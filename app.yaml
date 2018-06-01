@@ -1,0 +1,18 @@
+runtime: go
+env: flex
+
+# replace environment variable in production
+env_variables:
+  POSTGRES_CONNECTION: ""
+  HMAC_SIGNING_KEY: ""
+
+# replace cloud sql connection in production
+beta_settings:
+  cloud_sql_instances: ""
+
+manual_scaling:
+  instances: 1
+resources:
+  cpu: 1
+  memory_gb: 1.0
+  disk_size_gb: 10

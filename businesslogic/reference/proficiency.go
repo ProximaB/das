@@ -21,7 +21,7 @@ type SearchProficiencyCriteria struct {
 }
 
 type IProficiencyRepository interface {
-	SearchProficiency(criteria *SearchProficiencyCriteria) ([]Proficiency, error)
+	SearchProficiency(criteria SearchProficiencyCriteria) ([]Proficiency, error)
 	CreateProficiency(proficiency *Proficiency) error
 	UpdateProficiency(proficiency Proficiency) error
 	DeleteProficiency(proficiency Proficiency) error

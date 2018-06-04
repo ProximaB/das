@@ -23,7 +23,7 @@ type SearchSchoolCriteria struct {
 
 type ISchoolRepository interface {
 	CreateSchool(school *School) error
-	SearchSchool(criteria *SearchSchoolCriteria) ([]School, error)
+	SearchSchool(criteria SearchSchoolCriteria) ([]School, error)
 	UpdateSchool(school School) error
 	DeleteSchool(school School) error
 }

@@ -1,12 +1,12 @@
 package partnership
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/dataaccess/common"
 	"database/sql"
 	"errors"
 	"fmt"
-	sq "github.com/Masterminds/squirrel"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/Masterminds/squirrel"
 	"time"
 )
 
@@ -25,10 +25,13 @@ const (
 
 type PostgresPartnershipRepository struct {
 	Database   *sql.DB
-	SqlBuilder sq.StatementBuilderType
+	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresPartnershipRepository) CreatePartnership(partnership businesslogic.Partnership) error {
+func (repo PostgresPartnershipRepository) CreatePartnership(partnership *businesslogic.Partnership) error {
+	if repo.Database == nil {
+		return errors.New("data source of PostgresPartnershipRepository is not specified")
+	}
 	clause := repo.SqlBuilder.Insert("").
 		Into(DAS_PARTNERSHIP_TABLE).
 		Columns(
@@ -43,7 +46,10 @@ func (repo PostgresPartnershipRepository) CreatePartnership(partnership business
 	return err
 }
 
-func (repo PostgresPartnershipRepository) SearchPartnership(criteria *businesslogic.SearchPartnershipCriteria) ([]businesslogic.Partnership, error) {
+func (repo PostgresPartnershipRepository) SearchPartnership(criteria businesslogic.SearchPartnershipCriteria) ([]businesslogic.Partnership, error) {
+	if repo.Database == nil {
+		return nil, errors.New("data source of PostgresPartnershipRepository is not specified")
+	}
 	stmt := repo.SqlBuilder.Select(fmt.Sprintf("%s,%s,%s,%s,%s,%s,%s",
 		common.PRIMARY_KEY,
 		DAS_PARTNERSHIP_COL_LEAD_ID,
@@ -53,13 +59,13 @@ func (repo PostgresPartnershipRepository) SearchPartnership(criteria *businesslo
 		common.COL_DATETIME_CREATED,
 		common.COL_DATETIME_UPDATED)).From(DAS_PARTNERSHIP_TABLE)
 	if criteria.PartnershipID > 0 {
-		stmt = stmt.Where(sq.Eq{common.PRIMARY_KEY: criteria.PartnershipID})
+		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.PartnershipID})
 	}
 	if criteria.LeadID > 0 {
-		stmt = stmt.Where(sq.Eq{DAS_PARTNERSHIP_COL_LEAD_ID: criteria.LeadID})
+		stmt = stmt.Where(squirrel.Eq{DAS_PARTNERSHIP_COL_LEAD_ID: criteria.LeadID})
 	}
 	if criteria.FollowID > 0 {
-		stmt = stmt.Where(sq.Eq{DAS_PARTNERSHIP_COL_FOLLOW_ID: criteria.FollowID})
+		stmt = stmt.Where(squirrel.Eq{DAS_PARTNERSHIP_COL_FOLLOW_ID: criteria.FollowID})
 	}
 
 	partnerships := make([]businesslogic.Partnership, 0)
@@ -86,9 +92,15 @@ func (repo PostgresPartnershipRepository) SearchPartnership(criteria *businesslo
 }
 
 func (repo PostgresPartnershipRepository) DeletePartnership(partnership businesslogic.Partnership) error {
+	if repo.Database == nil {
+		return errors.New("data source of PostgresPartnershipRepository is not specified")
+	}
 	return errors.New("not implemented")
 }
 
 func (repo PostgresPartnershipRepository) UpdatePartnership(partnership businesslogic.Partnership) error {
+	if repo.Database == nil {
+		return errors.New("data source of PostgresPartnershipRepository is not specified")
+	}
 	return errors.New("not implemented")
 }

@@ -1,12 +1,12 @@
 package account
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/dataaccess/common"
 	"database/sql"
 	"errors"
 	"fmt"
-	sq "github.com/Masterminds/squirrel"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/Masterminds/squirrel"
 	"time"
 )
 
@@ -36,10 +36,13 @@ const (
 
 type PostgresAccountRepository struct {
 	Database   *sql.DB
-	SqlBuilder sq.StatementBuilderType
+	SqlBuilder squirrel.StatementBuilderType
 }
 
 func (repo PostgresAccountRepository) CreateAccount(account *businesslogic.Account) error {
+	if repo.Database == nil {
+		return errors.New("data source of PostgresAccountRepository is not specified")
+	}
 	stmt := repo.SqlBuilder.
 		Insert("").
 		Into(DAS_USER_ACCOUNT_TABLE).
@@ -68,17 +71,25 @@ func (repo PostgresAccountRepository) CreateAccount(account *businesslogic.Accou
 		account.MiddleNames, account.FirstName, account.DateOfBirth, account.Email, account.Phone,
 		account.EmailVerified, account.PhoneVerified, account.HashAlgorithm, account.PasswordSalt, account.PasswordHash, time.Now(), time.Now(),
 		account.ToSAccepted, account.PrivacyPolicyAccepted, account.ByGuardian, account.Signature,
-	).Suffix(fmt.Sprintf("RETURNING %s", common.PRIMARY_KEY))
+	).Suffix("RETURNING ID")
 
 	// parsing arguments to ... parameters: https://golang.org/ref/spec#Passing_arguments_to_..._parameters
 	// PostgreSQL does not return LastInsertID automatically: https://github.com/lib/pq/issues/24
 	clause, args, err := stmt.ToSql()
-	row := repo.Database.QueryRow(clause, args...)
-	row.Scan(&account.ID)
+	if tx, txErr := repo.Database.Begin(); txErr != nil {
+		return txErr
+	} else {
+		row := repo.Database.QueryRow(clause, args...)
+		row.Scan(&account.ID)
+		tx.Commit()
+	}
 	return err
 }
 
-func (repo PostgresAccountRepository) SearchAccount(criteria *businesslogic.SearchAccountCriteria) ([]businesslogic.Account, error) {
+func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.SearchAccountCriteria) ([]businesslogic.Account, error) {
+	if repo.Database == nil {
+		return nil, errors.New("data source of PostgresAccountRepository is not specified")
+	}
 	stmt := repo.SqlBuilder.
 		Select(
 			fmt.Sprintf(
@@ -107,34 +118,34 @@ func (repo PostgresAccountRepository) SearchAccount(criteria *businesslogic.Sear
 				DAS_USER_ACCOUNT_COL_GUARDIAN_SIGNATURE,
 			)).From(DAS_USER_ACCOUNT_TABLE)
 	if criteria.AccountType > 0 {
-		stmt = stmt.Where(sq.Eq{DAS_USER_ACCOUNT_COL_USER_TYPE_ID: criteria.AccountType})
+		stmt = stmt.Where(squirrel.Eq{DAS_USER_ACCOUNT_COL_USER_TYPE_ID: criteria.AccountType})
 	}
 	if len(criteria.UUID) != 0 {
-		stmt = stmt.Where(sq.Eq{common.COL_UUID: criteria.UUID})
+		stmt = stmt.Where(squirrel.Eq{common.COL_UUID: criteria.UUID})
 	}
 	if criteria.ID > 0 {
-		stmt = stmt.Where(sq.Eq{common.PRIMARY_KEY: criteria.ID})
+		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.ID})
 	}
 	if criteria.AccountStatus > 0 {
-		stmt = stmt.Where(sq.Eq{DAS_USER_ACCOUNT_COL_USER_STATUS_ID: criteria.AccountStatus})
+		stmt = stmt.Where(squirrel.Eq{DAS_USER_ACCOUNT_COL_USER_STATUS_ID: criteria.AccountStatus})
 	}
 	if criteria.Gender > 0 {
-		stmt = stmt.Where(sq.Eq{DAS_USER_ACCOUNT_COL_USER_GENDER_ID: criteria.Gender})
+		stmt = stmt.Where(squirrel.Eq{DAS_USER_ACCOUNT_COL_USER_GENDER_ID: criteria.Gender})
 	}
 	if len(criteria.Email) > 0 {
-		stmt = stmt.Where(sq.Eq{DAS_USER_ACCOUNT_COL_EMAIL: criteria.Email})
+		stmt = stmt.Where(squirrel.Eq{DAS_USER_ACCOUNT_COL_EMAIL: criteria.Email})
 	}
 	if len(criteria.Phone) > 0 {
-		stmt = stmt.Where(sq.Eq{DAS_USER_ACCOUNT_COL_PHONE: criteria.Phone})
+		stmt = stmt.Where(squirrel.Eq{DAS_USER_ACCOUNT_COL_PHONE: criteria.Phone})
 	}
 	if len(criteria.LastName) > 0 {
-		stmt = stmt.Where(sq.Eq{DAS_USER_ACCOUNT_COL_LAST_NAME: criteria.LastName})
+		stmt = stmt.Where(squirrel.Eq{DAS_USER_ACCOUNT_COL_LAST_NAME: criteria.LastName})
 	}
 	if len(criteria.FirstName) > 0 {
-		stmt = stmt.Where(sq.Eq{DAS_USER_ACCOUNT_COL_FIRST_NAME: criteria.FirstName})
+		stmt = stmt.Where(squirrel.Eq{DAS_USER_ACCOUNT_COL_FIRST_NAME: criteria.FirstName})
 	}
 	if &criteria.DateOfBirth != nil && (time.Now().Year()-criteria.DateOfBirth.Year()) < 120 {
-		stmt = stmt.Where(sq.Eq{DAS_USER_ACCOUNT_COL_DATE_OF_BIRTH: criteria.DateOfBirth})
+		stmt = stmt.Where(squirrel.Eq{DAS_USER_ACCOUNT_COL_DATE_OF_BIRTH: criteria.DateOfBirth})
 	}
 
 	accounts := make([]businesslogic.Account, 0)
@@ -175,8 +186,11 @@ func (repo PostgresAccountRepository) SearchAccount(criteria *businesslogic.Sear
 }
 
 func (repo PostgresAccountRepository) DeleteAccount(account businesslogic.Account) error {
+	if repo.Database == nil {
+		return errors.New("data source of PostgresAccountRepository is not specified")
+	}
 	if account.ID > 0 {
-		stmt := repo.SqlBuilder.Delete("").From(DAS_USER_ACCOUNT_TABLE).Where(sq.Eq{common.PRIMARY_KEY: account.ID})
+		stmt := repo.SqlBuilder.Delete("").From(DAS_USER_ACCOUNT_TABLE).Where(squirrel.Eq{common.PRIMARY_KEY: account.ID})
 		_, err := stmt.RunWith(repo.Database).Exec()
 		return err
 	}
@@ -184,5 +198,21 @@ func (repo PostgresAccountRepository) DeleteAccount(account businesslogic.Accoun
 }
 
 func (repo PostgresAccountRepository) UpdateAccount(account businesslogic.Account) error {
-	return errors.New("not implemented")
+	if repo.Database == nil {
+		return errors.New("data source of PostgresAccountRepository is not specified")
+	}
+	stmt := repo.SqlBuilder.Update(DAS_USER_ACCOUNT_TABLE)
+	if account.ID > 0 {
+		if len(account.PasswordSalt) > 0 {
+			stmt = stmt.Set(DAS_USER_ACCOUNT_COL_PASSWORD_SALT, account.PasswordSalt)
+		}
+	}
+	var err error
+	if tx, txErr := repo.Database.Begin(); txErr != nil {
+		return txErr
+	} else {
+		_, err = stmt.RunWith(repo.Database).Exec()
+		err = tx.Commit()
+	}
+	return err
 }

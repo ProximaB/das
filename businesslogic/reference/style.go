@@ -21,7 +21,7 @@ type SearchStyleCriteria struct {
 
 type IStyleRepository interface {
 	CreateStyle(style *Style) error
-	SearchStyle(criteria *SearchStyleCriteria) ([]Style, error)
+	SearchStyle(criteria SearchStyleCriteria) ([]Style, error)
 	UpdateStyle(style Style) error
 	DeleteStyle(style Style) error
 }

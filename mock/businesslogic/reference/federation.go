@@ -5,7 +5,7 @@
 package mock_reference
 
 import (
-	reference "github.com/yubing24/das/businesslogic/reference"
+	reference "github.com/DancesportSoftware/das/businesslogic/reference"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )

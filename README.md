@@ -1,7 +1,10 @@
 # Dancesport Application System (DAS)
+
+[![Build Status](https://travis-ci.org/DancesportSoftware/das.svg?branch=master)](https://travis-ci.org/DancesportSoftware/das)
+
 DAS is an open and free competition management system for competitive ballroom
-dance. This project (along with [dasdb](https://github.com/yubing24/dasdb) and 
-[dasweb](https://github.com/yubing24/dasweb)) aims to provide the community of
+dance. This project (along with [dasdb](https://github.com/DancesportSoftware/dasdb) and 
+[dasweb](https://github.com/DancesportSoftware/dasweb)) aims to provide the community of
 dancesport an open and secure implementation of competition management system.
 
 ### Goals of DAS ###
@@ -48,34 +51,49 @@ the setup works for Mac as well.
    
    `export PATH=$GOPATH/bin:$PATH`
    
-   Make sure you define `$GOPATH` before adding `$GOPATH/bin` to your `PATH`
+   Make sure you define `$GOPATH` before adding `$GOPATH/bin` to your `PATH`. Double check
+   if they are defined by running `$ echo $GOPATH`.
    
 3. Check out the repository
 
    First, we need to create necessary directory for DAS:
    
-   `$ mkdir -p $GOPATH/src/github.com/yubing24`
+   `$ mkdir -p $GOPATH/src/github.com/DancesportSoftware`
    
    Change directory:
 
-   `$ cd $GOPATH/src/github.com/yubing24`
+   `$ cd $GOPATH/src/github.com/DancesportSoftware`
    
    Check out the latest build:
    
-   `$ git clone https://github.com/yubing24/das.git`
+   `$ git clone https://github.com/DancesportSoftware/das.git`
    
 4. Get dependencies
 
-   Most of the dependencies can be get by `go get`: `$ go get ./...`
-   This command will download all the dependencies from online repositories.
+   Most of the dependencies can be get by `go get`:
+   1. Change directory to project root: `$ cd $GOPATH/src/DancesportSoftware/das`
+   2. Get dependencies `$ go get ./...`
+   
+   This will download all the dependencies from online repositories.
    
 5. Run DAS
 
    You will need to have the database set up in order to run DAS locally. You can
-   visit the [dasdb](https://github.com/yubing24/dasdb) to build the database schema
+   visit the [dasdb](https://github.com/DancesportSoftware/dasdb) to build the database schema
    for local development.
    
    To run DAS services locally, run `$ go run das.go` in the root of DAS repository.
+   
+   If you want to build a binary and run separately:
+   
+   `$ cd $GOPATH/src/github.com/DancesportSoftware/das`
+   
+   `$ go install`
+   
+   If you have added `$GOPATH/bin` to your `PATH`, then there should be a command available
+   to you: `$ das`, which is installed under `$GOPATH/bin`.
+   
+   DAS will run on port 8080: `localhost:8080`.
    
 ## Necessary Development Tools
 * IDE: IntelliJ (with Golang plugin), Goland (requires subscription), and VS Code

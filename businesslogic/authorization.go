@@ -11,13 +11,13 @@ func AuthenticateUser(email, password string, repo IAccountRepository) error {
 		return errors.New("username or password is missing")
 	}
 
-	accounts, err := repo.SearchAccount(&SearchAccountCriteria{Email: email})
+	accounts, err := repo.SearchAccount(SearchAccountCriteria{Email: email})
 	if err != nil {
 		return err
 	}
 
 	if len(accounts) != 1 {
-		return errors.New("invalid email address")
+		return errors.New("invalid credential")
 	}
 
 	if accounts[0].AccountStatusID == ACCOUNT_STATUS_SUSPENDED {

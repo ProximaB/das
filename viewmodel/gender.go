@@ -1,7 +1,7 @@
 package viewmodel
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
 )
 
 type Gender struct {

@@ -1,11 +1,11 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
-	"github.com/yubing24/das/dataaccess/common"
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -37,7 +37,7 @@ func (repo PostgresSchoolRepository) CreateSchool(school *reference.School) erro
 		school.UpdateUserID,
 		school.DateTimeUpdated,
 	).Suffix(
-		fmt.Sprintf("RETURNING %s", common.PRIMARY_KEY),
+		"RETURNING ID",
 	)
 
 	clause, args, err := stmt.ToSql()
@@ -98,7 +98,7 @@ func (repo PostgresSchoolRepository) DeleteSchool(school reference.School) error
 	return err
 }
 
-func (repo PostgresSchoolRepository) SearchSchool(criteria *reference.SearchSchoolCriteria) ([]reference.School, error) {
+func (repo PostgresSchoolRepository) SearchSchool(criteria reference.SearchSchoolCriteria) ([]reference.School, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresSchoolRepository is not specified")
 	}

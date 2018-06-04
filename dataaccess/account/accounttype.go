@@ -1,10 +1,10 @@
 package account
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/dataaccess/common"
 	"database/sql"
 	"fmt"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 )
 

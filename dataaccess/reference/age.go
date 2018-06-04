@@ -1,11 +1,11 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
-	"github.com/yubing24/das/dataaccess/common"
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -47,7 +47,7 @@ func (repo PostgresAgeRepository) CreateAge(age *reference.Age) error {
 		age.DateTimeCreated,
 		age.UpdateUserID,
 		age.DateTimeUpdated,
-	).Suffix(fmt.Sprintf("RETURNING %s", common.PRIMARY_KEY))
+	).Suffix("RETURNING ID")
 	clause, args, err := stmt.ToSql()
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
 		return txErr
@@ -75,7 +75,7 @@ func (repo PostgresAgeRepository) DeleteAge(age reference.Age) error {
 	return err
 }
 
-func (repo PostgresAgeRepository) SearchAge(criteria *reference.SearchAgeCriteria) ([]reference.Age, error) {
+func (repo PostgresAgeRepository) SearchAge(criteria reference.SearchAgeCriteria) ([]reference.Age, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresAgeRepository is not specified")
 	}
@@ -94,13 +94,11 @@ func (repo PostgresAgeRepository) SearchAge(criteria *reference.SearchAgeCriteri
 			common.COL_DATETIME_UPDATED)).
 		From(DAS_AGE_TABLE).
 		OrderBy(common.PRIMARY_KEY)
-	if criteria != nil {
-		if criteria.DivisionID > 0 {
-			stmt = stmt.Where(squirrel.Eq{common.COL_DIVISION_ID: criteria.DivisionID})
-		}
-		if criteria.AgeID > 0 {
-			stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.AgeID})
-		}
+	if criteria.DivisionID > 0 {
+		stmt = stmt.Where(squirrel.Eq{common.COL_DIVISION_ID: criteria.DivisionID})
+	}
+	if criteria.AgeID > 0 {
+		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.AgeID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
 	output := make([]reference.Age, 0)

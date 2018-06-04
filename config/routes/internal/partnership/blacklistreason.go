@@ -1,10 +1,10 @@
 package partnership
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/config/database"
-	"github.com/yubing24/das/controller/partnership/blacklist"
-	"github.com/yubing24/das/controller/util"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/config/database"
+	"github.com/DancesportSoftware/das/controller/partnership/blacklist"
+	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
 )
 
@@ -15,6 +15,7 @@ var partnershipRequestBlacklistReasonServer = blacklist.PartnershipRequestBlackl
 }
 
 var GetPartnershipBlacklistReasonController = util.DasController{
+	Name:         "GetPartnershipBlacklistReasonController",
 	Description:  "Get all the partnership blacklist reasons from DAS",
 	Method:       http.MethodGet,
 	Endpoint:     apiPartnershipBlacklistReasonEndpoint,

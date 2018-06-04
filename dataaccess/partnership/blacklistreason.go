@@ -1,10 +1,11 @@
 package partnership
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/dataaccess/common"
 	"database/sql"
+	"errors"
 	"fmt"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -14,6 +15,9 @@ type PostgresPartnershipRequestBlacklistReasonRepository struct {
 }
 
 func (repo PostgresPartnershipRequestBlacklistReasonRepository) GetPartnershipRequestBlacklistReasons() ([]businesslogic.PartnershipRequestBlacklistReason, error) {
+	if repo.Database == nil {
+		return nil, errors.New("data source of PostgresPartnershipRequestBlacklistReasonRepository is not specified")
+	}
 	stmt := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s",
 		common.PRIMARY_KEY,
 		common.COL_NAME,

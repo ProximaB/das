@@ -1,11 +1,11 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
-	"github.com/yubing24/das/dataaccess/common"
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 	"log"
 )
@@ -19,7 +19,10 @@ type PostgresDanceRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresDanceRepository) SearchDance(criteria *reference.SearchDanceCriteria) ([]reference.Dance, error) {
+func (repo PostgresDanceRepository) SearchDance(criteria reference.SearchDanceCriteria) ([]reference.Dance, error) {
+	if repo.Database == nil {
+		return nil, errors.New("data source of PostgresDanceRepository is not specified")
+	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s",
 			common.PRIMARY_KEY,
@@ -86,7 +89,7 @@ func (repo PostgresDanceRepository) CreateDance(dance *reference.Dance) error {
 		dance.UpdateUserID,
 		dance.DateTimeUpdated,
 	).Suffix(
-		fmt.Sprintf("RETURNING %s", common.PRIMARY_KEY),
+		"RETURNING ID",
 	)
 
 	clause, args, err := stmt.ToSql()

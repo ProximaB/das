@@ -5,7 +5,7 @@
 package mock_reference
 
 import (
-	reference "github.com/yubing24/das/businesslogic/reference"
+	reference "github.com/DancesportSoftware/das/businesslogic/reference"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )
@@ -34,7 +34,7 @@ func (m *MockICountryRepository) EXPECT() *MockICountryRepositoryMockRecorder {
 }
 
 // CreateCountry mocks base method
-func (m *MockICountryRepository) CreateCountry(country reference.Country) error {
+func (m *MockICountryRepository) CreateCountry(country *reference.Country) error {
 	ret := m.ctrl.Call(m, "CreateCountry", country)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -46,7 +46,7 @@ func (mr *MockICountryRepositoryMockRecorder) CreateCountry(country interface{})
 }
 
 // SearchCountry mocks base method
-func (m *MockICountryRepository) SearchCountry(criteria *reference.SearchCountryCriteria) ([]reference.Country, error) {
+func (m *MockICountryRepository) SearchCountry(criteria reference.SearchCountryCriteria) ([]reference.Country, error) {
 	ret := m.ctrl.Call(m, "SearchCountry", criteria)
 	ret0, _ := ret[0].([]reference.Country)
 	ret1, _ := ret[1].(error)

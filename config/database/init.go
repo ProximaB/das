@@ -69,4 +69,12 @@ func init() {
 	// organizer
 	OrganizerProvisionRepository.Database = PostgresDatabase
 	OrganizerProvisionHistoryRepository.Database = PostgresDatabase
+
+	// competition
+	CompetitionStatusRepository.Database = PostgresDatabase
+	CompetitionRepository.Database = PostgresDatabase
+
+	// event
+	EventRepository.Database = PostgresDatabase
+	EventMetaRepository.Database = PostgresDatabase
 }

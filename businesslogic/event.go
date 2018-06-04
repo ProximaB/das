@@ -1,8 +1,8 @@
 package businesslogic
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
 	"errors"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
 	"sort"
 	"time"
 )
@@ -51,7 +51,7 @@ func NewEvent() Event {
 }
 
 type IEventRepository interface {
-	SearchEvent(criteria *SearchEventCriteria) ([]Event, error)
+	SearchEvent(criteria SearchEventCriteria) ([]Event, error)
 	CreateEvent(event *Event) error
 	UpdateEvent(event Event) error
 	DeleteEvent(event Event) error
@@ -110,14 +110,14 @@ func (event Event) EquivalentTo(other Event) bool {
 }
 
 func GetEventByID(id int, repo IEventRepository) (Event, error) {
-	results, err := repo.SearchEvent(&SearchEventCriteria{EventID: id})
+	results, err := repo.SearchEvent(SearchEventCriteria{EventID: id})
 	return results[0], err
 }
 
 func CreateEvent(event Event, compRepo ICompetitionRepository, eventRepo IEventRepository, eventDanceRepo IEventDanceRepository) error {
 
 	// check if competition is still at the right status
-	compSearchResults, _ := compRepo.SearchCompetition(&SearchCompetitionCriteria{ID: event.CompetitionID})
+	compSearchResults, _ := compRepo.SearchCompetition(SearchCompetitionCriteria{ID: event.CompetitionID})
 	if len(compSearchResults) != 1 {
 		return errors.New("cannot find competition")
 	}
@@ -131,7 +131,7 @@ func CreateEvent(event Event, compRepo ICompetitionRepository, eventRepo IEventR
 	}
 
 	// check if specified events were created
-	similarEvents, _ := eventRepo.SearchEvent(&SearchEventCriteria{
+	similarEvents, _ := eventRepo.SearchEvent(SearchEventCriteria{
 		CompetitionID: event.CompetitionID,
 		CategoryID:    event.CategoryID,
 		FederationID:  event.FederationID,
@@ -181,13 +181,13 @@ func (event Event) validate(
 	styleRepo reference.IStyleRepository,
 	danceRepo reference.IDanceRepository) error {
 	// check if federation exists
-	targetFederations, err := federationRepo.SearchFederation(&reference.SearchFederationCriteria{ID: event.FederationID})
+	targetFederations, err := federationRepo.SearchFederation(reference.SearchFederationCriteria{ID: event.FederationID})
 	if err != nil {
 		return err
 	}
 
 	// check if division exists
-	divisions, err := divisionRepo.SearchDivision(&reference.SearchDivisionCriteria{ID: event.DivisionID})
+	divisions, err := divisionRepo.SearchDivision(reference.SearchDivisionCriteria{ID: event.DivisionID})
 	if err != nil {
 		return err
 	}
@@ -199,7 +199,7 @@ func (event Event) validate(
 	}
 
 	// check if age category exists
-	targetAges, err := ageRepo.SearchAge(&reference.SearchAgeCriteria{AgeID: event.AgeID})
+	targetAges, err := ageRepo.SearchAge(reference.SearchAgeCriteria{AgeID: event.AgeID})
 	if err != nil {
 		return err
 	}
@@ -210,13 +210,13 @@ func (event Event) validate(
 	}
 
 	// check if proficiency is part of this division
-	targetSkills, err := proficiencyRepo.SearchProficiency(&reference.SearchProficiencyCriteria{ProficiencyID: event.ProficiencyID})
+	targetSkills, err := proficiencyRepo.SearchProficiency(reference.SearchProficiencyCriteria{ProficiencyID: event.ProficiencyID})
 	if targetSkills[0].DivisionID != targetDivision.ID {
 		return errors.New("specified proficiency is not part of this division")
 	}
 
 	// check if style exists
-	targetStyles, err := styleRepo.SearchStyle(&reference.SearchStyleCriteria{StyleID: event.StyleID})
+	targetStyles, err := styleRepo.SearchStyle(reference.SearchStyleCriteria{StyleID: event.StyleID})
 	if err != nil {
 		return errors.New("specified style does not exist")
 	}
@@ -227,7 +227,7 @@ func (event Event) validate(
 	for _, each := range dances {
 		if unique[each.DanceID] == false {
 			// check if dance exists
-			dances, err := danceRepo.SearchDance(&reference.SearchDanceCriteria{DanceID: each.DanceID})
+			dances, err := danceRepo.SearchDance(reference.SearchDanceCriteria{DanceID: each.DanceID})
 			if err != nil {
 				return err
 			}

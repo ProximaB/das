@@ -1,11 +1,11 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
-	"github.com/yubing24/das/dataaccess/common"
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 	"log"
 )
@@ -58,7 +58,7 @@ func (repo PostgresFederationRepository) CreateFederation(federation *reference.
 	return err
 }
 
-func (repo PostgresFederationRepository) SearchFederation(criteria *reference.SearchFederationCriteria) ([]reference.Federation, error) {
+func (repo PostgresFederationRepository) SearchFederation(criteria reference.SearchFederationCriteria) ([]reference.Federation, error) {
 	if repo.Database == nil {
 		log.Println(common.ERROR_NIL_DATABASE)
 	}

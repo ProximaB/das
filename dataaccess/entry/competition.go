@@ -1,12 +1,12 @@
-package dataaccess
+package entry
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/dataaccess/common"
 	"database/sql"
 	"errors"
 	"fmt"
-	sq "github.com/Masterminds/squirrel"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/Masterminds/squirrel"
 )
 
 const (
@@ -17,12 +17,15 @@ const (
 )
 
 type PostgresCompetitionEntryRepository struct {
-	database   *sql.DB
-	sqlBuilder sq.StatementBuilderType
+	Database   *sql.DB
+	SqlBuilder squirrel.StatementBuilderType
 }
 
 func (repo PostgresCompetitionEntryRepository) CreateCompetitionEntry(entry businesslogic.CompetitionEntry) error {
-	clause := repo.sqlBuilder.Insert("").
+	if repo.Database == nil {
+		return errors.New("data source of PostgresCompetitionEntryRepository is not specified")
+	}
+	clause := repo.SqlBuilder.Insert("").
 		Into(DAS_COMPETITION_ENTRY_TABLE).
 		Columns(common.COL_COMPETITION_ID,
 			common.COL_ACCOUNT_ID,
@@ -37,12 +40,15 @@ func (repo PostgresCompetitionEntryRepository) CreateCompetitionEntry(entry busi
 		entry.UpdateUserID,
 		entry.DateTimeUpdated)
 
-	_, err := clause.RunWith(repo.database).Exec() // it's okay if the error is duplicate entry, since db has unique constraint on it
+	_, err := clause.RunWith(repo.Database).Exec() // it's okay if the error is duplicate entry, since db has unique constraint on it
 	return err
 }
 
-func (repo PostgresCompetitionEntryRepository) SearchCompetitionEntry(criteria *businesslogic.SearchCompetitionEntryCriteria) ([]businesslogic.CompetitionEntry, error) {
-	clause := repo.sqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s",
+func (repo PostgresCompetitionEntryRepository) SearchCompetitionEntry(criteria businesslogic.SearchCompetitionEntryCriteria) ([]businesslogic.CompetitionEntry, error) {
+	if repo.Database == nil {
+		return nil, errors.New("data source of PostgresCompetitionEntryRepository is not specified")
+	}
+	clause := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s",
 		common.PRIMARY_KEY,
 		common.COL_COMPETITION_ID,
 		common.COL_ACCOUNT_ID,
@@ -54,16 +60,16 @@ func (repo PostgresCompetitionEntryRepository) SearchCompetitionEntry(criteria *
 		common.COL_DATETIME_UPDATED)).From(DAS_COMPETITION_ENTRY_TABLE)
 
 	if criteria.ID > 0 {
-		clause = clause.Where(sq.Eq{common.PRIMARY_KEY: criteria.ID})
+		clause = clause.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.ID})
 	}
 	if criteria.AthleteID > 0 {
-		clause = clause.Where(sq.Eq{common.COL_ACCOUNT_ID: criteria.AthleteID})
+		clause = clause.Where(squirrel.Eq{common.COL_ACCOUNT_ID: criteria.AthleteID})
 	}
 	if criteria.CompetitionID > 0 {
-		clause = clause.Where(sq.Eq{common.COL_COMPETITION_ID: criteria.CompetitionID})
+		clause = clause.Where(squirrel.Eq{common.COL_COMPETITION_ID: criteria.CompetitionID})
 	}
 
-	rows, err := clause.RunWith(repo.database).Query()
+	rows, err := clause.RunWith(repo.Database).Query()
 	entries := make([]businesslogic.CompetitionEntry, 0)
 	if err != nil {
 		return entries, err
@@ -88,9 +94,15 @@ func (repo PostgresCompetitionEntryRepository) SearchCompetitionEntry(criteria *
 }
 
 func (repo PostgresCompetitionEntryRepository) DeleteCompetitionEntry(entry businesslogic.CompetitionEntry) error {
+	if repo.Database == nil {
+		return errors.New("data source of PostgresCompetitionEntryRepository is not specified")
+	}
 	return errors.New("not implemented")
 }
 
 func (repo PostgresCompetitionEntryRepository) UpdateCompetitionEntry(entry businesslogic.CompetitionEntry) error {
+	if repo.Database == nil {
+		return errors.New("data source of PostgresCompetitionEntryRepository is not specified")
+	}
 	return errors.New("not implemented")
 }

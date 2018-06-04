@@ -1,10 +1,10 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/config/database"
-	"github.com/yubing24/das/controller/reference"
-	"github.com/yubing24/das/controller/util"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/config/database"
+	"github.com/DancesportSoftware/das/controller/reference"
+	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
 )
 
@@ -15,6 +15,7 @@ var divisionServer = reference.DivisionServer{
 }
 
 var searchDivisionController = util.DasController{
+	Name:         "SearchDivisionController",
 	Description:  "Search divisions in DAS",
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceDivisionEndpoint,
@@ -23,6 +24,7 @@ var searchDivisionController = util.DasController{
 }
 
 var createDivisionController = util.DasController{
+	Name:         "CreateDivisionController",
 	Description:  "Create a division in DAS",
 	Method:       http.MethodPost,
 	Endpoint:     apiReferenceDivisionEndpoint,
@@ -31,6 +33,7 @@ var createDivisionController = util.DasController{
 }
 
 var deleteDivisionController = util.DasController{
+	Name:         "DeleteDivisionController",
 	Description:  "Delete a division from DAS",
 	Method:       http.MethodDelete,
 	Endpoint:     apiReferenceDivisionEndpoint,
@@ -39,6 +42,7 @@ var deleteDivisionController = util.DasController{
 }
 
 var updateDivisionController = util.DasController{
+	Name:         "UpdateDivisionController",
 	Description:  "Update a division in DAS",
 	Method:       http.MethodPut,
 	Endpoint:     apiReferenceDivisionEndpoint,

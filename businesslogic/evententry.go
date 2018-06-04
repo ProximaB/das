@@ -8,8 +8,8 @@ import (
 )
 
 type IEventEntryRepository interface {
-	SearchEventEntry(criteria *SearchEventEntryCriteria) ([]EventEntry, error)
-	CreateEventEntry(entry EventEntry) error
+	SearchEventEntry(criteria SearchEventEntryCriteria) ([]EventEntry, error)
+	CreateEventEntry(entry *EventEntry) error
 	DeleteEventEntry(entry EventEntry) error
 	UpdateEventEntry(entry EventEntry) error
 }
@@ -77,7 +77,7 @@ func createEventEntry(entry EventEntry, entryRepo IEventEntryRepository) error {
 		///PartnershipID:              entry.PartnershipID,
 		//CompetitiveBallroomEventID: entry.CompetitiveBallroomEventID,
 	}
-	existingEntries, _ := entryRepo.SearchEventEntry(&searchCriteria)
+	existingEntries, _ := entryRepo.SearchEventEntry(searchCriteria)
 
 	if len(existingEntries) == 1 {
 		return errors.New("event is already added")
@@ -85,5 +85,5 @@ func createEventEntry(entry EventEntry, entryRepo IEventEntryRepository) error {
 		log.Println(errors.New(fmt.Sprintf("more than 1 entry has been added: %v", entry)))
 	}
 
-	return entryRepo.CreateEventEntry(entry)
+	return entryRepo.CreateEventEntry(&entry)
 }

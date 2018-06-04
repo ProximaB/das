@@ -1,11 +1,11 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
-	"github.com/yubing24/das/dataaccess/common"
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -18,7 +18,7 @@ type PostgresDivisionRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresDivisionRepository) SearchDivision(criteria *reference.SearchDivisionCriteria) ([]reference.Division, error) {
+func (repo PostgresDivisionRepository) SearchDivision(criteria reference.SearchDivisionCriteria) ([]reference.Division, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresDivisionRepository is not specified")
 	}
@@ -88,7 +88,7 @@ func (repo PostgresDivisionRepository) CreateDivision(division *reference.Divisi
 		division.UpdateUserID,
 		division.DateTimeUpdated,
 	).Suffix(
-		fmt.Sprintf("RETURNING %s", common.PRIMARY_KEY),
+		"RETURNING ID",
 	)
 
 	clause, args, err := stmt.ToSql()

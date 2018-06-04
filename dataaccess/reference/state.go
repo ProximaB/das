@@ -1,11 +1,11 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
-	"github.com/yubing24/das/dataaccess/common"
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -18,7 +18,7 @@ type PostgresStateRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresStateRepository) SearchState(criteria *reference.SearchStateCriteria) ([]reference.State, error) {
+func (repo PostgresStateRepository) SearchState(criteria reference.SearchStateCriteria) ([]reference.State, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresStateRepository is not specified")
 	}
@@ -92,7 +92,7 @@ func (repo PostgresStateRepository) CreateState(state *reference.State) error {
 		state.UpdateUserID,
 		state.DateTimeUpdated,
 	).Suffix(
-		fmt.Sprintf("RETURNING %s", common.PRIMARY_KEY),
+		"RETURNING ID",
 	)
 
 	clause, args, err := stmt.ToSql()

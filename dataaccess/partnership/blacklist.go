@@ -1,11 +1,11 @@
 package partnership
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/dataaccess/common"
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -101,7 +101,7 @@ func (repo PostgresPartnershipRequestBlacklistRepository) CreatePartnershipReque
 		blacklist.UpdateUserID,
 		blacklist.DateTimeUpdated,
 	).Suffix(
-		fmt.Sprintf("RETURNING %s", common.PRIMARY_KEY),
+		"RETURNING ID",
 	)
 
 	clause, args, err := stmt.ToSql()

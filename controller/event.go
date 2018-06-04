@@ -1,9 +1,9 @@
 package controller
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/controller/util"
 	"encoding/json"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
 )
 
@@ -79,7 +79,7 @@ func getCompetitiveBallroomEventHandler(w http.ResponseWriter, r *http.Request) 
 	} else {
 		criteria := businesslogic.SearchEventCriteria{
 			EventID:       searchDTO.ID,
-			CompetitionID: searchDTO.CompetitionID,
+			ID: searchDTO.ID,
 			FederationID:  searchDTO.FederationID,
 			DivisionID:    searchDTO.DivisionID,
 			AgeID:         searchDTO.AgeID,

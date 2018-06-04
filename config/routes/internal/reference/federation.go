@@ -1,10 +1,10 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/config/database"
-	"github.com/yubing24/das/controller/reference"
-	"github.com/yubing24/das/controller/util"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/config/database"
+	"github.com/DancesportSoftware/das/controller/reference"
+	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
 )
 
@@ -15,6 +15,7 @@ var federationServer = reference.FederationServer{
 }
 
 var searchFederationController = util.DasController{
+	Name:         "SearchFederationController",
 	Description:  "Search federations in DAS",
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceFederationEndpoint,
@@ -23,6 +24,7 @@ var searchFederationController = util.DasController{
 }
 
 var createFederationController = util.DasController{
+	Name:         "CreateFederationController",
 	Description:  "Create a federation in DAS",
 	Method:       http.MethodPost,
 	Endpoint:     apiReferenceFederationEndpoint,
@@ -31,6 +33,7 @@ var createFederationController = util.DasController{
 }
 
 var deleteFederationController = util.DasController{
+	Name:         "DeleteFederationController",
 	Description:  "Delete a federation from DAS",
 	Method:       http.MethodDelete,
 	Endpoint:     apiReferenceFederationEndpoint,
@@ -39,6 +42,7 @@ var deleteFederationController = util.DasController{
 }
 
 var updateFederationController = util.DasController{
+	Name:         "UpdateFederationController",
 	Description:  "Update a federation in DAS",
 	Method:       http.MethodPut,
 	Endpoint:     apiReferenceFederationEndpoint,

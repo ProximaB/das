@@ -21,10 +21,10 @@ type SearchOrganizerProvisionCriteria struct {
 }
 
 type IOrganizerProvisionRepository interface {
-	CreateOrganizerProvision(provision OrganizerProvision) error
+	CreateOrganizerProvision(provision *OrganizerProvision) error
 	UpdateOrganizerProvision(provision OrganizerProvision) error
 	DeleteOrganizerProvision(provision OrganizerProvision) error
-	SearchOrganizerProvision(criteria *SearchOrganizerProvisionCriteria) ([]OrganizerProvision, error)
+	SearchOrganizerProvision(criteria SearchOrganizerProvisionCriteria) ([]OrganizerProvision, error)
 }
 
 func (provision OrganizerProvision) updateForCreateCompetition(competition Competition) OrganizerProvision {
@@ -59,6 +59,6 @@ func initializeOrganizerProvision(accountID int) (OrganizerProvision, OrganizerP
 
 func updateOrganizerProvision(provision OrganizerProvision, history OrganizerProvisionHistoryEntry,
 	organizerRepository IOrganizerProvisionRepository, historyRepository IOrganizerProvisionHistoryRepository) {
-	historyRepository.CreateOrganizerProvisionHistory(history)
+	historyRepository.CreateOrganizerProvisionHistory(&history)
 	organizerRepository.UpdateOrganizerProvision(provision)
 }

@@ -31,12 +31,12 @@ func newProvisionHistory(provision OrganizerProvision, competition Competition) 
 }
 
 type IOrganizerProvisionHistoryRepository interface {
-	SearchOrganizerProvisionHistory(criteria *SearchOrganizerProvisionHistoryCriteria) ([]OrganizerProvisionHistoryEntry, error)
+	SearchOrganizerProvisionHistory(criteria SearchOrganizerProvisionHistoryCriteria) ([]OrganizerProvisionHistoryEntry, error)
 	UpdateOrganizerProvisionHistory(history OrganizerProvisionHistoryEntry) error
 	DeleteOrganizerProvisionHistory(history OrganizerProvisionHistoryEntry) error
-	CreateOrganizerProvisionHistory(history OrganizerProvisionHistoryEntry) error
+	CreateOrganizerProvisionHistory(history *OrganizerProvisionHistoryEntry) error
 }
 
 func GetOrganizerProvisionHistory(organizerID int, repo IOrganizerProvisionHistoryRepository) ([]OrganizerProvisionHistoryEntry, error) {
-	return repo.SearchOrganizerProvisionHistory(&SearchOrganizerProvisionHistoryCriteria{OrganizerID: organizerID})
+	return repo.SearchOrganizerProvisionHistory(SearchOrganizerProvisionHistoryCriteria{OrganizerID: organizerID})
 }

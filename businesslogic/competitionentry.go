@@ -1,6 +1,8 @@
 package businesslogic
 
-import "time"
+import (
+	"time"
+)
 
 // this entry is competition-wise. athlete does not need to have a partner to enter a competition
 // competition entry helps with
@@ -24,7 +26,7 @@ type ICompetitionEntryRepository interface {
 	CreateCompetitionEntry(entry CompetitionEntry) error
 	UpdateCompetitionEntry(entry CompetitionEntry) error
 	DeleteCompetitionEntry(entry CompetitionEntry) error
-	SearchCompetitionEntry(criteria *SearchCompetitionEntryCriteria) ([]CompetitionEntry, error)
+	SearchCompetitionEntry(criteria SearchCompetitionEntryCriteria) ([]CompetitionEntry, error)
 }
 
 type CompetitionTBAEntry struct {
@@ -43,17 +45,17 @@ func CreateCompetitionEntry(user *Account,
 	repo ICompetitionEntryRepository,
 	accountRepo IAccountRepository,
 	partnershipRepo IPartnershipRepository) error {
-	partnerships, _ := partnershipRepo.SearchPartnership(&SearchPartnershipCriteria{PartnershipID: registration.PartnershipID})
+	partnerships, _ := partnershipRepo.SearchPartnership(SearchPartnershipCriteria{PartnershipID: registration.PartnershipID})
 	leadAccount := GetAccountByID(partnerships[0].LeadID, accountRepo)
 	followAccount := GetAccountByID(partnerships[0].FollowID, accountRepo)
 
 	// check if entry has been created
-	leadEntry, _ := repo.SearchCompetitionEntry(&SearchCompetitionEntryCriteria{
+	leadEntry, _ := repo.SearchCompetitionEntry(SearchCompetitionEntryCriteria{
 		CompetitionID: registration.CompetitionID,
 		AthleteID:     leadAccount.ID,
 	})
 
-	followEntry, _ := repo.SearchCompetitionEntry(&SearchCompetitionEntryCriteria{
+	followEntry, _ := repo.SearchCompetitionEntry(SearchCompetitionEntryCriteria{
 		CompetitionID: registration.CompetitionID,
 		AthleteID:     followAccount.ID,
 	})
@@ -85,6 +87,6 @@ func CreateCompetitionEntry(user *Account,
 		}
 	}
 
-	//updateCompetitionAttendance(registration.CompetitionID)
+	//updateCompetitionAttendance(registration.ID)
 	return nil
 }

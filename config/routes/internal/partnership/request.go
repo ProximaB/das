@@ -1,16 +1,18 @@
 package partnership
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/config/database"
-	"github.com/yubing24/das/controller/partnership/request"
-	"github.com/yubing24/das/controller/util"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/config/authentication"
+	"github.com/DancesportSoftware/das/config/database"
+	"github.com/DancesportSoftware/das/controller/partnership/request"
+	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
 )
 
 const apiPartnershipRequestEndpoint = "/api/partnership/request"
 
 var partnershipRequestServer = request.PartnershipRequestServer{
+	authentication.AuthenticationStrategy,
 	database.AccountRepository,
 	database.PartnershipRepository,
 	database.PartnershipRequestRepository,
@@ -18,6 +20,7 @@ var partnershipRequestServer = request.PartnershipRequestServer{
 }
 
 var createPartnershipRequestController = util.DasController{
+	Name:         "CreatePartnershipRequestController",
 	Description:  "Create a new partnership request in DAS",
 	Method:       http.MethodPost,
 	Endpoint:     apiPartnershipRequestEndpoint,
@@ -26,6 +29,7 @@ var createPartnershipRequestController = util.DasController{
 }
 
 var searchPartnershipRequestController = util.DasController{
+	Name:         "SearchPartnershipRequestController",
 	Description:  "Search a new partnership request in DAS",
 	Method:       http.MethodGet,
 	Endpoint:     apiPartnershipRequestEndpoint,
@@ -34,6 +38,7 @@ var searchPartnershipRequestController = util.DasController{
 }
 
 var updatePartnershipRequestController = util.DasController{
+	Name:         "UpdatePartnershipRequestController",
 	Description:  "Update a new partnership request in DAS",
 	Method:       http.MethodPut,
 	Endpoint:     apiPartnershipRequestEndpoint,
@@ -42,6 +47,7 @@ var updatePartnershipRequestController = util.DasController{
 }
 
 var deletePartnershipRequestController = util.DasController{
+	Name:         "DeletePartnershipRequestController",
 	Description:  "delete a new partnership request in DAS",
 	Method:       http.MethodDelete,
 	Endpoint:     apiPartnershipRequestEndpoint,

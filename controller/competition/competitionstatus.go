@@ -1,18 +1,20 @@
 package competition
 
 import (
-	"github.com/yubing24/das/controller/util"
-	"github.com/yubing24/das/dataaccess"
-	"github.com/yubing24/das/viewmodel"
 	"encoding/json"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 )
 
-var competitionStatusRepository = dataaccess.PostgresCompetitionStatusRepository{}
+type CompetitionStatusServer struct {
+	businesslogic.ICompetitionStatusRepository
+}
 
 // GET /api/competition/status
-func getCompetitionStatusHandler(w http.ResponseWriter, r *http.Request) {
-	status, err := competitionStatusRepository.GetCompetitionStatus()
+func (server CompetitionStatusServer) GetCompetitionStatusHandler(w http.ResponseWriter, r *http.Request) {
+	status, err := server.GetCompetitionAllStatus()
 	if err != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP_500_ERROR_RETRIEVING_DATA, err.Error())
 		return

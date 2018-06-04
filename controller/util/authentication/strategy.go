@@ -1,11 +1,11 @@
 package authentication
 
 import (
-	"github.com/yubing24/das/businesslogic"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"net/http"
 )
 
-type AuthenticationStrategy interface {
-	GetCurrentUser(r *http.Request) (businesslogic.Account, error)
+type IAuthenticationStrategy interface {
+	GetCurrentUser(r *http.Request, repository businesslogic.IAccountRepository) (businesslogic.Account, error)
 	SetAuthorizationResponse(w http.ResponseWriter)
 }

@@ -1,13 +1,12 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
-	"github.com/yubing24/das/dataaccess/common"
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
-	"log"
 	"time"
 )
 
@@ -22,7 +21,7 @@ type PostgresCountryRepository struct {
 
 func (repo PostgresCountryRepository) CreateCountry(country *reference.Country) error {
 	if repo.Database == nil {
-		log.Println(common.ERROR_NIL_DATABASE)
+		return errors.New("data source of PostgresCountryRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.
 		Insert("").
@@ -41,7 +40,7 @@ func (repo PostgresCountryRepository) CreateCountry(country *reference.Country) 
 			country.CreateUserID,
 			country.DateTimeUpdated,
 		).Suffix(
-		fmt.Sprintf("RETURNING %s", common.PRIMARY_KEY),
+		"RETURNING ID",
 	)
 	clause, args, err := stmt.ToSql()
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
@@ -56,7 +55,7 @@ func (repo PostgresCountryRepository) CreateCountry(country *reference.Country) 
 
 func (repo PostgresCountryRepository) DeleteCountry(country reference.Country) error {
 	if repo.Database == nil {
-		log.Println(common.ERROR_NIL_DATABASE)
+		return errors.New("data source of PostgresCountryRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.Delete("").From(DAS_COUNTRY_TABLE).
 		Where(squirrel.Eq{common.PRIMARY_KEY: country.ID})
@@ -72,7 +71,7 @@ func (repo PostgresCountryRepository) DeleteCountry(country reference.Country) e
 
 func (repo PostgresCountryRepository) UpdateCountry(country reference.Country) error {
 	if repo.Database == nil {
-		log.Println(common.ERROR_NIL_DATABASE)
+		return errors.New("data source of PostgresCountryRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_COUNTRY_TABLE)
 	if country.ID > 0 {
@@ -98,9 +97,9 @@ func (repo PostgresCountryRepository) UpdateCountry(country reference.Country) e
 	}
 }
 
-func (repo PostgresCountryRepository) SearchCountry(criteria *reference.SearchCountryCriteria) ([]reference.Country, error) {
+func (repo PostgresCountryRepository) SearchCountry(criteria reference.SearchCountryCriteria) ([]reference.Country, error) {
 	if repo.Database == nil {
-		log.Println(common.ERROR_NIL_DATABASE)
+		return nil, errors.New("data source of PostgresCountryRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s",
@@ -113,13 +112,13 @@ func (repo PostgresCountryRepository) SearchCountry(criteria *reference.SearchCo
 			common.COL_DATETIME_UPDATED)).
 		From(DAS_COUNTRY_TABLE).
 		OrderBy(common.PRIMARY_KEY)
-	if criteria != nil && criteria.CountryID > 0 {
+	if criteria.CountryID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.CountryID})
 	}
-	if criteria != nil && len(criteria.Name) > 0 {
+	if len(criteria.Name) > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: criteria.Name})
 	}
-	if criteria != nil && len(criteria.Abbreviation) > 0 {
+	if len(criteria.Abbreviation) > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_ABBREVIATION: criteria.Abbreviation})
 	}
 

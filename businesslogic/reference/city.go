@@ -9,7 +9,7 @@ type City struct {
 	CityID          int
 	Name            string
 	StateID         int
-	CreateUserID    *int // 2017-10-17 yubing24: use pointer so that if the value is nil, it will be ignored
+	CreateUserID    *int // 2017-10-17 DancesportSoftware: use pointer so that if the value is nil, it will be ignored
 	DateTimeCreated time.Time
 	UpdateUserID    *int
 	DateTimeUpdated time.Time
@@ -17,14 +17,14 @@ type City struct {
 
 func (city City) GetSchools(repo ISchoolRepository) ([]School, error) {
 	if repo != nil {
-		return repo.SearchSchool(&SearchSchoolCriteria{CityID: city.CityID})
+		return repo.SearchSchool(SearchSchoolCriteria{CityID: city.CityID})
 	}
 	return nil, errors.New("null ISchoolRepository")
 }
 
 func (city City) GetStudios(repo IStudioRepository) ([]Studio, error) {
 	if repo != nil {
-		return repo.SearchStudio(&SearchStudioCriteria{CityID: city.CityID})
+		return repo.SearchStudio(SearchStudioCriteria{CityID: city.CityID})
 	}
 	return nil, errors.New("null IStudioRepository")
 }
@@ -38,7 +38,7 @@ type SearchCityCriteria struct {
 
 type ICityRepository interface {
 	CreateCity(city *City) error
-	SearchCity(criteria *SearchCityCriteria) ([]City, error)
+	SearchCity(criteria SearchCityCriteria) ([]City, error)
 	UpdateCity(city City) error
 	DeleteCity(city City) error
 }

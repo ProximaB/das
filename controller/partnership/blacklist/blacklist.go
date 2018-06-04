@@ -1,9 +1,10 @@
 package blacklist
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/controller/util"
 	"encoding/json"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/DancesportSoftware/das/controller/util/authentication"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/log"
 	"net/http"
@@ -16,6 +17,7 @@ type PartnershipBlacklistViewModel struct {
 }
 
 type PartnershipRequestBlacklistServer struct {
+	authentication.IAuthenticationStrategy
 	businesslogic.IAccountRepository
 	businesslogic.IPartnershipRequestBlacklistRepository
 }
@@ -23,7 +25,7 @@ type PartnershipRequestBlacklistServer struct {
 // GET /api/partnership/blacklist
 func (server PartnershipRequestBlacklistServer) GetBlacklistedAccountHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
-	account, _ := util.GetCurrentUser(r, server.IAccountRepository)
+	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
 
 	blacklist, err := businesslogic.GetBlacklistedAccountsForUser(account.ID, server.IAccountRepository, server.IPartnershipRequestBlacklistRepository)
 

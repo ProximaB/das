@@ -1,10 +1,11 @@
 package partnership
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/dataaccess/common"
 	"database/sql"
+	"errors"
 	"fmt"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -20,6 +21,9 @@ type PostgresPartnershipRequestStatusRepository struct {
 }
 
 func (repo PostgresPartnershipRequestStatusRepository) GetPartnershipRequestStatus() ([]businesslogic.PartnershipRequestStatus, error) {
+	if repo.Database == nil {
+		return nil, errors.New("data source of PostgresPartnershipRequestStatusRepository is not specified")
+	}
 	clause := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s",
 		common.PRIMARY_KEY,
 		DAS_PARTNERSHIP_REQUEST_STATUS_COL_CODE,

@@ -1,8 +1,8 @@
 package businesslogic_test
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/mock/businesslogic"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/mock/businesslogic"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"testing"

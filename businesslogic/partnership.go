@@ -28,8 +28,8 @@ type Partnership struct {
 }
 
 type IPartnershipRepository interface {
-	CreatePartnership(partnership Partnership) error
-	SearchPartnership(criteria *SearchPartnershipCriteria) ([]Partnership, error)
+	CreatePartnership(partnership *Partnership) error
+	SearchPartnership(criteria SearchPartnershipCriteria) ([]Partnership, error)
 	UpdatePartnership(partnership Partnership) error
 	DeletePartnership(partnership Partnership) error
 }

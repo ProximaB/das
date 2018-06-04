@@ -1,9 +1,9 @@
 package reference_test
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
-	"github.com/yubing24/das/mock/businesslogic/reference"
 	"errors"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/mock/businesslogic/reference"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"testing"

@@ -1,7 +1,7 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
 	"github.com/Masterminds/squirrel"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"

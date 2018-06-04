@@ -1,11 +1,11 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
-	"github.com/yubing24/das/controller/util"
-	"github.com/yubing24/das/viewmodel"
 	"encoding/json"
 	"fmt"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 )
 
@@ -22,7 +22,7 @@ func (server StateServer) SearchStateHandler(w http.ResponseWriter, r *http.Requ
 		fmt.Fprintln(w, viewmodel.RESTAPIResult{Message: err.Error()})
 		return
 	}
-	states, err := server.IStateRepository.SearchState(criteria)
+	states, err := server.IStateRepository.SearchState(*criteria)
 	if err != nil {
 		w.WriteHeader(http.StatusInternalServerError)
 		fmt.Fprintln(w, viewmodel.RESTAPIResult{Message: err.Error()})

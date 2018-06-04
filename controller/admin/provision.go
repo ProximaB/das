@@ -1,9 +1,9 @@
 package admin
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/controller/util"
-	"github.com/yubing24/das/viewmodel"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 )
 
@@ -22,7 +22,7 @@ func (server OrganizerProvisionServer) UpdateOrganizerProvisionHandler(w http.Re
 	}
 
 	organizer := businesslogic.GetAccountByUUID(updateDTO.OrganizerID, server.IAccountRepository)
-	provisions, _ := server.SearchOrganizerProvision(&businesslogic.SearchOrganizerProvisionCriteria{OrganizerID: organizer.ID})
+	provisions, _ := server.SearchOrganizerProvision(businesslogic.SearchOrganizerProvisionCriteria{OrganizerID: organizer.ID})
 
 	record := provisions[0]
 	// TODO: finish implementing the data update

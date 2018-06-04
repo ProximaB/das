@@ -1,10 +1,10 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
-	"github.com/yubing24/das/controller/util"
-	"github.com/yubing24/das/viewmodel"
 	"encoding/json"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 )
 
@@ -19,7 +19,7 @@ func (server DivisionServer) SearchDivisionHandler(w http.ResponseWriter, r *htt
 		return
 	}
 
-	if divisions, err := server.IDivisionRepository.SearchDivision(criteria); err != nil {
+	if divisions, err := server.IDivisionRepository.SearchDivision(*criteria); err != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP_500_ERROR_RETRIEVING_DATA, err.Error())
 		return
 	} else {

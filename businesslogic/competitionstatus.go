@@ -22,5 +22,5 @@ type CompetitionStatus struct {
 }
 
 type ICompetitionStatusRepository interface {
-	GetCompetitionStatus() ([]CompetitionStatus, error)
+	GetCompetitionAllStatus() ([]CompetitionStatus, error)
 }

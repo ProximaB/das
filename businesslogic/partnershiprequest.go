@@ -42,7 +42,7 @@ type SearchPartnershipRequestCriteria struct {
 
 type IPartnershipRequestRepository interface {
 	CreatePartnershipRequest(request *PartnershipRequest) error
-	SearchPartnershipRequest(criteria *SearchPartnershipRequestCriteria) ([]PartnershipRequest, error)
+	SearchPartnershipRequest(criteria SearchPartnershipRequestCriteria) ([]PartnershipRequest, error)
 	DeletePartnershipRequest(request PartnershipRequest) error
 	UpdatePartnershipRequest(request PartnershipRequest) error
 }
@@ -64,8 +64,8 @@ func (request PartnershipRequest) validateRoles() error {
 }
 
 func (request PartnershipRequest) hasValidSenderAndRecipient(accountRepo IAccountRepository) error {
-	senderAccounts, seErr := accountRepo.SearchAccount(&SearchAccountCriteria{ID: request.SenderID})
-	recipientAccounts, recErr := accountRepo.SearchAccount(&SearchAccountCriteria{ID: request.RecipientID})
+	senderAccounts, seErr := accountRepo.SearchAccount(SearchAccountCriteria{ID: request.SenderID})
+	recipientAccounts, recErr := accountRepo.SearchAccount(SearchAccountCriteria{ID: request.RecipientID})
 	if seErr != nil {
 		return seErr
 	}
@@ -113,7 +113,7 @@ func (request PartnershipRequest) hasExistingPartnership(accountRepo IAccountRep
 	}
 
 	// check if sender is already in a partnership with recipient
-	partnerships, _ := partnershipRepo.SearchPartnership(partnershipCriteria)
+	partnerships, _ := partnershipRepo.SearchPartnership(*partnershipCriteria)
 	if len(partnerships) != 0 {
 		return true
 	}
@@ -123,7 +123,7 @@ func (request PartnershipRequest) hasExistingPartnership(accountRepo IAccountRep
 // hasPendingRequest checks if there is a request between these two dancers that still waits for response
 func (request PartnershipRequest) hasPendingRequest(requestRepo IPartnershipRequestRepository) bool {
 	// check if there is pending message between sender and recipient
-	requests, _ := requestRepo.SearchPartnershipRequest(&SearchPartnershipRequestCriteria{
+	requests, _ := requestRepo.SearchPartnershipRequest(SearchPartnershipRequestCriteria{
 		Recipient:       request.RecipientID,
 		Sender:          request.SenderID,
 		RequestStatusID: PARTNERSHIP_REQUEST_STATUS_PENDING,
@@ -182,7 +182,7 @@ func validatePartnershipRequestResponse(response PartnershipRequestResponse, rep
 	}
 
 	// check if request is valid
-	if requests, searchErr := repo.SearchPartnershipRequest(&SearchPartnershipRequestCriteria{
+	if requests, searchErr := repo.SearchPartnershipRequest(SearchPartnershipRequestCriteria{
 		RequestID: response.RequestID,
 		Recipient: response.RecipientID,
 	}); searchErr != nil {
@@ -207,7 +207,7 @@ func RespondPartnershipRequest(response PartnershipRequestResponse,
 
 	// respond partnership
 	if response.Response == PARTNERSHIP_REQUEST_STATUS_ACCEPTED || response.Response == PARTNERSHIP_REQUEST_STATUS_DECLINED {
-		requests, err := requestRepo.SearchPartnershipRequest(&SearchPartnershipRequestCriteria{
+		requests, err := requestRepo.SearchPartnershipRequest(SearchPartnershipRequestCriteria{
 			RequestID: response.RequestID,
 			Recipient: response.RecipientID,
 		})
@@ -223,7 +223,7 @@ func RespondPartnershipRequest(response PartnershipRequestResponse,
 		// optional: create partnership if accepted
 		if response.Response == PARTNERSHIP_REQUEST_STATUS_ACCEPTED {
 			partnership := Partnership{}
-			requests, _ := requestRepo.SearchPartnershipRequest(&SearchPartnershipRequestCriteria{
+			requests, _ := requestRepo.SearchPartnershipRequest(SearchPartnershipRequestCriteria{
 				RequestID: response.RequestID,
 				Recipient: response.RecipientID,
 			})
@@ -246,7 +246,7 @@ func RespondPartnershipRequest(response PartnershipRequestResponse,
 			}
 
 			partnership.DateTimeCreated = time.Now()
-			return partnershipRepo.CreatePartnership(partnership)
+			return partnershipRepo.CreatePartnership(&partnership)
 		}
 	}
 	return nil

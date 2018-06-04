@@ -1,10 +1,10 @@
 package account
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
-	"github.com/yubing24/das/mock/businesslogic/reference"
-	"github.com/yubing24/das/viewmodel"
 	"encoding/json"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/mock/businesslogic/reference"
+	"github.com/DancesportSoftware/das/viewmodel"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"net/http"

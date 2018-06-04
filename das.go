@@ -1,9 +1,9 @@
 package main
 
 import (
-	"github.com/yubing24/das/config/database"
-	"github.com/yubing24/das/config/routes"
-	"github.com/yubing24/das/controller/util"
+	"github.com/DancesportSoftware/das/config/database"
+	"github.com/DancesportSoftware/das/config/routes"
+	"github.com/DancesportSoftware/das/controller/util"
 	"google.golang.org/appengine"
 	"log"
 	"net/http"

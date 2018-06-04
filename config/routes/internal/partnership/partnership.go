@@ -1,20 +1,24 @@
 package partnership
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/config/database"
-	"github.com/yubing24/das/controller/partnership"
-	"github.com/yubing24/das/controller/util"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/config/authentication"
+	"github.com/DancesportSoftware/das/config/database"
+	"github.com/DancesportSoftware/das/controller/partnership"
+	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
 )
 
 const apiPartnershipEndpoint = "/api/partnership"
 
 var partnershipServer = partnership.PartnershipServer{
-	database.AccountRepository, database.PartnershipRepository,
+	authentication.AuthenticationStrategy,
+	database.AccountRepository,
+	database.PartnershipRepository,
 }
 
 var searchPartnershipController = util.DasController{
+	Name:         "SearchPartnershipController",
 	Description:  "Search partnerships in DAS",
 	Method:       http.MethodGet,
 	Endpoint:     apiPartnershipEndpoint,
@@ -23,6 +27,7 @@ var searchPartnershipController = util.DasController{
 }
 
 var updatePartnershipController = util.DasController{
+	Name:         "UpdatePartnershipController",
 	Description:  "Update a partnership in DAS",
 	Method:       http.MethodPut,
 	Endpoint:     apiPartnershipEndpoint,

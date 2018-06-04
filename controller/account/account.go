@@ -1,9 +1,10 @@
 package account
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/controller/util"
-	"github.com/yubing24/das/viewmodel"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/DancesportSoftware/das/controller/util/authentication"
+	"github.com/DancesportSoftware/das/viewmodel"
 	"log"
 	"net/http"
 )
@@ -83,7 +84,7 @@ func (server AccountServer) AccountAuthenticationHandler(w http.ResponseWriter, 
 		account := businesslogic.GetAccountByEmail(loginDTO.Email, server.IAccountRepository)
 
 		// user jwt authentication
-		authString := util.GenerateAuthenticationToken(account)
+		authString := authentication.GenerateAuthenticationToken(account)
 		if err != nil {
 			log.Printf("[error] generating client credential: %s\n", err.Error())
 			util.RespondJsonResult(w, http.StatusUnauthorized, "error in generating client credential", nil)

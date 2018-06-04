@@ -1,10 +1,12 @@
 package database
 
 import (
-	"github.com/yubing24/das/dataaccess"
-	"github.com/yubing24/das/dataaccess/account"
-	"github.com/yubing24/das/dataaccess/partnership"
-	"github.com/yubing24/das/dataaccess/reference"
+	"github.com/DancesportSoftware/das/dataaccess/account"
+	"github.com/DancesportSoftware/das/dataaccess/competition"
+	"github.com/DancesportSoftware/das/dataaccess/event"
+	"github.com/DancesportSoftware/das/dataaccess/partnership"
+	"github.com/DancesportSoftware/das/dataaccess/provision"
+	"github.com/DancesportSoftware/das/dataaccess/reference"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -84,10 +86,26 @@ var GenderRepository = reference.PostgresGenderRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var OrganizerProvisionRepository = dataaccess.PostgresOrganizerProvisionRepository{
+var OrganizerProvisionRepository = provision.PostgresOrganizerProvisionRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var OrganizerProvisionHistoryRepository = dataaccess.PostgresOrganizerProvisionHistoryRepository{
+var OrganizerProvisionHistoryRepository = provision.PostgresOrganizerProvisionHistoryRepository{
+	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
+var CompetitionStatusRepository = competition.PostgresCompetitionStatusRepository{
+	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
+var CompetitionRepository = competition.PostgresCompetitionRepository{
+	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
+var EventRepository = event.PostgresEventRepository{
+	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
+var EventMetaRepository = event.PostgresEventMetaRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }

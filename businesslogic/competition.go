@@ -1,13 +1,13 @@
 package businesslogic
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
 	"errors"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
 	"time"
 )
 
 type Competition struct {
-	CompetitionID   int
+	ID              int
 	FederationID    int
 	Name            string
 	Street          string
@@ -69,8 +69,8 @@ type OrganizerUpdateCompetition struct {
 }
 
 type ICompetitionRepository interface {
-	CreateCompetition(competition Competition) error
-	SearchCompetition(criteria *SearchCompetitionCriteria) ([]Competition, error)
+	CreateCompetition(competition *Competition) error
+	SearchCompetition(criteria SearchCompetitionCriteria) ([]Competition, error)
 	UpdateCompetition(competition Competition) error
 	DeleteCompetition(competition Competition) error
 }
@@ -83,7 +83,7 @@ func CreateCompetition(competition Competition, competitionRepo ICompetitionRepo
 	}
 
 	// check if organizer is provisioned with available competitions
-	provisions, _ := provisionRepo.SearchOrganizerProvision(&SearchOrganizerProvisionCriteria{
+	provisions, _ := provisionRepo.SearchOrganizerProvision(SearchOrganizerProvisionCriteria{
 		OrganizerID: competition.CreateUserID,
 	})
 	if len(provisions) != 1 {
@@ -97,7 +97,7 @@ func CreateCompetition(competition Competition, competitionRepo ICompetitionRepo
 		historyEntry := newProvisionHistory(newProvision, competition)
 		updateOrganizerProvision(newProvision, historyEntry, provisionRepo, historyRepo)
 	}
-	err := competitionRepo.CreateCompetition(competition)
+	err := competitionRepo.CreateCompetition(&competition)
 
 	return err
 }
@@ -147,11 +147,11 @@ func validateCreateCompetition(competition Competition) error {
 
 func UpdateCompetition(user *Account, competition OrganizerUpdateCompetition, repo ICompetitionRepository) error {
 	// check if user is the owner of the original competition
-	competitions, err := repo.SearchCompetition(&SearchCompetitionCriteria{ID: competition.CompetitionID})
+	competitions, err := repo.SearchCompetition(SearchCompetitionCriteria{ID: competition.CompetitionID})
 	if err != nil {
 		return err
 	}
-	if len(competitions) != 1 || competitions[0].CompetitionID == 0 {
+	if len(competitions) != 1 || competitions[0].ID == 0 {
 		return errors.New("cannot find this competition")
 	}
 	if validationErr := validateUpdateCompetition(user, competitions[0], &competition, repo); validationErr != nil {
@@ -161,7 +161,7 @@ func UpdateCompetition(user *Account, competition OrganizerUpdateCompetition, re
 	if competitions[0].GetStatus() == COMPETITION_STATUS_OPEN_REGISTRATION ||
 		competitions[0].GetStatus() == COMPETITION_STATUS_CLOSED_REGISTRATION {
 		// TODO: reimplement event update
-		/*if updateEventErr := dataaccess.UpdateCompetitionEventStatus(dataaccess.DATABASE, competition.CompetitionID, competitions[0].StatusID); updateEventErr != nil {
+		/*if updateEventErr := dataaccess.UpdateCompetitionEventStatus(dataaccess.DATABASE, competition.ID, competitions[0].StatusID); updateEventErr != nil {
 			return updateEventErr
 		}*/
 	}
@@ -208,24 +208,27 @@ func validateUpdateCompetition(user *Account,
 	return nil
 }
 
+type IEventMetaRepository interface {
+	GetEventUniqueFederations(competition Competition) ([]reference.Federation, error)
+	GetEventUniqueDivisions(competition Competition) ([]reference.Division, error)
+	GetEventUniqueAges(competition Competition) ([]reference.Age, error)
+	GetEventUniqueProficiencies(competition Competition) ([]reference.Proficiency, error)
+	GetEventUniqueStyles(competition Competition) ([]reference.Style, error)
+}
+
 // Get a list of unique federations that a competition has
-func GetEventUniqueFederations(compID int) ([]reference.Federation, error) {
-	return nil, errors.New("reimplement this")
-	// return dataaccess.GetEventUniqueFederations(dataaccess.DATABASE, compID)
+func (competition Competition) GetEventUniqueFederations(eventRepository IEventMetaRepository) ([]reference.Federation, error) {
+	return eventRepository.GetEventUniqueFederations(competition)
 }
-func GetEventUniqueDivisions(compID int) ([]reference.Division, error) {
-	return nil, errors.New("reimplement this")
-	// return dataaccess.GetEventUniqueDivisions(dataaccess.DATABASE, compID)
+func (competition Competition) GetEventUniqueDivisions(eventRepository IEventMetaRepository) ([]reference.Division, error) {
+	return eventRepository.GetEventUniqueDivisions(competition)
 }
-func GetEventUniqueAges(compID int) ([]reference.Age, error) {
-	return nil, errors.New("reimplement this")
-	// return dataaccess.GetEventUniqueAges(dataaccess.DATABASE, compID)
+func (competition Competition) GetEventUniqueAges(eventRepository IEventMetaRepository) ([]reference.Age, error) {
+	return eventRepository.GetEventUniqueAges(competition)
 }
-func GetEventUniqueProficiencies(compID int) ([]reference.Proficiency, error) {
-	return nil, errors.New("reimplement this")
-	// return dataaccess.GetEventUniqueProficiencies(dataaccess.DATABASE, compID)
+func (competition Competition) GetEventUniqueProficiencies(eventRepository IEventMetaRepository) ([]reference.Proficiency, error) {
+	return eventRepository.GetEventUniqueProficiencies(competition)
 }
-func GetEventUniqueStyles(compID int) ([]reference.Style, error) {
-	return nil, errors.New("reimplement this")
-	// return dataaccess.GetEventUniqueStyles(dataaccess.DATABASE, compID)
+func (competition Competition) GetEventUniqueStyles(eventRepository IEventMetaRepository) ([]reference.Style, error) {
+	return eventRepository.GetEventUniqueStyles(competition)
 }

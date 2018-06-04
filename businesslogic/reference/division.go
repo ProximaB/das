@@ -25,7 +25,7 @@ type SearchDivisionCriteria struct {
 
 type IDivisionRepository interface {
 	CreateDivision(division *Division) error
-	SearchDivision(criteria *SearchDivisionCriteria) ([]Division, error)
+	SearchDivision(criteria SearchDivisionCriteria) ([]Division, error)
 	UpdateDivision(division Division) error
 	DeleteDivision(division Division) error
 }

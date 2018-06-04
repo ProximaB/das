@@ -1,11 +1,11 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
-	"github.com/yubing24/das/dataaccess/common"
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -18,7 +18,7 @@ type PostgresStudioRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresStudioRepository) SearchStudio(criteria *reference.SearchStudioCriteria) ([]reference.Studio, error) {
+func (repo PostgresStudioRepository) SearchStudio(criteria reference.SearchStudioCriteria) ([]reference.Studio, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresStudioRepository is not specified")
 	}
@@ -96,7 +96,7 @@ func (repo PostgresStudioRepository) CreateStudio(studio *reference.Studio) erro
 		studio.UpdateUserID,
 		studio.DateTimeUpdated,
 	).Suffix(
-		fmt.Sprintf("RETURNING %s", common.PRIMARY_KEY),
+		"RETURNING ID",
 	)
 
 	clause, args, err := stmt.ToSql()

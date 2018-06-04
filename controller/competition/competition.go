@@ -1,26 +1,29 @@
 package competition
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/controller/util"
-	"github.com/yubing24/das/dataaccess"
-	"github.com/yubing24/das/viewmodel"
 	"encoding/json"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 	"strconv"
 )
 
-var competitionRepository = dataaccess.PostgresCompetitionRepository{}
+type PublicCompetitionServer struct {
+	businesslogic.ICompetitionRepository
+	businesslogic.IEventRepository
+	businesslogic.IEventMetaRepository
+}
 
-// GET /api/public/competitions
+// GET /api/competitions
 // Search competition(s). This controller is invokable without authentication
-func publicSearchCompetitionHandler(w http.ResponseWriter, r *http.Request) {
+func (server PublicCompetitionServer) SearchCompetitionHandler(w http.ResponseWriter, r *http.Request) {
 	searchDTO := new(businesslogic.SearchCompetitionCriteria)
 	if parseErr := util.ParseRequestData(r, searchDTO); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, parseErr.Error())
 		return
 	} else {
-		if competitions, err := competitionRepository.SearchCompetition(&businesslogic.SearchCompetitionCriteria{
+		if competitions, err := server.SearchCompetition(businesslogic.SearchCompetitionCriteria{
 			ID:       searchDTO.ID,
 			Name:     searchDTO.Name,
 			StatusID: searchDTO.StatusID,
@@ -38,7 +41,7 @@ func publicSearchCompetitionHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // GET /api/competition/federation
-func getEventUniqueFederationsHandler(w http.ResponseWriter, r *http.Request) {
+func (server PublicCompetitionServer) GetUniqueEventFederationHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	compID, parseErr := strconv.Atoi(r.Form.Get("competition"))
 	if parseErr != nil {
@@ -46,7 +49,10 @@ func getEventUniqueFederationsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	federations, err := businesslogic.GetEventUniqueFederations(compID)
+	searchResults, _ := server.SearchCompetition(businesslogic.SearchCompetitionCriteria{ID: compID})
+	competition := searchResults[0]
+
+	federations, err := competition.GetEventUniqueFederations(server.IEventMetaRepository)
 	if err != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP_500_ERROR_RETRIEVING_DATA, err.Error())
 		return
@@ -66,7 +72,7 @@ func getEventUniqueFederationsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // GET /api/competition/division
-func getEventUniqueDivisionsHandler(w http.ResponseWriter, r *http.Request) {
+func (server PublicCompetitionServer) GetEventUniqueDivisionsHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	compID, parseErr := strconv.Atoi(r.Form.Get("competition"))
 	if parseErr != nil {
@@ -74,7 +80,10 @@ func getEventUniqueDivisionsHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	divisions, err := businesslogic.GetEventUniqueDivisions(compID)
+	searchResults, _ := server.SearchCompetition(businesslogic.SearchCompetitionCriteria{ID: compID})
+	competition := searchResults[0]
+
+	divisions, err := competition.GetEventUniqueDivisions(server.IEventMetaRepository)
 	if err != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP_500_ERROR_RETRIEVING_DATA, err.Error())
 		return
@@ -94,7 +103,7 @@ func getEventUniqueDivisionsHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // GET /api/competition/age
-func getEventUniqueAgesHandler(w http.ResponseWriter, r *http.Request) {
+func (server PublicCompetitionServer) GetEventUniqueAgesHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	compID, parseErr := strconv.Atoi(r.Form.Get("competition"))
 	if parseErr != nil {
@@ -102,14 +111,16 @@ func getEventUniqueAgesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	federations, err := businesslogic.GetEventUniqueAges(compID)
+	searchResults, _ := server.SearchCompetition(businesslogic.SearchCompetitionCriteria{ID: compID})
+	competition := searchResults[0]
+	ages, err := competition.GetEventUniqueAges(server.IEventMetaRepository)
 	if err != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP_500_ERROR_RETRIEVING_DATA, err.Error())
 		return
 	}
 
 	data := make([]viewmodel.Age, 0)
-	for _, each := range federations {
+	for _, each := range ages {
 		data = append(data, viewmodel.Age{
 			ID:       each.ID,
 			Name:     each.Name,
@@ -124,22 +135,23 @@ func getEventUniqueAgesHandler(w http.ResponseWriter, r *http.Request) {
 }
 
 // GET /api/competition/proficiency
-func getEventUniqueProficienciesHandler(w http.ResponseWriter, r *http.Request) {
+func (server PublicCompetitionServer) GetEventUniqueProficienciesHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	compID, parseErr := strconv.Atoi(r.Form.Get("competition"))
 	if parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, parseErr.Error())
 		return
 	}
-
-	federations, err := businesslogic.GetEventUniqueProficiencies(compID)
+	searchResults, _ := server.SearchCompetition(businesslogic.SearchCompetitionCriteria{ID: compID})
+	competition := searchResults[0]
+	proficiencies, err := competition.GetEventUniqueProficiencies(server.IEventMetaRepository)
 	if err != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP_500_ERROR_RETRIEVING_DATA, err.Error())
 		return
 	}
 
 	data := make([]viewmodel.Proficiency, 0)
-	for _, each := range federations {
+	for _, each := range proficiencies {
 		data = append(data, viewmodel.ProficiencyDataModelToViewModel(each))
 	}
 
@@ -148,7 +160,7 @@ func getEventUniqueProficienciesHandler(w http.ResponseWriter, r *http.Request) 
 }
 
 // GET /api/competition/style
-func getEventUniqueStylesHandler(w http.ResponseWriter, r *http.Request) {
+func (server PublicCompetitionServer) GetEventUniqueStylesHandler(w http.ResponseWriter, r *http.Request) {
 	r.ParseForm()
 	compID, parseErr := strconv.Atoi(r.Form.Get("competition"))
 	if parseErr != nil {
@@ -156,14 +168,16 @@ func getEventUniqueStylesHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	federations, err := businesslogic.GetEventUniqueStyles(compID)
+	searchResults, _ := server.SearchCompetition(businesslogic.SearchCompetitionCriteria{ID: compID})
+	competition := searchResults[0]
+	styles, err := competition.GetEventUniqueStyles(server.IEventMetaRepository)
 	if err != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP_500_ERROR_RETRIEVING_DATA, err.Error())
 		return
 	}
 
 	data := make([]viewmodel.Style, 0)
-	for _, each := range federations {
+	for _, each := range styles {
 		data = append(data, viewmodel.Style{
 			ID:   each.ID,
 			Name: each.Name,

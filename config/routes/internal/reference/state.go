@@ -1,10 +1,10 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/config/database"
-	"github.com/yubing24/das/controller/reference"
-	"github.com/yubing24/das/controller/util"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/config/database"
+	"github.com/DancesportSoftware/das/controller/reference"
+	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
 )
 
@@ -15,6 +15,7 @@ var stateServer = reference.StateServer{
 }
 
 var createStateController = util.DasController{
+	Name:         "CreateStateController",
 	Description:  "Create a state in DAS",
 	Method:       http.MethodPost,
 	Endpoint:     apiReferenceStateEndpoint,
@@ -23,6 +24,7 @@ var createStateController = util.DasController{
 }
 
 var searchStateController = util.DasController{
+	Name:         "SearchStateController",
 	Description:  "Search states in DAS",
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceStateEndpoint,
@@ -31,6 +33,7 @@ var searchStateController = util.DasController{
 }
 
 var deleteStateController = util.DasController{
+	Name:         "DeleteStateController",
 	Description:  "Delete a state in DAS",
 	Method:       http.MethodDelete,
 	Endpoint:     apiReferenceStateEndpoint,
@@ -39,6 +42,7 @@ var deleteStateController = util.DasController{
 }
 
 var updateStateController = util.DasController{
+	Name:         "UpdateStateController",
 	Description:  "Update a state in DAS",
 	Method:       http.MethodPut,
 	Endpoint:     apiReferenceStateEndpoint,

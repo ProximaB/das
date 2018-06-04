@@ -1,10 +1,10 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/config/database"
-	"github.com/yubing24/das/controller/reference"
-	"github.com/yubing24/das/controller/util"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/config/database"
+	"github.com/DancesportSoftware/das/controller/reference"
+	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
 )
 
@@ -15,6 +15,7 @@ var proficiencyServer = reference.ProficiencyServer{
 }
 
 var searchProficiencyController = util.DasController{
+	Name:         "SearchProficiencyController",
 	Description:  "Search proficiencies in DAS",
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceProficiencyEndpoint,
@@ -23,6 +24,7 @@ var searchProficiencyController = util.DasController{
 }
 
 var createProficiencyController = util.DasController{
+	Name:         "CreateProficiencyController",
 	Description:  "Create a proficiency in DAS",
 	Method:       http.MethodPost,
 	Endpoint:     apiReferenceProficiencyEndpoint,
@@ -31,6 +33,7 @@ var createProficiencyController = util.DasController{
 }
 
 var deleteProficiencyController = util.DasController{
+	Name:         "DeleteProficiencyController",
 	Description:  "Delete a proficiency from DAS",
 	Method:       http.MethodDelete,
 	Endpoint:     apiReferenceProficiencyEndpoint,
@@ -39,6 +42,7 @@ var deleteProficiencyController = util.DasController{
 }
 
 var updateProficiencyController = util.DasController{
+	Name:         "UpdateProficiencyController",
 	Description:  "Update a proficiency in DAS",
 	Method:       http.MethodPut,
 	Endpoint:     apiReferenceProficiencyEndpoint,

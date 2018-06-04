@@ -1,11 +1,11 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
-	"github.com/yubing24/das/dataaccess/common"
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -37,7 +37,7 @@ func (repo PostgresStyleRepository) CreateStyle(style *reference.Style) error {
 		style.UpdateUserID,
 		style.DateTimeUpdated,
 	).Suffix(
-		fmt.Sprintf("RETURNING %s", common.PRIMARY_KEY),
+		"RETURNING ID",
 	)
 
 	clause, args, err := stmt.ToSql()
@@ -69,7 +69,7 @@ func (repo PostgresStyleRepository) DeleteStyle(style reference.Style) error {
 	return err
 }
 
-func (repo PostgresStyleRepository) SearchStyle(criteria *reference.SearchStyleCriteria) ([]reference.Style, error) {
+func (repo PostgresStyleRepository) SearchStyle(criteria reference.SearchStyleCriteria) ([]reference.Style, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresStyleRepository is not specified")
 	}

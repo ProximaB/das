@@ -1,10 +1,10 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/config/database"
-	"github.com/yubing24/das/controller/reference"
-	"github.com/yubing24/das/controller/util"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/config/database"
+	"github.com/DancesportSoftware/das/controller/reference"
+	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
 )
 
@@ -15,6 +15,7 @@ var schoolServer = reference.SchoolServer{
 }
 
 var searchSchoolController = util.DasController{
+	Name:         "SearchSchoolController",
 	Description:  "Search schools in DAS",
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceSchoolEndpoint,
@@ -23,6 +24,7 @@ var searchSchoolController = util.DasController{
 }
 
 var createSchoolController = util.DasController{
+	Name:         "CreateSchoolController",
 	Description:  "Create a school in DAS",
 	Method:       http.MethodPost,
 	Endpoint:     apiReferenceSchoolEndpoint,
@@ -31,6 +33,7 @@ var createSchoolController = util.DasController{
 }
 
 var deleteSchoolController = util.DasController{
+	Name:         "DeleteSchoolController",
 	Description:  "Delete a school from DAS",
 	Method:       http.MethodDelete,
 	Endpoint:     apiReferenceSchoolEndpoint,
@@ -39,6 +42,7 @@ var deleteSchoolController = util.DasController{
 }
 
 var updateSchoolController = util.DasController{
+	Name:         "UpdateSchoolController",
 	Description:  "Update a school in DAS",
 	Method:       http.MethodPut,
 	Endpoint:     apiReferenceSchoolEndpoint,

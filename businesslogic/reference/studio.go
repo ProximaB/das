@@ -26,7 +26,7 @@ type SearchStudioCriteria struct {
 
 type IStudioRepository interface {
 	CreateStudio(studio *Studio) error
-	SearchStudio(criteria *SearchStudioCriteria) ([]Studio, error)
+	SearchStudio(criteria SearchStudioCriteria) ([]Studio, error)
 	DeleteStudio(studio Studio) error
 	UpdateStudio(studio Studio) error
 }

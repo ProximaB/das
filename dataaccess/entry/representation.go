@@ -1,4 +1,4 @@
-package dataaccess
+package entry
 
 func CreateCompetititionRepresentation() {
 

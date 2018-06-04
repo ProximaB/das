@@ -1,8 +1,8 @@
 package viewmodel
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
 	"time"
 )
 
@@ -26,7 +26,7 @@ type Competition struct {
 
 func CompetitionDataModelToViewModel(competition businesslogic.Competition, accountType int) Competition {
 	view := Competition{
-		ID:         competition.CompetitionID,
+		ID:         competition.ID,
 		Federation: competition.FederationID,
 		Name:       competition.Name,
 		Website:    competition.Website,
@@ -93,4 +93,18 @@ func (createDTO CreateCompetition) ToCompetitionDataModel(user businesslogic.Acc
 	competition.City.CityID = createDTO.VenueCityID
 	competition.UpdateStatus(createDTO.Status)
 	return competition
+}
+
+type UpdateCompetitionDTO struct {
+	CompetitionID int       `json:"competition"`
+	Name          string    `json:"name"`
+	Website       string    `json:"website"`
+	Status        int       `json:"status"`
+	Address       string    `json:"street"`
+	ContactName   string    `json:"contact"`
+	ContactEmail  string    `json:"email"`
+	ContactPhone  string    `json:"phone"`
+	StartDate     time.Time `json:"start"`
+	EndDate       time.Time `json:"end"`
+	UpdateUserID  int
 }

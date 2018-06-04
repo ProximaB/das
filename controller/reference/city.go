@@ -1,10 +1,10 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
-	"github.com/yubing24/das/controller/util"
-	"github.com/yubing24/das/viewmodel"
 	"encoding/json"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/DancesportSoftware/das/viewmodel"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/log"
 	"net/http"
@@ -40,7 +40,7 @@ func (server CityServer) DeleteCityHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	if cities, searchErr := server.ICityRepository.SearchCity(&reference.SearchCityCriteria{CityID: deleteDTO.ID}); searchErr != nil {
+	if cities, searchErr := server.ICityRepository.SearchCity(reference.SearchCityCriteria{CityID: deleteDTO.ID}); searchErr != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, searchErr.Error(), nil)
 		return
 	} else if len(cities) != 1 {
@@ -76,7 +76,7 @@ func (server CityServer) SearchCityHandler(w http.ResponseWriter, r *http.Reques
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, err.Error())
 		return
 	}
-	cities, err := server.ICityRepository.SearchCity(criteria)
+	cities, err := server.ICityRepository.SearchCity(*criteria)
 	if err != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, err.Error(), nil)
 		return

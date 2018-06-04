@@ -1,28 +1,30 @@
 package partnership
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/controller/util"
-	"github.com/yubing24/das/viewmodel"
 	"encoding/json"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/DancesportSoftware/das/controller/util/authentication"
+	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 )
 
 type PartnershipServer struct {
+	authentication.IAuthenticationStrategy
 	businesslogic.IAccountRepository
 	businesslogic.IPartnershipRepository
 }
 
 // GET /api/partnership
 func (server PartnershipServer) SearchPartnershipHandler(w http.ResponseWriter, r *http.Request) {
-	account, _ := util.GetCurrentUser(r, server.IAccountRepository)
+	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
 	if account.ID == 0 || account.AccountTypeID != businesslogic.ACCOUNT_TYPE_ATHLETE {
 		util.RespondJsonResult(w, http.StatusUnauthorized, "not authorized", nil)
 		return
 	}
 
 	partnerships, err := server.SearchPartnership(
-		&businesslogic.SearchPartnershipCriteria{LeadID: account.ID, FollowID: account.ID})
+		businesslogic.SearchPartnershipCriteria{LeadID: account.ID, FollowID: account.ID})
 	if err != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP_500_ERROR_RETRIEVING_DATA, err.Error())
 		return
@@ -44,7 +46,7 @@ type updatePartnership struct {
 
 // PUT /api/partnership
 func (server PartnershipServer) UpdatePartnershipHandler(w http.ResponseWriter, r *http.Request) {
-	account, _ := util.GetCurrentUser(r, server.IAccountRepository)
+	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
 	if account.ID == 0 {
 		util.RespondJsonResult(w, http.StatusUnauthorized, "not authorized", nil)
 		return

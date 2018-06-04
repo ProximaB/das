@@ -1,43 +1,23 @@
 package routes
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/config/routes/internal/account"
-	"github.com/yubing24/das/config/routes/internal/organizer"
-	"github.com/yubing24/das/config/routes/internal/partnership"
-	"github.com/yubing24/das/config/routes/internal/reference"
-	"github.com/yubing24/das/controller/util"
-	"errors"
-	"github.com/dgrijalva/jwt-go"
-	"github.com/gorilla/context"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/config/authentication"
+	"github.com/DancesportSoftware/das/config/database"
+	"github.com/DancesportSoftware/das/config/routes/internal/account"
+	"github.com/DancesportSoftware/das/config/routes/internal/competition"
+	"github.com/DancesportSoftware/das/config/routes/internal/organizer"
+	"github.com/DancesportSoftware/das/config/routes/internal/partnership"
+	"github.com/DancesportSoftware/das/config/routes/internal/reference"
+	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
-	"strconv"
-	"strings"
 )
-
-type Route struct {
-	Name        string
-	Method      string
-	Pattern     string
-	HandlerFunc http.HandlerFunc
-}
 
 /*
 var restAPIRouter = []Route{
-	// Accounts
-	{"Authenticate", http.MethodPost, "/api/account/authenticate", authorizeSingleRole(AuthenticationHandler, businesslogic.ACCOUNT_TYPE_NOAUTH)},
-	{"Create DAS Account", http.MethodPost, "/api/account/register", authorizeSingleRole(registerAccountHandler, businesslogic.ACCOUNT_TYPE_NOAUTH)},
-
 	// Competition
-	{"Search competitions", http.MethodGet, "/api/public/competitions", authorizeSingleRole(setResponseHeader(publicSearchCompetitionHandler), businesslogic.ACCOUNT_TYPE_NOAUTH)},
-	{"Get competition status", http.MethodGet, "/api/competition/status", authorizeSingleRole(getCompetitionStatusHandler, businesslogic.ACCOUNT_TYPE_NOAUTH)},
-	{"Get unique federations of events at competition", http.MethodGet, "/api/competition/federation", authorizeSingleRole(getEventUniqueFederationsHandler, businesslogic.ACCOUNT_TYPE_NOAUTH)},
-	{"Get unique divisions of events at competition", http.MethodGet, "/api/competition/division", authorizeSingleRole(getEventUniqueDivisionsHandler, businesslogic.ACCOUNT_TYPE_NOAUTH)},
-	{"Get unique ages of events at competition", http.MethodGet, "/api/competition/age", authorizeSingleRole(getEventUniqueAgesHandler, businesslogic.ACCOUNT_TYPE_NOAUTH)},
-	{"Get unique proficiencies of events at competition", http.MethodGet, "/api/competition/proficiency", authorizeSingleRole(getEventUniqueProficienciesHandler, businesslogic.ACCOUNT_TYPE_NOAUTH)},
-	{"Get unique styles of events at competition", http.MethodGet, "/api/competition/style", authorizeSingleRole(getEventUniqueStylesHandler, businesslogic.ACCOUNT_TYPE_NOAUTH)},
 
 	// Events
 	{"Public view of events", http.MethodGet, "/api/event", authorizeSingleRole(getEventHandler, businesslogic.ACCOUNT_TYPE_NOAUTH)},
@@ -49,26 +29,6 @@ var restAPIRouter = []Route{
 	{"Get competitive ballroom entries for partnership", http.MethodGet, "/api/athlete/registration", authorizeSingleRole(getAthleteEventRegistrationHandler, businesslogic.ACCOUNT_TYPE_ATHLETE)},
 	{"Get competitive ballroom entries for public view", http.MethodGet, "/api/public/entries", authorizeSingleRole(getCompetitiveBallroomEventEntryHandler, businesslogic.ACCOUNT_TYPE_NOAUTH)},
 }*/
-
-type Identity struct {
-	Username    string
-	Email       string
-	AccountType int
-	AccountID   string
-}
-
-type JwtToken struct {
-	Token string `json:"token"`
-}
-
-const (
-	JWT_AUTH_CLAIM_EMAIL    = "email"
-	JWT_AUTH_CLAIM_USERNAME = "name"
-	JWT_AUTH_CLAIM_TYPE     = "type"
-	JWT_AUTH_CLAIM_UUID     = "uuid"
-)
-
-var HMAC_SECRET = ""
 
 func setResponseHeader(h http.HandlerFunc) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
@@ -85,40 +45,35 @@ func setResponseHeader(h http.HandlerFunc) http.HandlerFunc {
 		h.ServeHTTP(w, r)
 	}
 }
-func getAuthenticatedRequestIdentity(token *jwt.Token) Identity {
-	var identity Identity
-	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		identity.Username = claims[JWT_AUTH_CLAIM_USERNAME].(string)
-		identity.Email = claims[JWT_AUTH_CLAIM_EMAIL].(string)
-		identity.AccountID = claims[JWT_AUTH_CLAIM_UUID].(string)
-		accountType, _ := claims[JWT_AUTH_CLAIM_TYPE].(string)
-		identity.AccountType, _ = strconv.Atoi(accountType)
-	}
-	return identity
-}
+
+// TODO: this part needs careful rework
 func getRequestUserRole(r *http.Request) (int, error) {
-	authHeader := r.Header.Get("authorization")
-	if authHeader != "" {
-		bearerToken := strings.Split(authHeader, " ")
-		if len(bearerToken) == 2 {
-			token, err := jwt.Parse(bearerToken[1], func(token *jwt.Token) (interface{}, error) {
-				if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
-					return -1, errors.New("cannot authorize user")
-				}
-				return []byte(HMAC_SECRET), nil
-			})
-			if token.Valid && err == nil {
-				context.Set(r, "decoded", token.Claims)
-				identity := getAuthenticatedRequestIdentity(token)
-				return identity.AccountType, nil
-			}
-		}
-		return -1, errors.New("unauthorized")
+	account, err := authentication.AuthenticationStrategy.GetCurrentUser(r, database.AccountRepository)
+	if err != nil {
+		return 0, err
 	} else {
-		return -1, errors.New("not authorized")
+		return account.AccountTypeID, nil
 	}
 }
 func addDasController(router *mux.Router, handler util.DasController) {
+	if len(handler.Name) < 1 {
+		log.Fatalf("Name of %v is missing\n", handler)
+	}
+	if len(handler.Description) < 1 {
+		log.Fatalf("Description of %s is required\n", handler.Name)
+	}
+	if len(handler.Method) < 1 {
+		log.Fatalf("Method of %s is required\n", handler.Name)
+	}
+	if len(handler.Endpoint) < 1 {
+		log.Fatalf("Endpoint of %s is required\n", handler.Endpoint)
+	}
+	if handler.Handler == nil {
+		log.Fatalf("HandlerFunc of %s is required\n", handler.Name)
+	}
+	if handler.AllowedRoles == nil {
+		log.Fatalf("Alloed Roles of %s is required\n", handler.Name)
+	}
 	router.
 		Methods(handler.Method, http.MethodOptions).
 		Path(handler.Endpoint).
@@ -127,13 +82,22 @@ func addDasController(router *mux.Router, handler util.DasController) {
 }
 func authorizeMultipleRoles(h http.HandlerFunc, roles []int) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		userRole, authErr := getRequestUserRole(r)
 		allowNoAuth := false
-		authorized := false
 		for _, each := range roles {
 			if each == businesslogic.ACCOUNT_TYPE_NOAUTH {
 				allowNoAuth = true
+				break
 			}
+		}
+
+		userRole, authErr := getRequestUserRole(r)
+		if authErr != nil && !allowNoAuth {
+			util.RespondJsonResult(w, http.StatusUnauthorized, "invalid authorization token", nil)
+			return
+		}
+
+		authorized := false
+		for _, each := range roles {
 			if each == userRole {
 				authorized = true
 			}
@@ -191,13 +155,16 @@ func DasRouter() *mux.Router {
 	// partnership
 	addDasControllerGroup(router, partnership.PartnershipControllerGroup)
 
-	// organizer (multi-user group)
+	// organizer (multi-user)
 	addDasControllerGroup(router, organizer.ManageOrganizerProvisionControllerGroup)
 	addDasControllerGroup(router, organizer.ProvisionControllerGroup)
 	addDasControllerGroup(router, organizer.OrganizerProvisionControllerGroup)
 
-	// organizer
-	//addDasControllerGroup(router, organizer.OrganizerCompetitionManagementControllerGroup)
+	// organizer (only)
+	addDasControllerGroup(router, organizer.OrganizerCompetitionManagementControllerGroup)
+
+	// competition
+	addDasController(router, competition.GetCompetitionStatusController)
 
 	// athlete
 
@@ -212,6 +179,7 @@ func DasRouter() *mux.Router {
 	// administrator
 
 	// public only
+	addDasControllerGroup(router, competition.PublicCompetitionViewControllerGroup)
 
 	log.Println("finishing controller initialization")
 	return router

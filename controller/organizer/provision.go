@@ -1,15 +1,17 @@
 package organizer
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/controller/util"
-	"github.com/yubing24/das/viewmodel"
 	"encoding/json"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/DancesportSoftware/das/controller/util/authentication"
+	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 	"time"
 )
 
 type OrganizerProvisionServer struct {
+	authentication.IAuthenticationStrategy
 	businesslogic.IAccountRepository
 	businesslogic.IOrganizerProvisionRepository
 }
@@ -17,13 +19,13 @@ type OrganizerProvisionServer struct {
 // GET /api/organizer/organizer/summary
 func (server OrganizerProvisionServer) GetOrganizerProvisionSummaryHandler(w http.ResponseWriter, r *http.Request) {
 
-	account, _ := util.GetCurrentUser(r, server.IAccountRepository)
+	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
 	if account.AccountTypeID != businesslogic.ACCOUNT_TYPE_ORGANIZER || account.ID == 0 {
 		util.RespondJsonResult(w, http.StatusUnauthorized, "Access denied", nil)
 		return
 	}
 
-	summaries, _ := server.SearchOrganizerProvision(&businesslogic.SearchOrganizerProvisionCriteria{OrganizerID: account.ID})
+	summaries, _ := server.SearchOrganizerProvision(businesslogic.SearchOrganizerProvisionCriteria{OrganizerID: account.ID})
 	view := viewmodel.OrganizerProvisionSummary{
 		OrganizerID: summaries[0].OrganizerID,
 		Available:   summaries[0].Available,
@@ -41,6 +43,7 @@ type OrganizerProvisionHistoryEntryViewModel struct {
 }
 
 type OrganizerProvisionHistoryServer struct {
+	authentication.IAuthenticationStrategy
 	businesslogic.IAccountRepository
 	businesslogic.IOrganizerProvisionHistoryRepository
 }
@@ -48,13 +51,13 @@ type OrganizerProvisionHistoryServer struct {
 // GET /api/organizer/organizer/history
 func (server OrganizerProvisionHistoryServer) GetOrganizerProvisionHistoryHandler(w http.ResponseWriter, r *http.Request) {
 
-	account, _ := util.GetCurrentUser(r, server.IAccountRepository)
+	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
 	if account.AccountTypeID != businesslogic.ACCOUNT_TYPE_ORGANIZER && account.AccountTypeID != businesslogic.ACCOUNT_TYPE_ADMINISTRATOR {
 		util.RespondJsonResult(w, http.StatusUnauthorized, "Access denied", nil)
 		return
 	}
 
-	history, err := server.SearchOrganizerProvisionHistory(&businesslogic.SearchOrganizerProvisionHistoryCriteria{OrganizerID: account.ID})
+	history, err := server.SearchOrganizerProvisionHistory(businesslogic.SearchOrganizerProvisionHistoryCriteria{OrganizerID: account.ID})
 	if err != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, err.Error(), nil)
 		return

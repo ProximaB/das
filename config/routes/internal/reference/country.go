@@ -1,10 +1,10 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/config/database"
-	"github.com/yubing24/das/controller/reference"
-	"github.com/yubing24/das/controller/util"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/config/database"
+	"github.com/DancesportSoftware/das/controller/reference"
+	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
 )
 
@@ -14,6 +14,7 @@ var countryServer = reference.CountryServer{
 	database.CountryRepository,
 }
 var searchCountryController = util.DasController{
+	Name:         "SearchCountryController",
 	Description:  "Search countries in DAS",
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceCountryEndpoint,
@@ -22,6 +23,7 @@ var searchCountryController = util.DasController{
 }
 
 var createCountryController = util.DasController{
+	Name:         "CreateCountryController",
 	Description:  "Create a country in DAS",
 	Method:       http.MethodPost,
 	Endpoint:     apiReferenceCountryEndpoint,
@@ -30,6 +32,7 @@ var createCountryController = util.DasController{
 }
 
 var deleteCountryController = util.DasController{
+	Name:         "DeleteCountryController",
 	Description:  "Delete a country from DAS",
 	Method:       http.MethodDelete,
 	Endpoint:     apiReferenceCountryEndpoint,
@@ -38,6 +41,7 @@ var deleteCountryController = util.DasController{
 }
 
 var updateCountryController = util.DasController{
+	Name:         "UpdateCountryController",
 	Description:  "Update a country in DAS",
 	Method:       http.MethodPut,
 	Endpoint:     apiReferenceCountryEndpoint,

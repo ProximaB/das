@@ -1,16 +1,16 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
-	"github.com/yubing24/das/dataaccess/common"
 	"database/sql"
 	"fmt"
-	sq "github.com/Masterminds/squirrel"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/Masterminds/squirrel"
 )
 
 type PostgresGenderRepository struct {
 	Database   *sql.DB
-	SqlBuilder sq.StatementBuilderType
+	SqlBuilder squirrel.StatementBuilderType
 }
 
 const (

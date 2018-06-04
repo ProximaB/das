@@ -1,11 +1,11 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
-	"github.com/yubing24/das/dataaccess/common"
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -39,7 +39,7 @@ func (repo PostgresProficiencyRepository) CreateProficiency(proficiency *referen
 		proficiency.UpdateUserID,
 		proficiency.DateTImeUpdated,
 	).Suffix(
-		fmt.Sprintf("RETURNING %s", common.PRIMARY_KEY),
+		"RETURNING ID",
 	)
 
 	clause, args, err := stmt.ToSql()
@@ -100,7 +100,7 @@ func (repo PostgresProficiencyRepository) DeleteProficiency(proficiency referenc
 	}
 }
 
-func (repo PostgresProficiencyRepository) SearchProficiency(criteria *reference.SearchProficiencyCriteria) ([]reference.Proficiency, error) {
+func (repo PostgresProficiencyRepository) SearchProficiency(criteria reference.SearchProficiencyCriteria) ([]reference.Proficiency, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresProficiencyRepository is not specified")
 	}

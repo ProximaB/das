@@ -1,8 +1,8 @@
 package viewmodel
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
 	"time"
 )
 
@@ -38,7 +38,7 @@ func (dto CreateEventViewModel) ToDomainModel(user businesslogic.Account, repo r
 
 	dances := make([]int, 0)
 	for _, each := range dto.Dances {
-		results, _ := repo.SearchDance(&reference.SearchDanceCriteria{DanceID: each})
+		results, _ := repo.SearchDance(reference.SearchDanceCriteria{DanceID: each})
 		dances = append(dances, results[0].ID)
 	}
 	event.SetDances(dances)

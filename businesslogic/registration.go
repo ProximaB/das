@@ -42,7 +42,7 @@ func ValidateCompetitiveBallroomEventRegistration(creator *Account,
 	accountRepo IAccountRepository,
 	partnershipRepo IPartnershipRepository) error {
 	// check if partnership exists
-	results, partnershipErr := partnershipRepo.SearchPartnership(&SearchPartnershipCriteria{PartnershipID: registration.PartnershipID})
+	results, partnershipErr := partnershipRepo.SearchPartnership(SearchPartnershipCriteria{PartnershipID: registration.PartnershipID})
 	if results == nil || partnershipErr != nil {
 		return errors.New("partnership does not exist")
 	}
@@ -52,7 +52,7 @@ func ValidateCompetitiveBallroomEventRegistration(creator *Account,
 	partnership := results[0]
 
 	// check if competition exists
-	competitions, _ := competitionRepo.SearchCompetition(&SearchCompetitionCriteria{ID: registration.CompetitionID})
+	competitions, _ := competitionRepo.SearchCompetition(SearchCompetitionCriteria{ID: registration.CompetitionID})
 	if len(competitions) != 1 {
 		return errors.New("competition does not exists")
 	}
@@ -83,7 +83,7 @@ func ValidateCompetitiveBallroomEventRegistration(creator *Account,
 			return errors.New("competitive ballroom event does not exist")
 		}
 
-		event, searchErr := eventRepo.SearchEvent(&SearchEventCriteria{EventID: cbe.ID})
+		event, searchErr := eventRepo.SearchEvent(SearchEventCriteria{EventID: cbe.ID})
 		if searchErr != nil || len(event) != 1 {
 			return errors.New("event does not exist")
 		} else if event[0].StatusID != EVENT_STATUS_OPEN {
@@ -92,7 +92,7 @@ func ValidateCompetitiveBallroomEventRegistration(creator *Account,
 	}
 
 	// create competition entry for the lead, if the entry has not been created yet
-	entries, hasEntryErr := repo.SearchCompetitionEntry(&SearchCompetitionEntryCriteria{
+	entries, hasEntryErr := repo.SearchCompetitionEntry(SearchCompetitionEntryCriteria{
 		CompetitionID: registration.CompetitionID,
 		AthleteID:     partnership.LeadID,
 	})
@@ -104,7 +104,7 @@ func ValidateCompetitiveBallroomEventRegistration(creator *Account,
 	}
 
 	// create competition entry for the follow, if the entry has not been created yet
-	entries, hasEntryErr = repo.SearchCompetitionEntry(&SearchCompetitionEntryCriteria{
+	entries, hasEntryErr = repo.SearchCompetitionEntry(SearchCompetitionEntryCriteria{
 		CompetitionID: registration.CompetitionID,
 		AthleteID:     partnership.FollowID,
 	})
@@ -121,7 +121,7 @@ func ValidateCompetitiveBallroomEventRegistration(creator *Account,
 		if findErr != nil {
 			return errors.New("a competitive ballroom event does not exist")
 		}
-		events, eventErr := eventRepo.SearchEvent(&SearchEventCriteria{
+		events, eventErr := eventRepo.SearchEvent(SearchEventCriteria{
 			EventID: cbe.ID,
 		})
 		if eventErr != nil || len(events) != 1 {
@@ -171,7 +171,7 @@ func CreateEventEntries(creator *Account,
 			UpdateUserID:    creator.ID,
 			DateTimeUpdated: time.Now(),
 		}
-		createErr := eventEntryRepo.CreateEventEntry(eventEntry)
+		createErr := eventEntryRepo.CreateEventEntry(&eventEntry)
 		if createErr != nil {
 			return createErr
 		}
@@ -207,7 +207,7 @@ func GetEventRegistration(competitionID int,
 	partnershipRepo IPartnershipRepository,
 ) (Registration, error) {
 	// check if user is part of the partnership
-	results, err := partnershipRepo.SearchPartnership(&SearchPartnershipCriteria{PartnershipID: partnershipID})
+	results, err := partnershipRepo.SearchPartnership(SearchPartnershipCriteria{PartnershipID: partnershipID})
 	if err != nil {
 		return CompetitiveBallroomEventRegistration{}, errors.New("cannot find requested partnership")
 	}

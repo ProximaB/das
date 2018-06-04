@@ -1,21 +1,24 @@
 package partnership
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/config/database"
-	"github.com/yubing24/das/controller/partnership/blacklist"
-	"github.com/yubing24/das/controller/util"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/config/authentication"
+	"github.com/DancesportSoftware/das/config/database"
+	"github.com/DancesportSoftware/das/controller/partnership/blacklist"
+	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
 )
 
 const apiPartnershipRequestBlacklistEndpoint = "/api/partnership/request/blacklist"
 
 var partnershipRequestBlacklistServer = blacklist.PartnershipRequestBlacklistServer{
+	authentication.AuthenticationStrategy,
 	database.AccountRepository,
 	database.PartnershipRequestBlacklistRepository,
 }
 
 var searchBlacklistedAccountController = util.DasController{
+	Name:         "SearchBlacklistedAccountController",
 	Description:  "Search blacklisted account in DAS",
 	Method:       http.MethodGet,
 	Endpoint:     apiPartnershipRequestBlacklistEndpoint,
@@ -24,6 +27,7 @@ var searchBlacklistedAccountController = util.DasController{
 }
 
 var createBlacklistedAccountController = util.DasController{
+	Name:         "CreateBlacklistedAccountController",
 	Description:  "Create a blacklist report in DAS",
 	Method:       http.MethodPost,
 	Endpoint:     apiPartnershipRequestBlacklistEndpoint,

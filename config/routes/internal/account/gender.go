@@ -1,10 +1,10 @@
 package account
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/config/database"
-	"github.com/yubing24/das/controller/account"
-	"github.com/yubing24/das/controller/util"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/config/database"
+	"github.com/DancesportSoftware/das/controller/account"
+	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
 )
 
@@ -15,6 +15,7 @@ var genderServer = account.GenderServer{
 }
 
 var GenderController = util.DasController{
+	Name:         "GenderController",
 	Description:  "Get all genders in DAS",
 	Method:       http.MethodGet,
 	Endpoint:     apiAccountGenderEndpoint,

@@ -1,7 +1,7 @@
 /*
 To generate mock objects,
 1. Open a terminal
-2. Change directory to das root: $GOPATH/src/github.com/yubing24/das
+2. Change directory to das root: $GOPATH/src/github.com/DancesportSoftware/das
 3. Run command; $ mockgen -source./path/to/source/code > ./mock/path/to/mock/object
 4. Use the test below as a template
 5. If original file changes, chances are the mock file need to be regenerated as well
@@ -9,8 +9,8 @@ To generate mock objects,
 package reference_test
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
-	"github.com/yubing24/das/mock/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/mock/businesslogic/reference"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"testing"

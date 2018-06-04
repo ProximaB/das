@@ -21,7 +21,7 @@ type SearchEventDanceCriteria struct {
 }
 
 type IEventDanceRepository interface {
-	SearchEventDance(criteria *SearchEventDanceCriteria) ([]EventDance, error)
+	SearchEventDance(criteria SearchEventDanceCriteria) ([]EventDance, error)
 	CreateEventDance(eventDance *EventDance) error
 	DeleteEventDance(eventDance EventDance) error
 	UpdateEventDance(eventDance EventDance) error

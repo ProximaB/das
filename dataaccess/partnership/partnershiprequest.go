@@ -1,12 +1,12 @@
 package partnership
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/dataaccess/common"
 	"database/sql"
 	"errors"
 	"fmt"
-	sq "github.com/Masterminds/squirrel"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/Masterminds/squirrel"
 )
 
 const (
@@ -21,10 +21,10 @@ const (
 
 type PostgresPartnershipRequestRepository struct {
 	Database   *sql.DB
-	SqlBuilder sq.StatementBuilderType
+	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresPartnershipRequestRepository) SearchPartnershipRequest(criteria *businesslogic.SearchPartnershipRequestCriteria) ([]businesslogic.PartnershipRequest, error) {
+func (repo PostgresPartnershipRequestRepository) SearchPartnershipRequest(criteria businesslogic.SearchPartnershipRequestCriteria) ([]businesslogic.PartnershipRequest, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresPartnershipRequestRepository is not specified")
 	}
@@ -43,19 +43,19 @@ func (repo PostgresPartnershipRequestRepository) SearchPartnershipRequest(criter
 		common.COL_DATETIME_UPDATED)).From(DAS_PARTNERSHIP_REQUEST_TABLE).OrderBy(common.PRIMARY_KEY)
 
 	if criteria.Sender > 0 {
-		stmt = stmt.Where(sq.Eq{DAS_PARTNERSHIP_REQUEST_COL_SENDER_ID: criteria.Sender})
+		stmt = stmt.Where(squirrel.Eq{DAS_PARTNERSHIP_REQUEST_COL_SENDER_ID: criteria.Sender})
 	}
 	if criteria.Recipient > 0 {
-		stmt = stmt.Where(sq.Eq{DAS_PARTNERSHIP_REQUEST_COL_RECIPIEINT_ID: criteria.Recipient})
+		stmt = stmt.Where(squirrel.Eq{DAS_PARTNERSHIP_REQUEST_COL_RECIPIEINT_ID: criteria.Recipient})
 	}
 	if criteria.Sender == 0 && criteria.Recipient == 0 {
 		return requests, errors.New("either sender or recipient must be specified")
 	}
 	if criteria.RequestStatusID > 0 {
-		stmt = stmt.Where(sq.Eq{DAS_PARTNERSHIP_REQUEST_COL_REQUEST_STATUS: criteria.RequestStatusID})
+		stmt = stmt.Where(squirrel.Eq{DAS_PARTNERSHIP_REQUEST_COL_REQUEST_STATUS: criteria.RequestStatusID})
 	}
 	if criteria.RequestID > 0 {
-		stmt = stmt.Where(sq.Eq{common.PRIMARY_KEY: criteria.RequestID})
+		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.RequestID})
 	}
 
 	rows, err := stmt.RunWith(repo.Database).Query()
@@ -85,6 +85,9 @@ func (repo PostgresPartnershipRequestRepository) SearchPartnershipRequest(criter
 }
 
 func (repo PostgresPartnershipRequestRepository) CreatePartnershipRequest(request *businesslogic.PartnershipRequest) error {
+	if repo.Database == nil {
+		return errors.New("data source of PostgresPartnershipRequestRepository is not specified")
+	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_PARTNERSHIP_REQUEST_TABLE).Columns(
 		DAS_PARTNERSHIP_REQUEST_COL_SENDER_ID,
 		DAS_PARTNERSHIP_REQUEST_COL_RECIPIEINT_ID,
@@ -108,7 +111,7 @@ func (repo PostgresPartnershipRequestRepository) CreatePartnershipRequest(reques
 		request.UpdateUserID,
 		request.DateTimeUpdated,
 	).Suffix(
-		fmt.Sprintf("RETURNING %s", common.PRIMARY_KEY),
+		"RETURNING ID",
 	)
 
 	clause, args, err := stmt.ToSql()
@@ -123,17 +126,23 @@ func (repo PostgresPartnershipRequestRepository) CreatePartnershipRequest(reques
 }
 
 func (repo PostgresPartnershipRequestRepository) UpdatePartnershipRequest(request businesslogic.PartnershipRequest) error {
+	if repo.Database == nil {
+		return errors.New("data source of PostgresPartnershipRequestRepository is not specified")
+	}
 	clause := repo.SqlBuilder.Update("").
 		Table(DAS_PARTNERSHIP_REQUEST_TABLE).
 		Set(DAS_PARTNERSHIP_REQUEST_COL_REQUEST_STATUS, request.Status).
 		Set(common.COL_UPDATE_USER_ID, request.RecipientID).
 		Set(common.COL_DATETIME_UPDATED, request.DateTimeUpdated).
-		Where(sq.Eq{common.PRIMARY_KEY: request.PartnershipRequestID})
+		Where(squirrel.Eq{common.PRIMARY_KEY: request.PartnershipRequestID})
 
 	_, err := clause.RunWith(repo.Database).Exec()
 	return err
 }
 
 func (repo PostgresPartnershipRequestRepository) DeletePartnershipRequest(request businesslogic.PartnershipRequest) error {
+	if repo.Database == nil {
+		return errors.New("data source of PostgresPartnershipRequestRepository is not specified")
+	}
 	return errors.New("not implemented")
 }

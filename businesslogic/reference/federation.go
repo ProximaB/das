@@ -26,7 +26,7 @@ type SearchFederationCriteria struct {
 
 type IFederationRepository interface {
 	CreateFederation(federation *Federation) error
-	SearchFederation(criteria *SearchFederationCriteria) ([]Federation, error)
+	SearchFederation(criteria SearchFederationCriteria) ([]Federation, error)
 	UpdateFederation(federation Federation) error
 	DeleteFederation(federation Federation) error
 }
@@ -35,5 +35,5 @@ func (federation Federation) GetDivisions(repo IDivisionRepository) ([]Division,
 	if repo == nil {
 		return nil, errors.New("null IDivisionRepository")
 	}
-	return repo.SearchDivision(&SearchDivisionCriteria{FederationID: federation.ID})
+	return repo.SearchDivision(SearchDivisionCriteria{FederationID: federation.ID})
 }

@@ -1,36 +1,22 @@
 package organizer
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/controller/util"
-	"github.com/yubing24/das/viewmodel"
 	"encoding/json"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/DancesportSoftware/das/controller/util/authentication"
+	"github.com/DancesportSoftware/das/viewmodel"
 	"log"
 	"net/http"
 	"time"
 )
-
-const apiOrganizerCompetitionEndpoint = "/api/organizer/competition"
-
-var createCompetitionController = util.DasController{}
-var updateCompetitionController = util.DasController{}
-var searchCompetitionController = util.DasController{}
-var deleteCompetitionController = util.DasController{}
-
-var OrganizerCompetitionManagementControllerGroup = util.DasControllerGroup{
-	Controllers: []util.DasController{
-		createCompetitionController,
-		updateCompetitionController,
-		searchCompetitionController,
-		deleteCompetitionController,
-	},
-}
 
 type SearchOrganizerCompetitionViewModel struct {
 	Future bool `schema:"future"`
 }
 
 type OrganizerCompetitionServer struct {
+	authentication.IAuthenticationStrategy
 	businesslogic.IAccountRepository
 	businesslogic.ICompetitionRepository
 	businesslogic.IOrganizerProvisionRepository
@@ -38,7 +24,7 @@ type OrganizerCompetitionServer struct {
 }
 
 // POST /api/organizer/competition
-func (server OrganizerCompetitionServer) CreateNewCompetitionHandler(w http.ResponseWriter, r *http.Request) {
+func (server OrganizerCompetitionServer) OrganizerCreateCompetitionHandler(w http.ResponseWriter, r *http.Request) {
 
 	createDTO := new(viewmodel.CreateCompetition)
 
@@ -47,8 +33,8 @@ func (server OrganizerCompetitionServer) CreateNewCompetitionHandler(w http.Resp
 		return
 	}
 
-	account, _ := util.GetCurrentUser(r, server.IAccountRepository)
-	competition := createDTO.ToCompetitionDataModel(*account)
+	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
+	competition := createDTO.ToCompetitionDataModel(account)
 
 	err := businesslogic.CreateCompetition(competition, server.ICompetitionRepository, server.IOrganizerProvisionRepository, server.IOrganizerProvisionHistoryRepository)
 	if err != nil {
@@ -60,12 +46,12 @@ func (server OrganizerCompetitionServer) CreateNewCompetitionHandler(w http.Resp
 }
 
 // GET /api/organizer/competition
-func (server OrganizerCompetitionServer) GetOrganizerCompetitionsHandler(w http.ResponseWriter, r *http.Request) {
+func (server OrganizerCompetitionServer) OrganizerSearchCompetitionHandler(w http.ResponseWriter, r *http.Request) {
 	searchDTO := new(SearchOrganizerCompetitionViewModel)
 	if parseErr := util.ParseRequestData(r, searchDTO); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, parseErr.Error())
 	} else {
-		account, _ := util.GetCurrentUser(r, server.IAccountRepository)
+		account, _ := server.GetCurrentUser(r, server.IAccountRepository)
 		if account.ID == 0 ||
 			(account.AccountTypeID != businesslogic.ACCOUNT_TYPE_ORGANIZER &&
 				account.AccountTypeID != businesslogic.ACCOUNT_TYPE_ADMINISTRATOR) {
@@ -79,7 +65,7 @@ func (server OrganizerCompetitionServer) GetOrganizerCompetitionsHandler(w http.
 			criteria.StartDateTime = time.Now()
 		}
 
-		comps, err := server.SearchCompetition(&criteria)
+		comps, err := server.SearchCompetition(criteria)
 		if err != nil {
 			util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP_500_ERROR_RETRIEVING_DATA, err.Error())
 			return
@@ -95,8 +81,8 @@ func (server OrganizerCompetitionServer) GetOrganizerCompetitionsHandler(w http.
 }
 
 // PUT /api/organizer/competition
-func (server OrganizerCompetitionServer) UpdateOrganizerCompetitionHandler(w http.ResponseWriter, r *http.Request) {
-	account, _ := util.GetCurrentUser(r, server.IAccountRepository)
+func (server OrganizerCompetitionServer) OrganizerUpdateCompetitionHandler(w http.ResponseWriter, r *http.Request) {
+	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
 	updateDTO := new(businesslogic.OrganizerUpdateCompetition)
 
 	if parseErr := util.ParseRequestBodyData(r, updateDTO); parseErr != nil {
@@ -104,7 +90,7 @@ func (server OrganizerCompetitionServer) UpdateOrganizerCompetitionHandler(w htt
 		return
 	}
 
-	competitions, _ := server.SearchCompetition(&businesslogic.SearchCompetitionCriteria{ID: updateDTO.CompetitionID})
+	competitions, _ := server.SearchCompetition(businesslogic.SearchCompetitionCriteria{ID: updateDTO.CompetitionID})
 	competitions[0].Street = updateDTO.Address
 	competitions[0].UpdateStatus(updateDTO.Status) // TODO; error prone
 	competitions[0].DateTimeUpdated = time.Now()
@@ -120,6 +106,6 @@ func (server OrganizerCompetitionServer) UpdateOrganizerCompetitionHandler(w htt
 }
 
 // DELETE /api/organizer/competition
-func deleteOrganzierCompetitionHandler(w http.ResponseWriter, r *http.Request) {
+func (server OrganizerCompetitionServer) OrganizerDeleteCompetitionHandler(w http.ResponseWriter, r *http.Request) {
 	util.RespondJsonResult(w, http.StatusNotImplemented, "not implemented", nil)
 }

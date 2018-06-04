@@ -1,17 +1,17 @@
-package dataaccess
+package entry
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/dataaccess/common"
 	"database/sql"
 	"errors"
 	"fmt"
-	sq "github.com/Masterminds/squirrel"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/Masterminds/squirrel"
 )
 
 type PostgresEventEntryRepository struct {
 	database   *sql.DB
-	sqlBuilder sq.StatementBuilderType
+	sqlBuilder squirrel.StatementBuilderType
 }
 
 const (
@@ -45,8 +45,8 @@ func (repo PostgresEventEntryRepository) CreateEventEntry(entry businesslogic.Ev
 func (repo PostgresEventEntryRepository) DeleteEventEntry(entry businesslogic.EventEntry) error {
 	clause := repo.sqlBuilder.Delete("").
 		From(DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_TABLE).
-		Where(sq.Eq{DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID: entry.EventID}).
-		Where(sq.Eq{common.COL_PARTNERSHIP_ID: entry.PartnershipID})
+		Where(squirrel.Eq{DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID: entry.EventID}).
+		Where(squirrel.Eq{common.COL_PARTNERSHIP_ID: entry.PartnershipID})
 	_, err := clause.RunWith(repo.database).Exec()
 	return err
 }
@@ -56,7 +56,7 @@ func (repo PostgresEventEntryRepository) UpdateEventEntry(entry businesslogic.Ev
 }
 
 // Returns CompetitiveBallroomEventEntry, which is supposed to be used by competitor only
-func (repo PostgresEventEntryRepository) SearchEventEntry(criteria *businesslogic.SearchEventEntryCriteria) ([]businesslogic.EventEntry, error) {
+func (repo PostgresEventEntryRepository) SearchEventEntry(criteria businesslogic.SearchEventEntryCriteria) ([]businesslogic.EventEntry, error) {
 	clause := repo.sqlBuilder.Select(
 		fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
 			common.PRIMARY_KEY,
@@ -70,10 +70,10 @@ func (repo PostgresEventEntryRepository) SearchEventEntry(criteria *businesslogi
 		From(DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_TABLE)
 
 	if criteria.PartnershipID > 0 {
-		clause = clause.Where(sq.Eq{common.COL_PARTNERSHIP_ID: criteria.PartnershipID})
+		clause = clause.Where(squirrel.Eq{common.COL_PARTNERSHIP_ID: criteria.PartnershipID})
 	}
 	if criteria.EventID > 0 {
-		clause = clause.Where(sq.Eq{DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID: criteria.EventID})
+		clause = clause.Where(squirrel.Eq{DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID: criteria.EventID})
 	}
 
 	entries := make([]businesslogic.EventEntry, 0)
@@ -114,7 +114,7 @@ func GetCompetitiveBallroomEventEntrylist(criteria *businesslogic.SearchEventEnt
 					RC.NAME, RST.NAME, RSC.NAME, RSO.NAME
 			`).
 		From(DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_TABLE).
-		Where(sq.Eq{"E.COMPETITION_ID": criteria.CompetitionID})
+		Where(sq.Eq{"E.COMPETITION_ID": criteria.ID})
 
 	if criteria.Federation > 0 {
 		clause = clause.Where(sq.Eq{"ECB.FEDERATION_ID": criteria.Federation})

@@ -1,10 +1,10 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/config/database"
-	"github.com/yubing24/das/controller/reference"
-	"github.com/yubing24/das/controller/util"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/config/database"
+	"github.com/DancesportSoftware/das/controller/reference"
+	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
 )
 
@@ -15,6 +15,7 @@ var cityServer = reference.CityServer{
 }
 
 var createCityController = util.DasController{
+	Name:         "CreateCityController",
 	Description:  "Create a city in DAS",
 	Method:       http.MethodPost,
 	Endpoint:     apiReferenceCityEndpoint,
@@ -23,6 +24,7 @@ var createCityController = util.DasController{
 }
 
 var searchCityController = util.DasController{
+	Name:         "SearchCityController",
 	Description:  "Search cities in DAS",
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceCityEndpoint,
@@ -31,6 +33,7 @@ var searchCityController = util.DasController{
 }
 
 var deleteCityController = util.DasController{
+	Name:         "DeleteCityController",
 	Description:  "Delete a city in DAS",
 	Method:       http.MethodDelete,
 	Endpoint:     apiReferenceCityEndpoint,
@@ -39,6 +42,7 @@ var deleteCityController = util.DasController{
 }
 
 var updateCityController = util.DasController{
+	Name:         "UpdateCityController",
 	Description:  "Update a city in DAS",
 	Method:       http.MethodPut,
 	Endpoint:     apiReferenceCityEndpoint,

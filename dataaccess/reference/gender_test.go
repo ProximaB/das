@@ -1,7 +1,7 @@
 package reference
 
 import (
-	"github.com/yubing24/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"

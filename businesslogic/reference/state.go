@@ -24,7 +24,7 @@ type SearchStateCriteria struct {
 
 type IStateRepository interface {
 	CreateState(state *State) error
-	SearchState(criteria *SearchStateCriteria) ([]State, error)
+	SearchState(criteria SearchStateCriteria) ([]State, error)
 	UpdateState(state State) error
 	DeleteState(state State) error
 }
@@ -33,5 +33,5 @@ func (state State) GetCities(repo ICityRepository) ([]City, error) {
 	if repo == nil {
 		return nil, errors.New("null ICityRepository")
 	}
-	return repo.SearchCity(&SearchCityCriteria{StateID: state.ID})
+	return repo.SearchCity(SearchCityCriteria{StateID: state.ID})
 }

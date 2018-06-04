@@ -1,6 +1,6 @@
 package viewmodel
 
-import "github.com/yubing24/das/businesslogic/reference"
+import "github.com/DancesportSoftware/das/businesslogic/reference"
 
 type State struct {
 	ID           int    `json:"id"`

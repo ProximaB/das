@@ -1,8 +1,8 @@
 package businesslogic
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
 	"errors"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
 	"github.com/bearbin/go-age"
 	"github.com/google/uuid"
 	"log"
@@ -35,7 +35,7 @@ type Account struct {
 }
 
 type IAccountRepository interface {
-	SearchAccount(criteria *SearchAccountCriteria) ([]Account, error)
+	SearchAccount(criteria SearchAccountCriteria) ([]Account, error)
 	CreateAccount(account *Account) error
 	UpdateAccount(account Account) error
 	DeleteAccount(account Account) error
@@ -96,10 +96,10 @@ func (strategy CreateOrganizerAccountStrategy) CreateAccount(account Account, pa
 		return err
 	}
 	provision, history := initializeOrganizerProvision(account.ID)
-	if err := strategy.ProvisionRepo.CreateOrganizerProvision(provision); err != nil {
+	if err := strategy.ProvisionRepo.CreateOrganizerProvision(&provision); err != nil {
 		return err
 	}
-	if err := strategy.HistoryRepo.CreateOrganizerProvisionHistory(history); err != nil {
+	if err := strategy.HistoryRepo.CreateOrganizerProvisionHistory(&history); err != nil {
 		return err
 	}
 	return nil
@@ -122,7 +122,7 @@ func createAccount(account *Account, password string, repo IAccountRepository) e
 }
 
 func GetAccountByEmail(email string, repo IAccountRepository) Account {
-	accounts, _ := repo.SearchAccount(&SearchAccountCriteria{
+	accounts, _ := repo.SearchAccount(SearchAccountCriteria{
 		Email: email,
 	})
 	if len(accounts) != 1 {
@@ -132,7 +132,7 @@ func GetAccountByEmail(email string, repo IAccountRepository) Account {
 }
 
 func GetAccountByID(accountID int, repo IAccountRepository) Account {
-	accounts, _ := repo.SearchAccount(&SearchAccountCriteria{
+	accounts, _ := repo.SearchAccount(SearchAccountCriteria{
 		ID: accountID,
 	})
 	if len(accounts) != 1 {
@@ -142,7 +142,7 @@ func GetAccountByID(accountID int, repo IAccountRepository) Account {
 }
 
 func GetAccountByUUID(uuid string, repo IAccountRepository) Account {
-	accounts, _ := repo.SearchAccount(&SearchAccountCriteria{
+	accounts, _ := repo.SearchAccount(SearchAccountCriteria{
 		UUID: uuid,
 	})
 
@@ -153,7 +153,7 @@ func GetAccountByUUID(uuid string, repo IAccountRepository) Account {
 }
 
 func checkEmailUsed(email string, repo IAccountRepository) bool {
-	accounts, err := repo.SearchAccount(&SearchAccountCriteria{
+	accounts, err := repo.SearchAccount(SearchAccountCriteria{
 		Email: email,
 	})
 	if err != nil {
@@ -178,7 +178,6 @@ func validateAccountRegistration(account *Account, accountRepo IAccountRepositor
 	if len(account.Email) < 5 {
 		return errors.New("invalid email address")
 	}
-
 	if len(account.Phone) < 3 {
 		return errors.New("invalid phone number")
 	}

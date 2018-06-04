@@ -25,7 +25,7 @@ type SearchDanceCriteria struct {
 
 type IDanceRepository interface {
 	CreateDance(dance *Dance) error
-	SearchDance(criteria *SearchDanceCriteria) ([]Dance, error)
+	SearchDance(criteria SearchDanceCriteria) ([]Dance, error)
 	UpdateDance(dance Dance) error
 	DeleteDance(dance Dance) error
 }

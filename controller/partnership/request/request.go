@@ -1,15 +1,17 @@
 package request
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/controller/util"
-	"github.com/yubing24/das/viewmodel"
 	"encoding/json"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/DancesportSoftware/das/controller/util/authentication"
+	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 	"time"
 )
 
 type PartnershipRequestServer struct {
+	authentication.IAuthenticationStrategy
 	businesslogic.IAccountRepository
 	businesslogic.IPartnershipRepository
 	businesslogic.IPartnershipRequestRepository
@@ -26,7 +28,7 @@ func (server PartnershipRequestServer) CreatePartnershipRequestHandler(w http.Re
 		return
 	}
 
-	sender, _ := util.GetCurrentUser(r, server.IAccountRepository)
+	sender, _ := server.GetCurrentUser(r, server.IAccountRepository)
 	recipient := businesslogic.GetAccountByEmail(dto.RecipientEmail, server.IAccountRepository)
 
 	if recipient.ID == 0 {
@@ -68,7 +70,7 @@ func (server PartnershipRequestServer) CreatePartnershipRequestHandler(w http.Re
 // GET /api/partnership/request
 // Get a list of received partnership requests
 func (server PartnershipRequestServer) SearchPartnershipRequestHandler(w http.ResponseWriter, r *http.Request) {
-	account, _ := util.GetCurrentUser(r, server.IAccountRepository)
+	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
 	criteria := new(businesslogic.SearchPartnershipRequestCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, parseErr.Error())
@@ -84,7 +86,7 @@ func (server PartnershipRequestServer) SearchPartnershipRequestHandler(w http.Re
 		return
 	}
 
-	requests, err := server.SearchPartnershipRequest(criteria)
+	requests, err := server.SearchPartnershipRequest(*criteria)
 	if err != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP_500_ERROR_RETRIEVING_DATA, err.Error())
 		return
@@ -109,7 +111,7 @@ func (server PartnershipRequestServer) SearchPartnershipRequestHandler(w http.Re
 
 // PUT /api/partnership/request
 func (server PartnershipRequestServer) UpdatePartnershipRequestHandler(w http.ResponseWriter, r *http.Request) {
-	currentUser, _ := util.GetCurrentUser(r, server.IAccountRepository)
+	currentUser, _ := server.GetCurrentUser(r, server.IAccountRepository)
 
 	respondDTO := new(viewmodel.PartnershipRequestResponse)
 	if parseErr := util.ParseRequestBodyData(r, respondDTO); parseErr != nil {

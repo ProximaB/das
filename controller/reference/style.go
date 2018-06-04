@@ -1,10 +1,10 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
-	"github.com/yubing24/das/controller/util"
-	"github.com/yubing24/das/viewmodel"
 	"encoding/json"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 )
 
@@ -20,7 +20,7 @@ func (server StyleServer) SearchStyleHandler(w http.ResponseWriter, r *http.Requ
 		return
 	}
 
-	if styles, err := server.IStyleRepository.SearchStyle(criteria); err != nil {
+	if styles, err := server.IStyleRepository.SearchStyle(*criteria); err != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, "error in retrieving styles", err.Error())
 		return
 	} else {

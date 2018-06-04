@@ -26,7 +26,7 @@ type SearchAgeCriteria struct {
 
 type IAgeRepository interface {
 	CreateAge(age *Age) error
-	SearchAge(criteria *SearchAgeCriteria) ([]Age, error)
+	SearchAge(criteria SearchAgeCriteria) ([]Age, error)
 	UpdateAge(age Age) error
 	DeleteAge(age Age) error
 }

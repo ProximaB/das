@@ -12,6 +12,7 @@ import (
 // controller, specify the data source inside the server struct and inject data source into
 // controller's HandlerFunc implementation.
 type DasController struct {
+	Name         string
 	Description  string
 	Method       string
 	Endpoint     string

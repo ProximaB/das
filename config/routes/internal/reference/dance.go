@@ -1,10 +1,10 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic"
-	"github.com/yubing24/das/config/database"
-	"github.com/yubing24/das/controller/reference"
-	"github.com/yubing24/das/controller/util"
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/config/database"
+	"github.com/DancesportSoftware/das/controller/reference"
+	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
 )
 
@@ -15,6 +15,7 @@ var danceServer = reference.DanceServer{
 }
 
 var searchDanceController = util.DasController{
+	Name:         "SearchDanceController",
 	Description:  "Search dances in DAS",
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceDanceEndpoint,
@@ -23,6 +24,7 @@ var searchDanceController = util.DasController{
 }
 
 var createDanceController = util.DasController{
+	Name:         "CreateDanceController",
 	Description:  "Create a dance in DAS",
 	Method:       http.MethodPost,
 	Endpoint:     apiReferenceDanceEndpoint,
@@ -31,6 +33,7 @@ var createDanceController = util.DasController{
 }
 
 var deleteDanceController = util.DasController{
+	Name:         "DeleteDanceController",
 	Description:  "Delete a dance from DAS",
 	Method:       http.MethodDelete,
 	Endpoint:     apiReferenceDanceEndpoint,
@@ -39,6 +42,7 @@ var deleteDanceController = util.DasController{
 }
 
 var updateDanceController = util.DasController{
+	Name:         "UpdateDanceController",
 	Description:  "Update a dance in DAS",
 	Method:       http.MethodPut,
 	Endpoint:     apiReferenceDanceEndpoint,

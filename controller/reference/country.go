@@ -1,11 +1,11 @@
 package reference
 
 import (
-	"github.com/yubing24/das/businesslogic/reference"
-	"github.com/yubing24/das/controller/util"
-	"github.com/yubing24/das/viewmodel"
 	"encoding/json"
 	"fmt"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/DancesportSoftware/das/viewmodel"
 	"google.golang.org/appengine"
 	"google.golang.org/appengine/log"
 	"net/http"
@@ -86,6 +86,11 @@ func (server CountryServer) UpdateCountryHandler(w http.ResponseWriter, r *http.
 
 // GET /api/reference/country
 func (server CountryServer) SearchCountryHandler(w http.ResponseWriter, r *http.Request) {
+	if server.ICountryRepository == nil {
+		util.RespondJsonResult(w, http.StatusInternalServerError, "data source for SearchCountryHandler is not specified", nil)
+		return
+	}
+
 	ctx := appengine.NewContext(r)
 	searchDTO := new(reference.SearchCountryCriteria)
 	if err := util.ParseRequestData(r, searchDTO); err != nil {
@@ -93,7 +98,7 @@ func (server CountryServer) SearchCountryHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	countries, err := server.ICountryRepository.SearchCountry(searchDTO)
+	countries, err := server.ICountryRepository.SearchCountry(*searchDTO)
 	if err != nil {
 		log.Errorf(ctx, "error in searching Country: %v", err)
 		util.RespondJsonResult(w, http.StatusInternalServerError, "cannot get countries", nil)

@@ -46,7 +46,7 @@ func (mr *MockICityRepositoryMockRecorder) CreateCity(city interface{}) *gomock.
 }
 
 // SearchCity mocks base method
-func (m *MockICityRepository) SearchCity(criteria *reference.SearchCityCriteria) ([]reference.City, error) {
+func (m *MockICityRepository) SearchCity(criteria reference.SearchCityCriteria) ([]reference.City, error) {
 	ret := m.ctrl.Call(m, "SearchCity", criteria)
 	ret0, _ := ret[0].([]reference.City)
 	ret1, _ := ret[1].(error)

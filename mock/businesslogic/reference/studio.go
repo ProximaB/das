@@ -34,7 +34,7 @@ func (m *MockIStudioRepository) EXPECT() *MockIStudioRepositoryMockRecorder {
 }
 
 // CreateStudio mocks base method
-func (m *MockIStudioRepository) CreateStudio(studio reference.Studio) error {
+func (m *MockIStudioRepository) CreateStudio(studio *reference.Studio) error {
 	ret := m.ctrl.Call(m, "CreateStudio", studio)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -46,7 +46,7 @@ func (mr *MockIStudioRepositoryMockRecorder) CreateStudio(studio interface{}) *g
 }
 
 // SearchStudio mocks base method
-func (m *MockIStudioRepository) SearchStudio(criteria *reference.SearchStudioCriteria) ([]reference.Studio, error) {
+func (m *MockIStudioRepository) SearchStudio(criteria reference.SearchStudioCriteria) ([]reference.Studio, error) {
 	ret := m.ctrl.Call(m, "SearchStudio", criteria)
 	ret0, _ := ret[0].([]reference.Studio)
 	ret1, _ := ret[1].(error)

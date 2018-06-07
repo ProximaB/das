@@ -34,7 +34,7 @@ func (m *MockIAccountRepository) EXPECT() *MockIAccountRepositoryMockRecorder {
 }
 
 // SearchAccount mocks base method
-func (m *MockIAccountRepository) SearchAccount(criteria *businesslogic.SearchAccountCriteria) ([]businesslogic.Account, error) {
+func (m *MockIAccountRepository) SearchAccount(criteria businesslogic.SearchAccountCriteria) ([]businesslogic.Account, error) {
 	ret := m.ctrl.Call(m, "SearchAccount", criteria)
 	ret0, _ := ret[0].([]businesslogic.Account)
 	ret1, _ := ret[1].(error)

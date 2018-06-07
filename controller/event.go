@@ -27,7 +27,7 @@ func (server EventServer) GetEventHandler(w http.ResponseWriter, r *http.Request
 		return
 	} else {
 
-		events, err := server.SearchEvent(criteria)
+		events, err := server.SearchEvent(*criteria)
 		if err != nil {
 			util.RespondJsonResult(w, http.StatusInternalServerError, err.Error(), nil)
 			return

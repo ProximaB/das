@@ -2,10 +2,13 @@ package businesslogic
 
 import (
 	"errors"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
 	"time"
+
+	"github.com/DancesportSoftware/das/businesslogic/reference"
 )
 
+// Competition provides the base data structure for a competitive ballroom dance. All competitions in
+// DAS must have some affiliation with a dancesport federation (Not Affiliated/Independent is also a Federation,)
 type Competition struct {
 	ID              int
 	FederationID    int

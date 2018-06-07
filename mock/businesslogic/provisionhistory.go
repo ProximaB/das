@@ -34,7 +34,7 @@ func (m *MockIOrganizerProvisionHistoryRepository) EXPECT() *MockIOrganizerProvi
 }
 
 // SearchOrganizerProvisionHistory mocks base method
-func (m *MockIOrganizerProvisionHistoryRepository) SearchOrganizerProvisionHistory(criteria *businesslogic.SearchOrganizerProvisionHistoryCriteria) ([]businesslogic.OrganizerProvisionHistoryEntry, error) {
+func (m *MockIOrganizerProvisionHistoryRepository) SearchOrganizerProvisionHistory(criteria businesslogic.SearchOrganizerProvisionHistoryCriteria) ([]businesslogic.OrganizerProvisionHistoryEntry, error) {
 	ret := m.ctrl.Call(m, "SearchOrganizerProvisionHistory", criteria)
 	ret0, _ := ret[0].([]businesslogic.OrganizerProvisionHistoryEntry)
 	ret1, _ := ret[1].(error)
@@ -71,7 +71,7 @@ func (mr *MockIOrganizerProvisionHistoryRepositoryMockRecorder) DeleteOrganizerP
 }
 
 // CreateOrganizerProvisionHistory mocks base method
-func (m *MockIOrganizerProvisionHistoryRepository) CreateOrganizerProvisionHistory(history businesslogic.OrganizerProvisionHistoryEntry) error {
+func (m *MockIOrganizerProvisionHistoryRepository) CreateOrganizerProvisionHistory(history *businesslogic.OrganizerProvisionHistoryEntry) error {
 	ret := m.ctrl.Call(m, "CreateOrganizerProvisionHistory", history)
 	ret0, _ := ret[0].(error)
 	return ret0

@@ -29,7 +29,7 @@ func TestPostgresStudioRepository_SearchStudio(t *testing.T) {
 	).AddRow(1, "Wisconsin", "WI", 8, 3, time.Now(), 4, time.Now())
 
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
-	studios, _ := studioRepository.SearchStudio(&reference.SearchStudioCriteria{})
+	studios, _ := studioRepository.SearchStudio(reference.SearchStudioCriteria{})
 
 	assert.NotZero(t, len(studios))
 }

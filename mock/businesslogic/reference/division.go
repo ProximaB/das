@@ -34,7 +34,7 @@ func (m *MockIDivisionRepository) EXPECT() *MockIDivisionRepositoryMockRecorder 
 }
 
 // CreateDivision mocks base method
-func (m *MockIDivisionRepository) CreateDivision(division reference.Division) error {
+func (m *MockIDivisionRepository) CreateDivision(division *reference.Division) error {
 	ret := m.ctrl.Call(m, "CreateDivision", division)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -46,7 +46,7 @@ func (mr *MockIDivisionRepositoryMockRecorder) CreateDivision(division interface
 }
 
 // SearchDivision mocks base method
-func (m *MockIDivisionRepository) SearchDivision(criteria *reference.SearchDivisionCriteria) ([]reference.Division, error) {
+func (m *MockIDivisionRepository) SearchDivision(criteria reference.SearchDivisionCriteria) ([]reference.Division, error) {
 	ret := m.ctrl.Call(m, "SearchDivision", criteria)
 	ret0, _ := ret[0].([]reference.Division)
 	ret1, _ := ret[1].(error)

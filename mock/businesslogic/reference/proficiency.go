@@ -34,7 +34,7 @@ func (m *MockIProficiencyRepository) EXPECT() *MockIProficiencyRepositoryMockRec
 }
 
 // SearchProficiency mocks base method
-func (m *MockIProficiencyRepository) SearchProficiency(criteria *reference.SearchProficiencyCriteria) ([]reference.Proficiency, error) {
+func (m *MockIProficiencyRepository) SearchProficiency(criteria reference.SearchProficiencyCriteria) ([]reference.Proficiency, error) {
 	ret := m.ctrl.Call(m, "SearchProficiency", criteria)
 	ret0, _ := ret[0].([]reference.Proficiency)
 	ret1, _ := ret[1].(error)
@@ -47,7 +47,7 @@ func (mr *MockIProficiencyRepositoryMockRecorder) SearchProficiency(criteria int
 }
 
 // CreateProficiency mocks base method
-func (m *MockIProficiencyRepository) CreateProficiency(proficiency reference.Proficiency) error {
+func (m *MockIProficiencyRepository) CreateProficiency(proficiency *reference.Proficiency) error {
 	ret := m.ctrl.Call(m, "CreateProficiency", proficiency)
 	ret0, _ := ret[0].(error)
 	return ret0

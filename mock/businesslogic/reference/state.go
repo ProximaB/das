@@ -34,7 +34,7 @@ func (m *MockIStateRepository) EXPECT() *MockIStateRepositoryMockRecorder {
 }
 
 // CreateState mocks base method
-func (m *MockIStateRepository) CreateState(state reference.State) error {
+func (m *MockIStateRepository) CreateState(state *reference.State) error {
 	ret := m.ctrl.Call(m, "CreateState", state)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -46,7 +46,7 @@ func (mr *MockIStateRepositoryMockRecorder) CreateState(state interface{}) *gomo
 }
 
 // SearchState mocks base method
-func (m *MockIStateRepository) SearchState(criteria *reference.SearchStateCriteria) ([]reference.State, error) {
+func (m *MockIStateRepository) SearchState(criteria reference.SearchStateCriteria) ([]reference.State, error) {
 	ret := m.ctrl.Call(m, "SearchState", criteria)
 	ret0, _ := ret[0].([]reference.State)
 	ret1, _ := ret[1].(error)

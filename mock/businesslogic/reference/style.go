@@ -34,7 +34,7 @@ func (m *MockIStyleRepository) EXPECT() *MockIStyleRepositoryMockRecorder {
 }
 
 // CreateStyle mocks base method
-func (m *MockIStyleRepository) CreateStyle(style reference.Style) error {
+func (m *MockIStyleRepository) CreateStyle(style *reference.Style) error {
 	ret := m.ctrl.Call(m, "CreateStyle", style)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -46,7 +46,7 @@ func (mr *MockIStyleRepositoryMockRecorder) CreateStyle(style interface{}) *gomo
 }
 
 // SearchStyle mocks base method
-func (m *MockIStyleRepository) SearchStyle(criteria *reference.SearchStyleCriteria) ([]reference.Style, error) {
+func (m *MockIStyleRepository) SearchStyle(criteria reference.SearchStyleCriteria) ([]reference.Style, error) {
 	ret := m.ctrl.Call(m, "SearchStyle", criteria)
 	ret0, _ := ret[0].([]reference.Style)
 	ret1, _ := ret[1].(error)

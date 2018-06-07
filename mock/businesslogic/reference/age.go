@@ -34,7 +34,7 @@ func (m *MockIAgeRepository) EXPECT() *MockIAgeRepositoryMockRecorder {
 }
 
 // CreateAge mocks base method
-func (m *MockIAgeRepository) CreateAge(age reference.Age) error {
+func (m *MockIAgeRepository) CreateAge(age *reference.Age) error {
 	ret := m.ctrl.Call(m, "CreateAge", age)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -46,7 +46,7 @@ func (mr *MockIAgeRepositoryMockRecorder) CreateAge(age interface{}) *gomock.Cal
 }
 
 // SearchAge mocks base method
-func (m *MockIAgeRepository) SearchAge(criteria *reference.SearchAgeCriteria) ([]reference.Age, error) {
+func (m *MockIAgeRepository) SearchAge(criteria reference.SearchAgeCriteria) ([]reference.Age, error) {
 	ret := m.ctrl.Call(m, "SearchAge", criteria)
 	ret0, _ := ret[0].([]reference.Age)
 	ret1, _ := ret[1].(error)

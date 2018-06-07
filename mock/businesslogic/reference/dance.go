@@ -34,7 +34,7 @@ func (m *MockIDanceRepository) EXPECT() *MockIDanceRepositoryMockRecorder {
 }
 
 // CreateDance mocks base method
-func (m *MockIDanceRepository) CreateDance(dance reference.Dance) error {
+func (m *MockIDanceRepository) CreateDance(dance *reference.Dance) error {
 	ret := m.ctrl.Call(m, "CreateDance", dance)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -46,7 +46,7 @@ func (mr *MockIDanceRepositoryMockRecorder) CreateDance(dance interface{}) *gomo
 }
 
 // SearchDance mocks base method
-func (m *MockIDanceRepository) SearchDance(criteria *reference.SearchDanceCriteria) ([]reference.Dance, error) {
+func (m *MockIDanceRepository) SearchDance(criteria reference.SearchDanceCriteria) ([]reference.Dance, error) {
 	ret := m.ctrl.Call(m, "SearchDance", criteria)
 	ret0, _ := ret[0].([]reference.Dance)
 	ret1, _ := ret[1].(error)

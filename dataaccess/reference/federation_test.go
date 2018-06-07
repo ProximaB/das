@@ -44,7 +44,7 @@ func TestPostgresFederationRepository_SearchFederation(t *testing.T) {
 		3,
 		time.Now())
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
-	federations, err := federationRepo.SearchFederation(&reference.SearchFederationCriteria{})
+	federations, err := federationRepo.SearchFederation(reference.SearchFederationCriteria{})
 	assert.Nil(t, err, "should be able to read federation table")
 	assert.NotZero(t, len(federations), "Database has more than 1 federation")
 }

@@ -22,7 +22,7 @@ func TestPostgresDivisionRepository_SearchDivision(t *testing.T) {
 	defer db.Close()
 	divisionRepo.Database = db
 	mock.ExpectQuery("SELECT")
-	divisions, _ := divisionRepo.SearchDivision(&reference.SearchDivisionCriteria{})
+	divisions, _ := divisionRepo.SearchDivision(reference.SearchDivisionCriteria{})
 
 	assert.Zero(t, len(divisions))
 }

@@ -30,7 +30,7 @@ func TestDasStateRepository_SearchState(t *testing.T) {
 	).AddRow(1, "Kanopy", "WI", 8, "www.example.com", 3, time.Now(), 4, time.Now())
 
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
-	states, _ := stateRepository.SearchState(&reference.SearchStateCriteria{})
+	states, _ := stateRepository.SearchState(reference.SearchStateCriteria{})
 
 	assert.NotZero(t, len(states))
 }

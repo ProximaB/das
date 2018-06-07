@@ -43,7 +43,7 @@ func TestPostgresAccountRepository_SearchAccount(t *testing.T) {
 		3,
 		time.Now())
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
-	results, err := accountRepository.SearchAccount(&businesslogic.SearchAccountCriteria{
+	results, err := accountRepository.SearchAccount(businesslogic.SearchAccountCriteria{
 		Email: "test",
 	})
 

@@ -21,7 +21,7 @@ func TestPostgresDanceRepository_SearchDance(t *testing.T) {
 	defer db.Close()
 	danceRepo.Database = db
 	mock.ExpectQuery("SELECT")
-	dances, _ := danceRepo.SearchDance(&reference.SearchDanceCriteria{})
+	dances, _ := danceRepo.SearchDance(reference.SearchDanceCriteria{})
 
 	assert.Zero(t, len(dances))
 }

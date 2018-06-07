@@ -30,7 +30,7 @@ func TestDasSchoolRepository_SearchSchool(t *testing.T) {
 	).AddRow(1, "UW-Madison", 3, 3, time.Now(), 4, time.Now())
 
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
-	schools, _ := schoolRepository.SearchSchool(&reference.SearchSchoolCriteria{})
+	schools, _ := schoolRepository.SearchSchool(reference.SearchSchoolCriteria{})
 
 	assert.NotZero(t, len(schools))
 }

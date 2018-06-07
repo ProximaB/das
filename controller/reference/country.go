@@ -6,8 +6,7 @@ import (
 	"github.com/DancesportSoftware/das/businesslogic/reference"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/viewmodel"
-	"google.golang.org/appengine"
-	"google.golang.org/appengine/log"
+	"log"
 	"net/http"
 )
 
@@ -91,7 +90,6 @@ func (server CountryServer) SearchCountryHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	ctx := appengine.NewContext(r)
 	searchDTO := new(reference.SearchCountryCriteria)
 	if err := util.ParseRequestData(r, searchDTO); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
@@ -100,7 +98,7 @@ func (server CountryServer) SearchCountryHandler(w http.ResponseWriter, r *http.
 
 	countries, err := server.ICountryRepository.SearchCountry(*searchDTO)
 	if err != nil {
-		log.Errorf(ctx, "error in searching Country: %v", err)
+		log.Printf("error in searching Country: %v", err)
 		util.RespondJsonResult(w, http.StatusInternalServerError, "cannot get countries", nil)
 		return
 	}

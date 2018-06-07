@@ -34,7 +34,7 @@ func (m *MockIFederationRepository) EXPECT() *MockIFederationRepositoryMockRecor
 }
 
 // CreateFederation mocks base method
-func (m *MockIFederationRepository) CreateFederation(federation reference.Federation) error {
+func (m *MockIFederationRepository) CreateFederation(federation *reference.Federation) error {
 	ret := m.ctrl.Call(m, "CreateFederation", federation)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -46,7 +46,7 @@ func (mr *MockIFederationRepositoryMockRecorder) CreateFederation(federation int
 }
 
 // SearchFederation mocks base method
-func (m *MockIFederationRepository) SearchFederation(criteria *reference.SearchFederationCriteria) ([]reference.Federation, error) {
+func (m *MockIFederationRepository) SearchFederation(criteria reference.SearchFederationCriteria) ([]reference.Federation, error) {
 	ret := m.ctrl.Call(m, "SearchFederation", criteria)
 	ret0, _ := ret[0].([]reference.Federation)
 	ret1, _ := ret[1].(error)

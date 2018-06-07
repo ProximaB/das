@@ -16,13 +16,13 @@ func TestFederation_GetDivisions(t *testing.T) {
 	mockRepo := mock_reference.NewMockIDivisionRepository(mockCtrl)
 
 	// behavior 1
-	mockRepo.EXPECT().SearchDivision(&reference.SearchDivisionCriteria{FederationID: 1}).Return([]reference.Division{
+	mockRepo.EXPECT().SearchDivision(reference.SearchDivisionCriteria{FederationID: 1}).Return([]reference.Division{
 		{ID: 1, Name: "Correct Division 1", FederationID: 1},
 		{ID: 2, Name: "Correct Division 2", FederationID: 2},
 	}, nil)
 
 	// behavior 2
-	mockRepo.EXPECT().SearchDivision(&reference.SearchDivisionCriteria{FederationID: 2}).Return(nil, errors.New("invalid search"))
+	mockRepo.EXPECT().SearchDivision(reference.SearchDivisionCriteria{FederationID: 2}).Return(nil, errors.New("invalid search"))
 
 	federation_1 := reference.Federation{ID: 1}
 	federation_2 := reference.Federation{ID: 2}

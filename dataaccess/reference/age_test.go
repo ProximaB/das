@@ -60,14 +60,14 @@ func TestPostgresAgeRepository_SearchAge(t *testing.T) {
 			DATETIME_UPDATED 
 			FROM DAS.AGE`).WillReturnRows(rows)
 
-	result, err := ageRepository.SearchAge(nil)
+	result, err := ageRepository.SearchAge(reference.SearchAgeCriteria{})
 	if result != nil || err == nil {
 		t.Errorf("should halt when search criteria or data source is nil")
 	}
 
 	ageRepository.Database = db
 
-	ageRepository.SearchAge(&reference.SearchAgeCriteria{
+	ageRepository.SearchAge(reference.SearchAgeCriteria{
 		DivisionID: 1,
 		AgeID:      3,
 	})

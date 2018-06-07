@@ -21,28 +21,11 @@ func TestPostgresAccountStatusRepository_GetAccountStatus(t *testing.T) {
 	defer db.Close()
 	accountStatusRepo.Database = db
 	rows := sqlmock.NewRows(
-		[]string{
-			"ID",
-			"NAME",
-			"ABBREVIATION",
-			"YEAR_FOUNDED",
-			"COUNTRY_ID",
-			"CREATE_USER_ID",
-			"DATETIME_CREATED",
-			"UPDATE_USER_ID",
-			"DATETIME_UPDATED",
-		},
-	).AddRow(1,
-		"Pre Teen I",
-		"Pre",
-		1233,
-		8,
-		2,
-		time.Now(),
-		3,
-		time.Now())
-	mock.ExpectQuery("SELECT").WillReturnRows(rows)
+		[]string{"ID", "NAME", "ABBREVIATION", "DESCRIPTION", "DATETIME_CREATED", "DATETIME_UPDATED"},
+	).AddRow(1, "Activated", "A", "Account is activated and is usable", time.Now(), time.Now()).AddRow(1, "Suspended", "S", "Account is suspended for violation of ToS", time.Now(), time.Now())
+	mock.ExpectQuery(`SELECT ID, NAME, ABBREVIATION, DESCRIPTION, DATETIME_CREATED, 
+		DATETIME_UPDATED FROM DAS.ACCOUNT_STATUS`).WillReturnRows(rows)
 	status, err := accountStatusRepo.GetAccountStatus()
 	assert.Nil(t, err)
-	assert.EqualValues(t, 4, len(status))
+	assert.EqualValues(t, 2, len(status))
 }

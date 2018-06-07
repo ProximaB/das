@@ -25,24 +25,25 @@ func TestPostgresAccountTypeRepository_GetAccountTypes(t *testing.T) {
 		[]string{
 			"ID",
 			"NAME",
-			"ABBREVIATION",
-			"YEAR_FOUNDED",
-			"COUNTRY_ID",
-			"CREATE_USER_ID",
+			"DESCRIPTION",
 			"DATETIME_CREATED",
-			"UPDATE_USER_ID",
 			"DATETIME_UPDATED",
 		},
-	).AddRow(1,
-		"Pre Teen I",
-		"Pre",
-		1233,
-		8,
-		2,
-		time.Now(),
-		3,
-		time.Now())
-	mock.ExpectQuery("SELECT").WillReturnRows(rows)
+	).AddRow(
+		1, "Athlete", "Athlete or Competitor", time.Now(), time.Now(),
+	).AddRow(
+		2, "Adjudicator", "Judges", time.Now(), time.Now(),
+	).AddRow(
+		3, "Scrutineer", "Scrutineer or chairperson of judge", time.Now(), time.Now(),
+	).AddRow(
+		4, "Organizer", "Competition organizer", time.Now(), time.Now(),
+	).AddRow(
+		5, "Deck Captain", "Deck Captain", time.Now(), time.Now(),
+	).AddRow(
+		6, "Emcee", "Emcee view", time.Now(), time.Now(),
+	)
+	mock.ExpectQuery(`SELECT ID, NAME, DESCRIPTION, DATETIME_CREATED, DATETIME_UPDATED FROM 
+			DAS.ACCOUNT_TYPE`).WillReturnRows(rows)
 	types, _ := accountTypeRepository.GetAccountTypes()
-	assert.EqualValues(t, 7, len(types))
+	assert.EqualValues(t, 6, len(types))
 }

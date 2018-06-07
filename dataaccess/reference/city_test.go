@@ -28,8 +28,17 @@ func TestPostgresCityRepository_SearchCity(t *testing.T) {
 	}
 	defer db.Close()
 	cityRepository.Database = db
-	mock.ExpectQuery(`SELECT ID, NAME, STATE_ID, CREATE_USER_ID, DATETIME_CREATED, UPDATE_USER_ID, DATETIME_UPDATED FROM DAS.CITY`)
-	cities, err := cityRepository.SearchCity(&reference.SearchCityCriteria{})
+
+	rows := sqlmock.NewRows(
+		[]string{"ID", "NAME", "STATE_ID", "CREATE_USER_ID", "DATETIME_CREATED", "UPDATE_USER_ID", "DATETIME_UPDATED"},
+	).AddRow(
+		1, "Madison", 2, 3, time.Now(), 3, time.Now(),
+	).AddRow(
+		2, "Milwaukee", 4, 5, time.Now(), 4, time.Now(),
+	)
+
+	mock.ExpectQuery(`SELECT ID, NAME, STATE_ID, CREATE_USER_ID, DATETIME_CREATED, UPDATE_USER_ID, DATETIME_UPDATED FROM DAS.CITY`).WillReturnRows(rows)
+	cities, err := cityRepository.SearchCity(reference.SearchCityCriteria{})
 
 	assert.NotZero(t, len(cities), "should retrieve cities that were populated to Database")
 	assert.Nil(t, err, "schema for DAS.CITY should be up to date")
@@ -42,11 +51,13 @@ func TestPostgresCityRepository_CreateCity(t *testing.T) {
 	}
 	defer db.Close()
 	cityRepository.Database = db
-	mock.ExpectExec("DELETE")
-	cityRepository.DeleteCity(city)
+
+	mock.ExpectBegin()
+	mock.ExpectExec(`INSERT INTO DAS.CITY (NAME, STATE_ID, CREATE_USER_ID, DATETIME_CREATED, UPDATE_USER_ID, DATETIME_UPDATED) `)
+	mock.ExpectCommit()
 	err = cityRepository.CreateCity(&city)
+
 	assert.Nil(t, err, "should be able to create a new city")
-	assert.NotZero(t, city.CityID, "should retrieve the ID after creation")
 	cityRepository.DeleteCity(city)
 
 }
@@ -62,18 +73,4 @@ func TestPostgresCityRepository_UpdateCity(t *testing.T) {
 
 	cityRepository.UpdateCity(city)
 
-}
-
-func TestPostgresCityRepository_DeleteCity(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
-	defer db.Close()
-	cityRepository.Database = db
-	mock.ExpectQuery("SELECT")
-	cities, _ := cityRepository.SearchCity(&reference.SearchCityCriteria{Name: "Test City"})
-	assert.EqualValues(t, 1, len(cities), "data should exist in Database before deletion")
-	err = cityRepository.DeleteCity(city)
-	assert.Nil(t, err, "should be able to delete the city that was created")
 }

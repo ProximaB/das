@@ -29,6 +29,6 @@ func TestPostgresStyleRepository_SearchStyle(t *testing.T) {
 	).AddRow(1, "Standard", "International Standard", 3, time.Now(), 4, time.Now())
 
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
-	styles, _ := styleRepository.SearchStyle(&reference.SearchStyleCriteria{})
+	styles, _ := styleRepository.SearchStyle(reference.SearchStyleCriteria{})
 	assert.NotZero(t, len(styles))
 }

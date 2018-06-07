@@ -30,15 +30,13 @@ func TestGetAccountByEmail(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	mockedAccountRepo := mock_businesslogic.NewMockIAccountRepository(mockCtrl)
-	mockedAccountRepo.EXPECT().SearchAccount(&businesslogic.SearchAccountCriteria{
+	mockedAccountRepo.EXPECT().SearchAccount(businesslogic.SearchAccountCriteria{
 		Email: "test@email.com",
 	}).Return(nil, errors.New("should not return an account"))
-	mockedAccountRepo.EXPECT().SearchAccount(&businesslogic.SearchAccountCriteria{
+	mockedAccountRepo.EXPECT().SearchAccount(businesslogic.SearchAccountCriteria{
 		Email: "newuser@email.com",
 	}).Return([]businesslogic.Account{
-		businesslogic.Account{
-			ID: 1, Email: "newuser@email.com",
-		},
+		{ID: 1, Email: "newuser@email.com"},
 	}, nil)
 
 	result := businesslogic.GetAccountByEmail("test@email.com", mockedAccountRepo)
@@ -57,10 +55,10 @@ func TestGetAccountByID(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	mockedAccountRepo := mock_businesslogic.NewMockIAccountRepository(mockCtrl)
-	mockedAccountRepo.EXPECT().SearchAccount(&businesslogic.SearchAccountCriteria{
+	mockedAccountRepo.EXPECT().SearchAccount(businesslogic.SearchAccountCriteria{
 		ID: 1,
 	}).Return(nil, errors.New("should not return an account"))
-	mockedAccountRepo.EXPECT().SearchAccount(&businesslogic.SearchAccountCriteria{
+	mockedAccountRepo.EXPECT().SearchAccount(businesslogic.SearchAccountCriteria{
 		ID: 2,
 	}).Return([]businesslogic.Account{
 		businesslogic.Account{
@@ -83,10 +81,10 @@ func TestGetAccountByUUID(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	mockedAccountRepo := mock_businesslogic.NewMockIAccountRepository(mockCtrl)
-	mockedAccountRepo.EXPECT().SearchAccount(&businesslogic.SearchAccountCriteria{
+	mockedAccountRepo.EXPECT().SearchAccount(businesslogic.SearchAccountCriteria{
 		UUID: "abc",
 	}).Return(nil, errors.New("should not return an account"))
-	mockedAccountRepo.EXPECT().SearchAccount(&businesslogic.SearchAccountCriteria{
+	mockedAccountRepo.EXPECT().SearchAccount(businesslogic.SearchAccountCriteria{
 		UUID: "123",
 	}).Return([]businesslogic.Account{
 		businesslogic.Account{
@@ -109,7 +107,7 @@ func TestCreateAccountStrategy_CreateAccount(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	mockedAccountRepo := mock_businesslogic.NewMockIAccountRepository(mockCtrl)
-	mockedAccountRepo.EXPECT().SearchAccount(&businesslogic.SearchAccountCriteria{
+	mockedAccountRepo.EXPECT().SearchAccount(businesslogic.SearchAccountCriteria{
 		Email: "test@test.com",
 	}).Return([]businesslogic.Account{}, errors.New("account does not exist"))
 	mockedAccountRepo.EXPECT().CreateAccount(gomock.Any()).Return(nil)
@@ -130,7 +128,7 @@ func TestCreateOrganizerAccountStrategy_CreateAccount(t *testing.T) {
 	mockedProvisionRepo := mock_businesslogic.NewMockIOrganizerProvisionRepository(mockCtrl)
 	mockedHistoryRepo := mock_businesslogic.NewMockIOrganizerProvisionHistoryRepository(mockCtrl)
 
-	mockedAccountRepo.EXPECT().SearchAccount(&businesslogic.SearchAccountCriteria{
+	mockedAccountRepo.EXPECT().SearchAccount(businesslogic.SearchAccountCriteria{
 		Email: "test@test.com",
 	}).Return([]businesslogic.Account{}, errors.New("account does not exist"))
 	mockedAccountRepo.EXPECT().CreateAccount(gomock.Any()).Return(nil)

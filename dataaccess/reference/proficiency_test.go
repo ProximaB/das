@@ -30,7 +30,7 @@ func TestPostgresProficiencyRepository_SearchProficiency(t *testing.T) {
 	).AddRow(1, "Gold", 3, "USA DANCE Gold", 3, time.Now(), 4, time.Now())
 
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
-	proficienies, _ := proficiencyRepo.SearchProficiency(&reference.SearchProficiencyCriteria{})
+	proficienies, _ := proficiencyRepo.SearchProficiency(reference.SearchProficiencyCriteria{})
 
 	assert.EqualValues(t, 1, len(proficienies))
 }

@@ -1,4 +1,4 @@
-package reference
+package referencedal
 
 import (
 	"database/sql"
@@ -18,7 +18,7 @@ type PostgresProficiencyRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresProficiencyRepository) CreateProficiency(proficiency *reference.Proficiency) error {
+func (repo PostgresProficiencyRepository) CreateProficiency(proficiency *referencebll.Proficiency) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresProficiencyRepository is not specified")
 	}
@@ -48,12 +48,12 @@ func (repo PostgresProficiencyRepository) CreateProficiency(proficiency *referen
 	} else {
 		row := repo.Database.QueryRow(clause, args...)
 		row.Scan(&proficiency.ID)
-		err = tx.Commit()
+		tx.Commit()
 	}
 	return err
 }
 
-func (repo PostgresProficiencyRepository) UpdateProficiency(proficiency reference.Proficiency) error {
+func (repo PostgresProficiencyRepository) UpdateProficiency(proficiency referencebll.Proficiency) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresProficiencyRepository is not specified")
 	}
@@ -80,7 +80,7 @@ func (repo PostgresProficiencyRepository) UpdateProficiency(proficiency referenc
 	}
 }
 
-func (repo PostgresProficiencyRepository) DeleteProficiency(proficiency reference.Proficiency) error {
+func (repo PostgresProficiencyRepository) DeleteProficiency(proficiency referencebll.Proficiency) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresProficiencyRepository is not specified")
 	}
@@ -100,7 +100,7 @@ func (repo PostgresProficiencyRepository) DeleteProficiency(proficiency referenc
 	}
 }
 
-func (repo PostgresProficiencyRepository) SearchProficiency(criteria reference.SearchProficiencyCriteria) ([]reference.Proficiency, error) {
+func (repo PostgresProficiencyRepository) SearchProficiency(criteria referencebll.SearchProficiencyCriteria) ([]referencebll.Proficiency, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresProficiencyRepository is not specified")
 	}
@@ -122,12 +122,12 @@ func (repo PostgresProficiencyRepository) SearchProficiency(criteria reference.S
 		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.ProficiencyID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	proficiencies := make([]reference.Proficiency, 0)
+	proficiencies := make([]referencebll.Proficiency, 0)
 	if err != nil {
 		return proficiencies, err
 	}
 	for rows.Next() {
-		each := reference.Proficiency{}
+		each := referencebll.Proficiency{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,

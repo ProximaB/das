@@ -14,9 +14,9 @@ type Competition struct {
 	FederationID    int
 	Name            string
 	Street          string
-	City            reference.City
-	State           reference.State
-	Country         reference.Country
+	City            referencebll.City
+	State           referencebll.State
+	Country         referencebll.Country
 	StartDateTime   time.Time
 	EndDateTime     time.Time
 	CreateUserID    int
@@ -95,11 +95,12 @@ func CreateCompetition(competition Competition, competitionRepo ICompetitionRepo
 	provision := provisions[0]
 	if provision.Available < 1 {
 		return errors.New("no available competition slot")
-	} else {
-		newProvision := provision.updateForCreateCompetition(competition)
-		historyEntry := newProvisionHistory(newProvision, competition)
-		updateOrganizerProvision(newProvision, historyEntry, provisionRepo, historyRepo)
 	}
+
+	newProvision := provision.updateForCreateCompetition(competition)
+	historyEntry := newProvisionHistory(newProvision, competition)
+	updateOrganizerProvision(newProvision, historyEntry, provisionRepo, historyRepo)
+
 	err := competitionRepo.CreateCompetition(&competition)
 
 	return err
@@ -136,7 +137,7 @@ func validateCreateCompetition(competition Competition) error {
 	if len(competition.ContactPhone) < 9 {
 		return errors.New("contact phone is too short")
 	}
-	if competition.City.CityID < 1 {
+	if competition.City.ID < 1 {
 		return errors.New("city is required")
 	}
 	if competition.State.ID < 1 {
@@ -212,26 +213,26 @@ func validateUpdateCompetition(user *Account,
 }
 
 type IEventMetaRepository interface {
-	GetEventUniqueFederations(competition Competition) ([]reference.Federation, error)
-	GetEventUniqueDivisions(competition Competition) ([]reference.Division, error)
-	GetEventUniqueAges(competition Competition) ([]reference.Age, error)
-	GetEventUniqueProficiencies(competition Competition) ([]reference.Proficiency, error)
-	GetEventUniqueStyles(competition Competition) ([]reference.Style, error)
+	GetEventUniqueFederations(competition Competition) ([]referencebll.Federation, error)
+	GetEventUniqueDivisions(competition Competition) ([]referencebll.Division, error)
+	GetEventUniqueAges(competition Competition) ([]referencebll.Age, error)
+	GetEventUniqueProficiencies(competition Competition) ([]referencebll.Proficiency, error)
+	GetEventUniqueStyles(competition Competition) ([]referencebll.Style, error)
 }
 
 // Get a list of unique federations that a competition has
-func (competition Competition) GetEventUniqueFederations(eventRepository IEventMetaRepository) ([]reference.Federation, error) {
+func (competition Competition) GetEventUniqueFederations(eventRepository IEventMetaRepository) ([]referencebll.Federation, error) {
 	return eventRepository.GetEventUniqueFederations(competition)
 }
-func (competition Competition) GetEventUniqueDivisions(eventRepository IEventMetaRepository) ([]reference.Division, error) {
+func (competition Competition) GetEventUniqueDivisions(eventRepository IEventMetaRepository) ([]referencebll.Division, error) {
 	return eventRepository.GetEventUniqueDivisions(competition)
 }
-func (competition Competition) GetEventUniqueAges(eventRepository IEventMetaRepository) ([]reference.Age, error) {
+func (competition Competition) GetEventUniqueAges(eventRepository IEventMetaRepository) ([]referencebll.Age, error) {
 	return eventRepository.GetEventUniqueAges(competition)
 }
-func (competition Competition) GetEventUniqueProficiencies(eventRepository IEventMetaRepository) ([]reference.Proficiency, error) {
+func (competition Competition) GetEventUniqueProficiencies(eventRepository IEventMetaRepository) ([]referencebll.Proficiency, error) {
 	return eventRepository.GetEventUniqueProficiencies(competition)
 }
-func (competition Competition) GetEventUniqueStyles(eventRepository IEventMetaRepository) ([]reference.Style, error) {
+func (competition Competition) GetEventUniqueStyles(eventRepository IEventMetaRepository) ([]referencebll.Style, error) {
 	return eventRepository.GetEventUniqueStyles(competition)
 }

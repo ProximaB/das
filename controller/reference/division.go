@@ -9,11 +9,11 @@ import (
 )
 
 type DivisionServer struct {
-	reference.IDivisionRepository
+	referencebll.IDivisionRepository
 }
 
 func (server DivisionServer) SearchDivisionHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(reference.SearchDivisionCriteria)
+	criteria := new(referencebll.SearchDivisionCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, "invalid request data", parseErr.Error())
 		return

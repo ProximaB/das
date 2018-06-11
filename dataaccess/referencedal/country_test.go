@@ -1,16 +1,17 @@
-package reference
+package referencedal_test
 
 import (
+	"errors"
 	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/dataaccess/referencedal"
 	"github.com/Masterminds/squirrel"
-	"github.com/go-errors/errors"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"
 	"time"
 )
 
-var countryRepo = PostgresCountryRepository{
+var countryRepo = referencedal.PostgresCountryRepository{
 	Database:   nil,
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
@@ -21,7 +22,9 @@ func TestPostgresCountryRepository_CreateCountry(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-	country := reference.Country{
+
+	countryRepo.Database = db
+	country := referencebll.Country{
 		Name:         "United States",
 		Abbreviation: "USA",
 	}
@@ -30,7 +33,6 @@ func TestPostgresCountryRepository_CreateCountry(t *testing.T) {
 		country.Abbreviation, nil, country.DateTimeCreated, nil, country.DateTimeUpdated)
 	mock.ExpectCommit()
 
-	countryRepo.Database = db
 	err = countryRepo.CreateCountry(&country)
 	assert.Nil(t, err, "should create a new country")
 }
@@ -41,7 +43,7 @@ func TestPostgresCountryRepository_SearchCountry(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-
+	countryRepo.Database = db
 	rows := sqlmock.NewRows(
 		[]string{
 			"ID", "NAME", "ABBREVIATION", "CREATE_USER_ID", "DATETIME_CREATED", "UPDATE_USER_ID", "DATETIME_UPDATED",
@@ -56,8 +58,9 @@ func TestPostgresCountryRepository_SearchCountry(t *testing.T) {
 		CREATE_USER_ID,  DATETIME_CREATED, UPDATE_USER_ID,
 		DATETIME_UPDATED FROM DAS.COUNTRY`).WillReturnRows(rows)
 
-	countryRepo.Database = db
-	countries, err := countryRepo.SearchCountry(reference.SearchCountryCriteria{})
+	countries, err := countryRepo.SearchCountry(referencebll.SearchCountryCriteria{
+		CountryID: 1, Name: "Canada",
+	})
 	assert.Nil(t, err, "should get all countries")
 	assert.EqualValues(t, len(countries), 2, "should return all countries")
 }
@@ -68,13 +71,30 @@ func TestPostgresCountryRepository_DeleteCountry(t *testing.T) {
 		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
 	}
 	defer db.Close()
-
+	countryRepo.Database = db
 	// TODO: yhou 2018-06-07: delete test with SQL Mock is not clear.....
 	mock.ExpectBegin()
 	mock.ExpectExec(`^DELETE FROM DAS.COUNTRY`).WillReturnResult(sqlmock.NewErrorResult(errors.New("")))
 	mock.ExpectCommit()
 
-	countryRepo.Database = db
-	err = countryRepo.DeleteCountry(reference.Country{ID: 1})
+	err = countryRepo.DeleteCountry(referencebll.Country{ID: 1})
 	assert.Nil(t, err, "should delete country without error")
+}
+
+func TestPostgresCountryRepository_UpdateCountry(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+	defer db.Close()
+	countryRepo.Database = db
+
+	args := referencebll.Country{ID: 1, Name: "New Name"}
+
+	mock.ExpectBegin()
+	mock.ExpectExec(`UPDATE DAS.COUNTRY`).WillReturnResult(sqlmock.NewResult(1, 1))
+	mock.ExpectCommit()
+
+	err = countryRepo.UpdateCountry(args)
+	assert.Nil(t, err, "should update country without error")
 }

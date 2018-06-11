@@ -1,4 +1,4 @@
-package reference
+package referencedal
 
 import (
 	"database/sql"
@@ -20,7 +20,7 @@ type PostgresFederationRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresFederationRepository) CreateFederation(federation *reference.Federation) error {
+func (repo PostgresFederationRepository) CreateFederation(federation *referencebll.Federation) error {
 	if repo.Database == nil {
 		log.Println(common.ERROR_NIL_DATABASE)
 	}
@@ -45,20 +45,22 @@ func (repo PostgresFederationRepository) CreateFederation(federation *reference.
 		federation.CreateUserID,
 		federation.DateTimeCreated,
 		federation.UpdateUserID,
-		federation.DateTimeUpdated)
+		federation.DateTimeUpdated,
+	).Suffix("RETURNING ID")
 
-	var err error
+	clause, args, err := stmt.ToSql()
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
 		return txErr
 	} else {
-		_, err = stmt.RunWith(repo.Database).Exec()
+		row := repo.Database.QueryRow(clause, args...)
+		row.Scan(&federation.ID)
 		tx.Commit()
 	}
 
 	return err
 }
 
-func (repo PostgresFederationRepository) SearchFederation(criteria reference.SearchFederationCriteria) ([]reference.Federation, error) {
+func (repo PostgresFederationRepository) SearchFederation(criteria referencebll.SearchFederationCriteria) ([]referencebll.Federation, error) {
 	if repo.Database == nil {
 		log.Println(common.ERROR_NIL_DATABASE)
 	}
@@ -85,13 +87,13 @@ func (repo PostgresFederationRepository) SearchFederation(criteria reference.Sea
 		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.ID})
 	}
 
-	federations := make([]reference.Federation, 0)
+	federations := make([]referencebll.Federation, 0)
 	rows, err := stmt.RunWith(repo.Database).Query()
 	if err != nil {
 		return federations, err
 	}
 	for rows.Next() {
-		each := reference.Federation{}
+		each := referencebll.Federation{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -109,7 +111,7 @@ func (repo PostgresFederationRepository) SearchFederation(criteria reference.Sea
 	return federations, err
 }
 
-func (repo PostgresFederationRepository) DeleteFederation(federation reference.Federation) error {
+func (repo PostgresFederationRepository) DeleteFederation(federation referencebll.Federation) error {
 	if repo.Database == nil {
 		log.Println(common.ERROR_NIL_DATABASE)
 	}
@@ -125,7 +127,7 @@ func (repo PostgresFederationRepository) DeleteFederation(federation reference.F
 	return err
 }
 
-func (repo PostgresFederationRepository) UpdateFederation(federation reference.Federation) error {
+func (repo PostgresFederationRepository) UpdateFederation(federation referencebll.Federation) error {
 	if repo.Database == nil {
 		log.Println(common.ERROR_NIL_DATABASE)
 	}

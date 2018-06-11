@@ -8,7 +8,7 @@ type School struct {
 	CityID   int    `json:"city"`
 }
 
-func SchoolDataModelToViewModel(school reference.School) School {
+func SchoolDataModelToViewModel(school referencebll.School) School {
 	return School{
 		SchoolID: school.ID,
 		Name:     school.Name,

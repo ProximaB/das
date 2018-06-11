@@ -1,4 +1,4 @@
-package reference
+package referencedal
 
 import (
 	"database/sql"
@@ -13,12 +13,14 @@ const (
 	DAS_STYLE_TABLE = "DAS.STYLE"
 )
 
+// PostgresStyleRepository implements IStyleRepository and feeds data to
+// businesslogic from a PostgreSQL database
 type PostgresStyleRepository struct {
 	Database   *sql.DB
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresStyleRepository) CreateStyle(style *reference.Style) error {
+func (repo PostgresStyleRepository) CreateStyle(style *referencebll.Style) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStyleRepository is not specified")
 	}
@@ -46,12 +48,12 @@ func (repo PostgresStyleRepository) CreateStyle(style *reference.Style) error {
 	} else {
 		row := repo.Database.QueryRow(clause, args...)
 		row.Scan(&style.ID)
-		err = tx.Commit()
+		tx.Commit()
 	}
 	return err
 }
 
-func (repo PostgresStyleRepository) DeleteStyle(style reference.Style) error {
+func (repo PostgresStyleRepository) DeleteStyle(style referencebll.Style) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStyleRepository is not specified")
 	}
@@ -69,7 +71,7 @@ func (repo PostgresStyleRepository) DeleteStyle(style reference.Style) error {
 	return err
 }
 
-func (repo PostgresStyleRepository) SearchStyle(criteria reference.SearchStyleCriteria) ([]reference.Style, error) {
+func (repo PostgresStyleRepository) SearchStyle(criteria referencebll.SearchStyleCriteria) ([]referencebll.Style, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresStyleRepository is not specified")
 	}
@@ -91,12 +93,12 @@ func (repo PostgresStyleRepository) SearchStyle(criteria reference.SearchStyleCr
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: criteria.Name})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	styles := make([]reference.Style, 0)
+	styles := make([]referencebll.Style, 0)
 	if err != nil {
 		return styles, err
 	}
 	for rows.Next() {
-		each := reference.Style{}
+		each := referencebll.Style{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -112,7 +114,7 @@ func (repo PostgresStyleRepository) SearchStyle(criteria reference.SearchStyleCr
 	return styles, err
 }
 
-func (repo PostgresStyleRepository) UpdateStyle(style reference.Style) error {
+func (repo PostgresStyleRepository) UpdateStyle(style referencebll.Style) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStyleRepository is not specified")
 	}
@@ -137,5 +139,4 @@ func (repo PostgresStyleRepository) UpdateStyle(style reference.Style) error {
 	} else {
 		return errors.New("style is not specified")
 	}
-
 }

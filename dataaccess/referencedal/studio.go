@@ -1,4 +1,4 @@
-package reference
+package referencedal
 
 import (
 	"database/sql"
@@ -18,7 +18,7 @@ type PostgresStudioRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresStudioRepository) SearchStudio(criteria reference.SearchStudioCriteria) ([]reference.Studio, error) {
+func (repo PostgresStudioRepository) SearchStudio(criteria referencebll.SearchStudioCriteria) ([]referencebll.Studio, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresStudioRepository is not specified")
 	}
@@ -49,13 +49,13 @@ func (repo PostgresStudioRepository) SearchStudio(criteria reference.SearchStudi
 			Join(`DAS.STATE S ON S.ID = C.STATE_ID`).Where(squirrel.Eq{`S.ID`: criteria.StateID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	studios := make([]reference.Studio, 0)
+	studios := make([]referencebll.Studio, 0)
 	if err != nil {
 		return studios, err
 	}
 
 	for rows.Next() {
-		each := reference.Studio{}
+		each := referencebll.Studio{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -73,7 +73,7 @@ func (repo PostgresStudioRepository) SearchStudio(criteria reference.SearchStudi
 	return studios, err
 }
 
-func (repo PostgresStudioRepository) CreateStudio(studio *reference.Studio) error {
+func (repo PostgresStudioRepository) CreateStudio(studio *referencebll.Studio) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStudioRepository is not specified")
 	}
@@ -105,14 +105,12 @@ func (repo PostgresStudioRepository) CreateStudio(studio *reference.Studio) erro
 	} else {
 		row := repo.Database.QueryRow(clause, args...)
 		row.Scan(&studio.ID)
-		if err = tx.Commit(); err != nil {
-			tx.Rollback()
-		}
+		tx.Commit()
 	}
 	return err
 }
 
-func (repo PostgresStudioRepository) UpdateStudio(studio reference.Studio) error {
+func (repo PostgresStudioRepository) UpdateStudio(studio referencebll.Studio) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStudioRepository is not specified")
 	}
@@ -137,7 +135,7 @@ func (repo PostgresStudioRepository) UpdateStudio(studio reference.Studio) error
 	}
 }
 
-func (repo PostgresStudioRepository) DeleteStudio(studio reference.Studio) error {
+func (repo PostgresStudioRepository) DeleteStudio(studio referencebll.Studio) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStudioRepository is not specified")
 	}

@@ -6,51 +6,51 @@ import (
 	"github.com/DancesportSoftware/das/dataaccess/event"
 	"github.com/DancesportSoftware/das/dataaccess/partnership"
 	"github.com/DancesportSoftware/das/dataaccess/provision"
-	"github.com/DancesportSoftware/das/dataaccess/reference"
+	"github.com/DancesportSoftware/das/dataaccess/referencedal"
 	"github.com/Masterminds/squirrel"
 )
 
-var CountryRepository = reference.PostgresCountryRepository{
+var CountryRepository = referencedal.PostgresCountryRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var StateRepository = reference.PostgresStateRepository{
+var StateRepository = referencedal.PostgresStateRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var CityRepository = reference.PostgresCityRepository{
+var CityRepository = referencedal.PostgresCityRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var FederationRepository = reference.PostgresFederationRepository{
+var FederationRepository = referencedal.PostgresFederationRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var DivisionRepository = reference.PostgresDivisionRepository{
+var DivisionRepository = referencedal.PostgresDivisionRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var AgeRepository = reference.PostgresAgeRepository{
+var AgeRepository = referencedal.PostgresAgeRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var ProficiencyRepository = reference.PostgresProficiencyRepository{
+var ProficiencyRepository = referencedal.PostgresProficiencyRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var StyleRepository = reference.PostgresStyleRepository{
+var StyleRepository = referencedal.PostgresStyleRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var DanceRepository = reference.PostgresDanceRepository{
+var DanceRepository = referencedal.PostgresDanceRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var SchoolRepository = reference.PostgresSchoolRepository{
+var SchoolRepository = referencedal.PostgresSchoolRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var StudioRepository = reference.PostgresStudioRepository{
+var StudioRepository = referencedal.PostgresStudioRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
@@ -82,7 +82,7 @@ var PartnershipRequestBlacklistReasonRepository = partnership.PostgresPartnershi
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var GenderRepository = reference.PostgresGenderRepository{
+var GenderRepository = referencedal.PostgresGenderRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 

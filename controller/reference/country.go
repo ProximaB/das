@@ -11,10 +11,10 @@ import (
 )
 
 type CountryServer struct {
-	reference.ICountryRepository
+	referencebll.ICountryRepository
 }
 
-// POST /api/reference/country
+// POST /api/referencedal/country
 func (server CountryServer) CreateCountryHandler(w http.ResponseWriter, r *http.Request) {
 	payload := new(viewmodel.CreateCountry)
 	var err error
@@ -33,7 +33,7 @@ func (server CountryServer) CreateCountryHandler(w http.ResponseWriter, r *http.
 	util.RespondJsonResult(w, http.StatusOK, "success", nil)
 }
 
-// DELETE /api/reference/country
+// DELETE /api/referencedal/country
 func (server CountryServer) DeleteCountryHandler(w http.ResponseWriter, r *http.Request) {
 	deleteDTO := new(viewmodel.DeleteCountry)
 	err := util.ParseRequestData(r, deleteDTO)
@@ -43,7 +43,7 @@ func (server CountryServer) DeleteCountryHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	country := reference.Country{
+	country := referencebll.Country{
 		ID: deleteDTO.CountryID,
 	}
 
@@ -57,7 +57,7 @@ func (server CountryServer) DeleteCountryHandler(w http.ResponseWriter, r *http.
 	return
 }
 
-// PUT /api/reference/country
+// PUT /api/referencedal/country
 func (server CountryServer) UpdateCountryHandler(w http.ResponseWriter, r *http.Request) {
 	updateDTO := new(viewmodel.UpdateCountry)
 	err := util.ParseRequestData(r, updateDTO)
@@ -67,7 +67,7 @@ func (server CountryServer) UpdateCountryHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	country := reference.Country{
+	country := referencebll.Country{
 		ID:           updateDTO.CountryID,
 		Name:         updateDTO.Name,
 		Abbreviation: updateDTO.Abbreviation,
@@ -83,14 +83,14 @@ func (server CountryServer) UpdateCountryHandler(w http.ResponseWriter, r *http.
 	return
 }
 
-// GET /api/reference/country
+// GET /api/referencedal/country
 func (server CountryServer) SearchCountryHandler(w http.ResponseWriter, r *http.Request) {
 	if server.ICountryRepository == nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, "data source for SearchCountryHandler is not specified", nil)
 		return
 	}
 
-	searchDTO := new(reference.SearchCountryCriteria)
+	searchDTO := new(referencebll.SearchCountryCriteria)
 	if err := util.ParseRequestData(r, searchDTO); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return

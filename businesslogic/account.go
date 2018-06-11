@@ -185,7 +185,7 @@ func validateAccountRegistration(account *Account, accountRepo IAccountRepositor
 	if checkEmailUsed(account.Email, accountRepo) {
 		return errors.New("this email address is already used")
 	}
-	if account.UserGenderID != reference.GENDER_FEMALE && account.UserGenderID != reference.GENDER_MALE {
+	if account.UserGenderID != referencebll.GENDER_FEMALE && account.UserGenderID != referencebll.GENDER_MALE {
 		return errors.New("invalid gender")
 	}
 	if (time.Now().Year() - account.DateOfBirth.Year()) > 120 {

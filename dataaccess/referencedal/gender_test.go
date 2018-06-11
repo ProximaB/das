@@ -1,14 +1,15 @@
-package reference
+package referencedal_test
 
 import (
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/referencedal"
 	"github.com/Masterminds/squirrel"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"
 	"time"
 )
 
-var genderRepository = PostgresGenderRepository{
+var genderRepository = referencedal.PostgresGenderRepository{
 	Database:   nil,
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }

@@ -55,10 +55,8 @@ func (server AccountServer) RegisterAccountHandler(w http.ResponseWriter, r *htt
 	if err := strategy.CreateAccount(account, createAccount.Password); err != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, err.Error(), nil)
 		return
-	} else {
-		util.RespondJsonResult(w, http.StatusOK, "success", nil)
-		return
 	}
+	util.RespondJsonResult(w, http.StatusOK, "success", nil)
 }
 
 // POST /api/account/authenticate

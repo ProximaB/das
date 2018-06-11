@@ -4,15 +4,16 @@ import (
 	"time"
 )
 
-// this entry is competition-wise. athlete does not need to have a partner to enter a competition
-// competition entry helps with
-// - attendance of competition
-// - billing organizer for each unique dancer
+// CompetitionEntry is entry for a competition (not events).
+// Athlete does not have to have a partner to enter a competition (depending on the rule)
+// CompetitionEntry helps with
+// - finding attendance of competition
+// - reducing duplicate entries
 type CompetitionEntry struct {
 	ID                 int
 	CompetitionID      int
 	AthleteID          int  // account id
-	CheckedIn          bool // only organzier can check in athlete
+	CheckedIn          bool // only organizer can check in athlete
 	PaymentReceivedIND bool
 	PaymentDateTime    time.Time
 	CheckInDateTime    *time.Time
@@ -22,6 +23,8 @@ type CompetitionEntry struct {
 	DateTimeUpdated    time.Time
 }
 
+// ICompetitionEntryRepository specifies the interface that data source should implement
+// to perform CRUD operations on CompetitionEntry
 type ICompetitionEntryRepository interface {
 	CreateCompetitionEntry(entry CompetitionEntry) error
 	UpdateCompetitionEntry(entry CompetitionEntry) error
@@ -29,6 +32,10 @@ type ICompetitionEntryRepository interface {
 	SearchCompetitionEntry(criteria SearchCompetitionEntryCriteria) ([]CompetitionEntry, error)
 }
 
+// CompetitionTBAEntry provides the entry for dancers who do not have a partner
+// but still would like to compete. Athlete who enters competition as TBA
+// will also enter the match-making queue and DAS shall provides a list of dancers
+// who satisfy the searching criteria the TBA dancer
 type CompetitionTBAEntry struct {
 	ID              int
 	AccountID       int

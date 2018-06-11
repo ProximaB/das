@@ -1,4 +1,4 @@
-package reference
+package referencedal
 
 import (
 	"database/sql"
@@ -10,21 +10,24 @@ import (
 )
 
 const (
-	DAS_CITY_TABLE = "DAS.CITY"
+	dasCityTable = "DAS.CITY"
 )
 
+// PostgresCityRepository implements ICityRepository and provides CRUD operations
+// in PostgreSQL database
 type PostgresCityRepository struct {
 	Database   *sql.DB
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresCityRepository) CreateCity(city *reference.City) error {
+// CreateCity inserts a new City record in the database and updates the ID key of city
+func (repo PostgresCityRepository) CreateCity(city *referencebll.City) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCityRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.
 		Insert("").
-		Into(DAS_CITY_TABLE).
+		Into(dasCityTable).
 		Columns(common.COL_NAME,
 			common.COL_STATE_ID,
 			common.COL_CREATE_USER_ID,
@@ -44,24 +47,23 @@ func (repo PostgresCityRepository) CreateCity(city *reference.City) error {
 		return txErr
 	} else {
 		row := repo.Database.QueryRow(clause, args...)
-		row.Scan(&city.CityID)
+		row.Scan(&city.ID)
 		tx.Commit()
 	}
 	return err
 }
 
-func (repo PostgresCityRepository) DeleteCity(city reference.City) error {
+// DeleteCity removes the City record from the database
+func (repo PostgresCityRepository) DeleteCity(city referencebll.City) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCityRepository is not specified")
 	}
-	stmt := repo.SqlBuilder.Delete("").From(DAS_CITY_TABLE)
-	if city.CityID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: city.CityID})
+	stmt := repo.SqlBuilder.Delete("").From(dasCityTable)
+	if city.ID > 0 {
+		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: city.ID})
 	}
 	if len(city.Name) > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: city.Name})
-	} else {
-		return errors.New("cannot identify City")
 	}
 
 	var err error
@@ -75,13 +77,14 @@ func (repo PostgresCityRepository) DeleteCity(city reference.City) error {
 	return err
 }
 
-func (repo PostgresCityRepository) UpdateCity(city reference.City) error {
+// UpdateCity updates the value in a City record
+func (repo PostgresCityRepository) UpdateCity(city referencebll.City) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCityRepository is not specified")
 	}
-	stmt := repo.SqlBuilder.Update("").Table(DAS_CITY_TABLE).
+	stmt := repo.SqlBuilder.Update("").Table(dasCityTable).
 		SetMap(squirrel.Eq{common.COL_NAME: city.Name, common.COL_STATE_ID: city.StateID}).
-		SetMap(squirrel.Eq{common.COL_DATETIME_UPDATED: city.DateTimeUpdated}).Where(squirrel.Eq{common.PRIMARY_KEY: city.CityID})
+		SetMap(squirrel.Eq{common.COL_DATETIME_UPDATED: city.DateTimeUpdated}).Where(squirrel.Eq{common.PRIMARY_KEY: city.ID})
 
 	if city.UpdateUserID != nil {
 		stmt = stmt.SetMap(squirrel.Eq{common.COL_UPDATE_USER_ID: city.UpdateUserID})
@@ -98,7 +101,8 @@ func (repo PostgresCityRepository) UpdateCity(city reference.City) error {
 
 }
 
-func (repo PostgresCityRepository) SearchCity(criteria reference.SearchCityCriteria) ([]reference.City, error) {
+// SearchCity selects cityes
+func (repo PostgresCityRepository) SearchCity(criteria referencebll.SearchCityCriteria) ([]referencebll.City, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresCityRepository is not specified")
 	}
@@ -111,7 +115,7 @@ func (repo PostgresCityRepository) SearchCity(criteria reference.SearchCityCrite
 			common.COL_DATETIME_CREATED,
 			common.COL_UPDATE_USER_ID,
 			common.COL_DATETIME_UPDATED)).
-		From(DAS_CITY_TABLE).OrderBy(common.PRIMARY_KEY)
+		From(dasCityTable).OrderBy(common.PRIMARY_KEY)
 	if len(criteria.Name) > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: criteria.Name})
 	}
@@ -123,14 +127,14 @@ func (repo PostgresCityRepository) SearchCity(criteria reference.SearchCityCrite
 	}
 
 	rows, err := stmt.RunWith(repo.Database).Query()
-	cities := make([]reference.City, 0)
+	cities := make([]referencebll.City, 0)
 	if err != nil {
 		return cities, err
 	}
 	for rows.Next() {
-		each := reference.City{}
+		each := referencebll.City{}
 		scanErr := rows.Scan(
-			&each.CityID,
+			&each.ID,
 			&each.Name,
 			&each.StateID,
 			&each.CreateUserID,

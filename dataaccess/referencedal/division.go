@@ -1,4 +1,4 @@
-package reference
+package referencedal
 
 import (
 	"database/sql"
@@ -18,7 +18,7 @@ type PostgresDivisionRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresDivisionRepository) SearchDivision(criteria reference.SearchDivisionCriteria) ([]reference.Division, error) {
+func (repo PostgresDivisionRepository) SearchDivision(criteria referencebll.SearchDivisionCriteria) ([]referencebll.Division, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresDivisionRepository is not specified")
 	}
@@ -41,12 +41,12 @@ func (repo PostgresDivisionRepository) SearchDivision(criteria reference.SearchD
 		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.ID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	divisions := make([]reference.Division, 0)
+	divisions := make([]referencebll.Division, 0)
 	if err != nil {
 		return divisions, err
 	}
 	for rows.Next() {
-		each := reference.Division{}
+		each := referencebll.Division{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -63,7 +63,7 @@ func (repo PostgresDivisionRepository) SearchDivision(criteria reference.SearchD
 	return divisions, err
 }
 
-func (repo PostgresDivisionRepository) CreateDivision(division *reference.Division) error {
+func (repo PostgresDivisionRepository) CreateDivision(division *referencebll.Division) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresDivisionRepository is not specified")
 	}
@@ -97,12 +97,12 @@ func (repo PostgresDivisionRepository) CreateDivision(division *reference.Divisi
 	} else {
 		row := repo.Database.QueryRow(clause, args...)
 		row.Scan(&division.ID)
-		err = tx.Commit()
+		tx.Commit()
 	}
 	return err
 }
 
-func (repo PostgresDivisionRepository) UpdateDivision(division reference.Division) error {
+func (repo PostgresDivisionRepository) UpdateDivision(division referencebll.Division) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresDivisionRepository is not specified")
 	}
@@ -121,9 +121,7 @@ func (repo PostgresDivisionRepository) UpdateDivision(division reference.Divisio
 			return txErr
 		} else {
 			_, err = stmt.RunWith(repo.Database).Exec()
-			if err = tx.Commit(); err != nil {
-				tx.Rollback()
-			}
+			tx.Commit()
 		}
 		return err
 	} else {
@@ -131,7 +129,7 @@ func (repo PostgresDivisionRepository) UpdateDivision(division reference.Divisio
 	}
 }
 
-func (repo PostgresDivisionRepository) DeleteDivision(division reference.Division) error {
+func (repo PostgresDivisionRepository) DeleteDivision(division referencebll.Division) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresDivisionRepository is not specified")
 	}

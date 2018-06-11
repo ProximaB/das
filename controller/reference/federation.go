@@ -10,12 +10,12 @@ import (
 )
 
 type FederationServer struct {
-	reference.IFederationRepository
+	referencebll.IFederationRepository
 }
 
-// GET /api/reference/federation
+// GET /api/referencedal/federation
 func (server FederationServer) SearchFederationHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(reference.SearchFederationCriteria)
+	criteria := new(referencebll.SearchFederationCriteria)
 	if err := util.ParseRequestData(r, criteria); err != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, err.Error())
 		return
@@ -40,11 +40,11 @@ func (server FederationServer) SearchFederationHandler(w http.ResponseWriter, r 
 	w.Write(output)
 }
 
-// POST /api/reference/federation
+// POST /api/referencedal/federation
 func (server FederationServer) CreateFederationHandler(w http.ResponseWriter, r *http.Request) {}
 
-// DELETE /api/reference/federation
+// DELETE /api/referencedal/federation
 func (server FederationServer) DeleteFederationHandler(w http.ResponseWriter, r *http.Request) {}
 
-// PUT /api/reference/federation
+// PUT /api/referencedal/federation
 func (server FederationServer) UpdateFederationHandler(w http.ResponseWriter, r *http.Request) {}

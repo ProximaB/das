@@ -10,7 +10,7 @@ import (
 
 const apiCompetitionStatusEndpoint = "/api/competition/status"
 
-var competitionStatusServer = competition.CompetitionStatusServer{
+var competitionStatusServer = competition.StatusServer{
 	database.CompetitionStatusRepository,
 }
 
@@ -19,6 +19,6 @@ var GetCompetitionStatusController = util.DasController{
 	Description:  "Get all competition status",
 	Method:       http.MethodGet,
 	Endpoint:     apiCompetitionStatusEndpoint,
-	Handler:      competitionStatusServer.GetCompetitionStatusHandler,
+	Handler:      competitionStatusServer.GetStatusHandler,
 	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
 }

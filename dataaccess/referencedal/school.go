@@ -1,4 +1,4 @@
-package reference
+package referencedal
 
 import (
 	"database/sql"
@@ -18,7 +18,7 @@ type PostgresSchoolRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresSchoolRepository) CreateSchool(school *reference.School) error {
+func (repo PostgresSchoolRepository) CreateSchool(school *referencebll.School) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresSchoolRepository is not specified")
 	}
@@ -46,14 +46,12 @@ func (repo PostgresSchoolRepository) CreateSchool(school *reference.School) erro
 	} else {
 		row := repo.Database.QueryRow(clause, args...)
 		row.Scan(&school.ID)
-		if err = tx.Commit(); err != nil {
-			tx.Rollback()
-		}
+		tx.Commit()
 	}
 	return err
 }
 
-func (repo PostgresSchoolRepository) UpdateSchool(school reference.School) error {
+func (repo PostgresSchoolRepository) UpdateSchool(school referencebll.School) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresSchoolRepository is not specified")
 	}
@@ -78,7 +76,7 @@ func (repo PostgresSchoolRepository) UpdateSchool(school reference.School) error
 	}
 }
 
-func (repo PostgresSchoolRepository) DeleteSchool(school reference.School) error {
+func (repo PostgresSchoolRepository) DeleteSchool(school referencebll.School) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresSchoolRepository is not specified")
 	}
@@ -98,7 +96,7 @@ func (repo PostgresSchoolRepository) DeleteSchool(school reference.School) error
 	return err
 }
 
-func (repo PostgresSchoolRepository) SearchSchool(criteria reference.SearchSchoolCriteria) ([]reference.School, error) {
+func (repo PostgresSchoolRepository) SearchSchool(criteria referencebll.SearchSchoolCriteria) ([]referencebll.School, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresSchoolRepository is not specified")
 	}
@@ -128,12 +126,12 @@ func (repo PostgresSchoolRepository) SearchSchool(criteria reference.SearchSchoo
 			Where(squirrel.Eq{`C.STATE_ID`: criteria.StateID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	schools := make([]reference.School, 0)
+	schools := make([]referencebll.School, 0)
 	if err != nil {
 		return schools, err
 	}
 	for rows.Next() {
-		each := reference.School{}
+		each := referencebll.School{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,

@@ -1,4 +1,4 @@
-package reference
+package referencedal
 
 import (
 	"database/sql"
@@ -17,8 +17,8 @@ const (
 	DAS_USER_GENDER_TABLE = "DAS.GENDER"
 )
 
-func (repo PostgresGenderRepository) GetAllGenders() ([]reference.Gender, error) {
-	genders := make([]reference.Gender, 0)
+func (repo PostgresGenderRepository) GetAllGenders() ([]referencebll.Gender, error) {
+	genders := make([]referencebll.Gender, 0)
 	stmt := repo.SqlBuilder.Select(
 		fmt.Sprintf(
 			"%s, %s, %s, %s, %s, %s",
@@ -36,7 +36,7 @@ func (repo PostgresGenderRepository) GetAllGenders() ([]reference.Gender, error)
 	}
 
 	for rows.Next() {
-		each := reference.Gender{}
+		each := referencebll.Gender{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,

@@ -18,7 +18,7 @@ type Age struct {
 	Maximum  int    `json:"maximum"`
 }
 
-func AgeDataModelToViewModel(dm reference.Age) Age {
+func AgeDataModelToViewModel(dm referencebll.Age) Age {
 	return Age{
 		ID:       dm.ID,
 		Name:     dm.Name,

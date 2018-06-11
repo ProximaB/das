@@ -2,11 +2,11 @@
 To generate mock objects,
 1. Open a terminal
 2. Change directory to das root: $ cd $GOPATH/src/github.com/DancesportSoftware/das
-3. Run command; $ mockgen -source=./businesslogic/reference/country.go > ./mock/businesslogic/reference/country.go
+3. Run command; $ mockgen -source=./businesslogic/referencedal/country.go > ./mock/businesslogic/referencedal/country.go
 4. Use the test below as a template
 5. If original file changes, chances are the mock file need to be regenerated as well
 */
-package reference_test
+package referencebll_test
 
 import (
 	"testing"
@@ -23,12 +23,12 @@ func TestCountry_GetStates(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	mockRepo := mock_reference.NewMockIStateRepository(mockCtrl)
-	mockRepo.EXPECT().SearchState(reference.SearchStateCriteria{}).Return([]reference.State{
+	mockRepo.EXPECT().SearchState(referencebll.SearchStateCriteria{}).Return([]referencebll.State{
 		{ID: 1, Name: "Alaska", Abbreviation: "AK"},
 		{ID: 2, Name: "Michigan", Abbreviation: "MI"},
 	}, nil)
 
-	country := reference.Country{}
+	country := referencebll.Country{}
 
 	states, err := country.GetStates(mockRepo)
 	assert.Nil(t, err, "search states of a Country should not return errors")
@@ -40,14 +40,14 @@ func TestCountry_GetFederations(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockFederationRepo := mock_reference.NewMockIFederationRepository(ctrl)
-	mockFederationRepo.EXPECT().SearchFederation(reference.SearchFederationCriteria{}).Return(
-		[]reference.Federation{
+	mockFederationRepo.EXPECT().SearchFederation(referencebll.SearchFederationCriteria{}).Return(
+		[]referencebll.Federation{
 			{ID: 1, Name: "WDSF"},
 			{ID: 2, Name: "WDC"},
 		}, nil,
 	)
 
-	country := reference.Country{}
+	country := referencebll.Country{}
 	federations, err := country.GetFederations(mockFederationRepo)
 
 	assert.Nil(t, err)

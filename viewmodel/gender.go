@@ -9,7 +9,7 @@ type Gender struct {
 	Name string `json:"name"`
 }
 
-func GenderDataModelToViewModel(gender reference.Gender) Gender {
+func GenderDataModelToViewModel(gender referencebll.Gender) Gender {
 	return Gender{
 		ID:   gender.ID,
 		Name: gender.Name,

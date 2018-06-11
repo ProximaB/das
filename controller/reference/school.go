@@ -9,12 +9,12 @@ import (
 )
 
 type SchoolServer struct {
-	reference.ISchoolRepository
+	referencebll.ISchoolRepository
 }
 
-// GET /api/reference/school
+// GET /api/referencedal/school
 func (server SchoolServer) SearchSchoolHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(reference.SearchSchoolCriteria)
+	criteria := new(referencebll.SearchSchoolCriteria)
 
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, parseErr.Error())
@@ -35,11 +35,11 @@ func (server SchoolServer) SearchSchoolHandler(w http.ResponseWriter, r *http.Re
 	}
 }
 
-// POST /api/reference/school
+// POST /api/referencedal/school
 func (server SchoolServer) CreateSchoolHandler(w http.ResponseWriter, r *http.Request) {}
 
-// PUT /api/reference/school
+// PUT /api/referencedal/school
 func (server SchoolServer) UpdateSchoolHandler(w http.ResponseWriter, r *http.Request) {}
 
-// DELETE /api/reference/school
+// DELETE /api/referencedal/school
 func (server SchoolServer) DeleteSchoolHandler(w http.ResponseWriter, r *http.Request) {}

@@ -9,12 +9,12 @@ import (
 )
 
 type StudioServer struct {
-	reference.IStudioRepository
+	referencebll.IStudioRepository
 }
 
-// GET /api/reference/studio
+// GET /api/referencedal/studio
 func (server StudioServer) SearchStudioHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(reference.SearchStudioCriteria)
+	criteria := new(referencebll.SearchStudioCriteria)
 
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, parseErr.Error())
@@ -35,17 +35,17 @@ func (server StudioServer) SearchStudioHandler(w http.ResponseWriter, r *http.Re
 	}
 }
 
-// POST /api/reference/studio
+// POST /api/referencedal/studio
 func (server StudioServer) CreateStudioHandler(w http.ResponseWriter, r *http.Request) {
 	util.RespondJsonResult(w, http.StatusNotImplemented, "not implemented", nil)
 }
 
-// PUT /api/reference/studio
+// PUT /api/referencedal/studio
 func (server StudioServer) UpdateStudioHandler(w http.ResponseWriter, r *http.Request) {
 	util.RespondJsonResult(w, http.StatusNotImplemented, "not implemented", nil)
 }
 
-// DELETE /api/reference/studio
+// DELETE /api/referencedal/studio
 func (server StudioServer) DeleteStudioHandler(w http.ResponseWriter, r *http.Request) {
 	util.RespondJsonResult(w, http.StatusNotImplemented, "not implemented", nil)
 }

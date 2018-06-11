@@ -14,7 +14,7 @@ import (
 var testAccount = businesslogic.Account{
 	FirstName:             "First Name",
 	LastName:              "Last Name",
-	UserGenderID:          reference.GENDER_MALE,
+	UserGenderID:          referencebll.GENDER_MALE,
 	DateOfBirth:           time.Date(2017, time.January, 1, 1, 1, 1, 1, time.UTC),
 	ToSAccepted:           true,
 	PrivacyPolicyAccepted: true,

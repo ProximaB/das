@@ -1,5 +1,4 @@
-// a new idea for managing endpoints in DAS. this is still in experiment and should not be added to production until fully
-// tested
+// experiment feature
 package util
 
 import (

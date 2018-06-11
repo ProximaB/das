@@ -9,12 +9,12 @@ import (
 )
 
 type StyleServer struct {
-	reference.IStyleRepository
+	referencebll.IStyleRepository
 }
 
-// GET /api/reference/style
+// GET /api/referencedal/style
 func (server StyleServer) SearchStyleHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(reference.SearchStyleCriteria)
+	criteria := new(referencebll.SearchStyleCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, "invalid request data", parseErr.Error())
 		return

@@ -9,11 +9,11 @@ import (
 )
 
 type AgeServer struct {
-	reference.IAgeRepository
+	referencebll.IAgeRepository
 }
 
 func (server AgeServer) SearchAgeHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(reference.SearchAgeCriteria)
+	criteria := new(referencebll.SearchAgeCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, parseErr.Error())
 		return

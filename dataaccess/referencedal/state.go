@@ -1,4 +1,4 @@
-package reference
+package referencedal
 
 import (
 	"database/sql"
@@ -18,7 +18,7 @@ type PostgresStateRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresStateRepository) SearchState(criteria reference.SearchStateCriteria) ([]reference.State, error) {
+func (repo PostgresStateRepository) SearchState(criteria referencebll.SearchStateCriteria) ([]referencebll.State, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresStateRepository is not specified")
 	}
@@ -45,14 +45,14 @@ func (repo PostgresStateRepository) SearchState(criteria reference.SearchStateCr
 	stmt = stmt.OrderBy(common.PRIMARY_KEY,
 		common.COL_NAME)
 
-	states := make([]reference.State, 0)
+	states := make([]referencebll.State, 0)
 	rows, err := stmt.RunWith(repo.Database).Query()
 	if err != nil {
 		return states, err
 	}
 
 	for rows.Next() {
-		each := reference.State{}
+		each := referencebll.State{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -71,7 +71,7 @@ func (repo PostgresStateRepository) SearchState(criteria reference.SearchStateCr
 	return states, nil
 }
 
-func (repo PostgresStateRepository) CreateState(state *reference.State) error {
+func (repo PostgresStateRepository) CreateState(state *referencebll.State) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStateRepository is not specified")
 	}
@@ -101,14 +101,12 @@ func (repo PostgresStateRepository) CreateState(state *reference.State) error {
 	} else {
 		row := repo.Database.QueryRow(clause, args...)
 		row.Scan(&state.ID)
-		if err = tx.Commit(); err != nil {
-			tx.Rollback()
-		}
+		tx.Commit()
 	}
 	return err
 }
 
-func (repo PostgresStateRepository) UpdateState(state reference.State) error {
+func (repo PostgresStateRepository) UpdateState(state referencebll.State) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStateRepository is not specified")
 	}
@@ -135,7 +133,7 @@ func (repo PostgresStateRepository) UpdateState(state reference.State) error {
 	}
 }
 
-func (repo PostgresStateRepository) DeleteState(state reference.State) error {
+func (repo PostgresStateRepository) DeleteState(state referencebll.State) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStateRepository is not specified")
 	}

@@ -1,13 +1,17 @@
 # Dancesport Application System (DAS)
 
+[Join the DAS Slack Community](https://ballroomdev.slack.com)
+
+[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+[![GoDoc](https://godoc.org/github.com/DancesportSoftware/das?status.svg)](https://godoc.org/github.com/DancesportSoftware/das)
 [![Build Status](https://travis-ci.org/DancesportSoftware/das.svg?branch=development)](https://travis-ci.org/DancesportSoftware/das)
 [![codecov](https://codecov.io/gh/DancesportSoftware/das/branch/development/graph/badge.svg)](https://codecov.io/gh/DancesportSoftware/das)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/76bb2da0aa0e4a2486365500d3f93e8f)](https://www.codacy.com/app/DancesportSoftware/das_2?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=DancesportSoftware/das&amp;utm_campaign=Badge_Grade)
-
+[![Go Report Card](https://goreportcard.com/badge/github.com/DancesportSoftware/das)](https://goreportcard.com/report/github.com/DancesportSoftware/das)
 DAS is an open and free competition management system for competitive ballroom
 dance. This project (along with [dasdb](https://github.com/DancesportSoftware/dasdb) and 
-[dasweb](https://github.com/DancesportSoftware/dasweb)) aims to provide the community of
-dancesport an open and secure implementation of competition management system.
+[dasweb](https://github.com/DancesportSoftware/dasweb)) aims to provide the dancesport community
+an open and secure implementation of competition management system.
 
 ### Goals of DAS ###
 * To provide a secure and robust solution to competition organizers and competitors. Currently, the most popular systems do not have the necessary security setup to protect itself from being compromised. Data security is the top priority of this project.

@@ -9,7 +9,7 @@ import (
 
 // this structure will allow controller-based caching in the future, if needed
 type GenderServer struct {
-	reference.IGenderRepository
+	referencebll.IGenderRepository
 }
 
 // GET /api/account/gender

@@ -32,7 +32,7 @@ func CompetitionDataModelToViewModel(competition businesslogic.Competition, acco
 		Website:    competition.Website,
 		CountryID:  competition.Country.ID,
 		StateID:    competition.GetStatus(),
-		CityID:     competition.City.CityID,
+		CityID:     competition.City.ID,
 		Address:    competition.Street,
 		StartDate:  competition.StartDateTime,
 		EndDate:    competition.EndDateTime,
@@ -71,9 +71,9 @@ func (createDTO CreateCompetition) ToCompetitionDataModel(user businesslogic.Acc
 		Name:         createDTO.Name,
 		Website:      createDTO.WebsiteUrl,
 
-		Country: reference.Country{},
-		State:   reference.State{},
-		City:    reference.City{},
+		Country: referencebll.Country{},
+		State:   referencebll.State{},
+		City:    referencebll.City{},
 		Street:  createDTO.VenueStreet,
 
 		ContactName:  createDTO.ContactName,
@@ -90,7 +90,7 @@ func (createDTO CreateCompetition) ToCompetitionDataModel(user businesslogic.Acc
 	}
 	competition.Country.ID = createDTO.VenueCountryID
 	competition.State.ID = createDTO.VenueStateID
-	competition.City.CityID = createDTO.VenueCityID
+	competition.City.ID = createDTO.VenueCityID
 	competition.UpdateStatus(createDTO.Status)
 	return competition
 }

@@ -3,11 +3,13 @@ package event
 import (
 	"database/sql"
 	"errors"
+	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 )
 
+// PostgresEventDanceRepository implements IEventDanceRepository
 type PostgresEventDanceRepository struct {
 	Database   *sql.DB
 	SqlBuilder squirrel.StatementBuilderType
@@ -21,6 +23,37 @@ func (repo PostgresEventDanceRepository) SearchEventDance(criteria businesslogic
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresEventDanceRepository is not specified")
 	}
+	stmt := repo.SqlBuilder.Select(
+		fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s",
+			common.PRIMARY_KEY,
+			common.COL_EVENT_ID,
+			common.COL_DANCE_ID,
+			common.COL_CREATE_USER_ID,
+			common.COL_DATETIME_CREATED,
+			common.COL_UPDATE_USER_ID,
+			common.COL_DATETIME_UPDATED),
+	).From(DAS_EVENT_DANCES_TABLE).
+		OrderBy(common.PRIMARY_KEY)
+	if criteria.CompetitionID > 0 {
+		stmt = stmt.Where(squirrel.Eq{common.COL_COMPETITION_ID: criteria.CompetitionID})
+	}
+	if criteria.EventID > 0 {
+		stmt = stmt.Where(squirrel.Eq{common.COL_EVENT_ID: criteria.EventID})
+	}
+	rows, err := stmt.RunWith(repo.Database).Query()
+	output := make([]businesslogic.EventDance, 0)
+	if err != nil {
+		return output, err
+	}
+	for rows.Next() {
+		each := businesslogic.EventDance{}
+		rows.Scan(
+			&each.ID,
+			&each.EventID,
+		)
+		output = append(output, each)
+	}
+	rows.Close()
 	return nil, errors.New("not implemented")
 }
 func (repo PostgresEventDanceRepository) CreateEventDance(eventDance *businesslogic.EventDance) error {

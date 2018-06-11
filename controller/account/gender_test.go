@@ -26,9 +26,9 @@ func TestAccountGenderHandler_GetAccountGenderHandler(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	// test with zero param
-	mockedGenderRepo.EXPECT().GetAllGenders().Return([]reference.Gender{
-		reference.Gender{ID: 1, Name: "Female"},
-		reference.Gender{ID: 2, Name: "Male"},
+	mockedGenderRepo.EXPECT().GetAllGenders().Return([]referencebll.Gender{
+		referencebll.Gender{ID: 1, Name: "Female"},
+		referencebll.Gender{ID: 2, Name: "Male"},
 	}, nil)
 	server.GetAccountGenderHandler(w, req)
 	genders := make([]viewmodel.Gender, 0)
@@ -41,9 +41,9 @@ func TestAccountGenderHandler_GetAccountGenderHandler(t *testing.T) {
 	query.Add("badparam", "indeed")
 	req.URL.RawQuery = query.Encode()
 	// log.Printf("GET %s\n", req.URL.String())
-	mockedGenderRepo.EXPECT().GetAllGenders().Return([]reference.Gender{
-		reference.Gender{ID: 1, Name: "Female"},
-		reference.Gender{ID: 2, Name: "Male"},
+	mockedGenderRepo.EXPECT().GetAllGenders().Return([]referencebll.Gender{
+		referencebll.Gender{ID: 1, Name: "Female"},
+		referencebll.Gender{ID: 2, Name: "Male"},
 	}, nil)
 	server.GetAccountGenderHandler(w, req)
 	// log.Println(w.Body)

@@ -24,6 +24,7 @@ type PartnershipRequestBlacklistEntry struct {
 	DateTimeUpdated   time.Time
 }
 
+// IPartnershipRequestBlacklistRepository defines the interface that a partnership request blacklist repository should implement
 type IPartnershipRequestBlacklistRepository interface {
 	SearchPartnershipRequestBlacklist(criteria SearchPartnershipRequestBlacklistCriteria) ([]PartnershipRequestBlacklistEntry, error)
 	CreatePartnershipRequestBlacklist(blacklist *PartnershipRequestBlacklistEntry) error
@@ -31,10 +32,11 @@ type IPartnershipRequestBlacklistRepository interface {
 	UpdatePartnershipRequestBlacklist(blacklist PartnershipRequestBlacklistEntry) error
 }
 
-func GetBlacklistedAccountsForUser(userID int, accountRepo IAccountRepository,
-	blacklistRepo IPartnershipRequestBlacklistRepository) ([]Account, error) {
+// GetBlacklistedAccounts searches all records of Blacklist reports, finds blacklisted accounts, and returns those accounts
+// that were blacklisted
+func (self Account) GetBlacklistedAccounts(accountRepo IAccountRepository, blacklistRepo IPartnershipRequestBlacklistRepository) ([]Account, error) {
 	blacklist := make([]Account, 0)
-	entries, err := blacklistRepo.SearchPartnershipRequestBlacklist(SearchPartnershipRequestBlacklistCriteria{ReporterID: userID, Whitelisted: false})
+	entries, err := blacklistRepo.SearchPartnershipRequestBlacklist(SearchPartnershipRequestBlacklistCriteria{ReporterID: self.ID, Whitelisted: false})
 	if err != nil {
 		return blacklist, err
 	}

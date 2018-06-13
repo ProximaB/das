@@ -11,7 +11,7 @@ import (
 	"time"
 )
 
-var testAccount = businesslogic.Account{
+var testAthleteAccount = businesslogic.Account{
 	FirstName:             "First Name",
 	LastName:              "Last Name",
 	UserGenderID:          referencebll.GENDER_MALE,
@@ -23,6 +23,18 @@ var testAccount = businesslogic.Account{
 	Phone:                 "1232234442",
 	Signature:             "I am a parent",
 	ByGuardian:            true,
+}
+
+var testOrganizerAccount = businesslogic.Account{
+	FirstName:             "Mighty",
+	LastName:              "Meerkat",
+	UserGenderID:          referencebll.GENDER_FEMALE,
+	DateOfBirth:           time.Date(1997, time.May, 22, 1, 1, 1, 1, time.UTC),
+	ToSAccepted:           true,
+	PrivacyPolicyAccepted: true,
+	AccountTypeID:         businesslogic.ACCOUNT_TYPE_ORGANIZER,
+	Email:                 "mighty.meerkat@email.com",
+	Phone:                 "3321231232",
 }
 
 func TestGetAccountByEmail(t *testing.T) {
@@ -116,7 +128,7 @@ func TestCreateAccountStrategy_CreateAccount(t *testing.T) {
 		AccountRepo: mockedAccountRepo,
 	}
 
-	err := strategy.CreateAccount(testAccount, "testpassword")
+	err := strategy.CreateAccount(testAthleteAccount, "testpassword")
 	assert.Nil(t, err, "should not throw an error when creating account of non-organizer")
 }
 
@@ -129,7 +141,7 @@ func TestCreateOrganizerAccountStrategy_CreateAccount(t *testing.T) {
 	mockedHistoryRepo := mock_businesslogic.NewMockIOrganizerProvisionHistoryRepository(mockCtrl)
 
 	mockedAccountRepo.EXPECT().SearchAccount(businesslogic.SearchAccountCriteria{
-		Email: "test@test.com",
+		Email: "mighty.meerkat@email.com",
 	}).Return([]businesslogic.Account{}, errors.New("account does not exist"))
 	mockedAccountRepo.EXPECT().CreateAccount(gomock.Any()).Return(nil)
 	mockedProvisionRepo.EXPECT().CreateOrganizerProvision(gomock.Any()).Return(nil)
@@ -141,11 +153,6 @@ func TestCreateOrganizerAccountStrategy_CreateAccount(t *testing.T) {
 		HistoryRepo:   mockedHistoryRepo,
 	}
 
-	// test behaviors
-	err := strategy.CreateAccount(testAccount, "testpassword")
-	assert.NotNil(t, err, "non-organizer account should not be created by CreateOrganizerAccountStrategy")
-
-	testAccount.AccountTypeID = businesslogic.ACCOUNT_TYPE_ORGANIZER
-	err = strategy.CreateAccount(testAccount, "testpassword")
+	err := strategy.CreateAccount(testOrganizerAccount, "testpassword")
 	assert.Nil(t, err, "should create organizer account with CreateOrganizerAccountStrategy")
 }

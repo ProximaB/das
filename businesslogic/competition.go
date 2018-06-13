@@ -146,6 +146,12 @@ func validateCreateCompetition(competition Competition) error {
 	if competition.Country.ID < 1 {
 		return errors.New("country is required")
 	}
+	if competition.CreateUserID < 1 {
+		return errors.New("unauthorized")
+	}
+	if competition.UpdateUserID < 1 {
+		return errors.New("unauthorized")
+	}
 	return nil
 }
 

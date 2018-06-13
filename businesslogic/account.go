@@ -10,6 +10,7 @@ import (
 	"github.com/google/uuid"
 )
 
+// Account is the base account data for all users in DAS. Some fields are required with others are not
 type Account struct {
 	ID                    int    // userID will be account ID, too
 	UUID                  string // uuid that will be used in communicating with client
@@ -35,6 +36,7 @@ type Account struct {
 	Signature             string
 }
 
+// IAccountRepository specifies the interface that an account repository needs to implement.
 type IAccountRepository interface {
 	SearchAccount(criteria SearchAccountCriteria) ([]Account, error)
 	CreateAccount(account *Account) error
@@ -42,6 +44,7 @@ type IAccountRepository interface {
 	DeleteAccount(account Account) error
 }
 
+// SearchAccountCriteria provides the parameters that an IAccountRepository can use to search by
 type SearchAccountCriteria struct {
 	ID            int
 	UUID          string
@@ -55,14 +58,16 @@ type SearchAccountCriteria struct {
 	AccountStatus int
 }
 
-func (account Account) GetName() string {
-	return account.FirstName + " " + account.LastName
+func (self Account) GetName() string {
+	return self.FirstName + " " + self.LastName
 }
 
+// ICreateAccountStrategy specifies the interface that account creation strategy needs to implement.
 type ICreateAccountStrategy interface {
 	CreateAccount(account Account, password string) error
 }
 
+// CreateAccountStrategy can create an account that only has record in IAccountRepository
 type CreateAccountStrategy struct {
 	AccountRepo IAccountRepository
 }
@@ -122,6 +127,8 @@ func createAccount(account *Account, password string, repo IAccountRepository) e
 	return repo.CreateAccount(account)
 }
 
+// GetAccountByEmil will retrieve account from repo by email. This function will return either a matched account
+// or an empty account
 func GetAccountByEmail(email string, repo IAccountRepository) Account {
 	accounts, _ := repo.SearchAccount(SearchAccountCriteria{
 		Email: email,
@@ -132,6 +139,8 @@ func GetAccountByEmail(email string, repo IAccountRepository) Account {
 	return accounts[0]
 }
 
+// GetAccountByID will retrieve account from repo by ID. This function will return either a matched account
+// or an empty account
 func GetAccountByID(accountID int, repo IAccountRepository) Account {
 	accounts, _ := repo.SearchAccount(SearchAccountCriteria{
 		ID: accountID,
@@ -142,6 +151,8 @@ func GetAccountByID(accountID int, repo IAccountRepository) Account {
 	return accounts[0]
 }
 
+// GetAccountByUUID will retrieve account from repo by UUID. This function will return either a matched account
+// or an empty account
 func GetAccountByUUID(uuid string, repo IAccountRepository) Account {
 	accounts, _ := repo.SearchAccount(SearchAccountCriteria{
 		UUID: uuid,
@@ -198,10 +209,10 @@ func validateAccountRegistration(account *Account, accountRepo IAccountRepositor
 		return errors.New("must have consent from legal guardian")
 	}
 	if !account.ToSAccepted {
-		return errors.New("Terms of Services must be accepted")
+		return errors.New("terms of services must be accepted")
 	}
 	if !account.PrivacyPolicyAccepted {
-		return errors.New("Privacy Policy must be accepted")
+		return errors.New("privacy policy must be accepted")
 	}
 	return nil
 }

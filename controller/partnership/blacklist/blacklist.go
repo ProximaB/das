@@ -27,7 +27,7 @@ func (server PartnershipRequestBlacklistServer) GetBlacklistedAccountHandler(w h
 	ctx := appengine.NewContext(r)
 	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
 
-	blacklist, err := businesslogic.GetBlacklistedAccountsForUser(account.ID, server.IAccountRepository, server.IPartnershipRequestBlacklistRepository)
+	blacklist, err := account.GetBlacklistedAccounts(server.IAccountRepository, server.IPartnershipRequestBlacklistRepository)
 
 	if err != nil {
 		log.Errorf(ctx, "error in getting partnership blacklist for user: %v", err)

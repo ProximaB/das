@@ -14,6 +14,8 @@ const (
 	PARTNERSHIP_ROLE_FOLLOW = "FOLLOW"
 )
 
+// Partnership defines the combination of a lead and a follow. A partnership is uniquely identified
+// if the lead and follow are confirmed.
 type Partnership struct {
 	PartnershipID   int
 	LeadID          int
@@ -27,6 +29,7 @@ type Partnership struct {
 	DateTimeUpdated time.Time
 }
 
+// IPartnershipRepository defines the interface that a partnership repository should implement
 type IPartnershipRepository interface {
 	CreatePartnership(partnership *Partnership) error
 	SearchPartnership(criteria SearchPartnershipCriteria) ([]Partnership, error)
@@ -34,8 +37,35 @@ type IPartnershipRepository interface {
 	DeletePartnership(partnership Partnership) error
 }
 
+// SearchPartnershipCriteria provides the parameters that an IPartnershipRepository can use to search by
 type SearchPartnershipCriteria struct {
 	PartnershipID int `schema:"id"`
 	LeadID        int `schema:"lead"`
 	FollowID      int `schema:"follow"`
+}
+
+// GetAllPartnerships returns all the partnerships that caller account is in, including as a lead and as a follow
+func (self Account) GetAllPartnerships(repo IPartnershipRepository) ([]Partnership, error) {
+	asLeads, err := repo.SearchPartnership(SearchPartnershipCriteria{
+		LeadID: self.ID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	asFollows, err := repo.SearchPartnership(SearchPartnershipCriteria{
+		FollowID: self.ID,
+	})
+	if err != nil {
+		return nil, err
+	}
+
+	allPartnerships := make([]Partnership, 0)
+	for _, each := range asLeads {
+		allPartnerships = append(allPartnerships, each)
+	}
+	for _, each := range asFollows {
+		allPartnerships = append(allPartnerships, each)
+	}
+	return allPartnerships, err
 }

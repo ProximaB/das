@@ -18,7 +18,6 @@ import (
 )
 
 func TestCountry_GetStates(t *testing.T) {
-
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 

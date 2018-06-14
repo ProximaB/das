@@ -1,6 +1,8 @@
 package businesslogic
 
 import (
+	"errors"
+	"fmt"
 	"time"
 )
 
@@ -23,10 +25,17 @@ type CompetitionEntry struct {
 	DateTimeUpdated    time.Time
 }
 
+// SearchCompetitionEntryCriteria provides parameters to ICompetitionEntryRepository to search competition entry
+type SearchCompetitionEntryCriteria struct {
+	ID            int
+	CompetitionID int
+	AthleteID     int
+}
+
 // ICompetitionEntryRepository specifies the interface that data source should implement
 // to perform CRUD operations on CompetitionEntry
 type ICompetitionEntryRepository interface {
-	CreateCompetitionEntry(entry CompetitionEntry) error
+	CreateCompetitionEntry(entry *CompetitionEntry) error
 	UpdateCompetitionEntry(entry CompetitionEntry) error
 	DeleteCompetitionEntry(entry CompetitionEntry) error
 	SearchCompetitionEntry(criteria SearchCompetitionEntryCriteria) ([]CompetitionEntry, error)
@@ -47,53 +56,23 @@ type CompetitionTBAEntry struct {
 	DateTimeUpdated time.Time
 }
 
-func CreateCompetitionEntry(user *Account,
-	registration *CompetitiveBallroomEventRegistration,
-	repo ICompetitionEntryRepository,
-	accountRepo IAccountRepository,
-	partnershipRepo IPartnershipRepository) error {
-	partnerships, _ := partnershipRepo.SearchPartnership(SearchPartnershipCriteria{PartnershipID: registration.PartnershipID})
-	leadAccount := GetAccountByID(partnerships[0].LeadID, accountRepo)
-	followAccount := GetAccountByID(partnerships[0].FollowID, accountRepo)
-
-	// check if entry has been created
-	leadEntry, _ := repo.SearchCompetitionEntry(SearchCompetitionEntryCriteria{
-		CompetitionID: registration.CompetitionID,
-		AthleteID:     leadAccount.ID,
-	})
-
-	followEntry, _ := repo.SearchCompetitionEntry(SearchCompetitionEntryCriteria{
-		CompetitionID: registration.CompetitionID,
-		AthleteID:     followAccount.ID,
-	})
-
-	if len(leadEntry) == 0 {
-		// entry does not exist, create entry
-		if createErr := repo.CreateCompetitionEntry(CompetitionEntry{
-			CompetitionID:   registration.CompetitionID,
-			AthleteID:       leadAccount.ID,
-			CreateUserID:    user.ID,
-			DateTimeCreated: time.Now(),
-			UpdateUserID:    user.ID,
-			DateTimeUpdated: time.Now(),
-		}); createErr != nil {
-			return createErr
-		}
+func (entry *CompetitionEntry) CreateCompetitionEntry(entryRepo ICompetitionEntryRepository) error {
+	criteria := SearchCompetitionEntryCriteria{
+		AthleteID:     entry.AthleteID,
+		CompetitionID: entry.CompetitionID,
 	}
 
-	if len(followEntry) == 0 {
-		if createErr := repo.CreateCompetitionEntry(CompetitionEntry{
-			CompetitionID:   registration.CompetitionID,
-			AthleteID:       followAccount.ID,
-			CreateUserID:    user.ID,
-			DateTimeCreated: time.Now(),
-			UpdateUserID:    user.ID,
-			DateTimeUpdated: time.Now(),
-		}); createErr != nil {
-			return createErr
-		}
+	searchResults, err := entryRepo.SearchCompetitionEntry(criteria)
+	if err != nil {
+		return err
 	}
 
-	//updateCompetitionAttendance(registration.ID)
-	return nil
+	if len(searchResults) == 0 {
+		return entryRepo.CreateCompetitionEntry(entry)
+	}
+
+	if len(searchResults) > 0 {
+		return errors.New(fmt.Sprintf("competition entry for athlete %d is already created", entry.AthleteID))
+	}
+	return errors.New("cannot create competition entry for this athlete")
 }

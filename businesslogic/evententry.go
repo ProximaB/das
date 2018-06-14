@@ -13,11 +13,6 @@ type IEventEntryRepository interface {
 	DeleteEventEntry(entry EventEntry) error
 	UpdateEventEntry(entry EventEntry) error
 }
-type SearchCompetitionEntryCriteria struct {
-	ID            int
-	CompetitionID int
-	AthleteID     int
-}
 
 // EventEntry is event-wise. It indicates the participation of partnership in a competitive ballroom event
 // The owner of the

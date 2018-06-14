@@ -6,6 +6,7 @@ import (
 	"time"
 
 	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/util"
 	"github.com/bearbin/go-age"
 	"github.com/google/uuid"
 )
@@ -115,8 +116,8 @@ func createAccount(account *Account, password string, repo IAccountRepository) e
 	if err := validateAccountRegistration(account, repo); err != nil {
 		return err
 	}
-	salt := GenerateSalt([]byte(password))
-	hash := GenerateHash(salt, []byte(password))
+	salt := util.GenerateSalt([]byte(password))
+	hash := util.GenerateHash(salt, []byte(password))
 	account.PasswordHash = hash
 	account.PasswordSalt = salt
 	account.UUID = uuid.New().String()

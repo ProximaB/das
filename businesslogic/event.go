@@ -25,6 +25,8 @@ type SearchEventCriteria struct {
 	StatusID      int `schema:"status"`
 }
 
+// Event contains data that are used for a generic competitive ballroom event, though it can be used for
+// theatre art or cabaret events as well by leaving unnecessary fields empty or with default values.
 type Event struct {
 	ID              int
 	CompetitionID   int
@@ -172,8 +174,7 @@ func CreateEvent(event Event, compRepo ICompetitionRepository, eventRepo IEventR
 	return nil
 }
 
-func (event Event) validate(
-	dances []EventDance,
+func (event Event) validate(dances []EventDance,
 	federationRepo referencebll.IFederationRepository,
 	divisionRepo referencebll.IDivisionRepository,
 	ageRepo referencebll.IAgeRepository,

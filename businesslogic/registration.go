@@ -20,7 +20,7 @@ type CompetitionRepresentation struct {
 	DateTimeUpdated    time.Time
 }
 
-type CompetitiveBallroomEventRegistration struct {
+type EventRegistration struct {
 	CompetitionID      int   `json:"competition"`
 	PartnershipID      int   `json:"partnership"`
 	EventsAdded        []int `json:"added"`   // event id, should not be competitive ballroom event id
@@ -35,7 +35,7 @@ type Registration interface {
 }
 
 func ValidateCompetitiveBallroomEventRegistration(creator *Account,
-	registration *CompetitiveBallroomEventRegistration,
+	registration *EventRegistration,
 	competitionRepo ICompetitionRepository,
 	eventRepo IEventRepository,
 	repo ICompetitionEntryRepository,
@@ -97,7 +97,7 @@ func ValidateCompetitiveBallroomEventRegistration(creator *Account,
 		AthleteID:     partnership.LeadID,
 	})
 	if len(entries) != 1 || hasEntryErr != nil {
-		repo.CreateCompetitionEntry(CompetitionEntry{
+		repo.CreateCompetitionEntry(&CompetitionEntry{
 			CompetitionID: registration.CompetitionID,
 			AthleteID:     partnership.LeadID,
 		})
@@ -109,7 +109,7 @@ func ValidateCompetitiveBallroomEventRegistration(creator *Account,
 		AthleteID:     partnership.FollowID,
 	})
 	if len(entries) != 1 || hasEntryErr != nil {
-		repo.CreateCompetitionEntry(CompetitionEntry{
+		repo.CreateCompetitionEntry(&CompetitionEntry{
 			CompetitionID: registration.CompetitionID,
 			AthleteID:     partnership.FollowID,
 		})
@@ -159,7 +159,7 @@ func ValidateCompetitiveBallroomEventRegistration(creator *Account,
 }
 
 func CreateEventEntries(creator *Account,
-	registration *CompetitiveBallroomEventRegistration,
+	registration *EventRegistration,
 	eventEntryRepo IEventEntryRepository) error {
 	for _, each := range registration.EventsAdded {
 		eventEntry := EventEntry{
@@ -180,7 +180,7 @@ func CreateEventEntries(creator *Account,
 }
 
 func DropEventEntries(creator *Account,
-	registration *CompetitiveBallroomEventRegistration,
+	registration *EventRegistration,
 	eventEntryRepo IEventEntryRepository) error {
 	for _, each := range registration.EventsDropped {
 		eventEntry := EventEntry{
@@ -209,14 +209,14 @@ func GetEventRegistration(competitionID int,
 	// check if user is part of the partnership
 	results, err := partnershipRepo.SearchPartnership(SearchPartnershipCriteria{PartnershipID: partnershipID})
 	if err != nil {
-		return CompetitiveBallroomEventRegistration{}, errors.New("cannot find requested partnership")
+		return EventRegistration{}, errors.New("cannot find requested partnership")
 	}
 	if results == nil || len(results) != 1 {
 		return nil, errors.New("cannot find partnership for registration")
 	}
 	partnership := results[0]
 	if user.ID == 0 || user.AccountTypeID != ACCOUNT_TYPE_ATHLETE || (user.ID != partnership.LeadID && user.ID != partnership.FollowID) {
-		return CompetitiveBallroomEventRegistration{}, errors.New("not authorized to request this information")
+		return EventRegistration{}, errors.New("not authorized to request this information")
 	}
 
 	//return dataaccess.GetCompetitiveBallroomEventRegistration(dataaccess.DATABASE, competitionID, partnershipID)

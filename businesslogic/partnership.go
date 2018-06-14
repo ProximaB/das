@@ -69,3 +69,14 @@ func (self Account) GetAllPartnerships(repo IPartnershipRepository) ([]Partnersh
 	}
 	return allPartnerships, err
 }
+
+func MustGetPartnershipByID(id int, repo IPartnershipRepository) Partnership {
+	searchResults, err := repo.SearchPartnership(SearchPartnershipCriteria{PartnershipID: id})
+	if err != nil {
+		panic(err.Error())
+	}
+	if len(searchResults) != 1 {
+		panic("cannot find partnership with this ID")
+	}
+	return searchResults[0]
+}

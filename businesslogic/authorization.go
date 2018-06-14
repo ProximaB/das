@@ -2,6 +2,7 @@ package businesslogic
 
 import (
 	"errors"
+	"github.com/DancesportSoftware/das/util"
 	"log"
 	"reflect"
 )
@@ -28,7 +29,7 @@ func AuthenticateUser(email, password string, repo IAccountRepository) error {
 		return errors.New("account is locked")
 	}
 
-	expectedHash := GenerateHash(accounts[0].PasswordSalt, []byte(password))
+	expectedHash := util.GenerateHash(accounts[0].PasswordSalt, []byte(password))
 	if reflect.DeepEqual(expectedHash, accounts[0].PasswordHash) {
 		// TODO: UpdateAccountSecurity (email, "login", true)
 		log.Printf("%s was authenticated", email)

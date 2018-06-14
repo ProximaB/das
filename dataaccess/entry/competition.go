@@ -21,7 +21,7 @@ type PostgresCompetitionEntryRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresCompetitionEntryRepository) CreateCompetitionEntry(entry businesslogic.CompetitionEntry) error {
+func (repo PostgresCompetitionEntryRepository) CreateCompetitionEntry(entry *businesslogic.CompetitionEntry) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCompetitionEntryRepository is not specified")
 	}
@@ -38,7 +38,7 @@ func (repo PostgresCompetitionEntryRepository) CreateCompetitionEntry(entry busi
 		entry.CreateUserID,
 		entry.DateTimeCreated,
 		entry.UpdateUserID,
-		entry.DateTimeUpdated)
+		entry.DateTimeUpdated).Suffix("RETURNING ID")
 
 	_, err := clause.RunWith(repo.Database).Exec() // it's okay if the error is duplicate entry, since db has unique constraint on it
 	return err

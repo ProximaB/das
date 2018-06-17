@@ -13,7 +13,7 @@ type StateServer struct {
 	referencebll.IStateRepository
 }
 
-// GET /api/referencedal/state
+// GET /api/reference/state
 func (server StateServer) SearchStateHandler(w http.ResponseWriter, r *http.Request) {
 	criteria := new(referencebll.SearchStateCriteria)
 	err := util.ParseRequestData(r, criteria)
@@ -36,17 +36,17 @@ func (server StateServer) SearchStateHandler(w http.ResponseWriter, r *http.Requ
 	w.Write(data)
 }
 
-// POST /api/referencedal/state
+// POST /api/reference/state
 func (server StateServer) CreateStateHandler(w http.ResponseWriter, r *http.Request) {
 	util.RespondJsonResult(w, http.StatusNotImplemented, "not implemented", nil)
 }
 
-// PUT /api/referencedal/state
+// PUT /api/reference/state
 func (server StateServer) UpdateStateHandler(w http.ResponseWriter, r *http.Request) {
 	util.RespondJsonResult(w, http.StatusNotImplemented, "not implemented", nil)
 }
 
-// DELETE /api/referencedal/state
+// DELETE /api/reference/state
 func (server StateServer) DeleteStateHandler(w http.ResponseWriter, r *http.Request) {
 	util.RespondJsonResult(w, http.StatusNotImplemented, "not implemented", nil)
 }

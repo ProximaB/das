@@ -12,7 +12,15 @@ type GenderServer struct {
 	referencebll.IGenderRepository
 }
 
-// GET /api/account/gender
+// GetAccountGenderHandler handles request
+//		GET /api/account/gender
+// No parameter is required for this request.
+//
+// Sample returned result:
+//	[
+// 		{"id":1,"name":"Female"},
+// 		{"id":2,"name":"Male"}
+// 	]
 func (handler GenderServer) GetAccountGenderHandler(w http.ResponseWriter, r *http.Request) {
 	data := make([]viewmodel.Gender, 0)
 	genders, _ := handler.IGenderRepository.GetAllGenders()

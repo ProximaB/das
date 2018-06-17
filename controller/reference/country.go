@@ -1,3 +1,6 @@
+// Copyright 2017-2018 Yubing Hou (houyubing24@gmail.com). All rights reserved.
+// Use of this source code is governed by GPL v3 license that can be found in the LICENSE file.
+
 package reference
 
 import (
@@ -14,7 +17,15 @@ type CountryServer struct {
 	referencebll.ICountryRepository
 }
 
-// POST /api/referencedal/country
+// CreateCountryHandler handles request
+// 	POST /api/reference/country
+//
+// Accepted JSON parameters:
+//	{
+// 		"name": "A New Country",
+// 		"abbreviation": "ANC"
+//	}
+// Authentication is required.
 func (server CountryServer) CreateCountryHandler(w http.ResponseWriter, r *http.Request) {
 	payload := new(viewmodel.CreateCountry)
 	var err error
@@ -33,7 +44,7 @@ func (server CountryServer) CreateCountryHandler(w http.ResponseWriter, r *http.
 	util.RespondJsonResult(w, http.StatusOK, "success", nil)
 }
 
-// DELETE /api/referencedal/country
+// DELETE /api/reference/country
 func (server CountryServer) DeleteCountryHandler(w http.ResponseWriter, r *http.Request) {
 	deleteDTO := new(viewmodel.DeleteCountry)
 	err := util.ParseRequestData(r, deleteDTO)
@@ -57,7 +68,7 @@ func (server CountryServer) DeleteCountryHandler(w http.ResponseWriter, r *http.
 	return
 }
 
-// PUT /api/referencedal/country
+// PUT /api/reference/country
 func (server CountryServer) UpdateCountryHandler(w http.ResponseWriter, r *http.Request) {
 	updateDTO := new(viewmodel.UpdateCountry)
 	err := util.ParseRequestData(r, updateDTO)
@@ -83,7 +94,20 @@ func (server CountryServer) UpdateCountryHandler(w http.ResponseWriter, r *http.
 	return
 }
 
-// GET /api/referencedal/country
+// SearchCountryHandler handles request
+// 	 GET /api/reference/country
+//
+// Accepted search parameters:
+//	{
+//		"id": 1,
+// 		"name": "A New Country",
+// 		"abbreviation": "ANC"
+//	}
+// Sample results returned
+//	[
+//		{"id": 1, name: "United State", abbreviation: "USA"},
+//		{"id": 2, name: "Canada", abbreviation: "CAN"}
+//	]
 func (server CountryServer) SearchCountryHandler(w http.ResponseWriter, r *http.Request) {
 	if server.ICountryRepository == nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, "data source for SearchCountryHandler is not specified", nil)

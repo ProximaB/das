@@ -15,7 +15,26 @@ type AccountServer struct {
 	businesslogic.IOrganizerProvisionHistoryRepository
 }
 
-// POST /api/account/register
+// RegisterAccountHandler handle the request
+// 	POST /api/account/register
+// Accepted JSON parameters:
+//	{
+//		"accounttype": 1,
+//		"email": "awesomeuser@email.com",
+//		"phone": 1234567890,
+//		"firstname": "John",
+//		"middlename": "Adams",
+//		"lastname": "Smith",
+//		"dateofbirth: "1990-01-01T06:00:00.0000Z",
+//		"gender": 2,
+//		"password": !@#$1234,
+//		"tosaccepted": true,
+//		"ppaccepted": true
+//	}
+// In case an user of under-13 registers an account, parental control will be required and
+// additional parameters will be required as well:
+// 	"byguardian": true
+//	"signature": "John Smith Sr."
 func (server AccountServer) RegisterAccountHandler(w http.ResponseWriter, r *http.Request) {
 	createAccount := new(viewmodel.CreateAccount)
 
@@ -47,6 +66,9 @@ func (server AccountServer) RegisterAccountHandler(w http.ResponseWriter, r *htt
 			ProvisionRepo: server.IOrganizerProvisionRepository,
 			HistoryRepo:   server.IOrganizerProvisionHistoryRepository,
 		}
+	case businesslogic.ACCOUNT_TYPE_ADMINISTRATOR:
+		util.RespondJsonResult(w, http.StatusBadRequest, "invalid account type", nil)
+		return
 	default:
 		strategy = businesslogic.CreateAccountStrategy{
 			AccountRepo: server.IAccountRepository,

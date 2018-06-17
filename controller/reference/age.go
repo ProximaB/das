@@ -12,6 +12,20 @@ type AgeServer struct {
 	referencebll.IAgeRepository
 }
 
+// SearchAgeHandler handles request
+//	GET /api/reference/age
+//
+// Accepted parameters:
+//	{
+//		"id": 1,
+//		"federation": 2,
+//		"division": 3
+//	}
+// Sample results returned:
+//	[
+//		{ "id": 3, "name": "Adult", "division": 4, "enforced": true, "minimum": 19, "maximum": 99 },
+//		{ "id": 4, "name": "Senior I", "division": 4, "enforced": true, "minimum": 36, "maximum": 45 },
+//	]
 func (server AgeServer) SearchAgeHandler(w http.ResponseWriter, r *http.Request) {
 	criteria := new(referencebll.SearchAgeCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {

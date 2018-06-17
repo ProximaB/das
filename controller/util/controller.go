@@ -1,4 +1,3 @@
-// experiment feature
 package util
 
 import (

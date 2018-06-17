@@ -31,24 +31,20 @@ func countryToViewModel(country referencebll.Country) Country {
 type CreateCountry struct {
 	Name         string `schema:"name"`
 	Abbreviation string `schema:"abbreviation"`
-	CreateUserID int    `schema:"CreateUserID"`
 }
 
 func (cc *CreateCountry) ToDataModel() referencebll.Country {
 	return referencebll.Country{
 		Name:            cc.Name,
 		Abbreviation:    cc.Abbreviation,
-		CreateUserID:    &cc.CreateUserID,
 		DateTimeCreated: time.Now(),
-		UpdateUserID:    &cc.CreateUserID,
 		DateTimeUpdated: time.Now(),
 	}
 }
 
 type DeleteCountry struct {
-	CountryID    int    `schema:"id"`
-	Name         string `schema:"name"`
-	UpdateUserID int    `schema:"UpdateUserID"`
+	CountryID int    `schema:"id"`
+	Name      string `schema:"name"`
 }
 
 type UpdateCountry struct {

@@ -12,7 +12,7 @@ type ProficiencyServer struct {
 	referencebll.IProficiencyRepository
 }
 
-// GET /api/referencedal/proficiency
+// GET /api/reference/proficiency
 func (server ProficiencyServer) SearchProficiencyHandler(w http.ResponseWriter, r *http.Request) {
 	criteria := new(referencebll.SearchProficiencyCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
@@ -33,11 +33,11 @@ func (server ProficiencyServer) SearchProficiencyHandler(w http.ResponseWriter, 
 	}
 }
 
-// POST /api/referencedal/proficiency
+// POST /api/reference/proficiency
 func (server ProficiencyServer) CreateProficiencyHandler(w http.ResponseWriter, r *http.Request) {}
 
-// DELETE /api/referencedal/proficiency
+// DELETE /api/reference/proficiency
 func (server ProficiencyServer) DeleteProficiencyHandler(w http.ResponseWriter, r *http.Request) {}
 
-// PUT /api/referencedal/proficiency
+// PUT /api/reference/proficiency
 func (server ProficiencyServer) UpdateProficiencyHandler(w http.ResponseWriter, r *http.Request) {}

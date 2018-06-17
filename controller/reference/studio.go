@@ -12,7 +12,7 @@ type StudioServer struct {
 	referencebll.IStudioRepository
 }
 
-// GET /api/referencedal/studio
+// GET /api/reference/studio
 func (server StudioServer) SearchStudioHandler(w http.ResponseWriter, r *http.Request) {
 	criteria := new(referencebll.SearchStudioCriteria)
 
@@ -35,17 +35,17 @@ func (server StudioServer) SearchStudioHandler(w http.ResponseWriter, r *http.Re
 	}
 }
 
-// POST /api/referencedal/studio
+// POST /api/reference/studio
 func (server StudioServer) CreateStudioHandler(w http.ResponseWriter, r *http.Request) {
 	util.RespondJsonResult(w, http.StatusNotImplemented, "not implemented", nil)
 }
 
-// PUT /api/referencedal/studio
+// PUT /api/reference/studio
 func (server StudioServer) UpdateStudioHandler(w http.ResponseWriter, r *http.Request) {
 	util.RespondJsonResult(w, http.StatusNotImplemented, "not implemented", nil)
 }
 
-// DELETE /api/referencedal/studio
+// DELETE /api/reference/studio
 func (server StudioServer) DeleteStudioHandler(w http.ResponseWriter, r *http.Request) {
 	util.RespondJsonResult(w, http.StatusNotImplemented, "not implemented", nil)
 }

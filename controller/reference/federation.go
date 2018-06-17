@@ -13,7 +13,7 @@ type FederationServer struct {
 	referencebll.IFederationRepository
 }
 
-// GET /api/referencedal/federation
+// GET /api/reference/federation
 func (server FederationServer) SearchFederationHandler(w http.ResponseWriter, r *http.Request) {
 	criteria := new(referencebll.SearchFederationCriteria)
 	if err := util.ParseRequestData(r, criteria); err != nil {
@@ -40,11 +40,11 @@ func (server FederationServer) SearchFederationHandler(w http.ResponseWriter, r 
 	w.Write(output)
 }
 
-// POST /api/referencedal/federation
+// POST /api/reference/federation
 func (server FederationServer) CreateFederationHandler(w http.ResponseWriter, r *http.Request) {}
 
-// DELETE /api/referencedal/federation
+// DELETE /api/reference/federation
 func (server FederationServer) DeleteFederationHandler(w http.ResponseWriter, r *http.Request) {}
 
-// PUT /api/referencedal/federation
+// PUT /api/reference/federation
 func (server FederationServer) UpdateFederationHandler(w http.ResponseWriter, r *http.Request) {}

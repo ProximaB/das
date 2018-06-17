@@ -11,6 +11,7 @@ const (
 	ACCOUNT_STATUS_LOCKED     = 4
 )
 
+// IAccountStatusRepository specifies the requirements
 type IAccountStatusRepository interface {
 	GetAccountStatus() ([]AccountStatus, error)
 }

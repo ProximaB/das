@@ -12,7 +12,7 @@ type StyleServer struct {
 	referencebll.IStyleRepository
 }
 
-// GET /api/referencedal/style
+// GET /api/reference/style
 func (server StyleServer) SearchStyleHandler(w http.ResponseWriter, r *http.Request) {
 	criteria := new(referencebll.SearchStyleCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {

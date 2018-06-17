@@ -14,7 +14,7 @@ type CityServer struct {
 	referencebll.ICityRepository
 }
 
-// POST /api/referencedal/city
+// POST /api/reference/city
 func (server CityServer) CreateCityHandler(w http.ResponseWriter, r *http.Request) {
 	dto := new(viewmodel.CreateCity)
 	if err := util.ParseRequestBodyData(r, dto); err != nil {
@@ -30,7 +30,7 @@ func (server CityServer) CreateCityHandler(w http.ResponseWriter, r *http.Reques
 	util.RespondJsonResult(w, http.StatusOK, "success", nil)
 }
 
-// DELETE /api/referencedal/city
+// DELETE /api/reference/city
 func (server CityServer) DeleteCityHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
 	deleteDTO := new(viewmodel.DeleteCity)
@@ -57,7 +57,7 @@ func (server CityServer) DeleteCityHandler(w http.ResponseWriter, r *http.Reques
 	}
 }
 
-// PUT /api/referencedal/city
+// PUT /api/reference/city
 func (server CityServer) UpdateCityHandler(w http.ResponseWriter, r *http.Request) {
 	updateDTO := new(viewmodel.UpdateCity)
 	err := util.ParseRequestBodyData(r, updateDTO)
@@ -68,7 +68,7 @@ func (server CityServer) UpdateCityHandler(w http.ResponseWriter, r *http.Reques
 	util.RespondJsonResult(w, http.StatusNotImplemented, "", nil)
 }
 
-// GET /api/referencedal/city
+// GET /api/reference/city
 func (server CityServer) SearchCityHandler(w http.ResponseWriter, r *http.Request) {
 	criteria := new(referencebll.SearchCityCriteria)
 	err := util.ParseRequestData(r, criteria)

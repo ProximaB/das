@@ -4,6 +4,7 @@ import (
 	"time"
 )
 
+// EventDance represents the many-to-many relationship between competition event and dance references.
 type EventDance struct {
 	ID              int
 	EventID         int

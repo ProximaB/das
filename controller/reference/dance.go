@@ -12,7 +12,7 @@ type DanceServer struct {
 	referencebll.IDanceRepository
 }
 
-// GET /api/referencedal/dance
+// GET /api/reference/dance
 func (server DanceServer) SearchDanceHandler(w http.ResponseWriter, r *http.Request) {
 	criteria := new(referencebll.SearchDanceCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {

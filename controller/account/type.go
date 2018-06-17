@@ -7,15 +7,30 @@ import (
 	"net/http"
 )
 
+// AccountTypeServer is a micro-server that serves requests that ask for available
+// account types in DAS
 type AccountTypeServer struct {
 	businesslogic.IAccountTypeRepository
 }
 
-// GET /api/account/type
+// GetAccountTypeHandler handles the request
+//	GET /api/account/type
+// No parameter is required for this request.
+//
+// Sample returned result:
+//	[
+// 		{"id":1,"name":"Athlete"},
+// 		{"id":2,"name":"Adjudicator"},
+// 		{"id":3,"name":"Scrutineer"},
+// 		{"id":4,"name":"Organizer"},
+// 		{"id":5,"name":"Deck Captain"},
+// 		{"id":6,"name":"Emcee"}
+// 	]
 func (server AccountTypeServer) GetAccountTypeHandler(w http.ResponseWriter, r *http.Request) {
 	data := make([]viewmodel.AccountType, 0)
 	types, _ := server.GetAccountTypes()
 	for _, each := range types {
+		// System administrator should not be available for public registration
 		if each.ID != businesslogic.ACCOUNT_TYPE_ADMINISTRATOR {
 			data = append(data, viewmodel.AccountTypeDataModelToViewModel(each))
 		}

@@ -9,7 +9,6 @@ import (
 )
 
 var accountTypeRepository = PostgresAccountTypeRepository{
-
 	Database:   nil,
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }

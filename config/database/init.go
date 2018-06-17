@@ -7,7 +7,7 @@ import (
 	"os"
 )
 
-func OpenDatabaseConnection() {
+func openDatabaseConnection() {
 	connectionString := os.Getenv("POSTGRES_CONNECTION")
 	// for testing, use default connection
 	if len(connectionString) == 0 {
@@ -27,7 +27,7 @@ func OpenDatabaseConnection() {
 		log.Printf("[error] cannot ping database without error: %s\n", err.Error())
 	}
 	if err == nil {
-		log.Println("[success] connected to the database")
+		log.Println("[success] connected to database with given connection string")
 	}
 	if PostgresDatabase == nil {
 		log.Fatal("cannot create connection to the database")
@@ -35,7 +35,7 @@ func OpenDatabaseConnection() {
 }
 
 func init() {
-	OpenDatabaseConnection()
+	openDatabaseConnection()
 
 	// Reference data
 	CountryRepository.Database = PostgresDatabase

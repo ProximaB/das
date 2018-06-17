@@ -107,5 +107,5 @@ func (repo PostgresOrganizerProvisionRepository) DeleteOrganizerProvision(provis
 	if repo.Database == nil {
 		return errors.New("data source of PostgresOrganizerProvisionRepository is not specified")
 	}
-	return errors.New("not implemented")
+	return errors.New("deleting organizer provision history is prohibited")
 }

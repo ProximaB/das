@@ -12,7 +12,7 @@ type SchoolServer struct {
 	referencebll.ISchoolRepository
 }
 
-// GET /api/referencedal/school
+// GET /api/reference/school
 func (server SchoolServer) SearchSchoolHandler(w http.ResponseWriter, r *http.Request) {
 	criteria := new(referencebll.SearchSchoolCriteria)
 
@@ -35,11 +35,11 @@ func (server SchoolServer) SearchSchoolHandler(w http.ResponseWriter, r *http.Re
 	}
 }
 
-// POST /api/referencedal/school
+// POST /api/reference/school
 func (server SchoolServer) CreateSchoolHandler(w http.ResponseWriter, r *http.Request) {}
 
-// PUT /api/referencedal/school
+// PUT /api/reference/school
 func (server SchoolServer) UpdateSchoolHandler(w http.ResponseWriter, r *http.Request) {}
 
-// DELETE /api/referencedal/school
+// DELETE /api/reference/school
 func (server SchoolServer) DeleteSchoolHandler(w http.ResponseWriter, r *http.Request) {}

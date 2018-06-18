@@ -19,7 +19,8 @@ type CompetitionRegistrationServer struct {
 	authentication.IAuthenticationStrategy
 }
 
-// POST /api/athlete/registration
+// CreateAthleteRegistrationHandler handles the request
+//	POST /api/athlete/registration
 // This DasController is for athlete use only. Organizer will have to use a different DasController
 func (server CompetitionRegistrationServer) CreateAthleteRegistrationHandler(w http.ResponseWriter, r *http.Request) {
 	// validate identity first
@@ -67,8 +68,8 @@ func (server CompetitionRegistrationServer) CreateAthleteRegistrationHandler(w h
 		DateTimeUpdated:    time.Now(),
 	}
 
-	leadCompEntry.CreateCompetitionEntry(server.ICompetitionEntryRepository)
-	followCompEntry.CreateCompetitionEntry(server.ICompetitionEntryRepository)
+	leadCompEntry.CreateCompetitionEntry(server.ICompetitionRepository, server.ICompetitionEntryRepository)
+	followCompEntry.CreateCompetitionEntry(server.ICompetitionRepository, server.ICompetitionEntryRepository)
 
 	createEntryErr := businesslogic.CreateEventEntries(&account, registrationDTO, server.IEventEntryRepository)
 	dropEventErr := businesslogic.DropEventEntries(&account, registrationDTO, server.IEventEntryRepository)

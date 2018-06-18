@@ -34,7 +34,7 @@ func (m *MockIEventRepository) EXPECT() *MockIEventRepositoryMockRecorder {
 }
 
 // SearchEvent mocks base method
-func (m *MockIEventRepository) SearchEvent(criteria *businesslogic.SearchEventCriteria) ([]businesslogic.Event, error) {
+func (m *MockIEventRepository) SearchEvent(criteria businesslogic.SearchEventCriteria) ([]businesslogic.Event, error) {
 	ret := m.ctrl.Call(m, "SearchEvent", criteria)
 	ret0, _ := ret[0].([]businesslogic.Event)
 	ret1, _ := ret[1].(error)

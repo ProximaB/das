@@ -70,21 +70,21 @@ func TestEvent_Equivalent(t *testing.T) {
 	event_1.AddDance(dance_1)
 	event_2.AddDance(dance_1)
 
-	assert.True(t, event_1.EquivalentTo(event_2))
+	assert.True(t, event_1.EquivalentTo(*event_2))
 
 	event_1.FederationID = 1
 	event_2.FederationID = 1
-	assert.True(t, event_1.EquivalentTo(event_2))
+	assert.True(t, event_1.EquivalentTo(*event_2))
 
 	event_1.DivisionID = 3
 	event_2.DivisionID = 4
-	assert.False(t, event_1.EquivalentTo(event_2))
+	assert.False(t, event_1.EquivalentTo(*event_2))
 
 	event_1.AddDance(dance_2)
-	assert.False(t, event_1.EquivalentTo(event_2))
+	assert.False(t, event_1.EquivalentTo(*event_2))
 
 	event_2.AddDance(dance_3)
-	assert.False(t, event_1.EquivalentTo(event_2))
+	assert.False(t, event_1.EquivalentTo(*event_2))
 
 }
 
@@ -95,8 +95,8 @@ func TestCreateEvent(t *testing.T) {
 	event.SetDances(testDances)
 
 	eventRepository := mock_businesslogic.NewMockIEventRepository(mockCtrl)
-	eventRepository.EXPECT().CreateEvent(&event).Return(errors.New("should not allow wrong events to be created"))
+	eventRepository.EXPECT().CreateEvent(event).Return(errors.New("should not allow wrong events to be created"))
 
-	err := eventRepository.CreateEvent(&event)
+	err := eventRepository.CreateEvent(event)
 	assert.NotNil(t, err, "creating an uninitialized event should result in an error")
 }

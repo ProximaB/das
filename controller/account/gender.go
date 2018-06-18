@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-// this structure will allow controller-based caching in the future, if needed
+// GenderServer serves requests that ask for all possible gender options in DAS
 type GenderServer struct {
 	referencebll.IGenderRepository
 }

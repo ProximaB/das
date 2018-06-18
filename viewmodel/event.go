@@ -25,7 +25,7 @@ type CreateEventViewModel struct {
 	Dances          []int `json:"dances"`
 }
 
-func (dto CreateEventViewModel) ToDomainModel(user businesslogic.Account, repo referencebll.IDanceRepository) businesslogic.Event {
+func (dto CreateEventViewModel) ToDomainModel(user businesslogic.Account, repo referencebll.IDanceRepository) *businesslogic.Event {
 	event := businesslogic.NewEvent()
 	event.CompetitionID = dto.CompetitionID
 	event.CategoryID = businesslogic.EVENT_CATEGORY_COMPETITIVE_BALLROOM

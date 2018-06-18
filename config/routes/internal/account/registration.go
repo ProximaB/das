@@ -11,7 +11,7 @@ import (
 const apiAccountRegistrationEndpoint = "/api/account/register"
 const apiAccountAuthenticationEndpoint = "/api/account/authenticate"
 
-var accountServer = account.AccountServer{
+var accountServer = account.Server{
 	database.AccountRepository,
 	database.OrganizerProvisionRepository,
 	database.OrganizerProvisionHistoryRepository,

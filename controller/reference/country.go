@@ -13,6 +13,7 @@ import (
 	"net/http"
 )
 
+// CountryServer serves requests that perform
 type CountryServer struct {
 	referencebll.ICountryRepository
 }
@@ -26,6 +27,13 @@ type CountryServer struct {
 // 		"abbreviation": "ANC"
 //	}
 // Authentication is required.
+//
+// Sample returned response:
+//	{
+//		"status": 401,
+//		"message": "invalid authorization token",
+//		"data": null
+//	}
 func (server CountryServer) CreateCountryHandler(w http.ResponseWriter, r *http.Request) {
 	payload := new(viewmodel.CreateCountry)
 	var err error

@@ -10,26 +10,29 @@ import (
 )
 
 type PostgresEventEntryRepository struct {
-	database   *sql.DB
-	sqlBuilder squirrel.StatementBuilderType
+	Database   *sql.DB
+	SqlBuilder squirrel.StatementBuilderType
 }
 
 const (
-	DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_TABLE                             = "DAS.EVENT_COMPETITIVE_BALLROOM_ENTRY"
-	DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID = "COMPETITIVE_BALLROOM_EVENT_ID"
+	DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_TABLE                             = "DAS.EVENT__ENTRY"
+	DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID = "EVENT_ID"
 	DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_LEADTAG                       = "LEADTAG"
 )
 
-func (repo PostgresEventEntryRepository) CreateEventEntry(entry businesslogic.EventEntry) error {
-	clause := repo.sqlBuilder.Insert("").
-		Into(DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_TABLE).
-		Columns(DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID,
-			common.COL_PARTNERSHIP_ID,
-			DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_LEADTAG,
-			common.COL_CREATE_USER_ID,
-			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
-			common.COL_DATETIME_UPDATED).Values(
+func (repo PostgresEventEntryRepository) CreateEventEntry(entry *businesslogic.EventEntry) error {
+	if repo.Database == nil {
+		return errors.New("data source of PostgresEventEntryRepository is not specified")
+	}
+	stmt := repo.SqlBuilder.Insert("").Into(DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_TABLE).Columns(
+		DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID,
+		common.COL_PARTNERSHIP_ID,
+		DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_LEADTAG,
+		common.COL_CREATE_USER_ID,
+		common.COL_DATETIME_CREATED,
+		common.COL_UPDATE_USER_ID,
+		common.COL_DATETIME_UPDATED,
+	).Values(
 		entry.EventID,
 		entry.PartnershipID,
 		entry.CompetitorTag,
@@ -37,17 +40,24 @@ func (repo PostgresEventEntryRepository) CreateEventEntry(entry businesslogic.Ev
 		entry.DateTimeCreated,
 		entry.UpdateUserID,
 		entry.DateTimeUpdated,
-	)
-	_, err := clause.RunWith(repo.database).Exec()
+	).Suffix("RETURNING ID")
+	clause, args, err := stmt.ToSql()
+	if tx, txErr := repo.Database.Begin(); txErr != nil {
+		return txErr
+	} else {
+		row := repo.Database.QueryRow(clause, args...)
+		row.Scan(&entry.ID)
+		tx.Commit()
+	}
 	return err
 }
 
 func (repo PostgresEventEntryRepository) DeleteEventEntry(entry businesslogic.EventEntry) error {
-	clause := repo.sqlBuilder.Delete("").
+	clause := repo.SqlBuilder.Delete("").
 		From(DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_TABLE).
 		Where(squirrel.Eq{DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID: entry.EventID}).
 		Where(squirrel.Eq{common.COL_PARTNERSHIP_ID: entry.PartnershipID})
-	_, err := clause.RunWith(repo.database).Exec()
+	_, err := clause.RunWith(repo.Database).Exec()
 	return err
 }
 
@@ -57,7 +67,7 @@ func (repo PostgresEventEntryRepository) UpdateEventEntry(entry businesslogic.Ev
 
 // Returns CompetitiveBallroomEventEntry, which is supposed to be used by competitor only
 func (repo PostgresEventEntryRepository) SearchEventEntry(criteria businesslogic.SearchEventEntryCriteria) ([]businesslogic.EventEntry, error) {
-	clause := repo.sqlBuilder.Select(
+	clause := repo.SqlBuilder.Select(
 		fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
 			common.PRIMARY_KEY,
 			DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID,
@@ -77,7 +87,7 @@ func (repo PostgresEventEntryRepository) SearchEventEntry(criteria businesslogic
 	}
 
 	entries := make([]businesslogic.EventEntry, 0)
-	rows, err := clause.RunWith(repo.database).Query()
+	rows, err := clause.RunWith(repo.Database).Query()
 
 	if err != nil {
 		rows.Close()

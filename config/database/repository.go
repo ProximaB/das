@@ -3,6 +3,7 @@ package database
 import (
 	"github.com/DancesportSoftware/das/dataaccess/account"
 	"github.com/DancesportSoftware/das/dataaccess/competition"
+	"github.com/DancesportSoftware/das/dataaccess/entry"
 	"github.com/DancesportSoftware/das/dataaccess/event"
 	"github.com/DancesportSoftware/das/dataaccess/partnership"
 	"github.com/DancesportSoftware/das/dataaccess/provision"
@@ -102,10 +103,18 @@ var CompetitionRepository = competition.PostgresCompetitionRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
+var CompetitionEntryRepository = entry.PostgresCompetitionEntryRepository{
+	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
 var EventRepository = event.PostgresEventRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
 var EventMetaRepository = event.PostgresEventMetaRepository{
+	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
+var EventEntryRepository = entry.PostgresEventEntryRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }

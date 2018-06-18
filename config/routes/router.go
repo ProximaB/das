@@ -9,6 +9,7 @@ import (
 	"github.com/DancesportSoftware/das/config/routes/internal/organizer"
 	"github.com/DancesportSoftware/das/config/routes/internal/partnership"
 	"github.com/DancesportSoftware/das/config/routes/internal/reference"
+	"github.com/DancesportSoftware/das/config/routes/internal/registration"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/gorilla/mux"
 	"log"
@@ -167,6 +168,7 @@ func DasRouter() *mux.Router {
 	addDasController(router, competition.GetCompetitionStatusController)
 
 	// athlete
+	addDasControllerGroup(router, registration.CompetitionRegistrationControllerGroup)
 
 	// scrutineer
 

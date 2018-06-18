@@ -38,3 +38,4 @@ node_modules/
 
 # Google cloud
 app.yaml
+*.yaml

@@ -11,6 +11,7 @@ const (
 	EVENT_CATEGORY_COMPETITIVE_BALLROOM = 1
 	EVENT_CATEGORY_SHOWDANCE            = 2
 	EVENT_CATEGORY_CABARET              = 3
+	EVENT_CATEGORY_THEATRE_ART          = 4
 )
 
 type SearchEventCriteria struct {
@@ -46,10 +47,11 @@ type Event struct {
 	DateTimeUpdated time.Time
 }
 
-func NewEvent() Event {
+// NewEvent create a new
+func NewEvent() *Event {
 	e := Event{}
 	e.dances = make(map[int]bool)
-	return e
+	return &e
 }
 
 type IEventRepository interface {

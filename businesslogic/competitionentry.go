@@ -6,7 +6,7 @@ import (
 	"time"
 )
 
-// CompetitionEntry is entry for a competition (not events).
+// CompetitionEntry is the entry for a competition (not including events).
 // Athlete does not have to have a partner to enter a competition (depending on the rule)
 // CompetitionEntry helps with
 // - finding attendance of competition
@@ -56,7 +56,20 @@ type CompetitionTBAEntry struct {
 	DateTimeUpdated time.Time
 }
 
-func (entry *CompetitionEntry) CreateCompetitionEntry(entryRepo ICompetitionEntryRepository) error {
+// CreateCompetitionEntry will check if current entry exists in the repository. If yes, an error will be returned,
+// if not, a competition entry will be created for this athlete.
+// Competition must be during open registration stage.
+func (entry *CompetitionEntry) CreateCompetitionEntry(competitionRepo ICompetitionRepository, entryRepo ICompetitionEntryRepository) error {
+
+	// check if competition still accept entries
+	compSearchResults, searchCompErr := competitionRepo.SearchCompetition(SearchCompetitionCriteria{ID: entry.CompetitionID, StatusID: COMPETITION_STATUS_OPEN_REGISTRATION})
+	if searchCompErr != nil {
+		return searchCompErr
+	}
+	if len(compSearchResults) != 1 {
+		return errors.New("competition does not exist or it no longer accept new entries")
+	}
+
 	criteria := SearchCompetitionEntryCriteria{
 		AthleteID:     entry.AthleteID,
 		CompetitionID: entry.CompetitionID,
@@ -74,5 +87,6 @@ func (entry *CompetitionEntry) CreateCompetitionEntry(entryRepo ICompetitionEntr
 	if len(searchResults) > 0 {
 		return errors.New(fmt.Sprintf("competition entry for athlete %d is already created", entry.AthleteID))
 	}
+
 	return errors.New("cannot create competition entry for this athlete")
 }

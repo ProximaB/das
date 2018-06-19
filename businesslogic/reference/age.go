@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package referencebll
 
 import (
@@ -22,9 +26,8 @@ type Age struct {
 
 // SearchAgeCriteria provides parameters when searching Age in IAgeRepository
 type SearchAgeCriteria struct {
-	FederationID int `schema:"federation"`
-	DivisionID   int `schema:"division"`
-	AgeID        int `schema:"id"`
+	DivisionID int `schema:"division"`
+	AgeID      int `schema:"id"`
 }
 
 // IAgeRepository provides an interface for other businesslogic code to access Age data

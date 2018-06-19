@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package reference
 
 import (
@@ -28,7 +32,7 @@ var createCountryController = util.DasController{
 	Method:       http.MethodPost,
 	Endpoint:     apiReferenceCountryEndpoint,
 	Handler:      countryServer.CreateCountryHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
 var deleteCountryController = util.DasController{
@@ -37,7 +41,7 @@ var deleteCountryController = util.DasController{
 	Method:       http.MethodDelete,
 	Endpoint:     apiReferenceCountryEndpoint,
 	Handler:      countryServer.DeleteCountryHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
 var updateCountryController = util.DasController{
@@ -46,9 +50,10 @@ var updateCountryController = util.DasController{
 	Method:       http.MethodPut,
 	Endpoint:     apiReferenceCountryEndpoint,
 	Handler:      countryServer.UpdateCountryHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
+// CountryControllerGroup is a collection of handler functions for managing countries in DAS
 var CountryControllerGroup = util.DasControllerGroup{
 	Controllers: []util.DasController{
 		searchCountryController,

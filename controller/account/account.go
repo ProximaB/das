@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package account
 
 import (
@@ -66,7 +70,7 @@ func (server Server) RegisterAccountHandler(w http.ResponseWriter, r *http.Reque
 			ProvisionRepo: server.IOrganizerProvisionRepository,
 			HistoryRepo:   server.IOrganizerProvisionHistoryRepository,
 		}
-	case businesslogic.ACCOUNT_TYPE_ADMINISTRATOR:
+	case businesslogic.AccountTypeAdministrator:
 		util.RespondJsonResult(w, http.StatusBadRequest, "invalid account type", nil)
 		return
 	default:

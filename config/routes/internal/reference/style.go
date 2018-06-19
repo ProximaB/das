@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package reference
 
 import (
@@ -29,7 +33,7 @@ var createStyleController = util.DasController{
 	Method:       http.MethodPost,
 	Endpoint:     apiReferenceStyleEndpoint,
 	Handler:      styleServer.CreateStyleHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
 var deleteStyleController = util.DasController{
@@ -38,7 +42,7 @@ var deleteStyleController = util.DasController{
 	Method:       http.MethodDelete,
 	Endpoint:     apiReferenceStyleEndpoint,
 	Handler:      styleServer.DeleteStyleHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
 var updateStyleController = util.DasController{
@@ -47,9 +51,10 @@ var updateStyleController = util.DasController{
 	Method:       http.MethodPut,
 	Endpoint:     apiReferenceStyleEndpoint,
 	Handler:      styleServer.UpdateStyleHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
+// StyleControllerGroup is a collection of handler functions for managing dance styles in DAS
 var StyleControllerGroup = util.DasControllerGroup{
 	Controllers: []util.DasController{
 		searchStyleController,

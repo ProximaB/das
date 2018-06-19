@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package account
 
 import (
@@ -31,7 +35,7 @@ func (server AccountTypeServer) GetAccountTypeHandler(w http.ResponseWriter, r *
 	types, _ := server.GetAccountTypes()
 	for _, each := range types {
 		// System administrator should not be available for public registration
-		if each.ID != businesslogic.ACCOUNT_TYPE_ADMINISTRATOR {
+		if each.ID != businesslogic.AccountTypeAdministrator {
 			data = append(data, viewmodel.AccountTypeDataModelToViewModel(each))
 		}
 	}

@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package reference
 
 import (
@@ -29,7 +33,7 @@ var createFederationController = util.DasController{
 	Method:       http.MethodPost,
 	Endpoint:     apiReferenceFederationEndpoint,
 	Handler:      federationServer.CreateFederationHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
 var deleteFederationController = util.DasController{
@@ -38,7 +42,7 @@ var deleteFederationController = util.DasController{
 	Method:       http.MethodDelete,
 	Endpoint:     apiReferenceFederationEndpoint,
 	Handler:      federationServer.DeleteFederationHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
 var updateFederationController = util.DasController{
@@ -47,9 +51,10 @@ var updateFederationController = util.DasController{
 	Method:       http.MethodPut,
 	Endpoint:     apiReferenceFederationEndpoint,
 	Handler:      federationServer.UpdateFederationHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
+// FederationControllerGroup is a collection of handler functions for managing federations in DAS
 var FederationControllerGroup = util.DasControllerGroup{
 	Controllers: []util.DasController{
 		searchFederationController,

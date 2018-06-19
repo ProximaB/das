@@ -1,16 +1,21 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package businesslogic
 
 import "time"
 
 const (
-	ACCOUNT_TYPE_NOAUTH        = 0
-	ACCOUNT_TYPE_ATHLETE       = 1
-	ACCOUNT_TYPE_ADJUDICATOR   = 2
-	ACCOUNT_TYPE_SCRUTINEER    = 3
-	ACCOUNT_TYPE_ORGANIZER     = 4
-	ACCOUNT_TYPE_DECKCAPTAIN   = 5
-	ACCOUNT_TYPE_EMCEE         = 6
-	ACCOUNT_TYPE_ADMINISTRATOR = 7
+	AccountTypeUnauthorized  = -1
+	ACCOUNT_TYPE_NOAUTH      = 0
+	ACCOUNT_TYPE_ATHLETE     = 1
+	AccountTypeAdjudicator   = 2
+	AccountTypeScrutineer    = 3
+	ACCOUNT_TYPE_ORGANIZER   = 4
+	AccountTypeDeckCaptain   = 5
+	AccountTypeEmcee         = 6
+	AccountTypeAdministrator = 7
 )
 
 type AccountType struct {

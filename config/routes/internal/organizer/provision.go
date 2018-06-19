@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package organizer
 
 import (
@@ -23,7 +27,7 @@ var updateOrganizerProvisionController = util.DasController{
 	Method:       http.MethodPut,
 	Endpoint:     apiAdminManageOrganizerProvision,
 	Handler:      manageOrganizerProvisionServer.UpdateOrganizerProvisionHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
 var ManageOrganizerProvisionControllerGroup = util.DasControllerGroup{

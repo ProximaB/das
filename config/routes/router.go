@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package routes
 
 import (
@@ -51,10 +55,9 @@ func setResponseHeader(h http.HandlerFunc) http.HandlerFunc {
 func getRequestUserRole(r *http.Request) (int, error) {
 	account, err := authentication.AuthenticationStrategy.GetCurrentUser(r, database.AccountRepository)
 	if err != nil {
-		return 0, err
-	} else {
-		return account.AccountTypeID, nil
+		return businesslogic.AccountTypeUnauthorized, err
 	}
+	return account.AccountTypeID, nil
 }
 func addDasController(router *mux.Router, handler util.DasController) {
 	if len(handler.Name) < 1 {
@@ -124,7 +127,8 @@ func addDasControllerGroup(router *mux.Router, group util.DasControllerGroup) {
 	}
 }
 
-func DasRouter() *mux.Router {
+// NewDasRouter creates a new router that handle requests in DAS
+func NewDasRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	router.Schemes("https")
 

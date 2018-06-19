@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package registration
 
 import (
@@ -30,6 +34,8 @@ var createCompetitionRegistrationController = util.DasController{
 	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ATHLETE},
 }
 
+// CompetitionRegistrationControllerGroup is a collection of handler functions for managing
+// Competition Registration in DAS
 var CompetitionRegistrationControllerGroup = util.DasControllerGroup{
 	Controllers: []util.DasController{
 		createCompetitionRegistrationController,

@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package businesslogic
 
 import (
@@ -59,8 +63,9 @@ type SearchAccountCriteria struct {
 	AccountStatus int
 }
 
-func (self Account) GetName() string {
-	return self.FirstName + " " + self.LastName
+// GetName returns the full name of a user (excluding middle name, if any)
+func (account Account) GetName() string {
+	return account.FirstName + " " + account.LastName
 }
 
 // ICreateAccountStrategy specifies the interface that account creation strategy needs to implement.
@@ -73,6 +78,7 @@ type CreateAccountStrategy struct {
 	AccountRepo IAccountRepository
 }
 
+// CreateAccount creates a non-organizer account
 func (strategy CreateAccountStrategy) CreateAccount(account Account, password string) error {
 	if account.AccountTypeID == ACCOUNT_TYPE_ORGANIZER {
 		return errors.New("creating an organizer account with the wrong strategy")
@@ -80,12 +86,14 @@ func (strategy CreateAccountStrategy) CreateAccount(account Account, password st
 	return createAccount(&account, password, strategy.AccountRepo)
 }
 
+// CreateOrganizerAccountStrategy creates an organizer account, which follows a different procedure from other accounts
 type CreateOrganizerAccountStrategy struct {
 	AccountRepo   IAccountRepository
 	ProvisionRepo IOrganizerProvisionRepository
 	HistoryRepo   IOrganizerProvisionHistoryRepository
 }
 
+// CreateAccount creates an organizer account
 func (strategy CreateOrganizerAccountStrategy) CreateAccount(account Account, password string) error {
 	if strategy.AccountRepo == nil {
 		return errors.New("account repository is null")
@@ -128,7 +136,7 @@ func createAccount(account *Account, password string, repo IAccountRepository) e
 	return repo.CreateAccount(account)
 }
 
-// GetAccountByEmil will retrieve account from repo by email. This function will return either a matched account
+// GetAccountByEmail will retrieve account from repo by email. This function will return either a matched account
 // or an empty account
 func GetAccountByEmail(email string, repo IAccountRepository) Account {
 	accounts, _ := repo.SearchAccount(SearchAccountCriteria{
@@ -179,7 +187,7 @@ func checkEmailUsed(email string, repo IAccountRepository) bool {
 }
 
 func validateAccountRegistration(account *Account, accountRepo IAccountRepository) error {
-	if account.AccountTypeID > ACCOUNT_TYPE_ADMINISTRATOR || account.AccountTypeID < ACCOUNT_TYPE_ATHLETE {
+	if account.AccountTypeID > AccountTypeAdministrator || account.AccountTypeID < ACCOUNT_TYPE_ATHLETE {
 		return errors.New("invalid account type")
 	}
 	if len(account.FirstName) < 2 || len(account.LastName) < 2 {

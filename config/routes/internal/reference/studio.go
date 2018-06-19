@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package reference
 
 import (
@@ -29,7 +33,7 @@ var createStudioController = util.DasController{
 	Method:       http.MethodPost,
 	Endpoint:     apiReferenceStudioEndpoint,
 	Handler:      studioServer.CreateStudioHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR, businesslogic.ACCOUNT_TYPE_ATHLETE},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator, businesslogic.ACCOUNT_TYPE_ATHLETE},
 }
 
 var deleteStudioController = util.DasController{
@@ -38,7 +42,7 @@ var deleteStudioController = util.DasController{
 	Method:       http.MethodDelete,
 	Endpoint:     apiReferenceStudioEndpoint,
 	Handler:      studioServer.DeleteStudioHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
 var updateStudioController = util.DasController{
@@ -47,9 +51,10 @@ var updateStudioController = util.DasController{
 	Method:       http.MethodPut,
 	Endpoint:     apiReferenceStudioEndpoint,
 	Handler:      studioServer.UpdateStudioHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
+// StudioControllerGroup is a collection of handler functions for managing dance studios in DAS
 var StudioControllerGroup = util.DasControllerGroup{
 	Controllers: []util.DasController{
 		searchStudioController,

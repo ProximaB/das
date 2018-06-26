@@ -20,8 +20,16 @@ type PartnershipRoundEntry struct {
 	PartnershipEventEntryID int
 }
 
+type SearchPartnershipRoundEntryCriteria struct {
+
+}
+
 type AdjudicatorRoundEntry struct {
 	ID                 int
 	AdjudicatorEntryID int
 	RoundEntry         RoundEntry
+}
+
+type SearchAdjudicatorRoundEntryCriteria struct {
+	
 }

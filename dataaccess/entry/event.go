@@ -13,18 +13,19 @@ import (
 	"github.com/Masterminds/squirrel"
 )
 
-type PostgresEventEntryRepository struct {
+// PostgresPartnershipEventEntryRepository is a Postgres-based implementation of IPartnershipEventEntryRepository
+type PostgresPartnershipEventEntryRepository struct {
 	Database   *sql.DB
 	SqlBuilder squirrel.StatementBuilderType
 }
 
 const (
-	DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_TABLE                             = "DAS.EVENT__ENTRY"
+	DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_TABLE                             = "DAS.EVENT_ENTRY_PARTNERSHIP"
 	DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID = "EVENT_ID"
 	DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_LEADTAG                       = "LEADTAG"
 )
 
-func (repo PostgresEventEntryRepository) CreateEventEntry(entry *businesslogic.EventEntry) error {
+func (repo PostgresPartnershipEventEntryRepository) CreatePartnershipEventEntry(entry *businesslogic.PartnershipEventEntry) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresEventEntryRepository is not specified")
 	}
@@ -56,7 +57,7 @@ func (repo PostgresEventEntryRepository) CreateEventEntry(entry *businesslogic.E
 	return err
 }
 
-func (repo PostgresEventEntryRepository) DeleteEventEntry(entry businesslogic.EventEntry) error {
+func (repo PostgresPartnershipEventEntryRepository) DeletePartnershipEventEntry(entry businesslogic.PartnershipEventEntry) error {
 	clause := repo.SqlBuilder.Delete("").
 		From(DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_TABLE).
 		Where(squirrel.Eq{DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID: entry.EventID}).
@@ -65,12 +66,12 @@ func (repo PostgresEventEntryRepository) DeleteEventEntry(entry businesslogic.Ev
 	return err
 }
 
-func (repo PostgresEventEntryRepository) UpdateEventEntry(entry businesslogic.EventEntry) error {
+func (repo PostgresPartnershipEventEntryRepository) UpdatePartnershipEventEntry(entry businesslogic.PartnershipEventEntry) error {
 	return errors.New("not implemented")
 }
 
 // Returns CompetitiveBallroomEventEntry, which is supposed to be used by competitor only
-func (repo PostgresEventEntryRepository) SearchEventEntry(criteria businesslogic.SearchEventEntryCriteria) ([]businesslogic.EventEntry, error) {
+func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(criteria businesslogic.SearchPartnershipEventEntryCriteria) ([]businesslogic.PartnershipEventEntry, error) {
 	clause := repo.SqlBuilder.Select(
 		fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
 			common.PRIMARY_KEY,
@@ -115,6 +116,29 @@ func (repo PostgresEventEntryRepository) SearchEventEntry(criteria businesslogic
 	rows.Close()
 	return entries, err
 }
+
+type PostgresAdjudicatorEventEntryRepository struct {
+	Database *sql.DB
+	SqlBuilder squirrel.StatementBuilderType
+}
+
+func (repo PostgresAdjudicatorEventEntryRepository) CreateAdjudicatorEventEntry (entry * businesslogic.AdjudicatorEventEntry) error {
+	return errors.New("not implemented")
+}
+
+func (repo PostgresAdjudicatorEventEntryRepository) DeleteAdjudicatorEventEntry (entry businesslogic.AdjudicatorEventEntry) error {
+	return errors.New("not implemented")
+}
+
+func (repo PostgresAdjudicatorEventEntryRepository) SearchAdjudicatorEventEntry (criteria businesslogic.SearchAdjudicatorEventEntryCriteria) ([]businesslogic.AdjudicatorEventEntry, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (repo PostgresAdjudicatorEventEntryRepository) UpdateAdjudicatorEventEntry (entry businesslogic.AdjudicatorEventEntry) error {
+	return errors.New("not implemented")
+}
+
+
 
 // Returns CompetitiveBallroomEventEntryPublicView, which contains minimal information of the entry and is used by
 // public only

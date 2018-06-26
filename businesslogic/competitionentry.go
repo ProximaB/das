@@ -75,6 +75,8 @@ type PartnershipCompetitionEntry struct {
 type SearchPartnershipCompetitionEntryCriteria struct {
 }
 
+// IPartnershipCompetitionEntryRepository specifies functions that should be implemented to
+// provide CRUD operations on PartnershipCompetitionEntry
 type IPartnershipCompetitionEntryRepository interface {
 	CreatePartnershipCompetitionEntry(entry *PartnershipCompetitionEntry) error
 	DeletePartnershipCompetitionEntry(entry PartnershipCompetitionEntry) error
@@ -118,13 +120,17 @@ type AthleteCompetitionTBAEntry struct {
 	DateTimeUpdated time.Time
 }
 
-// CreateCompetitionEntry will check if current entry exists in the repository. If yes, an error will be returned,
+// CreateAthleteCompetitionEntry will check if current entry exists in the repository. If yes, an error will be returned,
 // if not, a competition entry will be created for this athlete.
 // Competition must be during open registration stage.
-func (entry *AthleteCompetitionEntry) CreateCompetitionEntry(competitionRepo ICompetitionRepository, entryRepo IAthleteCompetitionEntryRepository) error {
+func (entry * AthleteCompetitionEntry) CreateAthleteCompetitionEntry(competitionRepo ICompetitionRepository, entryRepo IAthleteCompetitionEntryRepository) error {
 
 	// check if competition still accept entries
-	compSearchResults, searchCompErr := competitionRepo.SearchCompetition(SearchCompetitionCriteria{ID: entry.CompetitionID, StatusID: COMPETITION_STATUS_OPEN_REGISTRATION})
+	compSearchResults, searchCompErr := competitionRepo.SearchCompetition(
+		SearchCompetitionCriteria {
+			ID: entry.CompetitionEntry.CompetitionID, 
+			StatusID: COMPETITION_STATUS_OPEN_REGISTRATION,
+		})
 	if searchCompErr != nil {
 		return searchCompErr
 	}

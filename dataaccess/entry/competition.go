@@ -14,18 +14,18 @@ import (
 )
 
 const (
-	DAS_COMPETITION_ENTRY_TABLE                = "DAS.COMPETITION_ENTRY"
+	DAS_COMPETITION_ENTRY_TABLE                = "DAS.COMPETITION_ENTRY_ATHLETE"
 	DAS_COMPETITION_ENTRY_COL_CHECKIN_IND      = "CHECKIN_IND"
 	DAS_COMPETITION_ENTRY_COL_CHECKIN_DATETIME = "CHECKIN_DATETIME"
 	DAS_COMPETITION_ENTRY_COL_COMPETITOR_TAG   = "LEADTAG"
 )
 
-type PostgresCompetitionEntryRepository struct {
+type PostgresAthleteCompetitionEntryRepository struct {
 	Database   *sql.DB
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresCompetitionEntryRepository) CreateCompetitionEntry(entry *businesslogic.CompetitionEntry) error {
+func (repo PostgresAthleteCompetitionEntryRepository) CreateCompetitionEntry(entry * businesslogic.AthleteCompetitionEntry) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCompetitionEntryRepository is not specified")
 	}
@@ -48,7 +48,7 @@ func (repo PostgresCompetitionEntryRepository) CreateCompetitionEntry(entry *bus
 	return err
 }
 
-func (repo PostgresCompetitionEntryRepository) SearchCompetitionEntry(criteria businesslogic.SearchCompetitionEntryCriteria) ([]businesslogic.CompetitionEntry, error) {
+func (repo PostgresAthleteCompetitionEntryRepository) SearchCompetitionEntry(criteria businesslogic.SearchCompetitionEntryCriteria) ([]businesslogic.CompetitionEntry, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresCompetitionEntryRepository is not specified")
 	}
@@ -97,14 +97,14 @@ func (repo PostgresCompetitionEntryRepository) SearchCompetitionEntry(criteria b
 	return entries, err
 }
 
-func (repo PostgresCompetitionEntryRepository) DeleteCompetitionEntry(entry businesslogic.CompetitionEntry) error {
+func (repo PostgresAthleteCompetitionEntryRepository) DeleteCompetitionEntry(entry businesslogic.CompetitionEntry) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCompetitionEntryRepository is not specified")
 	}
 	return errors.New("not implemented")
 }
 
-func (repo PostgresCompetitionEntryRepository) UpdateCompetitionEntry(entry businesslogic.CompetitionEntry) error {
+func (repo PostgresAthleteCompetitionEntryRepository) UpdateCompetitionEntry(entry businesslogic.CompetitionEntry) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCompetitionEntryRepository is not specified")
 	}

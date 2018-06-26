@@ -4,10 +4,20 @@
 
 package entry
 
-func CreateCompetititionRepresentation() {
+import (
+	"database/sql"
+	"github.com/Masterminds/squirrel"
+)
+
+type PostgresPartnershipCompetitionRepresentationRepository struct {
+	Database *sql.DB
+	SqlBuilder squirrel.StatementBuilderType
+}
+
+func (repo PostgresPartnershipCompetitionRepresentationRepository) CreateCompetitionRepresentation() {
 
 }
 
-func SearchCompetitionRepresentation() {
+func (repo PostgresPartnershipCompetitionRepresentationRepository) SearchCompetitionRepresentation() {
 
 }

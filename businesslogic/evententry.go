@@ -41,6 +41,10 @@ type PartnershipEventEntry struct {
 	CheckInTime   time.Time
 }
 
+type SearchPartnershipEventEntryCriteria struct {
+	
+}
+
 type AdjudicatorEventEntry struct {
 	ID            int
 	EventEntry    EventEntry

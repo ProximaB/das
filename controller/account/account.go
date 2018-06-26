@@ -78,6 +78,14 @@ func (server Server) RegisterAccountHandler(w http.ResponseWriter, r *http.Reque
 			AccountRepo: server.IAccountRepository,
 		}
 	}
+
+	// check if parental account is needed
+	if account.AccountTypeID == businesslogic.ACCOUNT_TYPE_ATHLETE && account.ByGuardian {
+		strategy = businesslogic.CreateParentalAccountStrategy{
+			AccountRepo: server.IAccountRepository,
+		}
+	}
+
 	if err := strategy.CreateAccount(account, createAccount.Password); err != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, err.Error(), nil)
 		return

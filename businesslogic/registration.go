@@ -9,19 +9,19 @@ import (
 	"time"
 )
 
-// individual dancer uses competition representation to represent country, state, studio, and school
-// at a competition
-type CompetitionRepresentation struct {
-	ID                 int
-	CompetitionEntryID int
-	CountryID          *int
-	StateID            *int
-	StudioID           *int
-	SchoolID           *int
-	CreateUserID       int
-	DateTimeCreated    time.Time
-	UpdateUserID       int
-	DateTimeUpdated    time.Time
+// PartnershipCompetitionRepresentation specifies the Country, State, Studio, School that a partnership represents
+// at a Competition
+type PartnershipCompetitionRepresentation struct {
+	ID                            int
+	PartnershipCompetitionEntryID int
+	CountryID                     *int
+	StateID                       *int
+	StudioID                      *int
+	SchoolID                      *int
+	CreateUserID                  int
+	DateTimeCreated               time.Time
+	UpdateUserID                  int
+	DateTimeUpdated               time.Time
 }
 
 type EventRegistration struct {
@@ -103,7 +103,7 @@ func ValidateCompetitiveBallroomEventRegistration(creator *Account,
 	if len(entries) != 1 || hasEntryErr != nil {
 		repo.CreateCompetitionEntry(&CompetitionEntry{
 			CompetitionID: registration.CompetitionID,
-			AthleteID:     partnership.LeadID,
+			//AthleteID:     partnership.LeadID,
 		})
 	}
 
@@ -115,7 +115,7 @@ func ValidateCompetitiveBallroomEventRegistration(creator *Account,
 	if len(entries) != 1 || hasEntryErr != nil {
 		repo.CreateCompetitionEntry(&CompetitionEntry{
 			CompetitionID: registration.CompetitionID,
-			AthleteID:     partnership.FollowID,
+			//AthleteID:     partnership.FollowID,
 		})
 	}
 

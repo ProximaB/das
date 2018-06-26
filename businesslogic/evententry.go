@@ -36,6 +36,19 @@ type EventEntry struct {
 	DateTimeUpdated   time.Time
 }
 
+type PartnershipEventEntry struct {
+	EventEntry
+	PartnershipID         int
+	CheckInTime           time.Time
+	leadSkillRating       float64
+	followTrueSkillRating float64
+}
+
+type AdjudicatorEventEntry struct {
+	ID int
+	EventEntry
+}
+
 type EventEntryPublicView struct {
 	CompetitiveBallroomEventEntryID int
 	CompetitiveBallroomEventID      int

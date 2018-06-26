@@ -7,9 +7,23 @@ package businesslogic
 import "time"
 
 type RoundEntry struct {
-	ID              int
-	RoundID         int
-	EventEntryID    int
-	DateTimeCreated time.Time
-	DateTimeUpdated time.Time
+	RoundID int
+}
+
+type PartnershipRoundEntry struct {
+	ID                      int
+	RoundID                 int
+	PartnershipEventEntryID int
+	DateTimeCreated         time.Time
+	DateTimeUpdated         time.Time
+}
+
+type AdjudicatorRoundEntry struct {
+	ID                      int
+	RoundID                 int
+	AdjudicatorEventEntryID int
+	CreateUserID            int
+	DateTimeCreated         time.Time
+	UpdateUserID            int
+	DateTimeUpdated         time.Time
 }

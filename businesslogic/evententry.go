@@ -21,32 +21,30 @@ type IEventEntryRepository interface {
 // EventEntry is event-wise. It indicates the participation of partnership in a competitive ballroom event
 // The owner of the
 type EventEntry struct {
-	ID                int
-	EventID           int
-	PartnershipID     int
-	CheckInTime       time.Time
-	leadAge           int
-	followAge         int
-	leadSkillRating   float64
-	followSkillRating float64
-	CompetitorTag     int // TODO: think about it. this does not support tags like A/B/C/D/E for team matches
-	CreateUserID      int
-	DateTimeCreated   time.Time
-	UpdateUserID      int
-	DateTimeUpdated   time.Time
+	ID              int
+	EventID         int
+	PartnershipID   int
+	CheckInTime     time.Time
+	leadAge         int
+	followAge       int
+	CompetitorTag   int // TODO: think about it. this does not support tags like A/B/C/D/E for team matches
+	CreateUserID    int
+	DateTimeCreated time.Time
+	UpdateUserID    int
+	DateTimeUpdated time.Time
 }
 
 type PartnershipEventEntry struct {
-	EventEntry
-	PartnershipID         int
-	CheckInTime           time.Time
-	leadSkillRating       float64
-	followTrueSkillRating float64
+	ID            int
+	EventEntry    EventEntry
+	PartnershipID int
+	CheckInTime   time.Time
 }
 
 type AdjudicatorEventEntry struct {
-	ID int
-	EventEntry
+	ID            int
+	EventEntry    EventEntry
+	AdjudicatorID int
 }
 
 type EventEntryPublicView struct {

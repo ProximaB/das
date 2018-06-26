@@ -42,8 +42,8 @@ type SearchCompetitionEntryCriteria struct {
 // AthleteCompetitionEntry wraps CompetitionEntry and adds additional data to manage payment status for Athletes. It
 // also allows quick indexing of competition attendance
 type AthleteCompetitionEntry struct {
-	ID int
-	CompetitionEntry
+	ID                       int
+	CompetitionEntry         CompetitionEntry
 	AthleteID                int
 	PaymentReceivedIndicator bool
 	DateTimeOfPayment        time.Time
@@ -52,6 +52,7 @@ type AthleteCompetitionEntry struct {
 // SearchAthleteCompetitionEntryCriteria specifies the parameters that can be used
 // to search Athlete Competition Entries in DAS
 type SearchAthleteCompetitionEntryCriteria struct {
+	ID int `schema:"id"`
 }
 
 // IAthleteCompetitionEntryRepository specifies the interface that data source should implement
@@ -65,12 +66,12 @@ type IAthleteCompetitionEntryRepository interface {
 
 // PartnershipCompetitionEntry defines a partnership's participation of a competition
 type PartnershipCompetitionEntry struct {
-	ID int
-	CompetitionEntry
-	PartnershipID int
+	ID               int
+	CompetitionEntry CompetitionEntry
+	PartnershipID    int
 }
 
-// SearchPartnershipCompetitionEntryCrtieria specifies
+// SearchPartnershipCompetitionEntryCriteria specifies
 type SearchPartnershipCompetitionEntryCriteria struct {
 }
 
@@ -83,9 +84,9 @@ type IPartnershipCompetitionEntryRepository interface {
 
 // AdjudicatorCompetitionEntry defines the presence of an Adjudicator at a Competition
 type AdjudicatorCompetitionEntry struct {
-	ID int
-	CompetitionEntry
-	AdjudicatorID int
+	ID               int
+	CompetitionEntry CompetitionEntry
+	AdjudicatorID    int
 }
 
 // SearchAdjudicatorCompetitionEntryCriteria specifies the parameters that can be used to search Adjudicator's
@@ -102,11 +103,11 @@ type IAdjudicatorCompetitionEntryRepository interface {
 	UpdateAdjudicatorCompetitionEntry(entry AdjudicatorCompetitionEntry) error
 }
 
-// CompetitionTBAEntry provides the entry for dancers who do not have a partner
+// AthleteCompetitionTBAEntry provides the entry for dancers who do not have a partner
 // but still would like to compete. Athlete who enters competition as TBA
 // will also enter the match-making queue and DAS shall provides a list of dancers
 // who satisfy the searching criteria the TBA dancer
-type CompetitionTBAEntry struct {
+type AthleteCompetitionTBAEntry struct {
 	ID              int
 	AccountID       int
 	CompetitionID   int

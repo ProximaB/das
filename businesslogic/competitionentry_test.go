@@ -20,11 +20,11 @@ func TestCompetitionEntry_CreateCompetitionEntry(t *testing.T) {
 	entryRepo.EXPECT().SearchCompetitionEntry(businesslogic.SearchCompetitionEntryCriteria{
 		AthleteID:     12,
 		CompetitionID: 44,
-	}).Return([]businesslogic.CompetitionEntry{
+	}).Return([]businesslogic.AthleteCompetitionEntry{
 		{ID: 3, AthleteID: 12, CompetitionID: 44},
 	}, nil)
 
-	entry := businesslogic.CompetitionEntry{
+	entry := businesslogic.AthleteCompetitionEntry{
 		AthleteID:     12,
 		CompetitionID: 44,
 	}

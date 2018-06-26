@@ -2,6 +2,8 @@ language: go
 sudo: false
 go:
   - master
+before_install:
+  - go get -t -v ./...
 script:
   - go vet
   - sh go.test.sh

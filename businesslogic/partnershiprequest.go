@@ -52,10 +52,10 @@ type IPartnershipRequestRepository interface {
 }
 
 func (request PartnershipRequest) validateRoles() error {
-	if request.SenderRole != PARTNERSHIP_ROLE_LEAD && request.SenderRole != PARTNERSHIP_ROLE_FOLLOW {
+	if request.SenderRole != PartnershipRoleLead && request.SenderRole != PartnershipRoleFollow {
 		return errors.New("sender's role is not specified")
 	}
-	if request.RecipientRole != PARTNERSHIP_ROLE_LEAD && request.RecipientRole != PARTNERSHIP_ROLE_FOLLOW {
+	if request.RecipientRole != PartnershipRoleLead && request.RecipientRole != PartnershipRoleFollow {
 		return errors.New("recipient's role is not specified")
 	}
 	if request.RecipientRole == request.SenderRole {
@@ -108,7 +108,7 @@ func (request PartnershipRequest) hasExistingPartnership(accountRepo IAccountRep
 	recipientAccount := GetAccountByID(request.RecipientID, accountRepo)
 
 	partnershipCriteria := new(SearchPartnershipCriteria)
-	if request.SenderRole == PARTNERSHIP_ROLE_LEAD {
+	if request.SenderRole == PartnershipRoleLead {
 		partnershipCriteria.LeadID = senderAccount.ID
 		partnershipCriteria.FollowID = recipientAccount.ID
 	} else {
@@ -233,7 +233,7 @@ func RespondPartnershipRequest(response PartnershipRequestResponse,
 			})
 			request := requests[0]
 
-			if request.RecipientRole == PARTNERSHIP_ROLE_LEAD {
+			if request.RecipientRole == PartnershipRoleLead {
 				partnership.LeadID = request.RecipientID
 				partnership.FollowID = request.SenderID
 			} else {

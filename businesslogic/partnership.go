@@ -9,13 +9,17 @@ import (
 )
 
 const (
-	PARTNERSHIP_REQUEST_RECEIVED = 1
-	PARTNERSHIP_REQUEST_SENT     = 2
+	// PartnershipRequestReceived labels the request as "received", once it's viewed by recipient
+	PartnershipRequestReceived = 1
+	// PartnershipRequestSent labels the request at "sent", once it's sent out by sender
+	PartnershipRequestSent = 2
 )
 
 const (
-	PARTNERSHIP_ROLE_LEAD   = "LEAD"
-	PARTNERSHIP_ROLE_FOLLOW = "FOLLOW"
+	// PartnershipRoleLead is the reference value for the Lead role
+	PartnershipRoleLead = "LEAD"
+	// PartnershipRoleFollow is the reference value for the Follow role
+	PartnershipRoleFollow = "FOLLOW"
 )
 
 // Partnership defines the combination of a lead and a follow. A partnership is uniquely identified
@@ -49,16 +53,16 @@ type SearchPartnershipCriteria struct {
 }
 
 // GetAllPartnerships returns all the partnerships that caller account is in, including as a lead and as a follow
-func (self Account) GetAllPartnerships(repo IPartnershipRepository) ([]Partnership, error) {
+func (account Account) GetAllPartnerships(repo IPartnershipRepository) ([]Partnership, error) {
 	asLeads, err := repo.SearchPartnership(SearchPartnershipCriteria{
-		LeadID: self.ID,
+		LeadID: account.ID,
 	})
 	if err != nil {
 		return nil, err
 	}
 
 	asFollows, err := repo.SearchPartnership(SearchPartnershipCriteria{
-		FollowID: self.ID,
+		FollowID: account.ID,
 	})
 	if err != nil {
 		return nil, err
@@ -74,6 +78,8 @@ func (self Account) GetAllPartnerships(repo IPartnershipRepository) ([]Partnersh
 	return allPartnerships, err
 }
 
+// MustGetPartnershipByID uses an known ID and a concrete PartnershipRepository to find the
+// partnership by the ID provided. If such partnership is not found, system will panic.
 func MustGetPartnershipByID(id int, repo IPartnershipRepository) Partnership {
 	searchResults, err := repo.SearchPartnership(SearchPartnershipCriteria{PartnershipID: id})
 	if err != nil {

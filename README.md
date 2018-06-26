@@ -1,6 +1,6 @@
 # Dancesport Application System (DAS)
 
-[Join the DAS Slack Community](https://ballroomdev.slack.com)
+[Join the DAS Slack Community](https://join.slack.com/t/ballroomdev/shared_invite/enQtMzg4OTU4OTAyNjQ3LTZmYWU2ZTA1Njc2NmI2YWIyZGRlMTQ1MGYyODM0ZWVmZjAzN2ZkNTcyYzNiM2NiMjE2MjI4YjQyNjcyNTU1MGE)
 
 
 [![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
@@ -15,6 +15,10 @@ DAS is an open and free competition management system for competitive ballroom
 dance. This project (along with [dasdb](https://github.com/DancesportSoftware/dasdb) and 
 [dasweb](https://github.com/DancesportSoftware/dasweb)) aims to provide the dancesport community
 an open and secure implementation of competition management system.
+
+### Development Setup
+
+A complete guide can be found [here](https://github.com/DancesportSoftware/das/wiki/Development-Setup).
 
 ### Goals of DAS ###
 * To provide a secure and robust solution to competition organizers and competitors. Currently, the most popular systems do not have the necessary security setup to protect itself from being compromised. Data security is the top priority of this project.
@@ -41,86 +45,7 @@ an open and secure implementation of competition management system.
 ## API Documents
 [Postman Document](https://documenter.getpostman.com/view/2986351/RWEfMemn)
 
-## Local Development Setup
-DAS is mostly developed for running on Linux platform. Though
-it is totally possible to develop and run on Windows and macOS, it's not tested
-as thoroughly as Linux.
-
-1. Install Go
-
-   Ubuntu: `$ sudo apt-get install golang-go`
    
-   Detailed documentation can be found [here](https://github.com/golang/go/wiki/Ubuntu).
-   
-   [Instruction for installing Go on macOS](https://golang.org/doc/install#osx)
-   
-2. Go environment
-
-   You need to add `$GOPATH` to your environment (`~/.profile`): 
-   
-   `export GOPATH=$HOME/go`
-   
-   Sometimes we will need to use binaries built from other packages:
-   
-   `export PATH=$GOPATH/bin:$PATH`
-   
-   Make sure you define `$GOPATH` before adding `$GOPATH/bin` to your `PATH`. Double check
-   if they are defined by running `$ echo $GOPATH`.
-   
-3. Check out the repository
-
-   First, we need to create necessary directory for DAS:
-   
-   `$ mkdir -p $GOPATH/src/github.com/DancesportSoftware`
-   
-   Change directory:
-
-   `$ cd $GOPATH/src/github.com/DancesportSoftware`
-   
-   Then check out the latest build:
-   
-   `$ git clone https://github.com/DancesportSoftware/das.git`
-   
-   The latest build is in development branch:
-   `$ git checkout development`
-   
-   The latest stable build is in master branch:
-   `$ git checkout master`
-   
-4. Get dependencies
-
-   Most of the dependencies can be get by `go get`:
-   1. Change directory to project root: `$ cd $GOPATH/src/DancesportSoftware/das`
-   2. Get dependencies `$ go get ./...`
-   
-   This will download all the dependencies from online repositories and can take a few minutes to complete.
-   
-5. Run DAS
-
-   You will need to have the database set up in order to run DAS locally. You can
-   visit the [dasdb](https://github.com/DancesportSoftware/dasdb) to build the database schema
-   for local development.
-   
-   To run DAS services locally, you have two options:
-   
-   - Option 1 (recommended):
-   
-        - Change directory: `$ cd $GOPATH/src/github.com/DancesportSoftware/das`
-        - Run `$ go run das.go`
-   
-   - Option 2 (build, install, then run):
-   
-        - `$ cd $GOPATH/src/github.com/DancesportSoftware/das`
-        - `$ go install`
-   
-   If you have added `$GOPATH/bin` to your `PATH`, then there should be a command available
-   to you: `$ das`, which is installed under `$GOPATH/bin/das`.
-   
-   DAS will run on port 8080: `localhost:8080`.
-   
-## Development Tools
-* IDE: IntelliJ (with Golang plugin), Goland (requires subscription), VS Code, Atom
-* Web Service: Postman, SoapUI
 
 ## Design and Development Principle.(Technical)
 

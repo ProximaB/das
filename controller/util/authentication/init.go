@@ -13,14 +13,6 @@ import (
 var HMAC_SIGNING_KEY string
 var HMAC_VALID_HOURS = 72
 
-const (
-	JWT_AUTH_CLAIM_EMAIL      = "email"
-	JWT_AUTH_CLAIM_USERNAME   = "name"
-	JWT_AUTH_CLAIM_TYPE       = "type"
-	JWT_AUTH_CLAIM_UUID       = "uuid"
-	JWT_AUTH_CLAIM_EXPIRATION = "exp" // default expiration is 48 hours
-)
-
 func init() {
 	var durationErr error
 	HMAC_SIGNING_KEY = os.Getenv("HMAC_SIGNING_KEY")

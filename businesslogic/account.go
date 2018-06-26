@@ -120,8 +120,20 @@ func (strategy CreateOrganizerAccountStrategy) CreateAccount(account Account, pa
 	return nil
 }
 
+// CreateParentalAccountStrategy allows exceptions where one parent uses his/her phone number for
+// children's accounts. The children's accounts will share the same phone number but different email
+// addresses.
+type CreateParentalAccountStrategy struct {
+	AccountRepo IAccountRepository
+}
+
+// CreateAccount allows creating accounts for competitors
+func (strategy CreateParentalAccountStrategy) CreateAccount(account Account, password string) error {
+	return errors.New("not implemented")
+}
+
 func createAccount(account *Account, password string, repo IAccountRepository) error {
-	if err := validateAccountRegistration(account, repo); err != nil {
+	if err := validateAccountRegistration(*account, repo); err != nil {
 		return err
 	}
 	salt := util.GenerateSalt([]byte(password))
@@ -186,7 +198,22 @@ func checkEmailUsed(email string, repo IAccountRepository) bool {
 	return false
 }
 
-func validateAccountRegistration(account *Account, accountRepo IAccountRepository) error {
+// IAccountValidationStrategy specifies the function that should be implemented to be used to validate accounts that
+// are about to be created
+type IAccountValidationStrategy interface {
+	Validate(account Account, accountRepo IAccountRepository) error
+}
+
+type mvpAccountValidationStrategy struct{}
+
+func (strategy mvpAccountValidationStrategy) Validate(account Account, accountRepo IAccountRepository) error {
+	if checkEmailUsed(account.Email, accountRepo) {
+		return errors.New("this email address is already used")
+	}
+	return nil
+}
+
+func validateAccountRegistration(account Account, accountRepo IAccountRepository) error {
 	if account.AccountTypeID > AccountTypeAdministrator || account.AccountTypeID < ACCOUNT_TYPE_ATHLETE {
 		return errors.New("invalid account type")
 	}

@@ -143,7 +143,7 @@ func createAccount(account *Account, password string, repo IAccountRepository) e
 	account.UUID = uuid.New().String()
 
 	// TODO: email and phone verification should be performed before account can be activated
-	account.AccountStatusID = ACCOUNT_STATUS_ACTIVATED
+	account.AccountStatusID = AccountStatusActivated
 
 	return repo.CreateAccount(account)
 }

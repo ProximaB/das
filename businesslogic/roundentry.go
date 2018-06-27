@@ -21,7 +21,6 @@ type PartnershipRoundEntry struct {
 }
 
 type SearchPartnershipRoundEntryCriteria struct {
-
 }
 
 type AdjudicatorRoundEntry struct {
@@ -31,5 +30,4 @@ type AdjudicatorRoundEntry struct {
 }
 
 type SearchAdjudicatorRoundEntryCriteria struct {
-	
 }

@@ -25,11 +25,11 @@ func AuthenticateUser(email, password string, repo IAccountRepository) error {
 		return errors.New("invalid credential")
 	}
 
-	if accounts[0].AccountStatusID == ACCOUNT_STATUS_SUSPENDED {
+	if accounts[0].AccountStatusID == AccountStatusSuspended {
 		return errors.New("account is suspended")
 	}
 
-	if accounts[0].AccountStatusID == ACCOUNT_STATUS_LOCKED {
+	if accounts[0].AccountStatusID == AccountStatusLocked {
 		return errors.New("account is locked")
 	}
 

@@ -9,10 +9,14 @@ import (
 )
 
 const (
-	ACCOUNT_STATUS_ACTIVATED  = 1
-	ACCOUNT_STATUS_UNVERIFIED = 2
-	ACCOUNT_STATUS_SUSPENDED  = 3
-	ACCOUNT_STATUS_LOCKED     = 4
+	// AccountStatusActivated sets a flag that account is activated and can function
+	AccountStatusActivated = 1
+	// AccountStatusUnverified is the status for most newly created accounts
+	AccountStatusUnverified = 2
+	// AccountStatusSuspended is the status for accounts that violates ToS or Privacy Policies
+	AccountStatusSuspended = 3
+	// AccountStatusLocked is the status for accounts that are locked due to security issues
+	AccountStatusLocked = 4
 )
 
 // IAccountStatusRepository specifies the requirements
@@ -20,6 +24,8 @@ type IAccountStatusRepository interface {
 	GetAccountStatus() ([]AccountStatus, error)
 }
 
+// AccountStatus defines the status that a DAS account could be. The status
+// of an account can affect the authorization of some actions.
 type AccountStatus struct {
 	ID              int
 	Name            string

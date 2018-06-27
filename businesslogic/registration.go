@@ -42,7 +42,7 @@ func ValidateCompetitiveBallroomEventRegistration(creator *Account,
 	registration *EventRegistration,
 	competitionRepo ICompetitionRepository,
 	eventRepo IEventRepository,
-	repo ICompetitionEntryRepository,
+	repo IAthleteCompetitionEntryRepository,
 	accountRepo IAccountRepository,
 	partnershipRepo IPartnershipRepository) error {
 	// check if partnership exists
@@ -96,25 +96,29 @@ func ValidateCompetitiveBallroomEventRegistration(creator *Account,
 	}
 
 	// create competition entry for the lead, if the entry has not been created yet
-	entries, hasEntryErr := repo.SearchCompetitionEntry(SearchCompetitionEntryCriteria{
+	entries, hasEntryErr := repo.SearchAthleteCompetitionEntry(SearchAthleteCompetitionEntryCriteria{
 		CompetitionID: registration.CompetitionID,
 		AthleteID:     partnership.LeadID,
 	})
 	if len(entries) != 1 || hasEntryErr != nil {
-		repo.CreateCompetitionEntry(&CompetitionEntry{
-			CompetitionID: registration.CompetitionID,
+		repo.CreateAthleteCompetitionEntry(&AthleteCompetitionEntry{
+			CompetitionEntry: CompetitionEntry{
+				CompetitionID: registration.CompetitionID,
+			},
 			//AthleteID:     partnership.LeadID,
 		})
 	}
 
 	// create competition entry for the follow, if the entry has not been created yet
-	entries, hasEntryErr = repo.SearchCompetitionEntry(SearchCompetitionEntryCriteria{
+	entries, hasEntryErr = repo.SearchAthleteCompetitionEntry(SearchAthleteCompetitionEntryCriteria{
 		CompetitionID: registration.CompetitionID,
 		AthleteID:     partnership.FollowID,
 	})
 	if len(entries) != 1 || hasEntryErr != nil {
-		repo.CreateCompetitionEntry(&CompetitionEntry{
-			CompetitionID: registration.CompetitionID,
+		repo.CreateAthleteCompetitionEntry(&AthleteCompetitionEntry{
+			CompetitionEntry: CompetitionEntry{
+				CompetitionID: registration.CompetitionID,
+			},
 			//AthleteID:     partnership.FollowID,
 		})
 	}
@@ -164,18 +168,20 @@ func ValidateCompetitiveBallroomEventRegistration(creator *Account,
 
 func CreateEventEntries(creator *Account,
 	registration *EventRegistration,
-	eventEntryRepo IEventEntryRepository) error {
+	eventEntryRepo IPartnershipEventEntryRepository) error {
 	for _, each := range registration.EventsAdded {
-		eventEntry := EventEntry{
-			EventID:         each,
-			PartnershipID:   registration.PartnershipID,
-			CompetitorTag:   0,
-			CreateUserID:    creator.ID,
-			DateTimeCreated: time.Now(),
-			UpdateUserID:    creator.ID,
-			DateTimeUpdated: time.Now(),
+		eventEntry := PartnershipEventEntry{
+			EventEntry: EventEntry{
+				EventID:         each,
+				PartnershipID:   registration.PartnershipID,
+				CompetitorTag:   0,
+				CreateUserID:    creator.ID,
+				DateTimeCreated: time.Now(),
+				UpdateUserID:    creator.ID,
+				DateTimeUpdated: time.Now(),
+			},
 		}
-		createErr := eventEntryRepo.CreateEventEntry(&eventEntry)
+		createErr := eventEntryRepo.CreatePartnershipEventEntry(&eventEntry)
 		if createErr != nil {
 			return createErr
 		}
@@ -185,14 +191,16 @@ func CreateEventEntries(creator *Account,
 
 func DropEventEntries(creator *Account,
 	registration *EventRegistration,
-	eventEntryRepo IEventEntryRepository) error {
+	eventEntryRepo IPartnershipEventEntryRepository) error {
 	for _, each := range registration.EventsDropped {
-		eventEntry := EventEntry{
-			EventID:       each,
+		eventEntry := PartnershipEventEntry{
+			EventEntry: EventEntry{
+				EventID:      each,
+				UpdateUserID: creator.ID,
+			},
 			PartnershipID: registration.PartnershipID,
-			UpdateUserID:  creator.ID,
 		}
-		dropErr := eventEntryRepo.DeleteEventEntry(eventEntry)
+		dropErr := eventEntryRepo.DeletePartnershipEventEntry(eventEntry)
 		if dropErr != nil {
 			return dropErr
 		}

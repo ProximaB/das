@@ -16,8 +16,8 @@ func TestCompetitionEntry_CreateCompetitionEntry(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	entryRepo := mock_businesslogic.NewMockICompetitionEntryRepository(mockCtrl)
-	entryRepo.EXPECT().SearchCompetitionEntry(businesslogic.SearchCompetitionEntryCriteria{
+	entryRepo := mock_businesslogic.NewMockIAthleteCompetitionEntryRepository(mockCtrl)
+	entryRepo.EXPECT().SearchAthleteCompetitionEntry(businesslogic.SearchCompetitionEntryCriteria{
 		AthleteID:     12,
 		CompetitionID: 44,
 	}).Return([]businesslogic.AthleteCompetitionEntry{
@@ -41,11 +41,11 @@ func TestCompetitionEntry_CreateCompetitionEntry(t *testing.T) {
 	err := entry.CreateAthleteCompetitionEntry(compRepo, entryRepo)
 	assert.NotNil(t, err, "should create duplicate competition entry with error")
 
-	entryRepo.EXPECT().SearchCompetitionEntry(businesslogic.SearchCompetitionEntryCriteria{
+	entryRepo.EXPECT().SearchAthleteCompetitionEntry(businesslogic.SearchCompetitionEntryCriteria{
 		AthleteID:     12,
 		CompetitionID: 44,
 	}).Return([]businesslogic.CompetitionEntry{}, nil)
-	entryRepo.EXPECT().CreateCompetitionEntry(gomock.Any()).Return(nil)
+	entryRepo.EXPECT().CreateAthleteCompetitionEntry(gomock.Any()).Return(nil)
 	compRepo.EXPECT().SearchCompetition(gomock.Any()).Return(
 		[]businesslogic.Competition{
 			competition,

@@ -202,10 +202,11 @@ func (mr *MockIPartnershipCompetitionEntryRepositoryMockRecorder) DeletePartners
 }
 
 // SearchPartnershipCompetitionEntry mocks base method
-func (m *MockIPartnershipCompetitionEntryRepository) SearchPartnershipCompetitionEntry(criteria businesslogic.SearchPartnershipCompetitionEntryCriteria) error {
+func (m *MockIPartnershipCompetitionEntryRepository) SearchPartnershipCompetitionEntry(criteria businesslogic.SearchPartnershipCompetitionEntryCriteria) ([]businesslogic.PartnershipCompetitionEntry, error) {
 	ret := m.ctrl.Call(m, "SearchPartnershipCompetitionEntry", criteria)
-	ret0, _ := ret[0].(error)
-	return ret0
+	ret0, _ := ret[0].([]businesslogic.PartnershipCompetitionEntry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
 }
 
 // SearchPartnershipCompetitionEntry indicates an expected call of SearchPartnershipCompetitionEntry

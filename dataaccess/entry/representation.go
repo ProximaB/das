@@ -10,7 +10,7 @@ import (
 )
 
 type PostgresPartnershipCompetitionRepresentationRepository struct {
-	Database *sql.DB
+	Database   *sql.DB
 	SqlBuilder squirrel.StatementBuilderType
 }
 

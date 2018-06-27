@@ -38,13 +38,13 @@ func (repo PostgresPartnershipEventEntryRepository) CreatePartnershipEventEntry(
 		common.COL_UPDATE_USER_ID,
 		common.COL_DATETIME_UPDATED,
 	).Values(
-		entry.EventID,
+		entry.EventEntry.EventID,
 		entry.PartnershipID,
-		entry.CompetitorTag,
-		entry.CreateUserID,
-		entry.DateTimeCreated,
-		entry.UpdateUserID,
-		entry.DateTimeUpdated,
+		entry.EventEntry.CompetitorTag,
+		entry.EventEntry.CreateUserID,
+		entry.EventEntry.DateTimeCreated,
+		entry.EventEntry.UpdateUserID,
+		entry.EventEntry.DateTimeUpdated,
 	).Suffix("RETURNING ID")
 	clause, args, err := stmt.ToSql()
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
@@ -60,7 +60,7 @@ func (repo PostgresPartnershipEventEntryRepository) CreatePartnershipEventEntry(
 func (repo PostgresPartnershipEventEntryRepository) DeletePartnershipEventEntry(entry businesslogic.PartnershipEventEntry) error {
 	clause := repo.SqlBuilder.Delete("").
 		From(DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_TABLE).
-		Where(squirrel.Eq{DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID: entry.EventID}).
+		Where(squirrel.Eq{DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID: entry.EventEntry.EventID}).
 		Where(squirrel.Eq{common.COL_PARTNERSHIP_ID: entry.PartnershipID})
 	_, err := clause.RunWith(repo.Database).Exec()
 	return err
@@ -91,7 +91,7 @@ func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(
 		clause = clause.Where(squirrel.Eq{DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID: criteria.EventID})
 	}
 
-	entries := make([]businesslogic.EventEntry, 0)
+	entries := make([]businesslogic.PartnershipEventEntry, 0)
 	rows, err := clause.RunWith(repo.Database).Query()
 
 	if err != nil {
@@ -100,16 +100,16 @@ func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(
 	}
 
 	for rows.Next() {
-		each := businesslogic.EventEntry{}
+		each := businesslogic.PartnershipEventEntry{}
 		rows.Scan(
 			&each.ID,
-			&each.EventID,
+			&each.EventEntry.EventID,
 			&each.PartnershipID,
-			&each.CompetitorTag,
-			&each.CreateUserID,
-			&each.DateTimeCreated,
-			&each.UpdateUserID,
-			&each.DateTimeUpdated,
+			&each.EventEntry.CompetitorTag,
+			&each.EventEntry.CreateUserID,
+			&each.EventEntry.DateTimeCreated,
+			&each.EventEntry.UpdateUserID,
+			&each.EventEntry.DateTimeUpdated,
 		)
 		entries = append(entries, each)
 	}
@@ -118,27 +118,25 @@ func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(
 }
 
 type PostgresAdjudicatorEventEntryRepository struct {
-	Database *sql.DB
+	Database   *sql.DB
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresAdjudicatorEventEntryRepository) CreateAdjudicatorEventEntry (entry * businesslogic.AdjudicatorEventEntry) error {
+func (repo PostgresAdjudicatorEventEntryRepository) CreateAdjudicatorEventEntry(entry *businesslogic.AdjudicatorEventEntry) error {
 	return errors.New("not implemented")
 }
 
-func (repo PostgresAdjudicatorEventEntryRepository) DeleteAdjudicatorEventEntry (entry businesslogic.AdjudicatorEventEntry) error {
+func (repo PostgresAdjudicatorEventEntryRepository) DeleteAdjudicatorEventEntry(entry businesslogic.AdjudicatorEventEntry) error {
 	return errors.New("not implemented")
 }
 
-func (repo PostgresAdjudicatorEventEntryRepository) SearchAdjudicatorEventEntry (criteria businesslogic.SearchAdjudicatorEventEntryCriteria) ([]businesslogic.AdjudicatorEventEntry, error) {
+func (repo PostgresAdjudicatorEventEntryRepository) SearchAdjudicatorEventEntry(criteria businesslogic.SearchAdjudicatorEventEntryCriteria) ([]businesslogic.AdjudicatorEventEntry, error) {
 	return nil, errors.New("not implemented")
 }
 
-func (repo PostgresAdjudicatorEventEntryRepository) UpdateAdjudicatorEventEntry (entry businesslogic.AdjudicatorEventEntry) error {
+func (repo PostgresAdjudicatorEventEntryRepository) UpdateAdjudicatorEventEntry(entry businesslogic.AdjudicatorEventEntry) error {
 	return errors.New("not implemented")
 }
-
-
 
 // Returns CompetitiveBallroomEventEntryPublicView, which contains minimal information of the entry and is used by
 // public only

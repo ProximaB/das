@@ -107,7 +107,11 @@ var CompetitionRepository = competition.PostgresCompetitionRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var CompetitionEntryRepository = entry.PostgresCompetitionEntryRepository{
+var AthleteCompetitionEntryRepository = entry.PostgresAthleteCompetitionEntryRepository{
+	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
+var PartnershipCompetitionEntryRepository = entry.PostgresPartnershipCompetitionEntryRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
@@ -119,6 +123,6 @@ var EventMetaRepository = event.PostgresEventMetaRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var EventEntryRepository = entry.PostgresEventEntryRepository{
+var PartnershipEventEntryRepository = entry.PostgresPartnershipEventEntryRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }

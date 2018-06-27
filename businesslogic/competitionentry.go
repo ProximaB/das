@@ -52,7 +52,9 @@ type AthleteCompetitionEntry struct {
 // SearchAthleteCompetitionEntryCriteria specifies the parameters that can be used
 // to search Athlete Competition Entries in DAS
 type SearchAthleteCompetitionEntryCriteria struct {
-	ID int `schema:"id"`
+	ID            int `schema:"id"`
+	AthleteID     int `schema:"athlete"`
+	CompetitionID int `schema:"competition"`
 }
 
 // IAthleteCompetitionEntryRepository specifies the interface that data source should implement
@@ -80,7 +82,7 @@ type SearchPartnershipCompetitionEntryCriteria struct {
 type IPartnershipCompetitionEntryRepository interface {
 	CreatePartnershipCompetitionEntry(entry *PartnershipCompetitionEntry) error
 	DeletePartnershipCompetitionEntry(entry PartnershipCompetitionEntry) error
-	SearchPartnershipCompetitionEntry(criteria SearchPartnershipCompetitionEntryCriteria) error
+	SearchPartnershipCompetitionEntry(criteria SearchPartnershipCompetitionEntryCriteria) ([]PartnershipCompetitionEntry, error)
 	UpdatePartnershipCompetitionEntry(entry PartnershipCompetitionEntry) error
 }
 
@@ -123,12 +125,12 @@ type AthleteCompetitionTBAEntry struct {
 // CreateAthleteCompetitionEntry will check if current entry exists in the repository. If yes, an error will be returned,
 // if not, a competition entry will be created for this athlete.
 // Competition must be during open registration stage.
-func (entry * AthleteCompetitionEntry) CreateAthleteCompetitionEntry(competitionRepo ICompetitionRepository, entryRepo IAthleteCompetitionEntryRepository) error {
+func (entry *AthleteCompetitionEntry) CreateAthleteCompetitionEntry(competitionRepo ICompetitionRepository, entryRepo IAthleteCompetitionEntryRepository) error {
 
 	// check if competition still accept entries
 	compSearchResults, searchCompErr := competitionRepo.SearchCompetition(
-		SearchCompetitionCriteria {
-			ID: entry.CompetitionEntry.CompetitionID, 
+		SearchCompetitionCriteria{
+			ID:       entry.CompetitionEntry.CompetitionID,
 			StatusID: COMPETITION_STATUS_OPEN_REGISTRATION,
 		})
 	if searchCompErr != nil {

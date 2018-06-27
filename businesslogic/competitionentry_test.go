@@ -21,12 +21,13 @@ func TestCompetitionEntry_CreateCompetitionEntry(t *testing.T) {
 		AthleteID:     12,
 		CompetitionID: 44,
 	}).Return([]businesslogic.AthleteCompetitionEntry{
-		{ID: 3, AthleteID: 12, CompetitionID: 44},
+		{ID: 3, AthleteID: 12,
+			CompetitionEntry: businesslogic.CompetitionEntry{CompetitionID: 44}},
 	}, nil)
 
 	entry := businesslogic.AthleteCompetitionEntry{
-		AthleteID:     12,
-		CompetitionID: 44,
+		AthleteID:        12,
+		CompetitionEntry: businesslogic.CompetitionEntry{CompetitionID: 44},
 	}
 	competition := businesslogic.Competition{ID: 44, Name: "Awesome Competition"}
 	competition.UpdateStatus(businesslogic.COMPETITION_STATUS_OPEN_REGISTRATION)
@@ -37,7 +38,7 @@ func TestCompetitionEntry_CreateCompetitionEntry(t *testing.T) {
 			competition,
 		}, nil)
 
-	err := entry.CreateCompetitionEntry(compRepo, entryRepo)
+	err := entry.CreateAthleteCompetitionEntry(compRepo, entryRepo)
 	assert.NotNil(t, err, "should create duplicate competition entry with error")
 
 	entryRepo.EXPECT().SearchCompetitionEntry(businesslogic.SearchCompetitionEntryCriteria{
@@ -49,6 +50,6 @@ func TestCompetitionEntry_CreateCompetitionEntry(t *testing.T) {
 		[]businesslogic.Competition{
 			competition,
 		}, nil)
-	err = entry.CreateCompetitionEntry(compRepo, entryRepo)
+	err = entry.CreateAthleteCompetitionEntry(compRepo, entryRepo)
 	assert.Nil(t, err, "should create new competition entry without error")
 }

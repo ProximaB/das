@@ -83,8 +83,9 @@ func init() {
 	EventMetaRepository.Database = PostgresDatabase
 
 	// competition entry
-	CompetitionEntryRepository.Database = PostgresDatabase
+	AthleteCompetitionEntryRepository.Database = PostgresDatabase
+	PartnershipCompetitionEntryRepository.Database = PostgresDatabase
 
 	// event entry
-	EventEntryRepository.Database = PostgresDatabase
+	PartnershipEventEntryRepository.Database = PostgresDatabase
 }

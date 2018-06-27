@@ -18,10 +18,11 @@ const apiAthleteCompetitionRegistrationEndpoint = "/api/athlete/competition/regi
 var athleteCompetitionRegistrationServer = controller.CompetitionRegistrationServer{
 	database.AccountRepository,
 	database.CompetitionRepository,
-	database.CompetitionEntryRepository,
+	database.AthleteCompetitionEntryRepository,
+	database.PartnershipCompetitionEntryRepository,
 	database.PartnershipRepository,
 	database.EventRepository,
-	database.EventEntryRepository,
+	database.PartnershipEventEntryRepository,
 	authentication.AuthenticationStrategy,
 }
 

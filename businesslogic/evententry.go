@@ -11,13 +11,6 @@ import (
 	"time"
 )
 
-type IEventEntryRepository interface {
-	SearchEventEntry(criteria SearchEventEntryCriteria) ([]EventEntry, error)
-	CreateEventEntry(entry *EventEntry) error
-	DeleteEventEntry(entry EventEntry) error
-	UpdateEventEntry(entry EventEntry) error
-}
-
 // EventEntry is event-wise. It indicates the participation of partnership in a competitive ballroom event
 // The owner of the
 type EventEntry struct {
@@ -42,13 +35,24 @@ type PartnershipEventEntry struct {
 }
 
 type SearchPartnershipEventEntryCriteria struct {
-	
+	PartnershipID int
+	EventID       int
+}
+
+type IPartnershipEventEntryRepository interface {
+	CreatePartnershipEventEntry(entry *PartnershipEventEntry) error
+	DeletePartnershipEventEntry(entry PartnershipEventEntry) error
+	SearchPartnershipEventEntry(criteria SearchPartnershipEventEntryCriteria) ([]PartnershipEventEntry, error)
+	UpdatePartnershipEventEntry(entry PartnershipEventEntry) error
 }
 
 type AdjudicatorEventEntry struct {
 	ID            int
 	EventEntry    EventEntry
 	AdjudicatorID int
+}
+
+type SearchAdjudicatorEventEntryCriteria struct {
 }
 
 type EventEntryPublicView struct {
@@ -85,13 +89,13 @@ type EventEntryList struct {
 	EntryList []EventEntryPublicView
 }
 
-func createEventEntry(entry EventEntry, entryRepo IEventEntryRepository) error {
+func createEventEntry(entry PartnershipEventEntry, entryRepo IPartnershipEventEntryRepository) error {
 	// check if entries were already created
-	searchCriteria := SearchEventEntryCriteria{
+	searchCriteria := SearchPartnershipEventEntryCriteria{
 		///PartnershipID:              entry.PartnershipID,
 		//CompetitiveBallroomEventID: entry.CompetitiveBallroomEventID,
 	}
-	existingEntries, _ := entryRepo.SearchEventEntry(searchCriteria)
+	existingEntries, _ := entryRepo.SearchPartnershipEventEntry(searchCriteria)
 
 	if len(existingEntries) == 1 {
 		return errors.New("event is already added")
@@ -99,5 +103,5 @@ func createEventEntry(entry EventEntry, entryRepo IEventEntryRepository) error {
 		log.Println(errors.New(fmt.Sprintf("more than 1 entry has been added: %v", entry)))
 	}
 
-	return entryRepo.CreateEventEntry(&entry)
+	return entryRepo.CreatePartnershipEventEntry(&entry)
 }

@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 /*
 To generate mock objects,
 1. Open a terminal
@@ -12,7 +16,7 @@ import (
 	"testing"
 
 	"github.com/DancesportSoftware/das/businesslogic/reference"
-	"github.com/DancesportSoftware/das/mock/businesslogic/reference"
+	mock_reference "github.com/DancesportSoftware/das/mock/businesslogic/reference"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )

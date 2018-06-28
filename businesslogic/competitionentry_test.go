@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package businesslogic_test
 
 import (
@@ -8,31 +12,44 @@ import (
 	"testing"
 )
 
-func TestCompetitionEntry_CreateCompetitionEntry(t *testing.T) {
+func TestAthleteCompetitionEntry_CreateAthleteCompetitionEntry(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	entryRepo := mock_businesslogic.NewMockICompetitionEntryRepository(mockCtrl)
-	entryRepo.EXPECT().SearchCompetitionEntry(businesslogic.SearchCompetitionEntryCriteria{
+	entryRepo := mock_businesslogic.NewMockIAthleteCompetitionEntryRepository(mockCtrl)
+	entryRepo.EXPECT().SearchAthleteCompetitionEntry(businesslogic.SearchAthleteCompetitionEntryCriteria{
 		AthleteID:     12,
 		CompetitionID: 44,
-	}).Return([]businesslogic.CompetitionEntry{
-		{ID: 3, AthleteID: 12, CompetitionID: 44},
+	}).Return([]businesslogic.AthleteCompetitionEntry{
+		{ID: 3, AthleteID: 12,
+			CompetitionEntry: businesslogic.CompetitionEntry{CompetitionID: 44}},
 	}, nil)
 
-	entry := businesslogic.CompetitionEntry{
-		AthleteID:     12,
-		CompetitionID: 44,
+	entry := businesslogic.AthleteCompetitionEntry{
+		AthleteID:        12,
+		CompetitionEntry: businesslogic.CompetitionEntry{CompetitionID: 44},
 	}
+	competition := businesslogic.Competition{ID: 44, Name: "Awesome Competition"}
+	competition.UpdateStatus(businesslogic.COMPETITION_STATUS_OPEN_REGISTRATION)
 
-	err := entry.CreateCompetitionEntry(entryRepo)
+	compRepo := mock_businesslogic.NewMockICompetitionRepository(mockCtrl)
+	compRepo.EXPECT().SearchCompetition(gomock.Any()).Return(
+		[]businesslogic.Competition{
+			competition,
+		}, nil)
+
+	err := entry.CreateAthleteCompetitionEntry(compRepo, entryRepo)
 	assert.NotNil(t, err, "should create duplicate competition entry with error")
 
-	entryRepo.EXPECT().SearchCompetitionEntry(businesslogic.SearchCompetitionEntryCriteria{
+	entryRepo.EXPECT().SearchAthleteCompetitionEntry(businesslogic.SearchAthleteCompetitionEntryCriteria{
 		AthleteID:     12,
 		CompetitionID: 44,
-	}).Return([]businesslogic.CompetitionEntry{}, nil)
-	entryRepo.EXPECT().CreateCompetitionEntry(gomock.Any()).Return(nil)
-	err = entry.CreateCompetitionEntry(entryRepo)
+	}).Return([]businesslogic.AthleteCompetitionEntry{}, nil)
+	entryRepo.EXPECT().CreateAthleteCompetitionEntry(gomock.Any()).Return(nil)
+	compRepo.EXPECT().SearchCompetition(gomock.Any()).Return(
+		[]businesslogic.Competition{
+			competition,
+		}, nil)
+	err = entry.CreateAthleteCompetitionEntry(compRepo, entryRepo)
 	assert.Nil(t, err, "should create new competition entry without error")
 }

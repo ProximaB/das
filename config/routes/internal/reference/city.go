@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package reference
 
 import (
@@ -20,7 +24,7 @@ var createCityController = util.DasController{
 	Method:       http.MethodPost,
 	Endpoint:     apiReferenceCityEndpoint,
 	Handler:      cityServer.CreateCityHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
 var searchCityController = util.DasController{
@@ -29,7 +33,7 @@ var searchCityController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceCityEndpoint,
 	Handler:      cityServer.SearchCityHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var deleteCityController = util.DasController{
@@ -38,7 +42,7 @@ var deleteCityController = util.DasController{
 	Method:       http.MethodDelete,
 	Endpoint:     apiReferenceCityEndpoint,
 	Handler:      cityServer.DeleteCityHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
 var updateCityController = util.DasController{
@@ -47,9 +51,10 @@ var updateCityController = util.DasController{
 	Method:       http.MethodPut,
 	Endpoint:     apiReferenceCityEndpoint,
 	Handler:      cityServer.UpdateCityHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
+// CityControllerGroup is a collection of handler functions for managing cities in DAS
 var CityControllerGroup = util.DasControllerGroup{
 	Controllers: []util.DasController{
 		createCityController,

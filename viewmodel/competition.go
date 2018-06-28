@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package viewmodel
 
 import (
@@ -39,7 +43,7 @@ func CompetitionDataModelToViewModel(competition businesslogic.Competition, acco
 		Attendance: competition.Attendance,
 	}
 
-	if accountType == businesslogic.ACCOUNT_TYPE_ORGANIZER {
+	if accountType == businesslogic.AccountTypeOrganizer {
 		view.ContactName = competition.ContactName
 		view.ContactEmail = competition.ContactEmail
 		view.ContactPhone = competition.ContactPhone

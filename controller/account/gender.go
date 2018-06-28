@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package account
 
 import (
@@ -7,7 +11,7 @@ import (
 	"net/http"
 )
 
-// this structure will allow controller-based caching in the future, if needed
+// GenderServer serves requests that ask for all possible gender options in DAS
 type GenderServer struct {
 	referencebll.IGenderRepository
 }

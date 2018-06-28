@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package businesslogic
 
 import (
@@ -59,8 +63,9 @@ type SearchAccountCriteria struct {
 	AccountStatus int
 }
 
-func (self Account) GetName() string {
-	return self.FirstName + " " + self.LastName
+// GetName returns the full name of a user (excluding middle name, if any)
+func (account Account) GetName() string {
+	return account.FirstName + " " + account.LastName
 }
 
 // ICreateAccountStrategy specifies the interface that account creation strategy needs to implement.
@@ -73,19 +78,22 @@ type CreateAccountStrategy struct {
 	AccountRepo IAccountRepository
 }
 
+// CreateAccount creates a non-organizer account
 func (strategy CreateAccountStrategy) CreateAccount(account Account, password string) error {
-	if account.AccountTypeID == ACCOUNT_TYPE_ORGANIZER {
+	if account.AccountTypeID == AccountTypeOrganizer {
 		return errors.New("creating an organizer account with the wrong strategy")
 	}
 	return createAccount(&account, password, strategy.AccountRepo)
 }
 
+// CreateOrganizerAccountStrategy creates an organizer account, which follows a different procedure from other accounts
 type CreateOrganizerAccountStrategy struct {
 	AccountRepo   IAccountRepository
 	ProvisionRepo IOrganizerProvisionRepository
 	HistoryRepo   IOrganizerProvisionHistoryRepository
 }
 
+// CreateAccount creates an organizer account
 func (strategy CreateOrganizerAccountStrategy) CreateAccount(account Account, password string) error {
 	if strategy.AccountRepo == nil {
 		return errors.New("account repository is null")
@@ -96,7 +104,7 @@ func (strategy CreateOrganizerAccountStrategy) CreateAccount(account Account, pa
 	if strategy.ProvisionRepo == nil {
 		return errors.New("organizer repository is null")
 	}
-	if account.AccountTypeID != ACCOUNT_TYPE_ORGANIZER {
+	if account.AccountTypeID != AccountTypeOrganizer {
 		return errors.New("not an organizer account")
 	}
 	if err := createAccount(&account, password, strategy.AccountRepo); err != nil {
@@ -112,8 +120,20 @@ func (strategy CreateOrganizerAccountStrategy) CreateAccount(account Account, pa
 	return nil
 }
 
+// CreateParentalAccountStrategy allows exceptions where one parent uses his/her phone number for
+// children's accounts. The children's accounts will share the same phone number but different email
+// addresses.
+type CreateParentalAccountStrategy struct {
+	AccountRepo IAccountRepository
+}
+
+// CreateAccount allows creating accounts for competitors
+func (strategy CreateParentalAccountStrategy) CreateAccount(account Account, password string) error {
+	return errors.New("not implemented")
+}
+
 func createAccount(account *Account, password string, repo IAccountRepository) error {
-	if err := validateAccountRegistration(account, repo); err != nil {
+	if err := validateAccountRegistration(*account, repo); err != nil {
 		return err
 	}
 	salt := util.GenerateSalt([]byte(password))
@@ -123,12 +143,12 @@ func createAccount(account *Account, password string, repo IAccountRepository) e
 	account.UUID = uuid.New().String()
 
 	// TODO: email and phone verification should be performed before account can be activated
-	account.AccountStatusID = ACCOUNT_STATUS_ACTIVATED
+	account.AccountStatusID = AccountStatusActivated
 
 	return repo.CreateAccount(account)
 }
 
-// GetAccountByEmil will retrieve account from repo by email. This function will return either a matched account
+// GetAccountByEmail will retrieve account from repo by email. This function will return either a matched account
 // or an empty account
 func GetAccountByEmail(email string, repo IAccountRepository) Account {
 	accounts, _ := repo.SearchAccount(SearchAccountCriteria{
@@ -178,8 +198,23 @@ func checkEmailUsed(email string, repo IAccountRepository) bool {
 	return false
 }
 
-func validateAccountRegistration(account *Account, accountRepo IAccountRepository) error {
-	if account.AccountTypeID > ACCOUNT_TYPE_ADMINISTRATOR || account.AccountTypeID < ACCOUNT_TYPE_ATHLETE {
+// IAccountValidationStrategy specifies the function that should be implemented to be used to validate accounts that
+// are about to be created
+type IAccountValidationStrategy interface {
+	Validate(account Account, accountRepo IAccountRepository) error
+}
+
+type mvpAccountValidationStrategy struct{}
+
+func (strategy mvpAccountValidationStrategy) Validate(account Account, accountRepo IAccountRepository) error {
+	if checkEmailUsed(account.Email, accountRepo) {
+		return errors.New("this email address is already used")
+	}
+	return nil
+}
+
+func validateAccountRegistration(account Account, accountRepo IAccountRepository) error {
+	if account.AccountTypeID > AccountTypeAdministrator || account.AccountTypeID < AccountTypeAthlete {
 		return errors.New("invalid account type")
 	}
 	if len(account.FirstName) < 2 || len(account.LastName) < 2 {

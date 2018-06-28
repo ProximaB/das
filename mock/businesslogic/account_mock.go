@@ -116,3 +116,38 @@ func (m *MockICreateAccountStrategy) CreateAccount(account businesslogic.Account
 func (mr *MockICreateAccountStrategyMockRecorder) CreateAccount(account, password interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateAccount", reflect.TypeOf((*MockICreateAccountStrategy)(nil).CreateAccount), account, password)
 }
+
+// MockIAccountValidationStrategy is a mock of IAccountValidationStrategy interface
+type MockIAccountValidationStrategy struct {
+	ctrl     *gomock.Controller
+	recorder *MockIAccountValidationStrategyMockRecorder
+}
+
+// MockIAccountValidationStrategyMockRecorder is the mock recorder for MockIAccountValidationStrategy
+type MockIAccountValidationStrategyMockRecorder struct {
+	mock *MockIAccountValidationStrategy
+}
+
+// NewMockIAccountValidationStrategy creates a new mock instance
+func NewMockIAccountValidationStrategy(ctrl *gomock.Controller) *MockIAccountValidationStrategy {
+	mock := &MockIAccountValidationStrategy{ctrl: ctrl}
+	mock.recorder = &MockIAccountValidationStrategyMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockIAccountValidationStrategy) EXPECT() *MockIAccountValidationStrategyMockRecorder {
+	return m.recorder
+}
+
+// Validate mocks base method
+func (m *MockIAccountValidationStrategy) Validate(account businesslogic.Account, accountRepo businesslogic.IAccountRepository) error {
+	ret := m.ctrl.Call(m, "Validate", account, accountRepo)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// Validate indicates an expected call of Validate
+func (mr *MockIAccountValidationStrategyMockRecorder) Validate(account, accountRepo interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "Validate", reflect.TypeOf((*MockIAccountValidationStrategy)(nil).Validate), account, accountRepo)
+}

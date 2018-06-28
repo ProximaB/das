@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package organizer
 
 import (
@@ -20,7 +24,7 @@ type OrganizerProvisionServer struct {
 func (server OrganizerProvisionServer) GetOrganizerProvisionSummaryHandler(w http.ResponseWriter, r *http.Request) {
 
 	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
-	if account.AccountTypeID != businesslogic.ACCOUNT_TYPE_ORGANIZER || account.ID == 0 {
+	if account.AccountTypeID != businesslogic.AccountTypeOrganizer || account.ID == 0 {
 		util.RespondJsonResult(w, http.StatusUnauthorized, "Access denied", nil)
 		return
 	}
@@ -52,7 +56,7 @@ type OrganizerProvisionHistoryServer struct {
 func (server OrganizerProvisionHistoryServer) GetOrganizerProvisionHistoryHandler(w http.ResponseWriter, r *http.Request) {
 
 	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
-	if account.AccountTypeID != businesslogic.ACCOUNT_TYPE_ORGANIZER && account.AccountTypeID != businesslogic.ACCOUNT_TYPE_ADMINISTRATOR {
+	if account.AccountTypeID != businesslogic.AccountTypeOrganizer && account.AccountTypeID != businesslogic.AccountTypeAdministrator {
 		util.RespondJsonResult(w, http.StatusUnauthorized, "Access denied", nil)
 		return
 	}

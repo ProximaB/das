@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package viewmodel
 
 import (
@@ -25,10 +29,10 @@ type CreateEventViewModel struct {
 	Dances          []int `json:"dances"`
 }
 
-func (dto CreateEventViewModel) ToDomainModel(user businesslogic.Account, repo referencebll.IDanceRepository) businesslogic.Event {
+func (dto CreateEventViewModel) ToDomainModel(user businesslogic.Account, repo referencebll.IDanceRepository) *businesslogic.Event {
 	event := businesslogic.NewEvent()
 	event.CompetitionID = dto.CompetitionID
-	event.CategoryID = businesslogic.EVENT_CATEGORY_COMPETITIVE_BALLROOM
+	event.CategoryID = businesslogic.EventCategoryCompetitiveBallroom
 	event.StatusID = businesslogic.EVENT_STATUS_DRAFT
 	event.FederationID = dto.FederationID
 	event.DivisionID = dto.DivisionID

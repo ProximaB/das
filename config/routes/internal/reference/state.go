@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package reference
 
 import (
@@ -20,7 +24,7 @@ var createStateController = util.DasController{
 	Method:       http.MethodPost,
 	Endpoint:     apiReferenceStateEndpoint,
 	Handler:      stateServer.CreateStateHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
 var searchStateController = util.DasController{
@@ -29,7 +33,7 @@ var searchStateController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceStateEndpoint,
 	Handler:      stateServer.SearchStateHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var deleteStateController = util.DasController{
@@ -38,7 +42,7 @@ var deleteStateController = util.DasController{
 	Method:       http.MethodDelete,
 	Endpoint:     apiReferenceStateEndpoint,
 	Handler:      stateServer.DeleteStateHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
 var updateStateController = util.DasController{
@@ -47,9 +51,10 @@ var updateStateController = util.DasController{
 	Method:       http.MethodPut,
 	Endpoint:     apiReferenceStateEndpoint,
 	Handler:      stateServer.UpdateStateHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
+// StateControllerGroup is a collection of handler functions for managing states in DAS
 var StateControllerGroup = util.DasControllerGroup{
 	Controllers: []util.DasController{
 		createStateController,

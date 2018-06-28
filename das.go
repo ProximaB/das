@@ -11,7 +11,7 @@ import (
 func main() {
 
 	defer database.PostgresDatabase.Close() // database connection will not close until server is shutdown
-	router := routes.DasRouter()
+	router := routes.NewDasRouter()
 
 	if database.PostgresDatabase == nil {
 		log.Fatal("database connection is closed before service started")

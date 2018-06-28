@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package partnership
 
 import (
@@ -23,7 +27,7 @@ var searchBlacklistedAccountController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiPartnershipRequestBlacklistEndpoint,
 	Handler:      partnershipRequestBlacklistServer.GetBlacklistedAccountHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ATHLETE, businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAthlete, businesslogic.AccountTypeAdministrator},
 }
 
 var createBlacklistedAccountController = util.DasController{
@@ -32,9 +36,11 @@ var createBlacklistedAccountController = util.DasController{
 	Method:       http.MethodPost,
 	Endpoint:     apiPartnershipRequestBlacklistEndpoint,
 	Handler:      partnershipRequestBlacklistServer.CreatePartnershipRequestBlacklistReportHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ATHLETE},
+	AllowedRoles: []int{businesslogic.AccountTypeAthlete},
 }
 
+// PartnershipRequestBlacklistControllerGroup is a collection of handler functions for managing
+// Partnership request blacklist in DAS
 var PartnershipRequestBlacklistControllerGroup = util.DasControllerGroup{
 	Controllers: []util.DasController{
 		searchBlacklistedAccountController,

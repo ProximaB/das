@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package businesslogic
 
 import (
@@ -7,29 +11,62 @@ import (
 	"time"
 )
 
-type IEventEntryRepository interface {
-	SearchEventEntry(criteria SearchEventEntryCriteria) ([]EventEntry, error)
-	CreateEventEntry(entry *EventEntry) error
-	DeleteEventEntry(entry EventEntry) error
-	UpdateEventEntry(entry EventEntry) error
+// EventEntry defines the
+type EventEntry struct {
+	ID              int
+	EventID         int
+	CheckInTime     time.Time
+	Mask            int
+	CreateUserID    int
+	DateTimeCreated time.Time
+	UpdateUserID    int
+	DateTimeUpdated time.Time
 }
 
-// EventEntry is event-wise. It indicates the participation of partnership in a competitive ballroom event
-// The owner of the
-type EventEntry struct {
-	ID                int
-	EventID           int
-	PartnershipID     int
-	CheckInTime       time.Time
-	leadAge           int
-	followAge         int
-	leadSkillRating   float64
-	followSkillRating float64
-	CompetitorTag     int // TODO: think about it. this does not support tags like A/B/C/D/E for team matches
-	CreateUserID      int
-	DateTimeCreated   time.Time
-	UpdateUserID      int
-	DateTimeUpdated   time.Time
+// PartnershipEventEntry defines the participation of a Partnership at an Event.
+type PartnershipEventEntry struct {
+	ID            int
+	EventEntry    EventEntry
+	PartnershipID int
+	leadAge       int
+	followAge     int
+	CheckInTime   time.Time
+}
+
+// SearchPartnershipEventEntryCriteria specifies the parameters that can be used to search the Event Entry of a
+// Partnership in DAS.
+type SearchPartnershipEventEntryCriteria struct {
+	PartnershipID int
+	EventID       int
+}
+
+// IPartnershipEventEntryRepository defines the functions that need to be implemented to perform CRUD function
+// for businesslogic to use
+type IPartnershipEventEntryRepository interface {
+	CreatePartnershipEventEntry(entry *PartnershipEventEntry) error
+	DeletePartnershipEventEntry(entry PartnershipEventEntry) error
+	SearchPartnershipEventEntry(criteria SearchPartnershipEventEntryCriteria) ([]PartnershipEventEntry, error)
+	UpdatePartnershipEventEntry(entry PartnershipEventEntry) error
+}
+
+// AdjudicatorEventEntry defines the participation of an Adjudicator at an Event.
+type AdjudicatorEventEntry struct {
+	ID            int
+	EventEntry    EventEntry
+	AdjudicatorID int
+}
+
+// SearchAdjudicatorEventEntryCriteria specifies the parameters that can be used to search the Event Entry of a
+// Adjudicator in DAS
+type SearchAdjudicatorEventEntryCriteria struct {
+	CompetitionID int `schema:"competition"`
+	EventID       int
+	PartnershipID int
+	Federation    int `schema:"federation"`
+	Division      int `schema:"division"`
+	Age           int `schema:"age"`
+	Proficiency   int `schema:"proficiency"`
+	Style         int `schema:"style"`
 }
 
 type EventEntryPublicView struct {
@@ -50,29 +87,25 @@ type EventEntryPublicView struct {
 	StudioRepresented               string
 }
 
-type SearchEventEntryCriteria struct {
-	CompetitionID int `schema:"competition"`
-	EventID       int
-	PartnershipID int
-	Federation    int `schema:"federation"`
-	Division      int `schema:"division"`
-	Age           int `schema:"age"`
-	Proficiency   int `schema:"proficiency"`
-	Style         int `schema:"style"`
-}
-
-type EventEntryList struct {
+// PartnershipEventEntryList contains the ID of an event and the Partnerships that are competing in this event
+type PartnershipEventEntryList struct {
 	EventID   int
-	EntryList []EventEntryPublicView
+	EntryList []PartnershipEventEntry
 }
 
-func createEventEntry(entry EventEntry, entryRepo IEventEntryRepository) error {
+// AdjudicatorEventEntryList contains the ID of an event and the Adjudicators that are assigned to this event
+type AdjudicatorEventEntryList struct {
+	EventID   int
+	EntryList []AdjudicatorEventEntry
+}
+
+func createEventEntry(entry PartnershipEventEntry, entryRepo IPartnershipEventEntryRepository) error {
 	// check if entries were already created
-	searchCriteria := SearchEventEntryCriteria{
+	searchCriteria := SearchPartnershipEventEntryCriteria{
 		///PartnershipID:              entry.PartnershipID,
 		//CompetitiveBallroomEventID: entry.CompetitiveBallroomEventID,
 	}
-	existingEntries, _ := entryRepo.SearchEventEntry(searchCriteria)
+	existingEntries, _ := entryRepo.SearchPartnershipEventEntry(searchCriteria)
 
 	if len(existingEntries) == 1 {
 		return errors.New("event is already added")
@@ -80,5 +113,5 @@ func createEventEntry(entry EventEntry, entryRepo IEventEntryRepository) error {
 		log.Println(errors.New(fmt.Sprintf("more than 1 entry has been added: %v", entry)))
 	}
 
-	return entryRepo.CreateEventEntry(&entry)
+	return entryRepo.CreatePartnershipEventEntry(&entry)
 }

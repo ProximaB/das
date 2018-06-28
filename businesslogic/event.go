@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package businesslogic
 
 import (
@@ -8,11 +12,17 @@ import (
 )
 
 const (
-	EVENT_CATEGORY_COMPETITIVE_BALLROOM = 1
-	EVENT_CATEGORY_SHOWDANCE            = 2
-	EVENT_CATEGORY_CABARET              = 3
+	// EventCategoryCompetitiveBallroom is a constant for Competitive Ballroom events
+	EventCategoryCompetitiveBallroom = 1
+	// EventCategoryShowDance is a constant for Show Dance events
+	EventCategoryShowDance = 2
+	// EventCategoryCabaret is a constant for Cabaret events
+	EventCategoryCabaret = 3
+	// EventCategoryTheatreArt is a constant for Theatre Art events
+	EventCategoryTheatreArt = 4
 )
 
+// SearchEventCriteria specifies the parameters that can be used to search events
 type SearchEventCriteria struct {
 	EventID       int `schema:"id"`
 	CompetitionID int `schema:"competition"`
@@ -46,12 +56,14 @@ type Event struct {
 	DateTimeUpdated time.Time
 }
 
-func NewEvent() Event {
+// NewEvent create a new
+func NewEvent() *Event {
 	e := Event{}
 	e.dances = make(map[int]bool)
-	return e
+	return &e
 }
 
+// IEventRepository specifies the interface that a struct need to implement to function as a repository for businesslogic
 type IEventRepository interface {
 	SearchEvent(criteria SearchEventCriteria) ([]Event, error)
 	CreateEvent(event *Event) error
@@ -59,6 +71,7 @@ type IEventRepository interface {
 	DeleteEvent(event Event) error
 }
 
+// GetDances returns the ID of dances of the caller event
 func (event Event) GetDances() []int {
 	keys := make([]int, 0)
 	for k := range event.dances {
@@ -68,6 +81,7 @@ func (event Event) GetDances() []int {
 	return keys
 }
 
+// AddDance adds a dance's ID
 func (event *Event) AddDance(dance int) {
 	if !event.dances[dance] {
 		event.dances[dance] = true
@@ -161,7 +175,7 @@ func CreateEvent(event Event, compRepo ICompetitionRepository, eventRepo IEventR
 		return errors.New("event was not created on time")
 	}
 
-	// step 2: create all the eventDances.
+	// step 2: create all the eventDances. requires primary key returned from the previous step
 	for _, each := range event.GetDances() {
 		eventDance := NewEventDance(event, each)
 		createDancesErr := eventDanceRepo.CreateEventDance(eventDance)
@@ -169,8 +183,6 @@ func CreateEvent(event Event, compRepo ICompetitionRepository, eventRepo IEventR
 			return createDancesErr
 		}
 	}
-
-	// Step 2 requires primary key returned from the previous step
 	return nil
 }
 

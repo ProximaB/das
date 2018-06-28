@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package reference
 
 import (
@@ -18,7 +22,6 @@ type AgeServer struct {
 // Accepted parameters:
 //	{
 //		"id": 1,
-//		"federation": 2,
 //		"division": 3
 //	}
 // Sample results returned:

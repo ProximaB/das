@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package reference
 
 import (
@@ -20,7 +24,7 @@ var searchAgeController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceAgeEndpoint,
 	Handler:      ageServer.SearchAgeHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var createAgeController = util.DasController{
@@ -29,7 +33,7 @@ var createAgeController = util.DasController{
 	Method:       http.MethodPost,
 	Endpoint:     apiReferenceAgeEndpoint,
 	Handler:      ageServer.CreateAgeHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
 var deleteAgeController = util.DasController{
@@ -38,7 +42,7 @@ var deleteAgeController = util.DasController{
 	Method:       http.MethodDelete,
 	Endpoint:     apiReferenceAgeEndpoint,
 	Handler:      ageServer.DeleteAgeHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
 var updateAgeController = util.DasController{
@@ -47,9 +51,10 @@ var updateAgeController = util.DasController{
 	Method:       http.MethodPut,
 	Endpoint:     apiReferenceAgeEndpoint,
 	Handler:      ageServer.UpdateAgeHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
+// AgeControllerGroup is a collection of handler functions for managing ages in DAS
 var AgeControllerGroup = util.DasControllerGroup{
 	Controllers: []util.DasController{
 		searchAgeController,

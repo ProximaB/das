@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package authentication
 
 import (
@@ -10,6 +14,15 @@ import (
 	"strconv"
 	"strings"
 	"time"
+)
+
+const (
+	JWT_AUTH_CLAIM_EMAIL      = "email"
+	JWT_AUTH_CLAIM_USERNAME   = "name"
+	JWT_AUTH_CLAIM_TYPE       = "type"
+	JWT_AUTH_CLAIM_UUID       = "uuid"
+	JWT_AUTH_CLAIM_ISSUEDON   = "issued"
+	JWT_AUTH_CLAIM_EXPIRATION = "exp" // default expiration is 48 hours
 )
 
 type JwtAuthenticationStrategy struct {

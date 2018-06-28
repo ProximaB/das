@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package account
 
 import (
@@ -9,7 +13,7 @@ import (
 	"net/http"
 )
 
-type AccountServer struct {
+type Server struct {
 	businesslogic.IAccountRepository
 	businesslogic.IOrganizerProvisionRepository
 	businesslogic.IOrganizerProvisionHistoryRepository
@@ -35,7 +39,7 @@ type AccountServer struct {
 // additional parameters will be required as well:
 // 	"byguardian": true
 //	"signature": "John Smith Sr."
-func (server AccountServer) RegisterAccountHandler(w http.ResponseWriter, r *http.Request) {
+func (server Server) RegisterAccountHandler(w http.ResponseWriter, r *http.Request) {
 	createAccount := new(viewmodel.CreateAccount)
 
 	if err := util.ParseRequestBodyData(r, createAccount); err != nil {
@@ -60,13 +64,13 @@ func (server AccountServer) RegisterAccountHandler(w http.ResponseWriter, r *htt
 
 	var strategy businesslogic.ICreateAccountStrategy
 	switch account.AccountTypeID {
-	case businesslogic.ACCOUNT_TYPE_ORGANIZER:
+	case businesslogic.AccountTypeOrganizer:
 		strategy = businesslogic.CreateOrganizerAccountStrategy{
 			AccountRepo:   server.IAccountRepository,
 			ProvisionRepo: server.IOrganizerProvisionRepository,
 			HistoryRepo:   server.IOrganizerProvisionHistoryRepository,
 		}
-	case businesslogic.ACCOUNT_TYPE_ADMINISTRATOR:
+	case businesslogic.AccountTypeAdministrator:
 		util.RespondJsonResult(w, http.StatusBadRequest, "invalid account type", nil)
 		return
 	default:
@@ -74,6 +78,14 @@ func (server AccountServer) RegisterAccountHandler(w http.ResponseWriter, r *htt
 			AccountRepo: server.IAccountRepository,
 		}
 	}
+
+	// check if parental account is needed
+	if account.AccountTypeID == businesslogic.AccountTypeAthlete && account.ByGuardian {
+		strategy = businesslogic.CreateParentalAccountStrategy{
+			AccountRepo: server.IAccountRepository,
+		}
+	}
+
 	if err := strategy.CreateAccount(account, createAccount.Password); err != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, err.Error(), nil)
 		return
@@ -81,9 +93,23 @@ func (server AccountServer) RegisterAccountHandler(w http.ResponseWriter, r *htt
 	util.RespondJsonResult(w, http.StatusOK, "success", nil)
 }
 
-// POST /api/account/authenticate
-// TODO: reimplement authentication with JWT, Cookie, and Google Account Authentication
-func (server AccountServer) AccountAuthenticationHandler(w http.ResponseWriter, r *http.Request) {
+// AccountAuthenticationHandler handles the request:
+// 	POST /api/account/authenticate
+// Accepted JSON parameters:
+// 	{
+//		"username": "user@email.com",
+//		"password": "password"
+//	}
+// Sample returned response:
+//	{
+//		"status": 200,
+//		"message": "authorized",
+//		"data": {
+//			"token": "some.jwt.token",
+//			"type: 3
+//		}
+//	}
+func (server Server) AccountAuthenticationHandler(w http.ResponseWriter, r *http.Request) {
 	loginDTO := new(viewmodel.Login)
 	err := util.ParseRequestBodyData(r, loginDTO)
 	if err != nil {
@@ -123,7 +149,7 @@ func (server AccountServer) AccountAuthenticationHandler(w http.ResponseWriter, 
 /*
 func authorizeSingleRole(h http.HandlerFunc, role int) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if role == businesslogic.ACCOUNT_TYPE_NOAUTH {
+		if role == businesslogic.AccountTypeNoAuth {
 			h.ServeHTTP(w, r)
 			return
 		}

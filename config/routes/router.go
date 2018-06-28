@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package routes
 
 import (
@@ -9,6 +13,7 @@ import (
 	"github.com/DancesportSoftware/das/config/routes/internal/organizer"
 	"github.com/DancesportSoftware/das/config/routes/internal/partnership"
 	"github.com/DancesportSoftware/das/config/routes/internal/reference"
+	"github.com/DancesportSoftware/das/config/routes/internal/registration"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/gorilla/mux"
 	"log"
@@ -20,14 +25,14 @@ var restAPIRouter = []Route{
 	// Competition
 
 	// Events
-	{"Public view of events", http.MethodGet, "/api/event", authorizeSingleRole(getEventHandler, businesslogic.ACCOUNT_TYPE_NOAUTH)},
-	{"Public view of competitive ballroom events", http.MethodGet, "/api/event/competitive/ballroom", authorizeSingleRole(getCompetitiveBallroomEventHandler, businesslogic.ACCOUNT_TYPE_NOAUTH)},
-	{"[Organizer] Create a competitive ballroom event", http.MethodPost, "/api/organizer/event", authorizeSingleRole(createEventHandler, businesslogic.ACCOUNT_TYPE_ORGANIZER)},
+	{"Public view of events", http.MethodGet, "/api/event", authorizeSingleRole(getEventHandler, businesslogic.AccountTypeNoAuth)},
+	{"Public view of competitive ballroom events", http.MethodGet, "/api/event/competitive/ballroom", authorizeSingleRole(getCompetitiveBallroomEventHandler, businesslogic.AccountTypeNoAuth)},
+	{"[Organizer] Create a competitive ballroom event", http.MethodPost, "/api/organizer/event", authorizeSingleRole(createEventHandler, businesslogic.AccountTypeOrganizer)},
 
 	// Entries
-	{"add/drop competitive ballroom event entries", http.MethodPost, "/api/athlete/registration", authorizeSingleRole(createAthleteRegistrationHandler, businesslogic.ACCOUNT_TYPE_ATHLETE)},
-	{"Get competitive ballroom entries for partnership", http.MethodGet, "/api/athlete/registration", authorizeSingleRole(getAthleteEventRegistrationHandler, businesslogic.ACCOUNT_TYPE_ATHLETE)},
-	{"Get competitive ballroom entries for public view", http.MethodGet, "/api/public/entries", authorizeSingleRole(getCompetitiveBallroomEventEntryHandler, businesslogic.ACCOUNT_TYPE_NOAUTH)},
+	{"add/drop competitive ballroom event entries", http.MethodPost, "/api/athlete/registration", authorizeSingleRole(createAthleteRegistrationHandler, businesslogic.AccountTypeAthlete)},
+	{"Get competitive ballroom entries for partnership", http.MethodGet, "/api/athlete/registration", authorizeSingleRole(getAthleteEventRegistrationHandler, businesslogic.AccountTypeAthlete)},
+	{"Get competitive ballroom entries for public view", http.MethodGet, "/api/public/entries", authorizeSingleRole(getCompetitiveBallroomEventEntryHandler, businesslogic.AccountTypeNoAuth)},
 }*/
 
 func setResponseHeader(h http.HandlerFunc) http.HandlerFunc {
@@ -50,10 +55,9 @@ func setResponseHeader(h http.HandlerFunc) http.HandlerFunc {
 func getRequestUserRole(r *http.Request) (int, error) {
 	account, err := authentication.AuthenticationStrategy.GetCurrentUser(r, database.AccountRepository)
 	if err != nil {
-		return 0, err
-	} else {
-		return account.AccountTypeID, nil
+		return businesslogic.AccountTypeUnauthorized, err
 	}
+	return account.AccountTypeID, nil
 }
 func addDasController(router *mux.Router, handler util.DasController) {
 	if len(handler.Name) < 1 {
@@ -84,7 +88,7 @@ func authorizeMultipleRoles(h http.HandlerFunc, roles []int) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		allowNoAuth := false
 		for _, each := range roles {
-			if each == businesslogic.ACCOUNT_TYPE_NOAUTH {
+			if each == businesslogic.AccountTypeNoAuth {
 				allowNoAuth = true
 				break
 			}
@@ -123,7 +127,8 @@ func addDasControllerGroup(router *mux.Router, group util.DasControllerGroup) {
 	}
 }
 
-func DasRouter() *mux.Router {
+// NewDasRouter creates a new router that handle requests in DAS
+func NewDasRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	router.Schemes("https")
 
@@ -167,6 +172,7 @@ func DasRouter() *mux.Router {
 	addDasController(router, competition.GetCompetitionStatusController)
 
 	// athlete
+	addDasControllerGroup(router, registration.CompetitionRegistrationControllerGroup)
 
 	// scrutineer
 

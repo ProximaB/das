@@ -1,5 +1,6 @@
-// Copyright 2017-2018 Yubing Hou (houyubing24@gmail.com). All rights reserved.
-// Use of this source code is governed by GPL v3 license that can be found in the LICENSE file.
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
 
 package reference
 
@@ -13,6 +14,7 @@ import (
 	"net/http"
 )
 
+// CountryServer serves requests that perform
 type CountryServer struct {
 	referencebll.ICountryRepository
 }
@@ -26,6 +28,13 @@ type CountryServer struct {
 // 		"abbreviation": "ANC"
 //	}
 // Authentication is required.
+//
+// Sample returned response:
+//	{
+//		"status": 401,
+//		"message": "invalid authorization token",
+//		"data": null
+//	}
 func (server CountryServer) CreateCountryHandler(w http.ResponseWriter, r *http.Request) {
 	payload := new(viewmodel.CreateCountry)
 	var err error

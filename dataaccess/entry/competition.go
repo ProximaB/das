@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package entry
 
 import (
@@ -10,18 +14,18 @@ import (
 )
 
 const (
-	DAS_COMPETITION_ENTRY_TABLE                = "DAS.COMPETITION_ENTRY"
+	DAS_COMPETITION_ENTRY_TABLE                = "DAS.COMPETITION_ENTRY_ATHLETE"
 	DAS_COMPETITION_ENTRY_COL_CHECKIN_IND      = "CHECKIN_IND"
 	DAS_COMPETITION_ENTRY_COL_CHECKIN_DATETIME = "CHECKIN_DATETIME"
 	DAS_COMPETITION_ENTRY_COL_COMPETITOR_TAG   = "LEADTAG"
 )
 
-type PostgresCompetitionEntryRepository struct {
+type PostgresAthleteCompetitionEntryRepository struct {
 	Database   *sql.DB
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresCompetitionEntryRepository) CreateCompetitionEntry(entry *businesslogic.CompetitionEntry) error {
+func (repo PostgresAthleteCompetitionEntryRepository) CreateAthleteCompetitionEntry(entry *businesslogic.AthleteCompetitionEntry) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCompetitionEntryRepository is not specified")
 	}
@@ -33,18 +37,18 @@ func (repo PostgresCompetitionEntryRepository) CreateCompetitionEntry(entry *bus
 			common.COL_DATETIME_CREATED,
 			common.COL_UPDATE_USER_ID,
 			common.COL_DATETIME_UPDATED).Values(
-		entry.CompetitionID,
+		entry.CompetitionEntry.CompetitionID,
 		entry.AthleteID,
-		entry.CreateUserID,
-		entry.DateTimeCreated,
-		entry.UpdateUserID,
-		entry.DateTimeUpdated).Suffix("RETURNING ID")
+		entry.CompetitionEntry.CreateUserID,
+		entry.CompetitionEntry.DateTimeCreated,
+		entry.CompetitionEntry.UpdateUserID,
+		entry.CompetitionEntry.DateTimeUpdated).Suffix("RETURNING ID")
 
 	_, err := clause.RunWith(repo.Database).Exec() // it's okay if the error is duplicate entry, since db has unique constraint on it
 	return err
 }
 
-func (repo PostgresCompetitionEntryRepository) SearchCompetitionEntry(criteria businesslogic.SearchCompetitionEntryCriteria) ([]businesslogic.CompetitionEntry, error) {
+func (repo PostgresAthleteCompetitionEntryRepository) SearchAthleteCompetitionEntry(criteria businesslogic.SearchAthleteCompetitionEntryCriteria) ([]businesslogic.AthleteCompetitionEntry, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresCompetitionEntryRepository is not specified")
 	}
@@ -70,39 +74,62 @@ func (repo PostgresCompetitionEntryRepository) SearchCompetitionEntry(criteria b
 	}
 
 	rows, err := clause.RunWith(repo.Database).Query()
-	entries := make([]businesslogic.CompetitionEntry, 0)
+	entries := make([]businesslogic.AthleteCompetitionEntry, 0)
 	if err != nil {
 		return entries, err
 	}
 
 	for rows.Next() {
-		each := businesslogic.CompetitionEntry{}
+		each := businesslogic.AthleteCompetitionEntry{
+			CompetitionEntry: businesslogic.CompetitionEntry{},
+		}
 		rows.Scan(
 			&each.ID,
-			&each.CompetitionID,
+			&each.CompetitionEntry.CompetitionID,
 			&each.AthleteID,
-			&each.CheckedIn,
-			&each.CheckInDateTime,
-			&each.CreateUserID,
-			&each.DateTimeCreated,
-			&each.UpdateUserID,
-			&each.DateTimeUpdated,
+			&each.CompetitionEntry.CheckInIndicator,
+			&each.CompetitionEntry.DateTimeCheckIn,
+			&each.CompetitionEntry.CreateUserID,
+			&each.CompetitionEntry.DateTimeCreated,
+			&each.CompetitionEntry.UpdateUserID,
+			&each.CompetitionEntry.DateTimeUpdated,
 		)
 		entries = append(entries, each)
 	}
 	return entries, err
 }
 
-func (repo PostgresCompetitionEntryRepository) DeleteCompetitionEntry(entry businesslogic.CompetitionEntry) error {
+func (repo PostgresAthleteCompetitionEntryRepository) DeleteAthleteCompetitionEntry(entry businesslogic.AthleteCompetitionEntry) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCompetitionEntryRepository is not specified")
 	}
 	return errors.New("not implemented")
 }
 
-func (repo PostgresCompetitionEntryRepository) UpdateCompetitionEntry(entry businesslogic.CompetitionEntry) error {
+func (repo PostgresAthleteCompetitionEntryRepository) UpdateAthleteCompetitionEntry(entry businesslogic.AthleteCompetitionEntry) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCompetitionEntryRepository is not specified")
 	}
+	return errors.New("not implemented")
+}
+
+type PostgresPartnershipCompetitionEntryRepository struct {
+	Database   *sql.DB
+	SqlBuilder squirrel.StatementBuilderType
+}
+
+func (repo PostgresPartnershipCompetitionEntryRepository) CreatePartnershipCompetitionEntry(entry *businesslogic.PartnershipCompetitionEntry) error {
+	return errors.New("not implemented")
+}
+
+func (repo PostgresPartnershipCompetitionEntryRepository) DeletePartnershipCompetitionEntry(entry businesslogic.PartnershipCompetitionEntry) error {
+	return errors.New("not implemented")
+}
+
+func (repo PostgresPartnershipCompetitionEntryRepository) SearchPartnershipCompetitionEntry(criteria businesslogic.SearchPartnershipCompetitionEntryCriteria) ([]businesslogic.PartnershipCompetitionEntry, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (repo PostgresPartnershipCompetitionEntryRepository) UpdatePartnershipCompetitionEntry(entry businesslogic.PartnershipCompetitionEntry) error {
 	return errors.New("not implemented")
 }

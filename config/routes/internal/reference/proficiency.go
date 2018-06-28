@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package reference
 
 import (
@@ -20,7 +24,7 @@ var searchProficiencyController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceProficiencyEndpoint,
 	Handler:      proficiencyServer.SearchProficiencyHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var createProficiencyController = util.DasController{
@@ -29,7 +33,7 @@ var createProficiencyController = util.DasController{
 	Method:       http.MethodPost,
 	Endpoint:     apiReferenceProficiencyEndpoint,
 	Handler:      proficiencyServer.CreateProficiencyHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
 var deleteProficiencyController = util.DasController{
@@ -38,7 +42,7 @@ var deleteProficiencyController = util.DasController{
 	Method:       http.MethodDelete,
 	Endpoint:     apiReferenceProficiencyEndpoint,
 	Handler:      proficiencyServer.DeleteProficiencyHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
 var updateProficiencyController = util.DasController{
@@ -47,9 +51,10 @@ var updateProficiencyController = util.DasController{
 	Method:       http.MethodPut,
 	Endpoint:     apiReferenceProficiencyEndpoint,
 	Handler:      proficiencyServer.UpdateProficiencyHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
+// ProficiencyControllerGroup is a collection of handler functions for managing proficiencies in DAS
 var ProficiencyControllerGroup = util.DasControllerGroup{
 	Controllers: []util.DasController{
 		searchProficiencyController,

@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package reference
 
 import (
@@ -20,7 +24,7 @@ var searchSchoolController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceSchoolEndpoint,
 	Handler:      schoolServer.SearchSchoolHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var createSchoolController = util.DasController{
@@ -29,7 +33,7 @@ var createSchoolController = util.DasController{
 	Method:       http.MethodPost,
 	Endpoint:     apiReferenceSchoolEndpoint,
 	Handler:      schoolServer.CreateSchoolHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR, businesslogic.ACCOUNT_TYPE_ATHLETE},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator, businesslogic.AccountTypeAthlete},
 }
 
 var deleteSchoolController = util.DasController{
@@ -38,7 +42,7 @@ var deleteSchoolController = util.DasController{
 	Method:       http.MethodDelete,
 	Endpoint:     apiReferenceSchoolEndpoint,
 	Handler:      schoolServer.DeleteSchoolHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
 var updateSchoolController = util.DasController{
@@ -47,9 +51,10 @@ var updateSchoolController = util.DasController{
 	Method:       http.MethodPut,
 	Endpoint:     apiReferenceSchoolEndpoint,
 	Handler:      schoolServer.UpdateSchoolHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
+// SchoolControllerGroup is a collection of handler functions for managing schools in DAS
 var SchoolControllerGroup = util.DasControllerGroup{
 	Controllers: []util.DasController{
 		searchSchoolController,

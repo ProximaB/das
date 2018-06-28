@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package request
 
 import (
@@ -47,10 +51,10 @@ func (server PartnershipRequestServer) CreatePartnershipRequestHandler(w http.Re
 		UpdateUserID:    sender.ID,
 	}
 
-	if request.RecipientRole == businesslogic.PARTNERSHIP_ROLE_LEAD {
-		request.SenderRole = businesslogic.PARTNERSHIP_ROLE_FOLLOW
-	} else if request.RecipientRole == businesslogic.PARTNERSHIP_ROLE_FOLLOW {
-		request.SenderRole = businesslogic.PARTNERSHIP_ROLE_LEAD
+	if request.RecipientRole == businesslogic.PartnershipRoleLead {
+		request.SenderRole = businesslogic.PartnershipRoleFollow
+	} else if request.RecipientRole == businesslogic.PartnershipRoleFollow {
+		request.SenderRole = businesslogic.PartnershipRoleLead
 	} else {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, "invalid role for recipient")
 		return
@@ -77,9 +81,9 @@ func (server PartnershipRequestServer) SearchPartnershipRequestHandler(w http.Re
 		return
 	}
 
-	if criteria.Type == businesslogic.PARTNERSHIP_REQUEST_RECEIVED {
+	if criteria.Type == businesslogic.PartnershipRequestReceived {
 		criteria.Recipient = account.ID
-	} else if criteria.Type == businesslogic.PARTNERSHIP_REQUEST_SENT {
+	} else if criteria.Type == businesslogic.PartnershipRequestSent {
 		criteria.Sender = account.ID
 	} else {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, "invalid partnership request type")

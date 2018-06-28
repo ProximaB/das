@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package competition
 
 import (
@@ -32,7 +36,7 @@ func (server PublicCompetitionServer) SearchCompetitionHandler(w http.ResponseWr
 		} else {
 			data := make([]viewmodel.Competition, 0)
 			for _, each := range competitions {
-				data = append(data, viewmodel.CompetitionDataModelToViewModel(each, businesslogic.ACCOUNT_TYPE_NOAUTH))
+				data = append(data, viewmodel.CompetitionDataModelToViewModel(each, businesslogic.AccountTypeNoAuth))
 			}
 			output, _ := json.Marshal(data)
 			w.Write(output)

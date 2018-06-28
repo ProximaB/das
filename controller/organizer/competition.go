@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package organizer
 
 import (
@@ -53,8 +57,8 @@ func (server OrganizerCompetitionServer) OrganizerSearchCompetitionHandler(w htt
 	} else {
 		account, _ := server.GetCurrentUser(r, server.IAccountRepository)
 		if account.ID == 0 ||
-			(account.AccountTypeID != businesslogic.ACCOUNT_TYPE_ORGANIZER &&
-				account.AccountTypeID != businesslogic.ACCOUNT_TYPE_ADMINISTRATOR) {
+			(account.AccountTypeID != businesslogic.AccountTypeOrganizer &&
+				account.AccountTypeID != businesslogic.AccountTypeAdministrator) {
 			util.RespondJsonResult(w, http.StatusUnauthorized, "you are not authorized to look up this information", nil)
 			return
 		}
@@ -72,7 +76,7 @@ func (server OrganizerCompetitionServer) OrganizerSearchCompetitionHandler(w htt
 		} else {
 			data := make([]viewmodel.Competition, 0)
 			for _, each := range comps {
-				data = append(data, viewmodel.CompetitionDataModelToViewModel(each, businesslogic.ACCOUNT_TYPE_ORGANIZER))
+				data = append(data, viewmodel.CompetitionDataModelToViewModel(each, businesslogic.AccountTypeOrganizer))
 			}
 			output, _ := json.Marshal(data)
 			w.Write(output)

@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package reference
 
 import (
@@ -20,7 +24,7 @@ var searchDivisionController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceDivisionEndpoint,
 	Handler:      divisionServer.SearchDivisionHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var createDivisionController = util.DasController{
@@ -29,7 +33,7 @@ var createDivisionController = util.DasController{
 	Method:       http.MethodPost,
 	Endpoint:     apiReferenceDivisionEndpoint,
 	Handler:      divisionServer.CreateDivisionHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
 var deleteDivisionController = util.DasController{
@@ -38,7 +42,7 @@ var deleteDivisionController = util.DasController{
 	Method:       http.MethodDelete,
 	Endpoint:     apiReferenceDivisionEndpoint,
 	Handler:      divisionServer.DeleteDivisionHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
 var updateDivisionController = util.DasController{
@@ -47,9 +51,10 @@ var updateDivisionController = util.DasController{
 	Method:       http.MethodPut,
 	Endpoint:     apiReferenceDivisionEndpoint,
 	Handler:      divisionServer.UpdateDivisionHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
+// DivisionControllerGroup is a collection of handler functions for managing divisions in DAS
 var DivisionControllerGroup = util.DasControllerGroup{
 	Controllers: []util.DasController{
 		searchDivisionController,

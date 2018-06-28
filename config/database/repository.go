@@ -1,8 +1,13 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package database
 
 import (
 	"github.com/DancesportSoftware/das/dataaccess/account"
 	"github.com/DancesportSoftware/das/dataaccess/competition"
+	"github.com/DancesportSoftware/das/dataaccess/entry"
 	"github.com/DancesportSoftware/das/dataaccess/event"
 	"github.com/DancesportSoftware/das/dataaccess/partnership"
 	"github.com/DancesportSoftware/das/dataaccess/provision"
@@ -102,10 +107,22 @@ var CompetitionRepository = competition.PostgresCompetitionRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
+var AthleteCompetitionEntryRepository = entry.PostgresAthleteCompetitionEntryRepository{
+	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
+var PartnershipCompetitionEntryRepository = entry.PostgresPartnershipCompetitionEntryRepository{
+	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
 var EventRepository = event.PostgresEventRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
 var EventMetaRepository = event.PostgresEventMetaRepository{
+	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
+var PartnershipEventEntryRepository = entry.PostgresPartnershipEventEntryRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }

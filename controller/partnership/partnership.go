@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package partnership
 
 import (
@@ -18,7 +22,7 @@ type PartnershipServer struct {
 // GET /api/partnership
 func (server PartnershipServer) SearchPartnershipHandler(w http.ResponseWriter, r *http.Request) {
 	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
-	if account.ID == 0 || account.AccountTypeID != businesslogic.ACCOUNT_TYPE_ATHLETE {
+	if account.ID == 0 || account.AccountTypeID != businesslogic.AccountTypeAthlete {
 		util.RespondJsonResult(w, http.StatusUnauthorized, "not authorized", nil)
 		return
 	}

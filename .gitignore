@@ -23,10 +23,10 @@ _testmain.go
 *.test
 *.prof
 
-# yhou: unnecessary files from MacOS
+# System Files
 .DS_Store
 
-#intelliJ stuff
+# IntelliJ stuff
 projectFilesBackup/
 das.iml
 .idea
@@ -38,3 +38,10 @@ node_modules/
 
 # Google cloud
 app.yaml
+*.yaml
+
+# vscode
+.vscode/
+
+# Test coverage
+coverage.txt

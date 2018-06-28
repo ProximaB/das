@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package businesslogic
 
 import (
@@ -6,30 +10,17 @@ import (
 	"time"
 )
 
-// CompetitionEntry is entry for a competition (not events).
-// Athlete does not have to have a partner to enter a competition (depending on the rule)
-// CompetitionEntry helps with
-// - finding attendance of competition
-// - reducing duplicate entries
+// CompetitionEntry is the entry for a competition (not including events) and is a
+// base entry for more specific entry such as AthleteCompetitionEntry, PartnershipCompetitionEntry,
+// and AdjudicatorCompetitionEntry
 type CompetitionEntry struct {
-	ID                 int
-	CompetitionID      int
-	AthleteID          int  // account id
-	CheckedIn          bool // only organizer can check in athlete
-	PaymentReceivedIND bool
-	PaymentDateTime    time.Time
-	CheckInDateTime    *time.Time
-	CreateUserID       int
-	DateTimeCreated    time.Time
-	UpdateUserID       int
-	DateTimeUpdated    time.Time
-}
-
-// SearchCompetitionEntryCriteria provides parameters to ICompetitionEntryRepository to search competition entry
-type SearchCompetitionEntryCriteria struct {
-	ID            int
-	CompetitionID int
-	AthleteID     int
+	CompetitionID    int
+	CheckInIndicator bool
+	DateTimeCheckIn  time.Time
+	CreateUserID     int
+	DateTimeCreated  time.Time
+	UpdateUserID     int
+	DateTimeUpdated  time.Time
 }
 
 // ICompetitionEntryRepository specifies the interface that data source should implement
@@ -41,11 +32,89 @@ type ICompetitionEntryRepository interface {
 	SearchCompetitionEntry(criteria SearchCompetitionEntryCriteria) ([]CompetitionEntry, error)
 }
 
-// CompetitionTBAEntry provides the entry for dancers who do not have a partner
+// SearchCompetitionEntryCriteria provides parameters to ICompetitionEntryRepository to search competition entry
+type SearchCompetitionEntryCriteria struct {
+	ID            int
+	CompetitionID int
+	AthleteID     int
+}
+
+// AthleteCompetitionEntry wraps CompetitionEntry and adds additional data to manage payment status for Athletes. It
+// also allows quick indexing of competition attendance
+type AthleteCompetitionEntry struct {
+	ID                       int
+	CompetitionEntry         CompetitionEntry
+	AthleteID                int
+	PaymentReceivedIndicator bool
+	DateTimeOfPayment        time.Time
+}
+
+// SearchAthleteCompetitionEntryCriteria specifies the parameters that can be used
+// to search Athlete Competition Entries in DAS
+type SearchAthleteCompetitionEntryCriteria struct {
+	ID            int `schema:"id"`
+	AthleteID     int `schema:"athlete"`
+	CompetitionID int `schema:"competition"`
+}
+
+// IAthleteCompetitionEntryRepository specifies the interface that data source should implement
+// to perform CRUD operations for AthleteCompetitionEntry
+type IAthleteCompetitionEntryRepository interface {
+	CreateAthleteCompetitionEntry(entry *AthleteCompetitionEntry) error
+	DeleteAthleteCompetitionEntry(entry AthleteCompetitionEntry) error
+	SearchAthleteCompetitionEntry(criteria SearchAthleteCompetitionEntryCriteria) ([]AthleteCompetitionEntry, error)
+	UpdateAthleteCompetitionEntry(entry AthleteCompetitionEntry) error
+}
+
+// PartnershipCompetitionEntry defines a partnership's participation of a competition
+type PartnershipCompetitionEntry struct {
+	ID               int
+	CompetitionEntry CompetitionEntry
+	PartnershipID    int
+}
+
+// SearchPartnershipCompetitionEntryCriteria specifies parameters that can be used to search the Competition Entry
+// of a Partnership
+type SearchPartnershipCompetitionEntryCriteria struct {
+	Partnership int `schema:"partnership"`
+	Competition int `schema:"competition"`
+}
+
+// IPartnershipCompetitionEntryRepository specifies functions that should be implemented to
+// provide CRUD operations on PartnershipCompetitionEntry
+type IPartnershipCompetitionEntryRepository interface {
+	CreatePartnershipCompetitionEntry(entry *PartnershipCompetitionEntry) error
+	DeletePartnershipCompetitionEntry(entry PartnershipCompetitionEntry) error
+	SearchPartnershipCompetitionEntry(criteria SearchPartnershipCompetitionEntryCriteria) ([]PartnershipCompetitionEntry, error)
+	UpdatePartnershipCompetitionEntry(entry PartnershipCompetitionEntry) error
+}
+
+// AdjudicatorCompetitionEntry defines the presence of an Adjudicator at a Competition
+type AdjudicatorCompetitionEntry struct {
+	ID               int
+	CompetitionEntry CompetitionEntry
+	AdjudicatorID    int
+}
+
+// SearchAdjudicatorCompetitionEntryCriteria specifies the parameters that can be used to search Adjudicator's
+// participation at competitions
+type SearchAdjudicatorCompetitionEntryCriteria struct {
+}
+
+// IAdjudicatorCompetitionEntryRepository specifies the methods that should be
+// implemented to provide repository function for businesslogic
+type IAdjudicatorCompetitionEntryRepository interface {
+	CreateAdjudicatorCompetitionEntry(entry *AdjudicatorCompetitionEntry) error
+	DeleteAdjudicatorCompetitionEntry(entry AdjudicatorCompetitionEntry) error
+	SearchAdjudicatorCompetitionEntry(criteria SearchAdjudicatorCompetitionEntryCriteria) ([]AdjudicatorCompetitionEntry, error)
+	UpdateAdjudicatorCompetitionEntry(entry AdjudicatorCompetitionEntry) error
+}
+
+// AthleteCompetitionTBAEntry provides the entry for dancers who do not have a partner
 // but still would like to compete. Athlete who enters competition as TBA
 // will also enter the match-making queue and DAS shall provides a list of dancers
 // who satisfy the searching criteria the TBA dancer
-type CompetitionTBAEntry struct {
+type AthleteCompetitionTBAEntry struct {
 	ID              int
 	AccountID       int
 	CompetitionID   int
@@ -56,23 +125,41 @@ type CompetitionTBAEntry struct {
 	DateTimeUpdated time.Time
 }
 
-func (entry *CompetitionEntry) CreateCompetitionEntry(entryRepo ICompetitionEntryRepository) error {
-	criteria := SearchCompetitionEntryCriteria{
-		AthleteID:     entry.AthleteID,
-		CompetitionID: entry.CompetitionID,
+// CreateAthleteCompetitionEntry will check if current entry exists in the repository. If yes, an error will be returned,
+// if not, a competition entry will be created for this athlete.
+// Competition must be during open registration stage.
+func (entry *AthleteCompetitionEntry) CreateAthleteCompetitionEntry(competitionRepo ICompetitionRepository, athleteCompEntryRepo IAthleteCompetitionEntryRepository) error {
+
+	// check if competition still accept entries
+	compSearchResults, searchCompErr := competitionRepo.SearchCompetition(
+		SearchCompetitionCriteria{
+			ID:       entry.CompetitionEntry.CompetitionID,
+			StatusID: COMPETITION_STATUS_OPEN_REGISTRATION,
+		})
+	if searchCompErr != nil {
+		return searchCompErr
+	}
+	if len(compSearchResults) != 1 {
+		return errors.New("competition does not exist or it no longer accept new entries")
 	}
 
-	searchResults, err := entryRepo.SearchCompetitionEntry(criteria)
+	criteria := SearchAthleteCompetitionEntryCriteria{
+		AthleteID:     entry.AthleteID,
+		CompetitionID: entry.CompetitionEntry.CompetitionID,
+	}
+
+	searchResults, err := athleteCompEntryRepo.SearchAthleteCompetitionEntry(criteria)
 	if err != nil {
 		return err
 	}
 
 	if len(searchResults) == 0 {
-		return entryRepo.CreateCompetitionEntry(entry)
+		return athleteCompEntryRepo.CreateAthleteCompetitionEntry(entry)
 	}
 
 	if len(searchResults) > 0 {
 		return errors.New(fmt.Sprintf("competition entry for athlete %d is already created", entry.AthleteID))
 	}
+
 	return errors.New("cannot create competition entry for this athlete")
 }

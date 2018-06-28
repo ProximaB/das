@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package partnership
 
 import (
@@ -23,7 +27,7 @@ var searchPartnershipController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiPartnershipEndpoint,
 	Handler:      partnershipServer.SearchPartnershipHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ATHLETE},
+	AllowedRoles: []int{businesslogic.AccountTypeAthlete},
 }
 
 var updatePartnershipController = util.DasController{
@@ -32,7 +36,7 @@ var updatePartnershipController = util.DasController{
 	Method:       http.MethodPut,
 	Endpoint:     apiPartnershipEndpoint,
 	Handler:      partnershipServer.UpdatePartnershipHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ATHLETE},
+	AllowedRoles: []int{businesslogic.AccountTypeAthlete},
 }
 
 var PartnershipControllerGroup = util.DasControllerGroup{

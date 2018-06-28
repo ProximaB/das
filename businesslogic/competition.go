@@ -1,10 +1,13 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package businesslogic
 
 import (
 	"errors"
-	"time"
-
 	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"time"
 )
 
 // Competition provides the base data structure for a competitive ballroom dance. All competitions in
@@ -71,6 +74,8 @@ type OrganizerUpdateCompetition struct {
 	UpdateUserID  int
 }
 
+// ICompetitionRepository specifies the interface that a competition repository needs to implement to provide CRUD
+// operations in the data repository
 type ICompetitionRepository interface {
 	CreateCompetition(competition *Competition) error
 	SearchCompetition(criteria SearchCompetitionCriteria) ([]Competition, error)

@@ -1,3 +1,7 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package reference
 
 import (
@@ -20,7 +24,7 @@ var searchDanceController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceDanceEndpoint,
 	Handler:      danceServer.SearchDanceHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var createDanceController = util.DasController{
@@ -29,7 +33,7 @@ var createDanceController = util.DasController{
 	Method:       http.MethodPost,
 	Endpoint:     apiReferenceDanceEndpoint,
 	Handler:      danceServer.CreateDanceHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
 var deleteDanceController = util.DasController{
@@ -38,7 +42,7 @@ var deleteDanceController = util.DasController{
 	Method:       http.MethodDelete,
 	Endpoint:     apiReferenceDanceEndpoint,
 	Handler:      danceServer.DeleteDanceHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
 var updateDanceController = util.DasController{
@@ -47,9 +51,10 @@ var updateDanceController = util.DasController{
 	Method:       http.MethodPut,
 	Endpoint:     apiReferenceDanceEndpoint,
 	Handler:      danceServer.UpdateDanceHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ADMINISTRATOR},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
 }
 
+// DanceControllerGroup is a collection of handler functions for managing dances in DAS
 var DanceControllerGroup = util.DasControllerGroup{
 	Controllers: []util.DasController{
 		searchDanceController,

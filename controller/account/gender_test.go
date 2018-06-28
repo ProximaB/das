@@ -1,9 +1,13 @@
+// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Use of this source code is governed by GPL license
+// that can be found in the LICENSE file
+
 package account
 
 import (
 	"encoding/json"
 	"github.com/DancesportSoftware/das/businesslogic/reference"
-	"github.com/DancesportSoftware/das/mock/businesslogic/reference"
+	mock_reference "github.com/DancesportSoftware/das/mock/businesslogic/reference"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"

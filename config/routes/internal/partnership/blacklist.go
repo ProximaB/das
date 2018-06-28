@@ -27,7 +27,7 @@ var searchBlacklistedAccountController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiPartnershipRequestBlacklistEndpoint,
 	Handler:      partnershipRequestBlacklistServer.GetBlacklistedAccountHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ATHLETE, businesslogic.AccountTypeAdministrator},
+	AllowedRoles: []int{businesslogic.AccountTypeAthlete, businesslogic.AccountTypeAdministrator},
 }
 
 var createBlacklistedAccountController = util.DasController{
@@ -36,7 +36,7 @@ var createBlacklistedAccountController = util.DasController{
 	Method:       http.MethodPost,
 	Endpoint:     apiPartnershipRequestBlacklistEndpoint,
 	Handler:      partnershipRequestBlacklistServer.CreatePartnershipRequestBlacklistReportHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ATHLETE},
+	AllowedRoles: []int{businesslogic.AccountTypeAthlete},
 }
 
 // PartnershipRequestBlacklistControllerGroup is a collection of handler functions for managing

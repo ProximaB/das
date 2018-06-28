@@ -24,7 +24,7 @@ var searchFederationController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceFederationEndpoint,
 	Handler:      federationServer.SearchFederationHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var createFederationController = util.DasController{

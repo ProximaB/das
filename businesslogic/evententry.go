@@ -11,34 +11,37 @@ import (
 	"time"
 )
 
-// EventEntry is event-wise. It indicates the participation of partnership in a competitive ballroom event
-// The owner of the
+// EventEntry defines the
 type EventEntry struct {
 	ID              int
 	EventID         int
-	PartnershipID   int
 	CheckInTime     time.Time
-	leadAge         int
-	followAge       int
-	CompetitorTag   int // TODO: think about it. this does not support tags like A/B/C/D/E for team matches
+	Mask            int
 	CreateUserID    int
 	DateTimeCreated time.Time
 	UpdateUserID    int
 	DateTimeUpdated time.Time
 }
 
+// PartnershipEventEntry defines the participation of a Partnership at an Event.
 type PartnershipEventEntry struct {
 	ID            int
 	EventEntry    EventEntry
 	PartnershipID int
+	leadAge       int
+	followAge     int
 	CheckInTime   time.Time
 }
 
+// SearchPartnershipEventEntryCriteria specifies the parameters that can be used to search the Event Entry of a
+// Partnership in DAS.
 type SearchPartnershipEventEntryCriteria struct {
 	PartnershipID int
 	EventID       int
 }
 
+// IPartnershipEventEntryRepository defines the functions that need to be implemented to perform CRUD function
+// for businesslogic to use
 type IPartnershipEventEntryRepository interface {
 	CreatePartnershipEventEntry(entry *PartnershipEventEntry) error
 	DeletePartnershipEventEntry(entry PartnershipEventEntry) error
@@ -46,13 +49,24 @@ type IPartnershipEventEntryRepository interface {
 	UpdatePartnershipEventEntry(entry PartnershipEventEntry) error
 }
 
+// AdjudicatorEventEntry defines the participation of an Adjudicator at an Event.
 type AdjudicatorEventEntry struct {
 	ID            int
 	EventEntry    EventEntry
 	AdjudicatorID int
 }
 
+// SearchAdjudicatorEventEntryCriteria specifies the parameters that can be used to search the Event Entry of a
+// Adjudicator in DAS
 type SearchAdjudicatorEventEntryCriteria struct {
+	CompetitionID int `schema:"competition"`
+	EventID       int
+	PartnershipID int
+	Federation    int `schema:"federation"`
+	Division      int `schema:"division"`
+	Age           int `schema:"age"`
+	Proficiency   int `schema:"proficiency"`
+	Style         int `schema:"style"`
 }
 
 type EventEntryPublicView struct {
@@ -73,20 +87,16 @@ type EventEntryPublicView struct {
 	StudioRepresented               string
 }
 
-type SearchEventEntryCriteria struct {
-	CompetitionID int `schema:"competition"`
-	EventID       int
-	PartnershipID int
-	Federation    int `schema:"federation"`
-	Division      int `schema:"division"`
-	Age           int `schema:"age"`
-	Proficiency   int `schema:"proficiency"`
-	Style         int `schema:"style"`
+// PartnershipEventEntryList contains the ID of an event and the Partnerships that are competing in this event
+type PartnershipEventEntryList struct {
+	EventID   int
+	EntryList []PartnershipEventEntry
 }
 
-type EventEntryList struct {
+// AdjudicatorEventEntryList contains the ID of an event and the Adjudicators that are assigned to this event
+type AdjudicatorEventEntryList struct {
 	EventID   int
-	EntryList []EventEntryPublicView
+	EntryList []AdjudicatorEventEntry
 }
 
 func createEventEntry(entry PartnershipEventEntry, entryRepo IPartnershipEventEntryRepository) error {

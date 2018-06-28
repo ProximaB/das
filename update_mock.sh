@@ -1,4 +1,7 @@
-# mockgen.sh batch updates all mock objects
+# mockgen.sh batch updates all mock objects.
+# To run this script:
+# $ cd $GOPATH/src/github.com/DancesportSoftware/das
+# $ sh update_mock.sh
 #
 # Copyright 2018 Yubing Hou. All rights reserved.
 # Use of this source code is governed by GPL license
@@ -25,21 +28,4 @@ do
             mockgen -source=$each > $MOCK_ROOT_DIR/${dest}_mock.go
         fi
     done
-#    echo Creating mock objects for module $SOURCE_DIR$m
-#    if [ -f $SOURCE_DIR$m ]; then # a regular go file
-#        echo \tCreating mock object for $SOURCE_DIR$m
-#        mkdir -p $MOCK_ROOT_DIR/$(dirname "$m")
-#        if [[$SOURCE_DIR$m -ne *"_test.go"]]; then
-#
-#        fi
-#    elif [ -d $SOURCE_DIR$m ]; then # a regular directory
-
 done
-
-# for filename in ./businesslogic/*.go; do
-#    mockgen -source="$filename" > ./mock/businesslogic/$(basename "$filename" .go)_mock.go
-# done
-
-# for filename in ./businesslogic/reference/*.go; do
-#    mockgen -source="$filename" > ./mock/businesslogic/reference/$(basename "$filename" .go)_mock.go
-# done

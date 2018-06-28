@@ -33,7 +33,7 @@ var searchCompetitionController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiCompetitionEndpoint,
 	Handler:      publicCompetitionServer.SearchCompetitionHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var searchCompetitionUniqueEventFederationController = util.DasController{
@@ -42,7 +42,7 @@ var searchCompetitionUniqueEventFederationController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiCompetitionFederationEndpoint,
 	Handler:      publicCompetitionServer.GetUniqueEventFederationHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var searchCompetitionUniqueEventDivisionController = util.DasController{
@@ -51,7 +51,7 @@ var searchCompetitionUniqueEventDivisionController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiCompetitionDivisionEndpoint,
 	Handler:      publicCompetitionServer.GetEventUniqueDivisionsHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 var searchCompetitionUniqueEventAgeController = util.DasController{
 	Name:         "SearchCompetitionUniqueEventAgeController",
@@ -59,7 +59,7 @@ var searchCompetitionUniqueEventAgeController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiCompetitionAgeEndpoint,
 	Handler:      publicCompetitionServer.GetEventUniqueAgesHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 var searchCompetitionUniqueEventProficiencyController = util.DasController{
 	Name:         "SearchCompetitionUniqueEventProficiencyController",
@@ -67,7 +67,7 @@ var searchCompetitionUniqueEventProficiencyController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiCompetitionProficiencyEndpoint,
 	Handler:      publicCompetitionServer.GetEventUniqueProficienciesHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 var searchCompetitionUniqueEventStyleController = util.DasController{
 	Name:         "SearchCompetitionUniqueEventStyleController",
@@ -75,7 +75,7 @@ var searchCompetitionUniqueEventStyleController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiCompetitionStyleEndpoint,
 	Handler:      publicCompetitionServer.GetEventUniqueStylesHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var PublicCompetitionViewControllerGroup = util.DasControllerGroup{

@@ -24,5 +24,5 @@ var GenderController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiAccountGenderEndpoint,
 	Handler:      genderServer.GetAccountGenderHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }

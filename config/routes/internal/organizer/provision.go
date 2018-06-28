@@ -54,7 +54,7 @@ var getOrganizerProvisionSummaryController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiOrganizerProvisionSummaryEndpoint,
 	Handler:      organizerProvisionServer.GetOrganizerProvisionSummaryHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ORGANIZER},
+	AllowedRoles: []int{businesslogic.AccountTypeOrganizer},
 }
 
 var organizerProvisionHistoryServer = organizer.OrganizerProvisionHistoryServer{
@@ -68,7 +68,7 @@ var getOrganizerProvisionHistoryController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiOrganizerProvisionHistoryEndpoint,
 	Handler:      organizerProvisionHistoryServer.GetOrganizerProvisionHistoryHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ORGANIZER},
+	AllowedRoles: []int{businesslogic.AccountTypeOrganizer},
 }
 var OrganizerProvisionControllerGroup = util.DasControllerGroup{
 	Controllers: []util.DasController{

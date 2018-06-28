@@ -24,7 +24,7 @@ var searchProficiencyController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceProficiencyEndpoint,
 	Handler:      proficiencyServer.SearchProficiencyHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var createProficiencyController = util.DasController{

@@ -27,7 +27,7 @@ var createCompetitionController = util.DasController{
 	Method:       http.MethodPost,
 	Endpoint:     apiOrganizerCompetitionEndpoint,
 	Handler:      organizerCompetitionServer.OrganizerCreateCompetitionHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ORGANIZER},
+	AllowedRoles: []int{businesslogic.AccountTypeOrganizer},
 }
 
 var deleteCompetitionController = util.DasController{
@@ -36,7 +36,7 @@ var deleteCompetitionController = util.DasController{
 	Method:       http.MethodDelete,
 	Endpoint:     apiOrganizerCompetitionEndpoint,
 	Handler:      organizerCompetitionServer.OrganizerDeleteCompetitionHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ORGANIZER},
+	AllowedRoles: []int{businesslogic.AccountTypeOrganizer},
 }
 
 var searchCompetitionController = util.DasController{
@@ -45,7 +45,7 @@ var searchCompetitionController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiOrganizerCompetitionEndpoint,
 	Handler:      organizerCompetitionServer.OrganizerSearchCompetitionHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ORGANIZER},
+	AllowedRoles: []int{businesslogic.AccountTypeOrganizer},
 }
 
 var updateCompetitionController = util.DasController{
@@ -54,7 +54,7 @@ var updateCompetitionController = util.DasController{
 	Method:       http.MethodPut,
 	Endpoint:     apiOrganizerCompetitionEndpoint,
 	Handler:      organizerCompetitionServer.OrganizerUpdateCompetitionHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ORGANIZER},
+	AllowedRoles: []int{businesslogic.AccountTypeOrganizer},
 }
 
 var OrganizerCompetitionManagementControllerGroup = util.DasControllerGroup{

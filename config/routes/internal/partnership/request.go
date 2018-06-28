@@ -29,7 +29,7 @@ var createPartnershipRequestController = util.DasController{
 	Method:       http.MethodPost,
 	Endpoint:     apiPartnershipRequestEndpoint,
 	Handler:      partnershipRequestServer.CreatePartnershipRequestHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ATHLETE},
+	AllowedRoles: []int{businesslogic.AccountTypeAthlete},
 }
 
 var searchPartnershipRequestController = util.DasController{
@@ -38,7 +38,7 @@ var searchPartnershipRequestController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiPartnershipRequestEndpoint,
 	Handler:      partnershipRequestServer.SearchPartnershipRequestHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ATHLETE},
+	AllowedRoles: []int{businesslogic.AccountTypeAthlete},
 }
 
 var updatePartnershipRequestController = util.DasController{
@@ -47,7 +47,7 @@ var updatePartnershipRequestController = util.DasController{
 	Method:       http.MethodPut,
 	Endpoint:     apiPartnershipRequestEndpoint,
 	Handler:      partnershipRequestServer.UpdatePartnershipRequestHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ATHLETE},
+	AllowedRoles: []int{businesslogic.AccountTypeAthlete},
 }
 
 var deletePartnershipRequestController = util.DasController{
@@ -56,7 +56,7 @@ var deletePartnershipRequestController = util.DasController{
 	Method:       http.MethodDelete,
 	Endpoint:     apiPartnershipRequestEndpoint,
 	Handler:      partnershipRequestServer.DeletePartnershipRequestHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ATHLETE},
+	AllowedRoles: []int{businesslogic.AccountTypeAthlete},
 }
 
 var PartnershipRequestControllerGroup = util.DasControllerGroup{

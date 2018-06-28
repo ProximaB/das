@@ -7,7 +7,6 @@ package businesslogic
 import (
 	"errors"
 	"github.com/DancesportSoftware/das/util"
-	"log"
 	"reflect"
 )
 
@@ -35,12 +34,8 @@ func AuthenticateUser(email, password string, repo IAccountRepository) error {
 
 	expectedHash := util.GenerateHash(accounts[0].PasswordSalt, []byte(password))
 	if reflect.DeepEqual(expectedHash, accounts[0].PasswordHash) {
-		// TODO: UpdateAccountSecurity (email, "login", true)
-		log.Printf("%s was authenticated", email)
 		return nil // user is authenticated
 	} else {
-		log.Printf("%s failed being authenticated", email)
-		// TODO: UpdateAccountSecurity (email, "login", false)
 		return errors.New("incorrect username or password")
 	}
 }

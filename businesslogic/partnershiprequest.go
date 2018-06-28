@@ -82,10 +82,10 @@ func (request PartnershipRequest) hasValidSenderAndRecipient(accountRepo IAccoun
 	if len(recipientAccounts) != 1 {
 		return errors.New("recipient account cannot be found")
 	}
-	if senderAccounts[0].AccountTypeID != ACCOUNT_TYPE_ATHLETE {
+	if senderAccounts[0].AccountTypeID != AccountTypeAthlete {
 		return errors.New("sender is not an athlete")
 	}
-	if recipientAccounts[0].AccountTypeID != ACCOUNT_TYPE_ATHLETE {
+	if recipientAccounts[0].AccountTypeID != AccountTypeAthlete {
 		return errors.New("recipient is not an athlete")
 	}
 	return nil

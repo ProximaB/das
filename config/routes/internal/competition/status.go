@@ -24,5 +24,5 @@ var GetCompetitionStatusController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiCompetitionStatusEndpoint,
 	Handler:      competitionStatusServer.GetStatusHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }

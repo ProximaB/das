@@ -33,7 +33,7 @@ var searchStateController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceStateEndpoint,
 	Handler:      stateServer.SearchStateHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var deleteStateController = util.DasController{

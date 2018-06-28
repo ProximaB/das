@@ -22,5 +22,5 @@ var PartnershipRequestStatusController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     "/api/partnership/request/status",
 	Handler:      partnershipRequestStatusServer.GetPartnershipRequestStatusHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }

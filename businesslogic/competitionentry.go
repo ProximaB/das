@@ -73,8 +73,11 @@ type PartnershipCompetitionEntry struct {
 	PartnershipID    int
 }
 
-// SearchPartnershipCompetitionEntryCriteria specifies
+// SearchPartnershipCompetitionEntryCriteria specifies parameters that can be used to search the Competition Entry
+// of a Partnership
 type SearchPartnershipCompetitionEntryCriteria struct {
+	Partnership int `schema:"partnership"`
+	Competition int `schema:"competition"`
 }
 
 // IPartnershipCompetitionEntryRepository specifies functions that should be implemented to
@@ -140,7 +143,7 @@ func (entry *AthleteCompetitionEntry) CreateAthleteCompetitionEntry(competitionR
 		return errors.New("competition does not exist or it no longer accept new entries")
 	}
 
-	criteria := SearchAthleteCompetitionEntryCriteria {
+	criteria := SearchAthleteCompetitionEntryCriteria{
 		AthleteID:     entry.AthleteID,
 		CompetitionID: entry.CompetitionEntry.CompetitionID,
 	}

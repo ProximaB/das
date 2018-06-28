@@ -104,7 +104,7 @@ func (server CompetitionRegistrationServer) CreateAthleteRegistrationHandler(w h
 func (server CompetitionRegistrationServer) GetAthleteEventRegistrationHandler(w http.ResponseWriter, r *http.Request) {
 	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
 
-	if account.ID == 0 || account.AccountTypeID != businesslogic.ACCOUNT_TYPE_ATHLETE {
+	if account.ID == 0 || account.AccountTypeID != businesslogic.AccountTypeAthlete {
 		w.WriteHeader(http.StatusUnauthorized)
 		return
 	}

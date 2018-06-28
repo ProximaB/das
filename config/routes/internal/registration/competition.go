@@ -32,7 +32,7 @@ var createCompetitionRegistrationController = util.DasController{
 	Method:       http.MethodPost,
 	Endpoint:     apiAthleteCompetitionRegistrationEndpoint,
 	Handler:      athleteCompetitionRegistrationServer.CreateAthleteRegistrationHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_ATHLETE},
+	AllowedRoles: []int{businesslogic.AccountTypeAthlete},
 }
 
 // CompetitionRegistrationControllerGroup is a collection of handler functions for managing

@@ -1,4 +1,6 @@
-# Dancesport Application System (DAS)
+# DAS
+An open dancesport competition management system.
+
 
 [Join the DAS Slack Community](https://join.slack.com/t/ballroomdev/shared_invite/enQtMzg4OTU4OTAyNjQ3LTZmYWU2ZTA1Njc2NmI2YWIyZGRlMTQ1MGYyODM0ZWVmZjAzN2ZkNTcyYzNiM2NiMjE2MjI4YjQyNjcyNTU1MGE)
 

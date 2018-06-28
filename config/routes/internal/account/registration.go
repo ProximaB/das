@@ -27,7 +27,7 @@ var accountRegistrationController = util.DasController{
 	Method:       http.MethodPost,
 	Endpoint:     apiAccountRegistrationEndpoint,
 	Handler:      accountServer.RegisterAccountHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var accountAuthenticationController = util.DasController{
@@ -36,7 +36,7 @@ var accountAuthenticationController = util.DasController{
 	Method:       http.MethodPost,
 	Endpoint:     apiAccountAuthenticationEndpoint,
 	Handler:      accountServer.AccountAuthenticationHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var AccountControllerGroup = util.DasControllerGroup{

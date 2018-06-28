@@ -24,7 +24,7 @@ var searchSchoolController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceSchoolEndpoint,
 	Handler:      schoolServer.SearchSchoolHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var createSchoolController = util.DasController{
@@ -33,7 +33,7 @@ var createSchoolController = util.DasController{
 	Method:       http.MethodPost,
 	Endpoint:     apiReferenceSchoolEndpoint,
 	Handler:      schoolServer.CreateSchoolHandler,
-	AllowedRoles: []int{businesslogic.AccountTypeAdministrator, businesslogic.ACCOUNT_TYPE_ATHLETE},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator, businesslogic.AccountTypeAthlete},
 }
 
 var deleteSchoolController = util.DasController{

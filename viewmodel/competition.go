@@ -43,7 +43,7 @@ func CompetitionDataModelToViewModel(competition businesslogic.Competition, acco
 		Attendance: competition.Attendance,
 	}
 
-	if accountType == businesslogic.ACCOUNT_TYPE_ORGANIZER {
+	if accountType == businesslogic.AccountTypeOrganizer {
 		view.ContactName = competition.ContactName
 		view.ContactEmail = competition.ContactEmail
 		view.ContactPhone = competition.ContactPhone

@@ -24,7 +24,7 @@ var searchStyleController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceStyleEndpoint,
 	Handler:      styleServer.SearchStyleHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var createStyleController = util.DasController{

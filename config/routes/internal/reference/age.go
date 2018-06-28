@@ -24,7 +24,7 @@ var searchAgeController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceAgeEndpoint,
 	Handler:      ageServer.SearchAgeHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var createAgeController = util.DasController{

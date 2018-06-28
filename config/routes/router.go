@@ -25,14 +25,14 @@ var restAPIRouter = []Route{
 	// Competition
 
 	// Events
-	{"Public view of events", http.MethodGet, "/api/event", authorizeSingleRole(getEventHandler, businesslogic.ACCOUNT_TYPE_NOAUTH)},
-	{"Public view of competitive ballroom events", http.MethodGet, "/api/event/competitive/ballroom", authorizeSingleRole(getCompetitiveBallroomEventHandler, businesslogic.ACCOUNT_TYPE_NOAUTH)},
-	{"[Organizer] Create a competitive ballroom event", http.MethodPost, "/api/organizer/event", authorizeSingleRole(createEventHandler, businesslogic.ACCOUNT_TYPE_ORGANIZER)},
+	{"Public view of events", http.MethodGet, "/api/event", authorizeSingleRole(getEventHandler, businesslogic.AccountTypeNoAuth)},
+	{"Public view of competitive ballroom events", http.MethodGet, "/api/event/competitive/ballroom", authorizeSingleRole(getCompetitiveBallroomEventHandler, businesslogic.AccountTypeNoAuth)},
+	{"[Organizer] Create a competitive ballroom event", http.MethodPost, "/api/organizer/event", authorizeSingleRole(createEventHandler, businesslogic.AccountTypeOrganizer)},
 
 	// Entries
-	{"add/drop competitive ballroom event entries", http.MethodPost, "/api/athlete/registration", authorizeSingleRole(createAthleteRegistrationHandler, businesslogic.ACCOUNT_TYPE_ATHLETE)},
-	{"Get competitive ballroom entries for partnership", http.MethodGet, "/api/athlete/registration", authorizeSingleRole(getAthleteEventRegistrationHandler, businesslogic.ACCOUNT_TYPE_ATHLETE)},
-	{"Get competitive ballroom entries for public view", http.MethodGet, "/api/public/entries", authorizeSingleRole(getCompetitiveBallroomEventEntryHandler, businesslogic.ACCOUNT_TYPE_NOAUTH)},
+	{"add/drop competitive ballroom event entries", http.MethodPost, "/api/athlete/registration", authorizeSingleRole(createAthleteRegistrationHandler, businesslogic.AccountTypeAthlete)},
+	{"Get competitive ballroom entries for partnership", http.MethodGet, "/api/athlete/registration", authorizeSingleRole(getAthleteEventRegistrationHandler, businesslogic.AccountTypeAthlete)},
+	{"Get competitive ballroom entries for public view", http.MethodGet, "/api/public/entries", authorizeSingleRole(getCompetitiveBallroomEventEntryHandler, businesslogic.AccountTypeNoAuth)},
 }*/
 
 func setResponseHeader(h http.HandlerFunc) http.HandlerFunc {
@@ -88,7 +88,7 @@ func authorizeMultipleRoles(h http.HandlerFunc, roles []int) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		allowNoAuth := false
 		for _, each := range roles {
-			if each == businesslogic.ACCOUNT_TYPE_NOAUTH {
+			if each == businesslogic.AccountTypeNoAuth {
 				allowNoAuth = true
 				break
 			}

@@ -64,18 +64,18 @@ func ValidateCompetitiveBallroomEventRegistration(creator *Account,
 	// check if competition still allow registration
 	// for competitor: only change registration if registration is open
 	// for organizer, only change registration if competition is
-	if creator.AccountTypeID == ACCOUNT_TYPE_ATHLETE && competitions[0].GetStatus() != COMPETITION_STATUS_OPEN_REGISTRATION {
+	if creator.AccountTypeID == AccountTypeAthlete && competitions[0].GetStatus() != COMPETITION_STATUS_OPEN_REGISTRATION {
 		return errors.New("registration is no longer open")
 	}
 
 	// check if organizer is authorized to change this partnership's reigstration
 	organizer := GetAccountByID(competitions[0].CreateUserID, accountRepo) // creator may not be the organizer of specified competition
-	if creator.AccountTypeID == ACCOUNT_TYPE_ORGANIZER && organizer.ID != creator.ID {
+	if creator.AccountTypeID == AccountTypeOrganizer && organizer.ID != creator.ID {
 		return errors.New("not the organizer of specified competition")
 	}
 
 	// check if the creator of the entry is competitor
-	if creator.AccountTypeID == ACCOUNT_TYPE_ATHLETE && partnership.LeadID != creator.ID && partnership.FollowID != creator.ID {
+	if creator.AccountTypeID == AccountTypeAthlete && partnership.LeadID != creator.ID && partnership.FollowID != creator.ID {
 		// request was sent by people who are neither the lead or the follow of this partnership
 		return errors.New("not the lead or the follow of specified partnership")
 	}
@@ -149,14 +149,16 @@ func ValidateCompetitiveBallroomEventRegistration(creator *Account,
 	// check event entries, and see if this partnership is still eligible for entering these events
 	// TODO: eligibility check
 	for _, each := range registration.EventsAdded {
-		eventEntry := EventEntry{
-			EventID:         each,
-			PartnershipID:   registration.PartnershipID,
-			CompetitorTag:   0,
-			CreateUserID:    creator.ID,
-			DateTimeCreated: time.Now(),
-			UpdateUserID:    creator.ID,
-			DateTimeUpdated: time.Now(),
+		eventEntry := PartnershipEventEntry{
+			PartnershipID: registration.PartnershipID,
+			EventEntry: EventEntry{
+				EventID:         each,
+				Mask:            0,
+				CreateUserID:    creator.ID,
+				DateTimeCreated: time.Now(),
+				UpdateUserID:    creator.ID,
+				DateTimeUpdated: time.Now(),
+			},
 		}
 		eligibilityErr := CheckCompetitiveBallroomEventEligibility(eventEntry)
 		if eligibilityErr != nil {
@@ -171,10 +173,11 @@ func CreateEventEntries(creator *Account,
 	eventEntryRepo IPartnershipEventEntryRepository) error {
 	for _, each := range registration.EventsAdded {
 		eventEntry := PartnershipEventEntry{
+
+			PartnershipID: registration.PartnershipID,
 			EventEntry: EventEntry{
 				EventID:         each,
-				PartnershipID:   registration.PartnershipID,
-				CompetitorTag:   0,
+				Mask:            0,
 				CreateUserID:    creator.ID,
 				DateTimeCreated: time.Now(),
 				UpdateUserID:    creator.ID,
@@ -208,7 +211,7 @@ func DropEventEntries(creator *Account,
 	return nil
 }
 
-func CheckCompetitiveBallroomEventEligibility(entry EventEntry) error {
+func CheckCompetitiveBallroomEventEligibility(entry PartnershipEventEntry) error {
 	// TODO: implement this method
 	return errors.New("not implemented")
 }
@@ -227,7 +230,7 @@ func GetEventRegistration(competitionID int,
 		return nil, errors.New("cannot find partnership for registration")
 	}
 	partnership := results[0]
-	if user.ID == 0 || user.AccountTypeID != ACCOUNT_TYPE_ATHLETE || (user.ID != partnership.LeadID && user.ID != partnership.FollowID) {
+	if user.ID == 0 || user.AccountTypeID != AccountTypeAthlete || (user.ID != partnership.LeadID && user.ID != partnership.FollowID) {
 		return EventRegistration{}, errors.New("not authorized to request this information")
 	}
 

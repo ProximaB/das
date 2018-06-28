@@ -80,7 +80,7 @@ type CreateAccountStrategy struct {
 
 // CreateAccount creates a non-organizer account
 func (strategy CreateAccountStrategy) CreateAccount(account Account, password string) error {
-	if account.AccountTypeID == ACCOUNT_TYPE_ORGANIZER {
+	if account.AccountTypeID == AccountTypeOrganizer {
 		return errors.New("creating an organizer account with the wrong strategy")
 	}
 	return createAccount(&account, password, strategy.AccountRepo)
@@ -104,7 +104,7 @@ func (strategy CreateOrganizerAccountStrategy) CreateAccount(account Account, pa
 	if strategy.ProvisionRepo == nil {
 		return errors.New("organizer repository is null")
 	}
-	if account.AccountTypeID != ACCOUNT_TYPE_ORGANIZER {
+	if account.AccountTypeID != AccountTypeOrganizer {
 		return errors.New("not an organizer account")
 	}
 	if err := createAccount(&account, password, strategy.AccountRepo); err != nil {
@@ -214,7 +214,7 @@ func (strategy mvpAccountValidationStrategy) Validate(account Account, accountRe
 }
 
 func validateAccountRegistration(account Account, accountRepo IAccountRepository) error {
-	if account.AccountTypeID > AccountTypeAdministrator || account.AccountTypeID < ACCOUNT_TYPE_ATHLETE {
+	if account.AccountTypeID > AccountTypeAdministrator || account.AccountTypeID < AccountTypeAthlete {
 		return errors.New("invalid account type")
 	}
 	if len(account.FirstName) < 2 || len(account.LastName) < 2 {

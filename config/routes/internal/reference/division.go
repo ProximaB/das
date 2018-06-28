@@ -24,7 +24,7 @@ var searchDivisionController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceDivisionEndpoint,
 	Handler:      divisionServer.SearchDivisionHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var createDivisionController = util.DasController{

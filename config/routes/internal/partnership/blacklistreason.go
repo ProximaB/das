@@ -24,5 +24,5 @@ var GetPartnershipBlacklistReasonController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiPartnershipBlacklistReasonEndpoint,
 	Handler:      partnershipRequestBlacklistReasonServer.GetPartnershipBlacklistReasonHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }

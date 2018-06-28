@@ -24,5 +24,5 @@ var AccountTypeController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiAccountTypeEndpoint,
 	Handler:      accountTypeServer.GetAccountTypeHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }

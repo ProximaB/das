@@ -40,7 +40,7 @@ func (repo PostgresPartnershipEventEntryRepository) CreatePartnershipEventEntry(
 	).Values(
 		entry.EventEntry.EventID,
 		entry.PartnershipID,
-		entry.EventEntry.CompetitorTag,
+		entry.EventEntry.Mask,
 		entry.EventEntry.CreateUserID,
 		entry.EventEntry.DateTimeCreated,
 		entry.EventEntry.UpdateUserID,
@@ -105,7 +105,7 @@ func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(
 			&each.ID,
 			&each.EventEntry.EventID,
 			&each.PartnershipID,
-			&each.EventEntry.CompetitorTag,
+			&each.EventEntry.Mask,
 			&each.EventEntry.CreateUserID,
 			&each.EventEntry.DateTimeCreated,
 			&each.EventEntry.UpdateUserID,

@@ -22,7 +22,7 @@ var testAthleteAccount = businesslogic.Account{
 	DateOfBirth:           time.Date(2017, time.January, 1, 1, 1, 1, 1, time.UTC),
 	ToSAccepted:           true,
 	PrivacyPolicyAccepted: true,
-	AccountTypeID:         businesslogic.ACCOUNT_TYPE_ATHLETE,
+	AccountTypeID:         businesslogic.AccountTypeAthlete,
 	Email:                 "test@test.com",
 	Phone:                 "1232234442",
 	Signature:             "I am a parent",
@@ -36,7 +36,7 @@ var testOrganizerAccount = businesslogic.Account{
 	DateOfBirth:           time.Date(1997, time.May, 22, 1, 1, 1, 1, time.UTC),
 	ToSAccepted:           true,
 	PrivacyPolicyAccepted: true,
-	AccountTypeID:         businesslogic.ACCOUNT_TYPE_ORGANIZER,
+	AccountTypeID:         businesslogic.AccountTypeOrganizer,
 	Email:                 "mighty.meerkat@email.com",
 	Phone:                 "3321231232",
 }
@@ -77,7 +77,7 @@ func TestGetAccountByID(t *testing.T) {
 	mockedAccountRepo.EXPECT().SearchAccount(businesslogic.SearchAccountCriteria{
 		ID: 2,
 	}).Return([]businesslogic.Account{
-		businesslogic.Account{
+		{
 			ID: 2, Email: "newuser@email.com",
 		},
 	}, nil)
@@ -103,7 +103,7 @@ func TestGetAccountByUUID(t *testing.T) {
 	mockedAccountRepo.EXPECT().SearchAccount(businesslogic.SearchAccountCriteria{
 		UUID: "123",
 	}).Return([]businesslogic.Account{
-		businesslogic.Account{
+		{
 			ID: 2, Email: "newuser@email.com",
 		},
 	}, nil)

@@ -23,7 +23,7 @@ var searchCountryController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceCountryEndpoint,
 	Handler:      countryServer.SearchCountryHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var createCountryController = util.DasController{

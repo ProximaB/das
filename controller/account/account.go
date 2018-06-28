@@ -64,7 +64,7 @@ func (server Server) RegisterAccountHandler(w http.ResponseWriter, r *http.Reque
 
 	var strategy businesslogic.ICreateAccountStrategy
 	switch account.AccountTypeID {
-	case businesslogic.ACCOUNT_TYPE_ORGANIZER:
+	case businesslogic.AccountTypeOrganizer:
 		strategy = businesslogic.CreateOrganizerAccountStrategy{
 			AccountRepo:   server.IAccountRepository,
 			ProvisionRepo: server.IOrganizerProvisionRepository,
@@ -80,7 +80,7 @@ func (server Server) RegisterAccountHandler(w http.ResponseWriter, r *http.Reque
 	}
 
 	// check if parental account is needed
-	if account.AccountTypeID == businesslogic.ACCOUNT_TYPE_ATHLETE && account.ByGuardian {
+	if account.AccountTypeID == businesslogic.AccountTypeAthlete && account.ByGuardian {
 		strategy = businesslogic.CreateParentalAccountStrategy{
 			AccountRepo: server.IAccountRepository,
 		}
@@ -149,7 +149,7 @@ func (server Server) AccountAuthenticationHandler(w http.ResponseWriter, r *http
 /*
 func authorizeSingleRole(h http.HandlerFunc, role int) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		if role == businesslogic.ACCOUNT_TYPE_NOAUTH {
+		if role == businesslogic.AccountTypeNoAuth {
 			h.ServeHTTP(w, r)
 			return
 		}

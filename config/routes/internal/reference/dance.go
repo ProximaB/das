@@ -24,7 +24,7 @@ var searchDanceController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceDanceEndpoint,
 	Handler:      danceServer.SearchDanceHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var createDanceController = util.DasController{

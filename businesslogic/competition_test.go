@@ -14,11 +14,6 @@ import (
 	"time"
 )
 
-var competitions = []businesslogic.Competition{
-	{Name: "Test Comp 1"},
-	{Name: "Test Comp 2"},
-}
-
 func TestCreateCompetition(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()

@@ -24,7 +24,7 @@ var searchStudioController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceStudioEndpoint,
 	Handler:      studioServer.SearchStudioHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var createStudioController = util.DasController{
@@ -33,7 +33,7 @@ var createStudioController = util.DasController{
 	Method:       http.MethodPost,
 	Endpoint:     apiReferenceStudioEndpoint,
 	Handler:      studioServer.CreateStudioHandler,
-	AllowedRoles: []int{businesslogic.AccountTypeAdministrator, businesslogic.ACCOUNT_TYPE_ATHLETE},
+	AllowedRoles: []int{businesslogic.AccountTypeAdministrator, businesslogic.AccountTypeAthlete},
 }
 
 var deleteStudioController = util.DasController{

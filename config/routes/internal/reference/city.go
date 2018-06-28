@@ -33,7 +33,7 @@ var searchCityController = util.DasController{
 	Method:       http.MethodGet,
 	Endpoint:     apiReferenceCityEndpoint,
 	Handler:      cityServer.SearchCityHandler,
-	AllowedRoles: []int{businesslogic.ACCOUNT_TYPE_NOAUTH},
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
 var deleteCityController = util.DasController{

@@ -125,7 +125,7 @@ type AthleteCompetitionTBAEntry struct {
 // CreateAthleteCompetitionEntry will check if current entry exists in the repository. If yes, an error will be returned,
 // if not, a competition entry will be created for this athlete.
 // Competition must be during open registration stage.
-func (entry *AthleteCompetitionEntry) CreateAthleteCompetitionEntry(competitionRepo ICompetitionRepository, entryRepo IAthleteCompetitionEntryRepository) error {
+func (entry *AthleteCompetitionEntry) CreateAthleteCompetitionEntry(competitionRepo ICompetitionRepository, athleteCompEntryRepo IAthleteCompetitionEntryRepository) error {
 
 	// check if competition still accept entries
 	compSearchResults, searchCompErr := competitionRepo.SearchCompetition(
@@ -140,18 +140,18 @@ func (entry *AthleteCompetitionEntry) CreateAthleteCompetitionEntry(competitionR
 		return errors.New("competition does not exist or it no longer accept new entries")
 	}
 
-	criteria := SearchAthleteCompetitionEntryCriteria{
-		//AthleteID:     entry.AthleteID,
-		//CompetitionID: entry.CompetitionID,
+	criteria := SearchAthleteCompetitionEntryCriteria {
+		AthleteID:     entry.AthleteID,
+		CompetitionID: entry.CompetitionEntry.CompetitionID,
 	}
 
-	searchResults, err := entryRepo.SearchAthleteCompetitionEntry(criteria)
+	searchResults, err := athleteCompEntryRepo.SearchAthleteCompetitionEntry(criteria)
 	if err != nil {
 		return err
 	}
 
 	if len(searchResults) == 0 {
-		return entryRepo.CreateAthleteCompetitionEntry(entry)
+		return athleteCompEntryRepo.CreateAthleteCompetitionEntry(entry)
 	}
 
 	if len(searchResults) > 0 {

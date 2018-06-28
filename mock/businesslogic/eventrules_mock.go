@@ -3,4 +3,3 @@
 
 // Package mock_businesslogic is a generated GoMock package.
 package mock_businesslogic
-

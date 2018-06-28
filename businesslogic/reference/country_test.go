@@ -16,7 +16,7 @@ import (
 	"testing"
 
 	"github.com/DancesportSoftware/das/businesslogic/reference"
-	"github.com/DancesportSoftware/das/mock/businesslogic/reference"
+	mock_reference "github.com/DancesportSoftware/das/mock/businesslogic/reference"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )

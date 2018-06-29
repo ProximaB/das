@@ -18,7 +18,7 @@ var dbConnectionString = os.Getenv(envarDBConnectionString)
 func openDatabaseConnection() {
 	// for testing, use default connection
 	if len(dbConnectionString) == 0 {
-		log.Fatalln("cannot connect to database")
+		log.Println("[error] cannot find database connection string")
 	}
 
 	var err error
@@ -31,7 +31,7 @@ func openDatabaseConnection() {
 		log.Printf("[error] cannot ping database without error: %s\n", err.Error())
 	}
 	if err == nil {
-		log.Println("[success] connected to database with given connection string")
+		log.Println("[success] connected to database with the given connection string")
 	}
 	if PostgresDatabase == nil {
 		log.Fatal("cannot create connection to the database")

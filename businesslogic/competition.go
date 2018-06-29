@@ -38,7 +38,7 @@ func (comp *Competition) UpdateStatus(statusID int) error {
 	if comp.statusID >= statusID && comp.statusID != 0 {
 		return errors.New("cannot revert competition status")
 	}
-	if comp.statusID == COMPETITION_STATUS_CLOSED || comp.statusID == COMPETITION_STATUS_CANCELLED {
+	if comp.statusID == CompetitionStatusClosed || comp.statusID == CompetitionStatusCancelled {
 		return errors.New("competition status is locked")
 	}
 	comp.statusID = statusID
@@ -49,6 +49,7 @@ func (comp Competition) GetStatus() int {
 	return comp.statusID
 }
 
+// SearchCompetitionCriteria specifies the parameters that can be used to search a Competition
 type SearchCompetitionCriteria struct {
 	ID            int       `schema:"id"`
 	Name          string    `schema:"name"`
@@ -83,6 +84,8 @@ type ICompetitionRepository interface {
 	DeleteCompetition(competition Competition) error
 }
 
+// CreateCompetition creates competition in competitionRepo, update records in provisionRepo, and
+// add a new record to historyRepo
 func CreateCompetition(competition Competition, competitionRepo ICompetitionRepository,
 	provisionRepo IOrganizerProvisionRepository, historyRepo IOrganizerProvisionHistoryRepository) error {
 	// check if data received is validationErr
@@ -121,8 +124,8 @@ func validateCreateCompetition(competition Competition) error {
 	if len(competition.Website) < 7 { // requires "http://"
 		return errors.New("official competition website is required")
 	}
-	if competition.GetStatus() > COMPETITION_STATUS_CLOSED_REGISTRATION {
-		return errors.New("cannot create competition that no longer allows registration")
+	if competition.GetStatus() > CompetitionStatusClosedRegistration {
+		return errors.New("cannot create competition that no longer allows new registration")
 	}
 	if competition.StartDateTime.After(competition.EndDateTime) {
 		return errors.New("start date must be ahead of end date")
@@ -160,21 +163,22 @@ func validateCreateCompetition(competition Competition) error {
 	return nil
 }
 
+// UpdateCompetition updates the existing competition with the information provided in OrganizerUpdateCompetition
 func UpdateCompetition(user *Account, competition OrganizerUpdateCompetition, repo ICompetitionRepository) error {
 	// check if user is the owner of the original competition
 	competitions, err := repo.SearchCompetition(SearchCompetitionCriteria{ID: competition.CompetitionID})
 	if err != nil {
 		return err
 	}
-	if len(competitions) != 1 || competitions[0].ID == 0 {
+	if competitions == nil || len(competitions) != 1 || competitions[0].ID == 0 {
 		return errors.New("cannot find this competition")
 	}
 	if validationErr := validateUpdateCompetition(user, competitions[0], &competition, repo); validationErr != nil {
 		return validationErr
 	}
 
-	if competitions[0].GetStatus() == COMPETITION_STATUS_OPEN_REGISTRATION ||
-		competitions[0].GetStatus() == COMPETITION_STATUS_CLOSED_REGISTRATION {
+	if competitions[0].GetStatus() == CompetitionStatusOpenRegistration ||
+		competitions[0].GetStatus() == CompetitionStatusClosedRegistration {
 		// TODO: reimplement event update
 		/*if updateEventErr := dataaccess.UpdateCompetitionEventStatus(dataaccess.DATABASE, competition.ID, competitions[0].StatusID); updateEventErr != nil {
 			return updateEventErr
@@ -198,7 +202,7 @@ func validateUpdateCompetition(user *Account,
 		return errors.New("cannot change competition status back")
 	}
 
-	if competition.GetStatus() == COMPETITION_STATUS_CLOSED {
+	if competition.GetStatus() == CompetitionStatusClosed {
 		return errors.New("competition is closed")
 	}
 	if len(updateDTO.Name) < 3 {

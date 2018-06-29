@@ -26,7 +26,7 @@ type PostgresFederationRepository struct {
 
 func (repo PostgresFederationRepository) CreateFederation(federation *referencebll.Federation) error {
 	if repo.Database == nil {
-		log.Println(common.ERROR_NIL_DATABASE)
+		log.Println(common.ErrorMessageEmptyDatabase)
 	}
 	stmt := repo.SqlBuilder.Insert("").
 		Into(DAS_FEDERATION_TABLE).
@@ -66,7 +66,7 @@ func (repo PostgresFederationRepository) CreateFederation(federation *referenceb
 
 func (repo PostgresFederationRepository) SearchFederation(criteria referencebll.SearchFederationCriteria) ([]referencebll.Federation, error) {
 	if repo.Database == nil {
-		log.Println(common.ERROR_NIL_DATABASE)
+		log.Println(common.ErrorMessageEmptyDatabase)
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s",
@@ -117,7 +117,7 @@ func (repo PostgresFederationRepository) SearchFederation(criteria referencebll.
 
 func (repo PostgresFederationRepository) DeleteFederation(federation referencebll.Federation) error {
 	if repo.Database == nil {
-		log.Println(common.ERROR_NIL_DATABASE)
+		log.Println(common.ErrorMessageEmptyDatabase)
 	}
 	stmt := repo.SqlBuilder.Delete("").From(DAS_FEDERATION_TABLE).Where(squirrel.Eq{common.PRIMARY_KEY: federation.ID})
 
@@ -133,7 +133,7 @@ func (repo PostgresFederationRepository) DeleteFederation(federation referencebl
 
 func (repo PostgresFederationRepository) UpdateFederation(federation referencebll.Federation) error {
 	if repo.Database == nil {
-		log.Println(common.ERROR_NIL_DATABASE)
+		log.Println(common.ErrorMessageEmptyDatabase)
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_FEDERATION_TABLE)
 	if federation.ID > 0 {

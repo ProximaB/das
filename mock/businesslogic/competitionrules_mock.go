@@ -34,7 +34,7 @@ func (m *MockIRule) EXPECT() *MockIRuleMockRecorder {
 }
 
 // Apply mocks base method
-func (m *MockIRule) Apply(registration businesslogic.Registration) error {
+func (m *MockIRule) Apply(registration businesslogic.EventRegistration) error {
 	ret := m.ctrl.Call(m, "Apply", registration)
 	ret0, _ := ret[0].(error)
 	return ret0

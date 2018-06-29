@@ -116,7 +116,7 @@ func (event Event) EquivalentTo(other Event) bool {
 		return false
 	}
 	sameDances := true
-	for k, _ := range event.dances {
+	for k := range event.dances {
 		if !(other.dances[k]) {
 			sameDances = false
 			break
@@ -140,7 +140,7 @@ func CreateEvent(event Event, compRepo ICompetitionRepository, eventRepo IEventR
 
 	competition := compSearchResults[0]
 
-	if competition.GetStatus() != COMPETITION_STATUS_PRE_REGISTRATION {
+	if competition.GetStatus() != CompetitionStatusPreRegistration {
 		return errors.New("events can only be added when competition is in pre-registration")
 	} else if competition.CreateUserID != event.CreateUserID {
 		return errors.New("not authorized to create event for this competition")

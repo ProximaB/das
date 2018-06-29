@@ -134,7 +134,7 @@ func (entry *AthleteCompetitionEntry) CreateAthleteCompetitionEntry(competitionR
 	compSearchResults, searchCompErr := competitionRepo.SearchCompetition(
 		SearchCompetitionCriteria{
 			ID:       entry.CompetitionEntry.CompetitionID,
-			StatusID: COMPETITION_STATUS_OPEN_REGISTRATION,
+			StatusID: CompetitionStatusOpenRegistration,
 		})
 	if searchCompErr != nil {
 		return searchCompErr

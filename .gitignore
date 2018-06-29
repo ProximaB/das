@@ -45,3 +45,7 @@ app.yaml
 
 # Test coverage
 coverage.txt
+profile.out
+
+# sonar
+.scannerwork/

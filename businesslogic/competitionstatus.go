@@ -7,15 +7,16 @@ package businesslogic
 import "time"
 
 const (
-	COMPETITION_STATUS_PRE_REGISTRATION    = 1
-	COMPETITION_STATUS_OPEN_REGISTRATION   = 2
-	COMPETITION_STATUS_CLOSED_REGISTRATION = 3
-	COMPETITION_STATUS_IN_PROGRESS         = 4
-	COMPETITION_STATUS_PROCESSING          = 5
-	COMPETITION_STATUS_CLOSED              = 6
-	COMPETITION_STATUS_CANCELLED           = 7
+	CompetitionStatusPreRegistration    = 1
+	CompetitionStatusOpenRegistration   = 2
+	CompetitionStatusClosedRegistration = 3
+	CompetitionStatusInProgress         = 4
+	CompetitionStatusProcessing         = 5
+	CompetitionStatusClosed             = 6
+	CompetitionStatusCancelled          = 7
 )
 
+// CompetitionStatus defines the data that is required to label the status of a Competition
 type CompetitionStatus struct {
 	ID              int
 	Name            string
@@ -25,6 +26,7 @@ type CompetitionStatus struct {
 	DateTimeUpdated time.Time
 }
 
+// ICompetitionStatusRepository defines the function that a CompetitionStatusRepository should implement
 type ICompetitionStatusRepository interface {
 	GetCompetitionAllStatus() ([]CompetitionStatus, error)
 }

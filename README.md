@@ -11,7 +11,7 @@ An open dancesport competition management system.
 [![codecov](https://codecov.io/gh/DancesportSoftware/das/branch/development/graph/badge.svg)](https://codecov.io/gh/DancesportSoftware/das)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/76bb2da0aa0e4a2486365500d3f93e8f)](https://www.codacy.com/app/DancesportSoftware/das_2?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=DancesportSoftware/das&amp;utm_campaign=Badge_Grade)
 [![Go Report Card](https://goreportcard.com/badge/github.com/DancesportSoftware/das)](https://goreportcard.com/report/github.com/DancesportSoftware/das)
-
+[![Quality Gate](https://sonarcloud.io/api/project_badges/measure?project=das&metric=alert_status)](https://sonarcloud.io/api/project_badges/measure?project=das&metric=alert_status)
 
 DAS is an open and free competition management system for competitive ballroom
 dance. This project (along with [dasdb](https://github.com/DancesportSoftware/dasdb) and 

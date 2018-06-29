@@ -54,13 +54,13 @@ func TestCreateCompetition(t *testing.T) {
 func TestCompetition_UpdateStatus(t *testing.T) {
 	comp := businesslogic.Competition{}
 
-	err_1 := comp.UpdateStatus(businesslogic.COMPETITION_STATUS_PRE_REGISTRATION)
+	err_1 := comp.UpdateStatus(businesslogic.CompetitionStatusPreRegistration)
 	assert.Nil(t, err_1, "change the status of newly instantiated competition should not result in error")
 
-	err_2 := comp.UpdateStatus(businesslogic.COMPETITION_STATUS_IN_PROGRESS)
+	err_2 := comp.UpdateStatus(businesslogic.CompetitionStatusInProgress)
 	assert.Nil(t, err_2, "change the status of competition from pre-registration to in-progress should not result in error")
 
-	err_3 := comp.UpdateStatus(businesslogic.COMPETITION_STATUS_OPEN_REGISTRATION)
+	err_3 := comp.UpdateStatus(businesslogic.CompetitionStatusOpenRegistration)
 	assert.NotNil(t, err_3, "cannot revert competition status from in-progress to open-registration")
 
 }

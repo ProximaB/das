@@ -7,12 +7,25 @@ package businesslogic
 import "errors"
 
 type IRule interface {
-	Apply(registration Registration) error
+	Apply(registration EventRegistration) error
 }
 
 type GenderRule struct {
+	AllowSameSex bool
+	IAccountRepository
+	IPartnershipRepository
 }
 
-func (rule GenderRule) Apply(registration Registration) error {
-	return errors.New("not implemented")
+func (rule GenderRule) Apply(registration EventRegistration) error {
+	if partnershipResults, err := rule.SearchPartnership(SearchPartnershipCriteria{
+		PartnershipID: registration.PartnershipID,
+	}); err != nil {
+		return err
+	} else {
+		partnership := partnershipResults[0]
+		if partnership.SameSex && (!rule.AllowSameSex) {
+			return errors.New("same sex is not allowed")
+		}
+	}
+	return nil
 }

@@ -30,7 +30,7 @@ func TestAthleteCompetitionEntry_CreateAthleteCompetitionEntry(t *testing.T) {
 		CompetitionEntry: businesslogic.CompetitionEntry{CompetitionID: 44},
 	}
 	competition := businesslogic.Competition{ID: 44, Name: "Awesome Competition"}
-	competition.UpdateStatus(businesslogic.COMPETITION_STATUS_OPEN_REGISTRATION)
+	competition.UpdateStatus(businesslogic.CompetitionStatusOpenRegistration)
 
 	compRepo := mock_businesslogic.NewMockICompetitionRepository(mockCtrl)
 	compRepo.EXPECT().SearchCompetition(gomock.Any()).Return(

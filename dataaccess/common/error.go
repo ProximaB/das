@@ -4,4 +4,5 @@
 
 package common
 
-const ERROR_NIL_DATABASE = "data source is not specified"
+// ErrorMessageEmptyDatabase defines a generic error message that is used when database connection is nil
+const ErrorMessageEmptyDatabase = "data source is not specified"

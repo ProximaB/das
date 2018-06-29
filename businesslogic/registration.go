@@ -24,6 +24,7 @@ type PartnershipCompetitionRepresentation struct {
 	DateTimeUpdated               time.Time
 }
 
+// EventRegistration specifies the data needed to create/update/drop event registration
 type EventRegistration struct {
 	CompetitionID      int   `json:"competition"`
 	PartnershipID      int   `json:"partnership"`
@@ -33,9 +34,6 @@ type EventRegistration struct {
 	StateRepresented   int   `json:"state"`
 	SchoolRepresented  int   `json:"school"`
 	StudioRepresented  int   `json:"studio"`
-}
-
-type Registration interface {
 }
 
 func ValidateCompetitiveBallroomEventRegistration(creator *Account,
@@ -64,7 +62,7 @@ func ValidateCompetitiveBallroomEventRegistration(creator *Account,
 	// check if competition still allow registration
 	// for competitor: only change registration if registration is open
 	// for organizer, only change registration if competition is
-	if creator.AccountTypeID == AccountTypeAthlete && competitions[0].GetStatus() != COMPETITION_STATUS_OPEN_REGISTRATION {
+	if creator.AccountTypeID == AccountTypeAthlete && competitions[0].GetStatus() != CompetitionStatusOpenRegistration {
 		return errors.New("registration is no longer open")
 	}
 
@@ -220,14 +218,14 @@ func GetEventRegistration(competitionID int,
 	partnershipID int,
 	user *Account,
 	partnershipRepo IPartnershipRepository,
-) (Registration, error) {
+) (EventRegistration, error) {
 	// check if user is part of the partnership
 	results, err := partnershipRepo.SearchPartnership(SearchPartnershipCriteria{PartnershipID: partnershipID})
 	if err != nil {
 		return EventRegistration{}, errors.New("cannot find requested partnership")
 	}
 	if results == nil || len(results) != 1 {
-		return nil, errors.New("cannot find partnership for registration")
+		return EventRegistration{}, errors.New("cannot find partnership for registration")
 	}
 	partnership := results[0]
 	if user.ID == 0 || user.AccountTypeID != AccountTypeAthlete || (user.ID != partnership.LeadID && user.ID != partnership.FollowID) {
@@ -235,5 +233,5 @@ func GetEventRegistration(competitionID int,
 	}
 
 	//return dataaccess.GetCompetitiveBallroomEventRegistration(dataaccess.DATABASE, competitionID, partnershipID)
-	return nil, errors.New("not implemented")
+	return EventRegistration{}, errors.New("not implemented")
 }

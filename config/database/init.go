@@ -11,18 +11,18 @@ import (
 	"os"
 )
 
+const envarDBConnectionString = "POSTGRES_CONNECTION"
+
+var dbConnectionString = os.Getenv(envarDBConnectionString)
+
 func openDatabaseConnection() {
-	connectionString := os.Getenv("POSTGRES_CONNECTION")
 	// for testing, use default connection
-	if len(connectionString) == 0 {
-		log.Println("using default connection string")
-		connectionString = `user=dasdev password=dAs\!@#\$1234 dbname=das sslmode=disable`
-	} else {
-		log.Println("using connection string from environment variable")
+	if len(dbConnectionString) == 0 {
+		log.Fatalln("cannot connect to database")
 	}
 
 	var err error
-	PostgresDatabase, err = sql.Open("postgres", connectionString)
+	PostgresDatabase, err = sql.Open("postgres", dbConnectionString)
 	if err != nil {
 		log.Printf("[error] cannot establish connection to database: %s\n", err)
 	}

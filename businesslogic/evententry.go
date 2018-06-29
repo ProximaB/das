@@ -1,4 +1,4 @@
-// Copyright 2017, 2018 Yubing Hou. All rights reserved.
+// Copyright 2018 Yubing Hou. All rights reserved.
 // Use of this source code is governed by GPL license
 // that can be found in the LICENSE file
 
@@ -7,11 +7,10 @@ package businesslogic
 import (
 	"errors"
 	"fmt"
-	"log"
 	"time"
 )
 
-// EventEntry defines the
+// EventEntry defines the base struct of an Entry at an Event
 type EventEntry struct {
 	ID              int
 	EventID         int
@@ -23,7 +22,7 @@ type EventEntry struct {
 	DateTimeUpdated time.Time
 }
 
-// PartnershipEventEntry defines the participation of a Partnership at an Event.
+// PartnershipEventEntry defines the Entry of a Partnership at an Event
 type PartnershipEventEntry struct {
 	ID            int
 	EventEntry    EventEntry
@@ -33,8 +32,7 @@ type PartnershipEventEntry struct {
 	CheckInTime   time.Time
 }
 
-// SearchPartnershipEventEntryCriteria specifies the parameters that can be used to search the Event Entry of a
-// Partnership in DAS.
+// SearchPartnershipEventEntryCriteria specifies the parameters that can be used to search the Event Entry of a Partnership
 type SearchPartnershipEventEntryCriteria struct {
 	PartnershipID int
 	EventID       int
@@ -99,19 +97,19 @@ type AdjudicatorEventEntryList struct {
 	EntryList []AdjudicatorEventEntry
 }
 
-func createEventEntry(entry PartnershipEventEntry, entryRepo IPartnershipEventEntryRepository) error {
+// CreatePartnershipEventEntry checks if an entry for the specified Partnership already exists in the specified Event. If
+// not, a new PartnershipEventEntry will be created for the specified event in the provided repository
+func CreatePartnershipEventEntry(entry PartnershipEventEntry, entryRepo IPartnershipEventEntryRepository) error {
 	// check if entries were already created
-	searchCriteria := SearchPartnershipEventEntryCriteria{
-		///PartnershipID:              entry.PartnershipID,
-		//CompetitiveBallroomEventID: entry.CompetitiveBallroomEventID,
-	}
-	existingEntries, _ := entryRepo.SearchPartnershipEventEntry(searchCriteria)
-
-	if len(existingEntries) == 1 {
-		return errors.New("event is already added")
-	} else if len(existingEntries) > 1 {
-		log.Println(errors.New(fmt.Sprintf("more than 1 entry has been added: %v", entry)))
+	if searchedResults, err := entryRepo.SearchPartnershipEventEntry(SearchPartnershipEventEntryCriteria{
+		PartnershipID: entry.PartnershipID,
+		EventID:       entry.EventEntry.EventID,
+	}); err != nil {
+		return err
+	} else if len(searchedResults) > 0 {
+		return errors.New(fmt.Sprintf("entry for partnership %d already exists for event %d", entry.PartnershipID, entry.EventEntry.EventID))
 	}
 
+	// entry does not exist, create the entry
 	return entryRepo.CreatePartnershipEventEntry(&entry)
 }

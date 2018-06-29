@@ -3,3 +3,153 @@
 
 // Package mock_businesslogic is a generated GoMock package.
 package mock_businesslogic
+
+import (
+	businesslogic "github.com/DancesportSoftware/das/businesslogic"
+	gomock "github.com/golang/mock/gomock"
+	reflect "reflect"
+)
+
+// MockIPartnershipRoundEntryRepository is a mock of IPartnershipRoundEntryRepository interface
+type MockIPartnershipRoundEntryRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockIPartnershipRoundEntryRepositoryMockRecorder
+}
+
+// MockIPartnershipRoundEntryRepositoryMockRecorder is the mock recorder for MockIPartnershipRoundEntryRepository
+type MockIPartnershipRoundEntryRepositoryMockRecorder struct {
+	mock *MockIPartnershipRoundEntryRepository
+}
+
+// NewMockIPartnershipRoundEntryRepository creates a new mock instance
+func NewMockIPartnershipRoundEntryRepository(ctrl *gomock.Controller) *MockIPartnershipRoundEntryRepository {
+	mock := &MockIPartnershipRoundEntryRepository{ctrl: ctrl}
+	mock.recorder = &MockIPartnershipRoundEntryRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockIPartnershipRoundEntryRepository) EXPECT() *MockIPartnershipRoundEntryRepositoryMockRecorder {
+	return m.recorder
+}
+
+// CreatePartnershipRoundEntry mocks base method
+func (m *MockIPartnershipRoundEntryRepository) CreatePartnershipRoundEntry(entry *businesslogic.PartnershipRoundEntry) error {
+	ret := m.ctrl.Call(m, "CreatePartnershipRoundEntry", entry)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreatePartnershipRoundEntry indicates an expected call of CreatePartnershipRoundEntry
+func (mr *MockIPartnershipRoundEntryRepositoryMockRecorder) CreatePartnershipRoundEntry(entry interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePartnershipRoundEntry", reflect.TypeOf((*MockIPartnershipRoundEntryRepository)(nil).CreatePartnershipRoundEntry), entry)
+}
+
+// DeletePartnershipRoundEntry mocks base method
+func (m *MockIPartnershipRoundEntryRepository) DeletePartnershipRoundEntry(entry businesslogic.PartnershipRoundEntry) error {
+	ret := m.ctrl.Call(m, "DeletePartnershipRoundEntry", entry)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeletePartnershipRoundEntry indicates an expected call of DeletePartnershipRoundEntry
+func (mr *MockIPartnershipRoundEntryRepositoryMockRecorder) DeletePartnershipRoundEntry(entry interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeletePartnershipRoundEntry", reflect.TypeOf((*MockIPartnershipRoundEntryRepository)(nil).DeletePartnershipRoundEntry), entry)
+}
+
+// SearchPartnershipRoundEntry mocks base method
+func (m *MockIPartnershipRoundEntryRepository) SearchPartnershipRoundEntry(criteria businesslogic.SearchPartnershipRoundEntryCriteria) ([]businesslogic.PartnershipRoundEntry, error) {
+	ret := m.ctrl.Call(m, "SearchPartnershipRoundEntry", criteria)
+	ret0, _ := ret[0].([]businesslogic.PartnershipRoundEntry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SearchPartnershipRoundEntry indicates an expected call of SearchPartnershipRoundEntry
+func (mr *MockIPartnershipRoundEntryRepositoryMockRecorder) SearchPartnershipRoundEntry(criteria interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchPartnershipRoundEntry", reflect.TypeOf((*MockIPartnershipRoundEntryRepository)(nil).SearchPartnershipRoundEntry), criteria)
+}
+
+// UpdatePartnershipRoundEntry mocks base method
+func (m *MockIPartnershipRoundEntryRepository) UpdatePartnershipRoundEntry(entry businesslogic.PartnershipRoundEntry) error {
+	ret := m.ctrl.Call(m, "UpdatePartnershipRoundEntry", entry)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdatePartnershipRoundEntry indicates an expected call of UpdatePartnershipRoundEntry
+func (mr *MockIPartnershipRoundEntryRepositoryMockRecorder) UpdatePartnershipRoundEntry(entry interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePartnershipRoundEntry", reflect.TypeOf((*MockIPartnershipRoundEntryRepository)(nil).UpdatePartnershipRoundEntry), entry)
+}
+
+// MockIAdjudicatorRoundEntryRepository is a mock of IAdjudicatorRoundEntryRepository interface
+type MockIAdjudicatorRoundEntryRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockIAdjudicatorRoundEntryRepositoryMockRecorder
+}
+
+// MockIAdjudicatorRoundEntryRepositoryMockRecorder is the mock recorder for MockIAdjudicatorRoundEntryRepository
+type MockIAdjudicatorRoundEntryRepositoryMockRecorder struct {
+	mock *MockIAdjudicatorRoundEntryRepository
+}
+
+// NewMockIAdjudicatorRoundEntryRepository creates a new mock instance
+func NewMockIAdjudicatorRoundEntryRepository(ctrl *gomock.Controller) *MockIAdjudicatorRoundEntryRepository {
+	mock := &MockIAdjudicatorRoundEntryRepository{ctrl: ctrl}
+	mock.recorder = &MockIAdjudicatorRoundEntryRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockIAdjudicatorRoundEntryRepository) EXPECT() *MockIAdjudicatorRoundEntryRepositoryMockRecorder {
+	return m.recorder
+}
+
+// CreateAdjudicatorRoundEntry mocks base method
+func (m *MockIAdjudicatorRoundEntryRepository) CreateAdjudicatorRoundEntry(entry *businesslogic.AdjudicatorRoundEntry) error {
+	ret := m.ctrl.Call(m, "CreateAdjudicatorRoundEntry", entry)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateAdjudicatorRoundEntry indicates an expected call of CreateAdjudicatorRoundEntry
+func (mr *MockIAdjudicatorRoundEntryRepositoryMockRecorder) CreateAdjudicatorRoundEntry(entry interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateAdjudicatorRoundEntry", reflect.TypeOf((*MockIAdjudicatorRoundEntryRepository)(nil).CreateAdjudicatorRoundEntry), entry)
+}
+
+// DeleteAdjudicatorRoundEntry mocks base method
+func (m *MockIAdjudicatorRoundEntryRepository) DeleteAdjudicatorRoundEntry(entry businesslogic.AdjudicatorRoundEntry) error {
+	ret := m.ctrl.Call(m, "DeleteAdjudicatorRoundEntry", entry)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteAdjudicatorRoundEntry indicates an expected call of DeleteAdjudicatorRoundEntry
+func (mr *MockIAdjudicatorRoundEntryRepositoryMockRecorder) DeleteAdjudicatorRoundEntry(entry interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAdjudicatorRoundEntry", reflect.TypeOf((*MockIAdjudicatorRoundEntryRepository)(nil).DeleteAdjudicatorRoundEntry), entry)
+}
+
+// SearchAdjudicatorRoundEntry mocks base method
+func (m *MockIAdjudicatorRoundEntryRepository) SearchAdjudicatorRoundEntry(criteria businesslogic.SearchAdjudicatorRoundEntryCriteria) ([]businesslogic.AdjudicatorRoundEntry, error) {
+	ret := m.ctrl.Call(m, "SearchAdjudicatorRoundEntry", criteria)
+	ret0, _ := ret[0].([]businesslogic.AdjudicatorRoundEntry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SearchAdjudicatorRoundEntry indicates an expected call of SearchAdjudicatorRoundEntry
+func (mr *MockIAdjudicatorRoundEntryRepositoryMockRecorder) SearchAdjudicatorRoundEntry(criteria interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchAdjudicatorRoundEntry", reflect.TypeOf((*MockIAdjudicatorRoundEntryRepository)(nil).SearchAdjudicatorRoundEntry), criteria)
+}
+
+// UpdateAdjudicatorRoundEntry mocks base method
+func (m *MockIAdjudicatorRoundEntryRepository) UpdateAdjudicatorRoundEntry(entry businesslogic.AdjudicatorRoundEntry) error {
+	ret := m.ctrl.Call(m, "UpdateAdjudicatorRoundEntry", entry)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateAdjudicatorRoundEntry indicates an expected call of UpdateAdjudicatorRoundEntry
+func (mr *MockIAdjudicatorRoundEntryRepositoryMockRecorder) UpdateAdjudicatorRoundEntry(entry interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateAdjudicatorRoundEntry", reflect.TypeOf((*MockIAdjudicatorRoundEntryRepository)(nil).UpdateAdjudicatorRoundEntry), entry)
+}

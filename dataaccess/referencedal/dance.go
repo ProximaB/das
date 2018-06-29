@@ -131,7 +131,7 @@ func (repo PostgresDanceRepository) UpdateDance(dance referencebll.Dance) error 
 
 func (repo PostgresDanceRepository) DeleteDance(dance referencebll.Dance) error {
 	if repo.Database == nil {
-		log.Println(common.ERROR_NIL_DATABASE)
+		log.Println(common.ErrorMessageEmptyDatabase)
 	}
 	stmt := repo.SqlBuilder.Delete("").From(DAS_DANCE_TABLE).Where(
 		squirrel.Eq{common.PRIMARY_KEY: dance.ID},

@@ -3,30 +3,3 @@
 
 // Package mock_businesslogic is a generated GoMock package.
 package mock_businesslogic
-
-import (
-	gomock "github.com/golang/mock/gomock"
-)
-
-// MockRegistration is a mock of Registration interface
-type MockRegistration struct {
-	ctrl     *gomock.Controller
-	recorder *MockRegistrationMockRecorder
-}
-
-// MockRegistrationMockRecorder is the mock recorder for MockRegistration
-type MockRegistrationMockRecorder struct {
-	mock *MockRegistration
-}
-
-// NewMockRegistration creates a new mock instance
-func NewMockRegistration(ctrl *gomock.Controller) *MockRegistration {
-	mock := &MockRegistration{ctrl: ctrl}
-	mock.recorder = &MockRegistrationMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use
-func (m *MockRegistration) EXPECT() *MockRegistrationMockRecorder {
-	return m.recorder
-}

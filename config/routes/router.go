@@ -187,6 +187,6 @@ func NewDasRouter() *mux.Router {
 	// public only
 	addDasControllerGroup(router, competition.PublicCompetitionViewControllerGroup)
 
-	log.Println("finishing controller initialization")
+	log.Println("[info] finishing controller initialization")
 	return router
 }

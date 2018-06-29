@@ -9,6 +9,6 @@ import "errors"
 type EventAgeRule struct {
 }
 
-func (rule EventAgeRule) Apply(registration Registration) error {
+func (rule EventAgeRule) Apply(registration EventRegistration) error {
 	return errors.New("not implemented")
 }

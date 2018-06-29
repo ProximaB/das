@@ -36,7 +36,7 @@ type AccountType struct {
 	DateTimeUpdated time.Time
 }
 
-// AccountTypeRepository specifies the functiosn that need to be implemented for looking up account types in DAS
+// IAccountTypeRepository specifies the functiosn that need to be implemented for looking up account types in DAS
 type IAccountTypeRepository interface {
 	GetAccountTypes() ([]AccountType, error)
 }

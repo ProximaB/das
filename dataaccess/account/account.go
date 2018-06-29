@@ -8,10 +8,11 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
-	"time"
 )
 
 const (
@@ -40,14 +41,14 @@ const (
 
 type PostgresAccountRepository struct {
 	Database   *sql.DB
-	SqlBuilder squirrel.StatementBuilderType
+	SQLBuilder squirrel.StatementBuilderType
 }
 
 func (repo PostgresAccountRepository) CreateAccount(account *businesslogic.Account) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresAccountRepository is not specified")
 	}
-	stmt := repo.SqlBuilder.
+	stmt := repo.SQLBuilder.
 		Insert("").
 		Into(DAS_USER_ACCOUNT_TABLE).
 		Columns(DAS_USER_ACCOUNT_COL_USER_TYPE_ID,
@@ -94,7 +95,7 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresAccountRepository is not specified")
 	}
-	stmt := repo.SqlBuilder.
+	stmt := repo.SQLBuilder.
 		Select(
 			fmt.Sprintf(
 				"%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
@@ -194,7 +195,7 @@ func (repo PostgresAccountRepository) DeleteAccount(account businesslogic.Accoun
 		return errors.New("data source of PostgresAccountRepository is not specified")
 	}
 	if account.ID > 0 {
-		stmt := repo.SqlBuilder.Delete("").From(DAS_USER_ACCOUNT_TABLE).Where(squirrel.Eq{common.PRIMARY_KEY: account.ID})
+		stmt := repo.SQLBuilder.Delete("").From(DAS_USER_ACCOUNT_TABLE).Where(squirrel.Eq{common.PRIMARY_KEY: account.ID})
 		_, err := stmt.RunWith(repo.Database).Exec()
 		return err
 	}
@@ -205,7 +206,7 @@ func (repo PostgresAccountRepository) UpdateAccount(account businesslogic.Accoun
 	if repo.Database == nil {
 		return errors.New("data source of PostgresAccountRepository is not specified")
 	}
-	stmt := repo.SqlBuilder.Update(DAS_USER_ACCOUNT_TABLE)
+	stmt := repo.SQLBuilder.Update(DAS_USER_ACCOUNT_TABLE)
 	if account.ID > 0 {
 		if len(account.PasswordSalt) > 0 {
 			stmt = stmt.Set(DAS_USER_ACCOUNT_COL_PASSWORD_SALT, account.PasswordSalt)

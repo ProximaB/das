@@ -15,7 +15,7 @@ import (
 
 var accountRepository = PostgresAccountRepository{
 	Database:   nil,
-	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
 func TestPostgresAccountRepository_SearchAccount(t *testing.T) {

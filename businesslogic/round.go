@@ -12,9 +12,9 @@ type RoundOrder struct {
 }
 
 var (
-	ROUND_ORDER_FINAL   = RoundOrder{"Final", 1}
-	ROUND_ORDER_SEMI    = RoundOrder{"Semi-Final", 2}
-	ROUND_ORDER_QUARTER = RoundOrder{"Quarter Final", 3}
+	RoundOrderFinal     = RoundOrder{"Final", 1}
+	RoundOrderSemiFinal = RoundOrder{"Semi-Final", 2}
+	RoundOrderQuarter   = RoundOrder{"Quarter Final", 3}
 	ROUND_ORDER_1_8     = RoundOrder{"1/8 Final", 4}
 	ROUND_ORDER_1_16    = RoundOrder{"1/16 Final", 5}
 	ROUND_ORDER_1_32    = RoundOrder{"1/32 Final", 6}
@@ -26,8 +26,9 @@ var (
 	ROUND_ORDER_1_2048  = RoundOrder{"1/2048 Final", 12}
 )
 
+// Round defines the
 type Round struct {
-	RoundID         int
+	ID              int
 	EventID         int
 	Order           RoundOrder
 	Entries         []EventEntry

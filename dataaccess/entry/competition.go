@@ -8,29 +8,32 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 )
 
 const (
-	DAS_COMPETITION_ENTRY_TABLE                = "DAS.COMPETITION_ENTRY_ATHLETE"
-	DAS_COMPETITION_ENTRY_COL_CHECKIN_IND      = "CHECKIN_IND"
-	DAS_COMPETITION_ENTRY_COL_CHECKIN_DATETIME = "CHECKIN_DATETIME"
-	DAS_COMPETITION_ENTRY_COL_COMPETITOR_TAG   = "LEADTAG"
+	dasCompetitionEntryTable              = "DAS.COMPETITION_ENTRY_ATHLETE"
+	dasCompetitionEntryColCheckinInd      = "CHECKIN_IND"
+	dasCompetitionEntryColCheckinDateTime = "CHECKIN_DATETIME"
+	dasCompetitionEntryColCompetitorTag   = "LEADTAG"
 )
 
+// PostgresAthleteCompetitionEntryRepository is a Postgres-based Athlete Competition Entry Repository
 type PostgresAthleteCompetitionEntryRepository struct {
 	Database   *sql.DB
-	SqlBuilder squirrel.StatementBuilderType
+	SQLBuilder squirrel.StatementBuilderType
 }
 
+// CreateAthleteCompetitionEntry creates a AthleteCompetitionEntry in the repository and update the ID of the AthleteCompetitionEntry
 func (repo PostgresAthleteCompetitionEntryRepository) CreateAthleteCompetitionEntry(entry *businesslogic.AthleteCompetitionEntry) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCompetitionEntryRepository is not specified")
 	}
-	clause := repo.SqlBuilder.Insert("").
-		Into(DAS_COMPETITION_ENTRY_TABLE).
+	clause := repo.SQLBuilder.Insert("").
+		Into(dasCompetitionEntryTable).
 		Columns(common.COL_COMPETITION_ID,
 			common.COL_ACCOUNT_ID,
 			common.COL_CREATE_USER_ID,
@@ -52,16 +55,16 @@ func (repo PostgresAthleteCompetitionEntryRepository) SearchAthleteCompetitionEn
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresCompetitionEntryRepository is not specified")
 	}
-	clause := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s",
+	clause := repo.SQLBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s",
 		common.PRIMARY_KEY,
 		common.COL_COMPETITION_ID,
 		common.COL_ACCOUNT_ID,
-		DAS_COMPETITION_ENTRY_COL_CHECKIN_IND,
-		DAS_COMPETITION_ENTRY_COL_CHECKIN_DATETIME,
+		dasCompetitionEntryColCheckinInd,
+		dasCompetitionEntryColCheckinDateTime,
 		common.COL_CREATE_USER_ID,
 		common.COL_DATETIME_CREATED,
 		common.COL_UPDATE_USER_ID,
-		common.COL_DATETIME_UPDATED)).From(DAS_COMPETITION_ENTRY_TABLE)
+		common.COL_DATETIME_UPDATED)).From(dasCompetitionEntryTable)
 
 	if criteria.ID > 0 {
 		clause = clause.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.ID})

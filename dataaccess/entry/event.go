@@ -8,6 +8,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
@@ -16,7 +17,7 @@ import (
 // PostgresPartnershipEventEntryRepository is a Postgres-based implementation of IPartnershipEventEntryRepository
 type PostgresPartnershipEventEntryRepository struct {
 	Database   *sql.DB
-	SqlBuilder squirrel.StatementBuilderType
+	SQLBuilder squirrel.StatementBuilderType
 }
 
 const (
@@ -29,7 +30,7 @@ func (repo PostgresPartnershipEventEntryRepository) CreatePartnershipEventEntry(
 	if repo.Database == nil {
 		return errors.New("data source of PostgresEventEntryRepository is not specified")
 	}
-	stmt := repo.SqlBuilder.Insert("").Into(DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_TABLE).Columns(
+	stmt := repo.SQLBuilder.Insert("").Into(DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_TABLE).Columns(
 		DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID,
 		common.COL_PARTNERSHIP_ID,
 		DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_LEADTAG,
@@ -58,7 +59,7 @@ func (repo PostgresPartnershipEventEntryRepository) CreatePartnershipEventEntry(
 }
 
 func (repo PostgresPartnershipEventEntryRepository) DeletePartnershipEventEntry(entry businesslogic.PartnershipEventEntry) error {
-	clause := repo.SqlBuilder.Delete("").
+	clause := repo.SQLBuilder.Delete("").
 		From(DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_TABLE).
 		Where(squirrel.Eq{DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID: entry.EventEntry.EventID}).
 		Where(squirrel.Eq{common.COL_PARTNERSHIP_ID: entry.PartnershipID})
@@ -72,12 +73,12 @@ func (repo PostgresPartnershipEventEntryRepository) UpdatePartnershipEventEntry(
 
 // Returns CompetitiveBallroomEventEntry, which is supposed to be used by competitor only
 func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(criteria businesslogic.SearchPartnershipEventEntryCriteria) ([]businesslogic.PartnershipEventEntry, error) {
-	clause := repo.SqlBuilder.Select(
+	clause := repo.SQLBuilder.Select(
 		fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
 			common.PRIMARY_KEY,
 			DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID,
 			common.COL_PARTNERSHIP_ID,
-			DAS_COMPETITION_ENTRY_COL_COMPETITOR_TAG,
+			dasCompetitionEntryColCompetitorTag,
 			common.COL_CREATE_USER_ID,
 			common.COL_DATETIME_CREATED,
 			common.COL_UPDATE_USER_ID,
@@ -119,7 +120,7 @@ func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(
 
 type PostgresAdjudicatorEventEntryRepository struct {
 	Database   *sql.DB
-	SqlBuilder squirrel.StatementBuilderType
+	SQLBuilder squirrel.StatementBuilderType
 }
 
 func (repo PostgresAdjudicatorEventEntryRepository) CreateAdjudicatorEventEntry(entry *businesslogic.AdjudicatorEventEntry) error {

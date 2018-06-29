@@ -60,7 +60,7 @@ var StudioRepository = referencedal.PostgresStudioRepository{
 }
 
 var AccountRepository = account.PostgresAccountRepository{
-	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
 var AccountTypeRepository = account.PostgresAccountTypeRepository{
@@ -108,7 +108,7 @@ var CompetitionRepository = competition.PostgresCompetitionRepository{
 }
 
 var AthleteCompetitionEntryRepository = entry.PostgresAthleteCompetitionEntryRepository{
-	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
 var PartnershipCompetitionEntryRepository = entry.PostgresPartnershipCompetitionEntryRepository{
@@ -124,5 +124,5 @@ var EventMetaRepository = event.PostgresEventMetaRepository{
 }
 
 var PartnershipEventEntryRepository = entry.PostgresPartnershipEventEntryRepository{
-	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }

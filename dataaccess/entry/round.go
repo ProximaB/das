@@ -7,13 +7,14 @@ package entry
 import (
 	"database/sql"
 	"errors"
+
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/Masterminds/squirrel"
 )
 
 type PostgresPartnershipRoundEntryRepository struct {
 	Database   *sql.DB
-	SqlBuilder squirrel.StatementBuilderType
+	SQLBuilder squirrel.StatementBuilderType
 }
 
 func (repo PostgresPartnershipRoundEntryRepository) CreatePartnershipRoundEntry(entry *businesslogic.PartnershipRoundEntry) error {
@@ -34,7 +35,7 @@ func (repo PostgresPartnershipRoundEntryRepository) UpdatePartnershipRoundEntry(
 
 type PostgresAdjudicatorRoundEntryRepository struct {
 	Database   *sql.DB
-	SqlBuilder squirrel.StatementBuilderType
+	SQLBuilder squirrel.StatementBuilderType
 }
 
 func (repo PostgresAdjudicatorRoundEntryRepository) CreateAdjudicatorRoundEntry(entry *businesslogic.AdjudicatorRoundEntry) error {

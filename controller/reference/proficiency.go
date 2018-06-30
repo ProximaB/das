@@ -37,7 +37,7 @@ func (server ProficiencyServer) SearchProficiencyHandler(w http.ResponseWriter, 
 	}
 
 	if proficiencies, err := server.IProficiencyRepository.SearchProficiency(*criteria); err != nil {
-		util.RespondJsonResult(w, http.StatusInternalServerError, util.Http500ErrorRetrievingData, err.Error())
+		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP500ErrorRetrievingData, err.Error())
 		return
 	} else {
 		dtos := make([]viewmodel.Proficiency, 0)

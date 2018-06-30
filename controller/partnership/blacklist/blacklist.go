@@ -47,7 +47,7 @@ func (server PartnershipRequestBlacklistServer) GetBlacklistedAccountHandler(w h
 
 	if err != nil {
 		log.Errorf(ctx, "error in getting partnership blacklist for user: %v", err)
-		util.RespondJsonResult(w, http.StatusInternalServerError, util.Http500ErrorRetrievingData, err.Error())
+		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP500ErrorRetrievingData, err.Error())
 		return
 	}
 

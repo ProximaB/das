@@ -36,7 +36,7 @@ func (server DivisionServer) SearchDivisionHandler(w http.ResponseWriter, r *htt
 	}
 
 	if divisions, err := server.IDivisionRepository.SearchDivision(*criteria); err != nil {
-		util.RespondJsonResult(w, http.StatusInternalServerError, util.Http500ErrorRetrievingData, err.Error())
+		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP500ErrorRetrievingData, err.Error())
 		return
 	} else {
 		data := make([]viewmodel.DivisionViewModel, 0)

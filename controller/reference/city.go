@@ -89,7 +89,7 @@ func (server CityServer) SearchCityHandler(w http.ResponseWriter, r *http.Reques
 	criteria := new(referencebll.SearchCityCriteria)
 	err := util.ParseRequestData(r, criteria)
 	if err != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, err.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, err.Error())
 		return
 	}
 	cities, err := server.ICityRepository.SearchCity(*criteria)

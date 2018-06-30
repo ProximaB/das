@@ -24,8 +24,10 @@ import (
 )
 
 const (
-	Http400InvalidRequestData  = "invalid request data"
-	Http500ErrorRetrievingData = "error in retrieving data"
+	// HTTP400InvalidRequestData provides a generic message that can be used when HTTP 400 error has to be returned
+	HTTP400InvalidRequestData = "invalid request data"
+	// HTTP500ErrorRetrievingData provides a generic error message which indicates that data access layer code has thrown an error
+	HTTP500ErrorRetrievingData = "error in retrieving data"
 )
 
 var JsonRequestDecoder = schema.NewDecoder()

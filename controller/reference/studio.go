@@ -33,12 +33,12 @@ func (server StudioServer) SearchStudioHandler(w http.ResponseWriter, r *http.Re
 	criteria := new(referencebll.SearchStudioCriteria)
 
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
 		return
 	}
 
 	if studios, err := server.SearchStudio(*criteria); err != nil {
-		util.RespondJsonResult(w, http.StatusInternalServerError, util.Http500ErrorRetrievingData, err.Error())
+		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP500ErrorRetrievingData, err.Error())
 		return
 	} else {
 		data := make([]viewmodel.Studio, 0)

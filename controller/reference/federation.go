@@ -33,7 +33,7 @@ type FederationServer struct {
 func (server FederationServer) SearchFederationHandler(w http.ResponseWriter, r *http.Request) {
 	criteria := new(referencebll.SearchFederationCriteria)
 	if err := util.ParseRequestData(r, criteria); err != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, err.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, err.Error())
 		return
 	}
 

@@ -40,7 +40,7 @@ func (server PartnershipRequestServer) CreatePartnershipRequestHandler(w http.Re
 	dto := new(viewmodel.CreatePartnershipRequest)
 
 	if parseErr := util.ParseRequestBodyData(r, dto); parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
 		return
 	}
 
@@ -48,7 +48,7 @@ func (server PartnershipRequestServer) CreatePartnershipRequestHandler(w http.Re
 	recipient := businesslogic.GetAccountByEmail(dto.RecipientEmail, server.IAccountRepository)
 
 	if recipient.ID == 0 {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, "recipient does not exist")
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, "recipient does not exist")
 		return
 	}
 
@@ -68,7 +68,7 @@ func (server PartnershipRequestServer) CreatePartnershipRequestHandler(w http.Re
 	} else if request.RecipientRole == businesslogic.PartnershipRoleFollow {
 		request.SenderRole = businesslogic.PartnershipRoleLead
 	} else {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, "invalid role for recipient")
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, "invalid role for recipient")
 		return
 	}
 
@@ -89,7 +89,7 @@ func (server PartnershipRequestServer) SearchPartnershipRequestHandler(w http.Re
 	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
 	criteria := new(businesslogic.SearchPartnershipRequestCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
 		return
 	}
 
@@ -98,13 +98,13 @@ func (server PartnershipRequestServer) SearchPartnershipRequestHandler(w http.Re
 	} else if criteria.Type == businesslogic.PartnershipRequestSent {
 		criteria.Sender = account.ID
 	} else {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, "invalid partnership request type")
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, "invalid partnership request type")
 		return
 	}
 
 	requests, err := server.SearchPartnershipRequest(*criteria)
 	if err != nil {
-		util.RespondJsonResult(w, http.StatusInternalServerError, util.Http500ErrorRetrievingData, err.Error())
+		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP500ErrorRetrievingData, err.Error())
 		return
 	}
 
@@ -131,12 +131,12 @@ func (server PartnershipRequestServer) UpdatePartnershipRequestHandler(w http.Re
 
 	respondDTO := new(viewmodel.PartnershipRequestResponse)
 	if parseErr := util.ParseRequestBodyData(r, respondDTO); parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
 		return
 	}
 
 	if respondDTO.Response != businesslogic.PartnershipRequestStatusAccepted && respondDTO.Response != businesslogic.PartnershipRequestStatusDeclined {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, "invalid response")
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, "invalid response")
 		return
 	}
 

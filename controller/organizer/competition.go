@@ -13,6 +13,7 @@
 //
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 package organizer
 
 import (
@@ -44,7 +45,7 @@ func (server OrganizerCompetitionServer) OrganizerCreateCompetitionHandler(w htt
 	createDTO := new(viewmodel.CreateCompetition)
 
 	if err := util.ParseRequestBodyData(r, createDTO); err != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, err.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, err.Error())
 		return
 	}
 
@@ -64,7 +65,7 @@ func (server OrganizerCompetitionServer) OrganizerCreateCompetitionHandler(w htt
 func (server OrganizerCompetitionServer) OrganizerSearchCompetitionHandler(w http.ResponseWriter, r *http.Request) {
 	searchDTO := new(SearchOrganizerCompetitionViewModel)
 	if parseErr := util.ParseRequestData(r, searchDTO); parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
 	} else {
 		account, _ := server.GetCurrentUser(r, server.IAccountRepository)
 		if account.ID == 0 ||
@@ -82,7 +83,7 @@ func (server OrganizerCompetitionServer) OrganizerSearchCompetitionHandler(w htt
 
 		comps, err := server.SearchCompetition(criteria)
 		if err != nil {
-			util.RespondJsonResult(w, http.StatusInternalServerError, util.Http500ErrorRetrievingData, err.Error())
+			util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP500ErrorRetrievingData, err.Error())
 			return
 		} else {
 			data := make([]viewmodel.Competition, 0)
@@ -101,7 +102,7 @@ func (server OrganizerCompetitionServer) OrganizerUpdateCompetitionHandler(w htt
 	updateDTO := new(businesslogic.OrganizerUpdateCompetition)
 
 	if parseErr := util.ParseRequestBodyData(r, updateDTO); parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
 		return
 	}
 
@@ -112,7 +113,7 @@ func (server OrganizerCompetitionServer) OrganizerUpdateCompetitionHandler(w htt
 	competitions[0].UpdateUserID = account.ID
 
 	if updateErr := server.UpdateCompetition(competitions[0]); updateErr != nil {
-		util.RespondJsonResult(w, http.StatusInternalServerError, util.Http500ErrorRetrievingData, updateErr.Error())
+		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP500ErrorRetrievingData, updateErr.Error())
 		return
 	}
 

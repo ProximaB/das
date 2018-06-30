@@ -42,7 +42,7 @@ func (server PartnershipServer) SearchPartnershipHandler(w http.ResponseWriter, 
 	partnerships, err := server.SearchPartnership(
 		businesslogic.SearchPartnershipCriteria{LeadID: account.ID, FollowID: account.ID})
 	if err != nil {
-		util.RespondJsonResult(w, http.StatusInternalServerError, util.Http500ErrorRetrievingData, err.Error())
+		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP500ErrorRetrievingData, err.Error())
 		return
 	}
 
@@ -70,7 +70,7 @@ func (server PartnershipServer) UpdatePartnershipHandler(w http.ResponseWriter, 
 
 	updateDTO := new(updatePartnership)
 	if parseErr := util.ParseRequestBodyData(r, updateDTO); parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
 		return
 	}
 }

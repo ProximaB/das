@@ -34,7 +34,7 @@ type StatusServer struct {
 func (server StatusServer) GetStatusHandler(w http.ResponseWriter, r *http.Request) {
 	status, err := server.GetCompetitionAllStatus()
 	if err != nil {
-		util.RespondJsonResult(w, http.StatusInternalServerError, util.Http500ErrorRetrievingData, err.Error())
+		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP500ErrorRetrievingData, err.Error())
 		return
 	}
 

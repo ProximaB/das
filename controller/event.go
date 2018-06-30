@@ -39,7 +39,7 @@ type EventServer struct {
 func (server EventServer) GetEventHandler(w http.ResponseWriter, r *http.Request) {
 	criteria := new(businesslogic.SearchEventCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
 		return
 	} else {
 
@@ -91,7 +91,7 @@ func getCompetitiveBallroomEventHandler(w http.ResponseWriter, r *http.Request) 
 	searchDTO := new(SearchCompetitiveBallroomEventViewModel)
 
 	if parseErr := util.ParseRequestData(r, searchDTO); parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
 	} else {
 		criteria := businesslogic.SearchEventCriteria{
 			EventID:       searchDTO.ID,

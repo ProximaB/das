@@ -44,12 +44,12 @@ type AgeServer struct {
 func (server AgeServer) SearchAgeHandler(w http.ResponseWriter, r *http.Request) {
 	criteria := new(referencebll.SearchAgeCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
 		return
 	}
 
 	if ages, err := server.SearchAge(*criteria); err != nil {
-		util.RespondJsonResult(w, http.StatusInternalServerError, util.Http500ErrorRetrievingData, err.Error())
+		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP500ErrorRetrievingData, err.Error())
 		return
 	} else {
 		data := make([]viewmodel.Age, 0)

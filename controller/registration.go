@@ -45,7 +45,7 @@ func (server CompetitionRegistrationServer) CreateAthleteRegistrationHandler(w h
 
 	registrationDTO := new(businesslogic.EventRegistration)
 	if parseErr := util.ParseRequestBodyData(r, registrationDTO); parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
 		return
 	}
 
@@ -127,14 +127,14 @@ func (server CompetitionRegistrationServer) GetAthleteEventRegistrationHandler(w
 	})
 
 	if parseErr := util.ParseRequestData(r, searchDTO); parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
 		return
 	}
 
 	registration, err := businesslogic.GetEventRegistration(searchDTO.CompetitionID,
 		searchDTO.PartnershipID, &account, server.IPartnershipRepository)
 	if err != nil {
-		util.RespondJsonResult(w, http.StatusInternalServerError, util.Http500ErrorRetrievingData, err.Error())
+		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP500ErrorRetrievingData, err.Error())
 		return
 	}
 

@@ -1,6 +1,18 @@
-// Copyright 2017, 2018 Yubing Hou. All rights reserved.
-// Use of this source code is governed by GPL license
-// that can be found in the LICENSE file
+// Dancesport Application System (DAS)
+// Copyright (C) 2017, 2018 Yubing Hou
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package businesslogic
 
@@ -82,15 +94,16 @@ func (event Event) GetDances() []int {
 }
 
 // AddDance adds a dance's ID
-func (event *Event) AddDance(dance int) {
-	if !event.dances[dance] {
-		event.dances[dance] = true
+func (event *Event) AddDance(danceID int) {
+	if !event.dances[danceID] {
+		event.dances[danceID] = true
 	}
 }
 
-func (event *Event) RemoveDance(dance int) {
-	if event.dances[dance] {
-		delete(event.dances, dance)
+// RemoveDance removes the dance of the provided ID from the event
+func (event *Event) RemoveDance(danceID int) {
+	if event.dances[danceID] {
+		delete(event.dances, danceID)
 	}
 }
 
@@ -101,15 +114,26 @@ func (event *Event) SetDances(dances []int) {
 	}
 }
 
+// HasDance checks if a dance of the provided ID is in the event
 func (event Event) HasDance(danceID int) bool {
 	return event.dances[danceID]
 }
 
+// EquivalentTo checks if two events are equivalent in Federation, Division, Age, Proficiency, Style, and dances
 func (event Event) EquivalentTo(other Event) bool {
 	if event.FederationID != other.FederationID {
 		return false
 	}
 	if event.DivisionID != other.DivisionID {
+		return false
+	}
+	if event.AgeID != other.AgeID {
+		return false
+	}
+	if event.ProficiencyID != other.ProficiencyID {
+		return false
+	}
+	if event.StyleID != other.StyleID {
 		return false
 	}
 	if len(event.dances) != len(other.dances) {
@@ -130,16 +154,12 @@ func GetEventByID(id int, repo IEventRepository) (Event, error) {
 	return results[0], err
 }
 
+// CreateEvent will check if event is valid, and create the in the provided IEventRepository. If competition
 func CreateEvent(event Event, compRepo ICompetitionRepository, eventRepo IEventRepository, eventDanceRepo IEventDanceRepository) error {
 
+	competition := GetCompetitionByID(event.CompetitionID, compRepo)
+
 	// check if competition is still at the right status
-	compSearchResults, _ := compRepo.SearchCompetition(SearchCompetitionCriteria{ID: event.CompetitionID})
-	if len(compSearchResults) != 1 {
-		return errors.New("cannot find competition")
-	}
-
-	competition := compSearchResults[0]
-
 	if competition.GetStatus() != CompetitionStatusPreRegistration {
 		return errors.New("events can only be added when competition is in pre-registration")
 	} else if competition.CreateUserID != event.CreateUserID {
@@ -157,7 +177,7 @@ func CreateEvent(event Event, compRepo ICompetitionRepository, eventRepo IEventR
 		StyleID:       event.StyleID,
 	})
 
-	// for each similar event, check if they have the dance included
+	// for each similar event, check if they share dances
 	for _, eachEvent := range similarEvents {
 		for _, eachDance := range event.GetDances() {
 			if eachEvent.HasDance(eachDance) {
@@ -171,15 +191,15 @@ func CreateEvent(event Event, compRepo ICompetitionRepository, eventRepo IEventR
 	createEventErr := eventRepo.CreateEvent(&event)
 	if createEventErr != nil {
 		return createEventErr
-	} else if event.ID == 0 {
-		return errors.New("event was not created on time")
+	}
+	if event.ID == 0 {
+		return errors.New("event could not be created")
 	}
 
 	// step 2: create all the eventDances. requires primary key returned from the previous step
 	for _, each := range event.GetDances() {
 		eventDance := NewEventDance(event, each)
-		createDancesErr := eventDanceRepo.CreateEventDance(eventDance)
-		if createDancesErr != nil {
+		if createDancesErr := eventDanceRepo.CreateEventDance(eventDance); createDancesErr != nil {
 			return createDancesErr
 		}
 	}

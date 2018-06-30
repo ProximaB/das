@@ -1,6 +1,18 @@
-// Copyright 2017, 2018 Yubing Hou. All rights reserved.
-// Use of this source code is governed by GPL license
-// that can be found in the LICENSE file
+// Dancesport Application System (DAS)
+// Copyright (C) 2017, 2018 Yubing Hou
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package request
 
@@ -28,7 +40,7 @@ func (server PartnershipRequestServer) CreatePartnershipRequestHandler(w http.Re
 	dto := new(viewmodel.CreatePartnershipRequest)
 
 	if parseErr := util.ParseRequestBodyData(r, dto); parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, parseErr.Error())
 		return
 	}
 
@@ -36,7 +48,7 @@ func (server PartnershipRequestServer) CreatePartnershipRequestHandler(w http.Re
 	recipient := businesslogic.GetAccountByEmail(dto.RecipientEmail, server.IAccountRepository)
 
 	if recipient.ID == 0 {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, "recipient does not exist")
+		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, "recipient does not exist")
 		return
 	}
 
@@ -45,7 +57,7 @@ func (server PartnershipRequestServer) CreatePartnershipRequestHandler(w http.Re
 		RecipientID:     recipient.ID,
 		RecipientRole:   dto.RecipientRole,
 		Message:         dto.Message,
-		Status:          businesslogic.PARTNERSHIP_REQUEST_STATUS_PENDING,
+		Status:          businesslogic.PartnershipRequestStatusPending,
 		CreateUserID:    sender.ID,
 		DateTimeCreated: time.Now(),
 		UpdateUserID:    sender.ID,
@@ -56,7 +68,7 @@ func (server PartnershipRequestServer) CreatePartnershipRequestHandler(w http.Re
 	} else if request.RecipientRole == businesslogic.PartnershipRoleFollow {
 		request.SenderRole = businesslogic.PartnershipRoleLead
 	} else {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, "invalid role for recipient")
+		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, "invalid role for recipient")
 		return
 	}
 
@@ -77,7 +89,7 @@ func (server PartnershipRequestServer) SearchPartnershipRequestHandler(w http.Re
 	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
 	criteria := new(businesslogic.SearchPartnershipRequestCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, parseErr.Error())
 		return
 	}
 
@@ -86,13 +98,13 @@ func (server PartnershipRequestServer) SearchPartnershipRequestHandler(w http.Re
 	} else if criteria.Type == businesslogic.PartnershipRequestSent {
 		criteria.Sender = account.ID
 	} else {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, "invalid partnership request type")
+		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, "invalid partnership request type")
 		return
 	}
 
 	requests, err := server.SearchPartnershipRequest(*criteria)
 	if err != nil {
-		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP_500_ERROR_RETRIEVING_DATA, err.Error())
+		util.RespondJsonResult(w, http.StatusInternalServerError, util.Http500ErrorRetrievingData, err.Error())
 		return
 	}
 
@@ -119,12 +131,12 @@ func (server PartnershipRequestServer) UpdatePartnershipRequestHandler(w http.Re
 
 	respondDTO := new(viewmodel.PartnershipRequestResponse)
 	if parseErr := util.ParseRequestBodyData(r, respondDTO); parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, parseErr.Error())
 		return
 	}
 
-	if respondDTO.Response != businesslogic.PARTNERSHIP_REQUEST_STATUS_ACCEPTED && respondDTO.Response != businesslogic.PARTNERSHIP_REQUEST_STATUS_DECLINED {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, "invalid response")
+	if respondDTO.Response != businesslogic.PartnershipRequestStatusAccepted && respondDTO.Response != businesslogic.PartnershipRequestStatusDeclined {
+		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, "invalid response")
 		return
 	}
 

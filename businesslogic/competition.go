@@ -1,6 +1,18 @@
-// Copyright 2017, 2018 Yubing Hou. All rights reserved.
-// Use of this source code is governed by GPL license
-// that can be found in the LICENSE file
+// Dancesport Application System (DAS)
+// Copyright (C) 2017, 2018 Yubing Hou
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package businesslogic
 
@@ -82,6 +94,19 @@ type ICompetitionRepository interface {
 	SearchCompetition(criteria SearchCompetitionCriteria) ([]Competition, error)
 	UpdateCompetition(competition Competition) error
 	DeleteCompetition(competition Competition) error
+}
+
+// GetCompetitionByID guarantees getting a competition from the provided repository. In case failure happens,
+// panic() will be invoked
+func GetCompetitionByID(id int, repo ICompetitionRepository) Competition {
+	searchResults, err := repo.SearchCompetition(SearchCompetitionCriteria{ID: id})
+	if len(searchResults) == 1 {
+		return searchResults[0]
+	}
+	if err != nil {
+		panic(err.Error())
+	}
+	panic("competition does not exist")
 }
 
 // CreateCompetition creates competition in competitionRepo, update records in provisionRepo, and

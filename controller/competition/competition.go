@@ -1,7 +1,18 @@
-// Copyright 2017, 2018 Yubing Hou. All rights reserved.
-// Use of this source code is governed by GPL license
-// that can be found in the LICENSE file
-
+// Dancesport Application System (DAS)
+// Copyright (C) 2017, 2018 Yubing Hou
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 package competition
 
 import (
@@ -24,7 +35,7 @@ type PublicCompetitionServer struct {
 func (server PublicCompetitionServer) SearchCompetitionHandler(w http.ResponseWriter, r *http.Request) {
 	searchDTO := new(businesslogic.SearchCompetitionCriteria)
 	if parseErr := util.ParseRequestData(r, searchDTO); parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, parseErr.Error())
 		return
 	} else {
 		if competitions, err := server.SearchCompetition(businesslogic.SearchCompetitionCriteria{
@@ -32,7 +43,7 @@ func (server PublicCompetitionServer) SearchCompetitionHandler(w http.ResponseWr
 			Name:     searchDTO.Name,
 			StatusID: searchDTO.StatusID,
 		}); err != nil {
-			util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP_500_ERROR_RETRIEVING_DATA, err.Error())
+			util.RespondJsonResult(w, http.StatusInternalServerError, util.Http500ErrorRetrievingData, err.Error())
 		} else {
 			data := make([]viewmodel.Competition, 0)
 			for _, each := range competitions {
@@ -49,7 +60,7 @@ func (server PublicCompetitionServer) GetUniqueEventFederationHandler(w http.Res
 	r.ParseForm()
 	compID, parseErr := strconv.Atoi(r.Form.Get("competition"))
 	if parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, parseErr.Error())
 		return
 	}
 
@@ -58,7 +69,7 @@ func (server PublicCompetitionServer) GetUniqueEventFederationHandler(w http.Res
 
 	federations, err := competition.GetEventUniqueFederations(server.IEventMetaRepository)
 	if err != nil {
-		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP_500_ERROR_RETRIEVING_DATA, err.Error())
+		util.RespondJsonResult(w, http.StatusInternalServerError, util.Http500ErrorRetrievingData, err.Error())
 		return
 	}
 
@@ -80,7 +91,7 @@ func (server PublicCompetitionServer) GetEventUniqueDivisionsHandler(w http.Resp
 	r.ParseForm()
 	compID, parseErr := strconv.Atoi(r.Form.Get("competition"))
 	if parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, parseErr.Error())
 		return
 	}
 
@@ -89,7 +100,7 @@ func (server PublicCompetitionServer) GetEventUniqueDivisionsHandler(w http.Resp
 
 	divisions, err := competition.GetEventUniqueDivisions(server.IEventMetaRepository)
 	if err != nil {
-		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP_500_ERROR_RETRIEVING_DATA, err.Error())
+		util.RespondJsonResult(w, http.StatusInternalServerError, util.Http500ErrorRetrievingData, err.Error())
 		return
 	}
 
@@ -111,7 +122,7 @@ func (server PublicCompetitionServer) GetEventUniqueAgesHandler(w http.ResponseW
 	r.ParseForm()
 	compID, parseErr := strconv.Atoi(r.Form.Get("competition"))
 	if parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, parseErr.Error())
 		return
 	}
 
@@ -119,7 +130,7 @@ func (server PublicCompetitionServer) GetEventUniqueAgesHandler(w http.ResponseW
 	competition := searchResults[0]
 	ages, err := competition.GetEventUniqueAges(server.IEventMetaRepository)
 	if err != nil {
-		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP_500_ERROR_RETRIEVING_DATA, err.Error())
+		util.RespondJsonResult(w, http.StatusInternalServerError, util.Http500ErrorRetrievingData, err.Error())
 		return
 	}
 
@@ -143,14 +154,14 @@ func (server PublicCompetitionServer) GetEventUniqueProficienciesHandler(w http.
 	r.ParseForm()
 	compID, parseErr := strconv.Atoi(r.Form.Get("competition"))
 	if parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, parseErr.Error())
 		return
 	}
 	searchResults, _ := server.SearchCompetition(businesslogic.SearchCompetitionCriteria{ID: compID})
 	competition := searchResults[0]
 	proficiencies, err := competition.GetEventUniqueProficiencies(server.IEventMetaRepository)
 	if err != nil {
-		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP_500_ERROR_RETRIEVING_DATA, err.Error())
+		util.RespondJsonResult(w, http.StatusInternalServerError, util.Http500ErrorRetrievingData, err.Error())
 		return
 	}
 
@@ -168,7 +179,7 @@ func (server PublicCompetitionServer) GetEventUniqueStylesHandler(w http.Respons
 	r.ParseForm()
 	compID, parseErr := strconv.Atoi(r.Form.Get("competition"))
 	if parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP_400_INVALID_REQUEST_DATA, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.Http400InvalidRequestData, parseErr.Error())
 		return
 	}
 
@@ -176,7 +187,7 @@ func (server PublicCompetitionServer) GetEventUniqueStylesHandler(w http.Respons
 	competition := searchResults[0]
 	styles, err := competition.GetEventUniqueStyles(server.IEventMetaRepository)
 	if err != nil {
-		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP_500_ERROR_RETRIEVING_DATA, err.Error())
+		util.RespondJsonResult(w, http.StatusInternalServerError, util.Http500ErrorRetrievingData, err.Error())
 		return
 	}
 

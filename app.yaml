@@ -1,3 +1,5 @@
+# This program provides specification for deploying DAS on Google Cloud Platform 
+# and is not part of DAS
 runtime: go
 env: flex
 

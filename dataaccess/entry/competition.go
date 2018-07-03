@@ -148,3 +148,24 @@ func (repo PostgresPartnershipCompetitionEntryRepository) SearchPartnershipCompe
 func (repo PostgresPartnershipCompetitionEntryRepository) UpdatePartnershipCompetitionEntry(entry businesslogic.PartnershipCompetitionEntry) error {
 	return errors.New("not implemented")
 }
+
+type PostgresAdjudicatorCompetitionEntryRepository struct {
+	Database   *sql.DB
+	SQLBuilder squirrel.StatementBuilderType
+}
+
+func (repo PostgresAdjudicatorCompetitionEntryRepository) CreateAdjudicatorCompetitionEntry(entry *businesslogic.AdjudicatorCompetitionEntry) error {
+	return errors.New("not implemented")
+}
+
+func (repo PostgresAdjudicatorCompetitionEntryRepository) DeleteAdjudicatorCompetitionEntry(entry businesslogic.AdjudicatorCompetitionEntry) error {
+	return errors.New("not implemented")
+}
+
+func (repo PostgresAdjudicatorCompetitionEntryRepository) SearchAdjudicatorCompetitionEntry(criteria businesslogic.SearchAdjudicatorCompetitionEntryCriteria) ([]businesslogic.AdjudicatorCompetitionEntry, error) {
+	return nil, errors.New("not implemented")
+}
+
+func (repo PostgresAdjudicatorCompetitionEntryRepository) UpdateAdjudicatorCompetitionEntry(entry businesslogic.AdjudicatorCompetitionEntry) error {
+	return errors.New("not implemented")
+}

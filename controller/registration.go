@@ -22,7 +22,6 @@ import (
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/controller/util/authentication"
 	"net/http"
-	"time"
 )
 
 type CompetitionRegistrationServer struct {
@@ -49,53 +48,27 @@ func (server CompetitionRegistrationServer) CreateAthleteRegistrationHandler(w h
 		return
 	}
 
-	// if registration is not valid, return error
-	validationErr := businesslogic.ValidateCompetitiveBallroomEventRegistration(&account,
-		registrationDTO,
+	registrationService := businesslogic.CompetitionRegistrationService{
+		server.IAccountRepository,
+		server.IPartnershipRepository,
 		server.ICompetitionRepository,
 		server.IEventRepository,
 		server.IAthleteCompetitionEntryRepository,
-		server.IAccountRepository,
-		server.IPartnershipRepository)
+		server.IPartnershipCompetitionEntryRepository,
+		server.IPartnershipEventEntryRepository,
+	}
+	validationErr := registrationService.ValidateEventRegistration(account, *registrationDTO)
+
+	// if registration is not valid, return error
 	if validationErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, validationErr.Error(), nil)
 		return
 	}
 
-	partnership := businesslogic.MustGetPartnershipByID(registrationDTO.PartnershipID, server.IPartnershipRepository)
+	registrationService.CreateAthleteCompetitionEventEntry(account, *registrationDTO)
 
-	leadCompEntry := businesslogic.AthleteCompetitionEntry{
-		CompetitionEntry: businesslogic.CompetitionEntry{
-
-			CompetitionID:    registrationDTO.CompetitionID,
-			CheckInIndicator: false,
-			CreateUserID:     account.ID,
-			DateTimeCreated:  time.Now(),
-			UpdateUserID:     account.ID,
-			DateTimeUpdated:  time.Now(),
-		},
-		AthleteID:                partnership.LeadID,
-		PaymentReceivedIndicator: false,
-	}
-	followCompEntry := businesslogic.AthleteCompetitionEntry{
-		CompetitionEntry: businesslogic.CompetitionEntry{
-
-			CompetitionID:    registrationDTO.CompetitionID,
-			CheckInIndicator: false,
-			CreateUserID:     account.ID,
-			DateTimeCreated:  time.Now(),
-			UpdateUserID:     account.ID,
-			DateTimeUpdated:  time.Now(),
-		},
-		AthleteID:                partnership.FollowID,
-		PaymentReceivedIndicator: false,
-	}
-
-	leadCompEntry.CreateAthleteCompetitionEntry(server.ICompetitionRepository, server.IAthleteCompetitionEntryRepository)
-	followCompEntry.CreateAthleteCompetitionEntry(server.ICompetitionRepository, server.IAthleteCompetitionEntryRepository)
-
-	createEntryErr := businesslogic.CreateEventEntries(&account, registrationDTO, server.IPartnershipEventEntryRepository)
-	dropEventErr := businesslogic.DropEventEntries(&account, registrationDTO, server.IPartnershipEventEntryRepository)
+	createEntryErr := registrationService.CreatePartnershipEventEntries(account, *registrationDTO)
+	dropEventErr := registrationService.DropPartnershipEventEntries(account, *registrationDTO)
 
 	if createEntryErr != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, "error in creating event entry", createEntryErr.Error())

@@ -116,3 +116,33 @@ func TestCreateEvent(t *testing.T) {
 	err := eventRepository.CreateEvent(event)
 	assert.NotNil(t, err, "creating an uninitialized event should result in an error")
 }
+
+func TestCreateEvent_BadCompetitionStatus(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	event := businesslogic.NewEvent()
+	event.CompetitionID = 22
+	event.FederationID = 3
+	event.DivisionID = 19
+	event.AgeID = 19
+	event.ProficiencyID = 10
+	event.StyleID = 7
+	event.StatusID = businesslogic.EVENT_STATUS_DRAFT
+
+	event.SetDances(testDances)
+
+	compRepository := mock_businesslogic.NewMockICompetitionRepository(mockCtrl)
+	eventRepository := mock_businesslogic.NewMockIEventRepository(mockCtrl)
+	eventDancerepository := mock_businesslogic.NewMockIEventDanceRepository(mockCtrl)
+
+	expectedCompetition := businesslogic.Competition{ID: 22}
+	expectedCompetition.UpdateStatus(businesslogic.CompetitionStatusClosedRegistration)
+
+	compRepository.EXPECT().SearchCompetition(gomock.Any()).Return([]businesslogic.Competition{
+		expectedCompetition,
+	}, nil)
+
+	err := businesslogic.CreateEvent(*event, compRepository, eventRepository, eventDancerepository)
+	assert.NotNil(t, err, "creating event for competition that is closed for registration should throw an error")
+}

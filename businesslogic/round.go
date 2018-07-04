@@ -1,5 +1,5 @@
 // Dancesport Application System (DAS)
-// Copyright (C) 2017, 2018 Yubing Hou
+// Copyright (C) 2018 Yubing Hou
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -23,7 +23,7 @@ type RoundOrder struct {
 	Rank int
 }
 
-// Round defines the
+// Round defines the round for each event
 type Round struct {
 	ID              int
 	EventID         int

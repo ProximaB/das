@@ -107,6 +107,7 @@ func (event *Event) RemoveDance(danceID int) {
 	}
 }
 
+// SetDances replaces the dances of the event with the new dances
 func (event *Event) SetDances(dances []int) {
 	event.dances = make(map[int]bool)
 	for _, each := range dances {
@@ -149,6 +150,7 @@ func (event Event) EquivalentTo(other Event) bool {
 	return sameDances
 }
 
+// GetEventByID retrieves an existing Event from the provided repository by its ID
 func GetEventByID(id int, repo IEventRepository) (Event, error) {
 	results, err := repo.SearchEvent(SearchEventCriteria{EventID: id})
 	return results[0], err
@@ -157,7 +159,7 @@ func GetEventByID(id int, repo IEventRepository) (Event, error) {
 // CreateEvent will check if event is valid, and create the in the provided IEventRepository. If competition
 func CreateEvent(event Event, compRepo ICompetitionRepository, eventRepo IEventRepository, eventDanceRepo IEventDanceRepository) error {
 
-	competition := GetCompetitionByID(event.CompetitionID, compRepo)
+	competition, _ := GetCompetitionByID(event.CompetitionID, compRepo)
 
 	// check if competition is still at the right status
 	if competition.GetStatus() != CompetitionStatusPreRegistration {

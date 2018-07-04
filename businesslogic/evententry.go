@@ -79,6 +79,11 @@ type SearchAdjudicatorEventEntryCriteria struct {
 	Style         int `schema:"style"`
 }
 
+// EventEntryService abstracts the process of event entry management and  provides services functions that
+// can be used by other packages to manage competition entries
+type EventEntryService struct {
+}
+
 type EventEntryPublicView struct {
 	CompetitiveBallroomEventEntryID int
 	CompetitiveBallroomEventID      int

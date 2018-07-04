@@ -35,22 +35,6 @@ type CompetitionEntry struct {
 	DateTimeUpdated  time.Time
 }
 
-// ICompetitionEntryRepository specifies the interface that data source should implement
-// to perform CRUD operations on CompetitionEntry
-type ICompetitionEntryRepository interface {
-	CreateCompetitionEntry(entry *CompetitionEntry) error
-	UpdateCompetitionEntry(entry CompetitionEntry) error
-	DeleteCompetitionEntry(entry CompetitionEntry) error
-	SearchCompetitionEntry(criteria SearchCompetitionEntryCriteria) ([]CompetitionEntry, error)
-}
-
-// SearchCompetitionEntryCriteria provides parameters to ICompetitionEntryRepository to search competition entry
-type SearchCompetitionEntryCriteria struct {
-	ID            int
-	CompetitionID int
-	AthleteID     int
-}
-
 // AthleteCompetitionEntry wraps CompetitionEntry and adds additional data to manage payment status for Athletes. It
 // also allows quick indexing of competition attendance
 type AthleteCompetitionEntry struct {
@@ -137,11 +121,22 @@ type AthleteCompetitionTBAEntry struct {
 	DateTimeUpdated time.Time
 }
 
+// CompetitionEntryService abstracts the process of competition entry management and provides services functions that
+// can be used by other packages to manage competition entries
+type CompetitionEntryService struct {
+	IAccountRepository
+	IPartnershipRepository
+	ICompetitionRepository
+	IEventRepository
+	IAthleteCompetitionEntryRepository
+	IPartnershipCompetitionEntryRepository
+	IAdjudicatorCompetitionEntryRepository
+}
+
 // CreateAthleteCompetitionEntry will check if current entry exists in the repository. If yes, an error will be returned,
 // if not, a competition entry will be created for this athlete.
 // Competition must be during open registration stage.
-func (entry *AthleteCompetitionEntry) CreateAthleteCompetitionEntry(competitionRepo ICompetitionRepository, athleteCompEntryRepo IAthleteCompetitionEntryRepository) error {
-
+func (entry *AthleteCompetitionEntry) createAthleteCompetitionEntry(competitionRepo ICompetitionRepository, athleteCompEntryRepo IAthleteCompetitionEntryRepository) error {
 	// check if competition still accept entries
 	compSearchResults, searchCompErr := competitionRepo.SearchCompetition(
 		SearchCompetitionCriteria{
@@ -174,4 +169,17 @@ func (entry *AthleteCompetitionEntry) CreateAthleteCompetitionEntry(competitionR
 	}
 
 	return errors.New("cannot create competition entry for this athlete")
+}
+
+func (entry *PartnershipCompetitionEntry) createPartnershipCompetitionEntry(compRepo ICompetitionRepository, entryRepo IPartnershipCompetitionEntryRepository) error {
+	// check if competition still accepts new entries
+	competition, findCompErr := GetCompetitionByID(entry.CompetitionEntry.CompetitionID, compRepo)
+	if findCompErr != nil {
+		return findCompErr
+	}
+	if competition.GetStatus() != CompetitionStatusOpenRegistration {
+		return errors.New("this competition no longer accepts new entries")
+	}
+
+	return nil
 }

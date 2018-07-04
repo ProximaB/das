@@ -46,6 +46,7 @@ type Competition struct {
 	Attendance      int
 }
 
+// UpdateStatus will attempt to change the status of the caller competition to statusID, if the change is in logical order
 func (comp *Competition) UpdateStatus(statusID int) error {
 	if comp.statusID >= statusID && comp.statusID != 0 {
 		return errors.New("cannot revert competition status")
@@ -98,15 +99,12 @@ type ICompetitionRepository interface {
 
 // GetCompetitionByID guarantees getting a competition from the provided repository. In case failure happens,
 // panic() will be invoked
-func GetCompetitionByID(id int, repo ICompetitionRepository) Competition {
+func GetCompetitionByID(id int, repo ICompetitionRepository) (Competition, error) {
 	searchResults, err := repo.SearchCompetition(SearchCompetitionCriteria{ID: id})
-	if len(searchResults) == 1 {
-		return searchResults[0]
+	if err != nil || searchResults == nil || len(searchResults) != 1 {
+		return Competition{}, err
 	}
-	if err != nil {
-		panic(err.Error())
-	}
-	panic("competition does not exist")
+	return searchResults[0], err
 }
 
 // CreateCompetition creates competition in competitionRepo, update records in provisionRepo, and

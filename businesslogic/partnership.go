@@ -90,6 +90,15 @@ func (account Account) GetAllPartnerships(repo IPartnershipRepository) ([]Partne
 	return allPartnerships, err
 }
 
+// GetPartnershipByID retrieves the Partnership in the provided repository by the specified ID
+func GetPartnershipByID(id int, repo IPartnershipRepository) (Partnership, error) {
+	searchResults, err := repo.SearchPartnership(SearchPartnershipCriteria{PartnershipID: id})
+	if err != nil || searchResults == nil || len(searchResults) != 1 {
+		return Partnership{}, err
+	}
+	return searchResults[0], err
+}
+
 // MustGetPartnershipByID uses an known ID and a concrete PartnershipRepository to find the
 // partnership by the ID provided. If such partnership is not found, system will panic.
 func MustGetPartnershipByID(id int, repo IPartnershipRepository) Partnership {
@@ -101,4 +110,9 @@ func MustGetPartnershipByID(id int, repo IPartnershipRepository) Partnership {
 		panic("cannot find partnership with this ID")
 	}
 	return searchResults[0]
+}
+
+// HasAthlete checks if the provided Athlete ID is in this partnership
+func (partnership Partnership) HasAthlete(athleteID int) bool {
+	return partnership.LeadID == athleteID || partnership.FollowID == athleteID
 }

@@ -121,18 +121,6 @@ type AthleteCompetitionTBAEntry struct {
 	DateTimeUpdated time.Time
 }
 
-// CompetitionEntryService abstracts the process of competition entry management and provides services functions that
-// can be used by other packages to manage competition entries
-type CompetitionEntryService struct {
-	IAccountRepository
-	IPartnershipRepository
-	ICompetitionRepository
-	IEventRepository
-	IAthleteCompetitionEntryRepository
-	IPartnershipCompetitionEntryRepository
-	IAdjudicatorCompetitionEntryRepository
-}
-
 // CreateAthleteCompetitionEntry will check if current entry exists in the repository. If yes, an error will be returned,
 // if not, a competition entry will be created for this athlete.
 // Competition must be during open registration stage.

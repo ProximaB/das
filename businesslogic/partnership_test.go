@@ -32,13 +32,13 @@ func TestAccount_GetAllPartnerships(t *testing.T) {
 	mockRepo.EXPECT().SearchPartnership(businesslogic.SearchPartnershipCriteria{
 		LeadID: 9,
 	}).Return([]businesslogic.Partnership{
-		{PartnershipID: 1, LeadID: 9, FollowID: 8},
-		{PartnershipID: 2, LeadID: 9, FollowID: 3},
+		{ID: 1, LeadID: 9, FollowID: 8},
+		{ID: 2, LeadID: 9, FollowID: 3},
 	}, nil)
 	mockRepo.EXPECT().SearchPartnership(businesslogic.SearchPartnershipCriteria{
 		FollowID: 9,
 	}).Return([]businesslogic.Partnership{
-		{PartnershipID: 7, LeadID: 33, FollowID: 9},
+		{ID: 7, LeadID: 33, FollowID: 9},
 	}, nil)
 
 	athlete := businesslogic.Account{ID: 9}

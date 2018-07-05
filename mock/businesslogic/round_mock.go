@@ -3,3 +3,81 @@
 
 // Package mock_businesslogic is a generated GoMock package.
 package mock_businesslogic
+
+import (
+	businesslogic "github.com/DancesportSoftware/das/businesslogic"
+	gomock "github.com/golang/mock/gomock"
+	reflect "reflect"
+)
+
+// MockIRoundRepository is a mock of IRoundRepository interface
+type MockIRoundRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockIRoundRepositoryMockRecorder
+}
+
+// MockIRoundRepositoryMockRecorder is the mock recorder for MockIRoundRepository
+type MockIRoundRepositoryMockRecorder struct {
+	mock *MockIRoundRepository
+}
+
+// NewMockIRoundRepository creates a new mock instance
+func NewMockIRoundRepository(ctrl *gomock.Controller) *MockIRoundRepository {
+	mock := &MockIRoundRepository{ctrl: ctrl}
+	mock.recorder = &MockIRoundRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockIRoundRepository) EXPECT() *MockIRoundRepositoryMockRecorder {
+	return m.recorder
+}
+
+// CreateRound mocks base method
+func (m *MockIRoundRepository) CreateRound(round *businesslogic.Round) error {
+	ret := m.ctrl.Call(m, "CreateRound", round)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateRound indicates an expected call of CreateRound
+func (mr *MockIRoundRepositoryMockRecorder) CreateRound(round interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateRound", reflect.TypeOf((*MockIRoundRepository)(nil).CreateRound), round)
+}
+
+// DeleteRound mocks base method
+func (m *MockIRoundRepository) DeleteRound(round businesslogic.Round) error {
+	ret := m.ctrl.Call(m, "DeleteRound", round)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteRound indicates an expected call of DeleteRound
+func (mr *MockIRoundRepositoryMockRecorder) DeleteRound(round interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteRound", reflect.TypeOf((*MockIRoundRepository)(nil).DeleteRound), round)
+}
+
+// SearchRound mocks base method
+func (m *MockIRoundRepository) SearchRound(criteria businesslogic.SearchRoundCriteria) ([]businesslogic.Round, error) {
+	ret := m.ctrl.Call(m, "SearchRound", criteria)
+	ret0, _ := ret[0].([]businesslogic.Round)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SearchRound indicates an expected call of SearchRound
+func (mr *MockIRoundRepositoryMockRecorder) SearchRound(criteria interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchRound", reflect.TypeOf((*MockIRoundRepository)(nil).SearchRound), criteria)
+}
+
+// UpdateRound mocks base method
+func (m *MockIRoundRepository) UpdateRound(round businesslogic.Round) error {
+	ret := m.ctrl.Call(m, "UpdateRound", round)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateRound indicates an expected call of UpdateRound
+func (mr *MockIRoundRepositoryMockRecorder) UpdateRound(round interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateRound", reflect.TypeOf((*MockIRoundRepository)(nil).UpdateRound), round)
+}

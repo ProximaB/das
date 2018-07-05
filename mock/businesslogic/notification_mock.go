@@ -3,3 +3,189 @@
 
 // Package mock_businesslogic is a generated GoMock package.
 package mock_businesslogic
+
+import (
+	businesslogic "github.com/DancesportSoftware/das/businesslogic"
+	gomock "github.com/golang/mock/gomock"
+	reflect "reflect"
+)
+
+// MockINotificationCategoryRepository is a mock of INotificationCategoryRepository interface
+type MockINotificationCategoryRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockINotificationCategoryRepositoryMockRecorder
+}
+
+// MockINotificationCategoryRepositoryMockRecorder is the mock recorder for MockINotificationCategoryRepository
+type MockINotificationCategoryRepositoryMockRecorder struct {
+	mock *MockINotificationCategoryRepository
+}
+
+// NewMockINotificationCategoryRepository creates a new mock instance
+func NewMockINotificationCategoryRepository(ctrl *gomock.Controller) *MockINotificationCategoryRepository {
+	mock := &MockINotificationCategoryRepository{ctrl: ctrl}
+	mock.recorder = &MockINotificationCategoryRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockINotificationCategoryRepository) EXPECT() *MockINotificationCategoryRepositoryMockRecorder {
+	return m.recorder
+}
+
+// GetAllNotificationCategories mocks base method
+func (m *MockINotificationCategoryRepository) GetAllNotificationCategories() ([]businesslogic.NotificationCategory, error) {
+	ret := m.ctrl.Call(m, "GetAllNotificationCategories")
+	ret0, _ := ret[0].([]businesslogic.NotificationCategory)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllNotificationCategories indicates an expected call of GetAllNotificationCategories
+func (mr *MockINotificationCategoryRepositoryMockRecorder) GetAllNotificationCategories() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllNotificationCategories", reflect.TypeOf((*MockINotificationCategoryRepository)(nil).GetAllNotificationCategories))
+}
+
+// MockINotificationPreferenceRepository is a mock of INotificationPreferenceRepository interface
+type MockINotificationPreferenceRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockINotificationPreferenceRepositoryMockRecorder
+}
+
+// MockINotificationPreferenceRepositoryMockRecorder is the mock recorder for MockINotificationPreferenceRepository
+type MockINotificationPreferenceRepositoryMockRecorder struct {
+	mock *MockINotificationPreferenceRepository
+}
+
+// NewMockINotificationPreferenceRepository creates a new mock instance
+func NewMockINotificationPreferenceRepository(ctrl *gomock.Controller) *MockINotificationPreferenceRepository {
+	mock := &MockINotificationPreferenceRepository{ctrl: ctrl}
+	mock.recorder = &MockINotificationPreferenceRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockINotificationPreferenceRepository) EXPECT() *MockINotificationPreferenceRepositoryMockRecorder {
+	return m.recorder
+}
+
+// CreateNotificationPreference mocks base method
+func (m *MockINotificationPreferenceRepository) CreateNotificationPreference(pref *businesslogic.NotificationPreference) error {
+	ret := m.ctrl.Call(m, "CreateNotificationPreference", pref)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateNotificationPreference indicates an expected call of CreateNotificationPreference
+func (mr *MockINotificationPreferenceRepositoryMockRecorder) CreateNotificationPreference(pref interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNotificationPreference", reflect.TypeOf((*MockINotificationPreferenceRepository)(nil).CreateNotificationPreference), pref)
+}
+
+// DeleteNotificationPreference mocks base method
+func (m *MockINotificationPreferenceRepository) DeleteNotificationPreference(pref businesslogic.NotificationPreference) error {
+	ret := m.ctrl.Call(m, "DeleteNotificationPreference", pref)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteNotificationPreference indicates an expected call of DeleteNotificationPreference
+func (mr *MockINotificationPreferenceRepositoryMockRecorder) DeleteNotificationPreference(pref interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteNotificationPreference", reflect.TypeOf((*MockINotificationPreferenceRepository)(nil).DeleteNotificationPreference), pref)
+}
+
+// SearchNotificationPreference mocks base method
+func (m *MockINotificationPreferenceRepository) SearchNotificationPreference(criteria businesslogic.SearchNotificationPreferenceCriteria) ([]businesslogic.NotificationPreference, error) {
+	ret := m.ctrl.Call(m, "SearchNotificationPreference", criteria)
+	ret0, _ := ret[0].([]businesslogic.NotificationPreference)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SearchNotificationPreference indicates an expected call of SearchNotificationPreference
+func (mr *MockINotificationPreferenceRepositoryMockRecorder) SearchNotificationPreference(criteria interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchNotificationPreference", reflect.TypeOf((*MockINotificationPreferenceRepository)(nil).SearchNotificationPreference), criteria)
+}
+
+// UpdateNotificationPreference mocks base method
+func (m *MockINotificationPreferenceRepository) UpdateNotificationPreference(pref businesslogic.NotificationPreference) error {
+	ret := m.ctrl.Call(m, "UpdateNotificationPreference", pref)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateNotificationPreference indicates an expected call of UpdateNotificationPreference
+func (mr *MockINotificationPreferenceRepositoryMockRecorder) UpdateNotificationPreference(pref interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateNotificationPreference", reflect.TypeOf((*MockINotificationPreferenceRepository)(nil).UpdateNotificationPreference), pref)
+}
+
+// MockINotificationRepository is a mock of INotificationRepository interface
+type MockINotificationRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockINotificationRepositoryMockRecorder
+}
+
+// MockINotificationRepositoryMockRecorder is the mock recorder for MockINotificationRepository
+type MockINotificationRepositoryMockRecorder struct {
+	mock *MockINotificationRepository
+}
+
+// NewMockINotificationRepository creates a new mock instance
+func NewMockINotificationRepository(ctrl *gomock.Controller) *MockINotificationRepository {
+	mock := &MockINotificationRepository{ctrl: ctrl}
+	mock.recorder = &MockINotificationRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockINotificationRepository) EXPECT() *MockINotificationRepositoryMockRecorder {
+	return m.recorder
+}
+
+// CreateNotification mocks base method
+func (m *MockINotificationRepository) CreateNotification(notification *businesslogic.Notification) error {
+	ret := m.ctrl.Call(m, "CreateNotification", notification)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateNotification indicates an expected call of CreateNotification
+func (mr *MockINotificationRepositoryMockRecorder) CreateNotification(notification interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateNotification", reflect.TypeOf((*MockINotificationRepository)(nil).CreateNotification), notification)
+}
+
+// DeleteNotification mocks base method
+func (m *MockINotificationRepository) DeleteNotification(notification businesslogic.Notification) error {
+	ret := m.ctrl.Call(m, "DeleteNotification", notification)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteNotification indicates an expected call of DeleteNotification
+func (mr *MockINotificationRepositoryMockRecorder) DeleteNotification(notification interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteNotification", reflect.TypeOf((*MockINotificationRepository)(nil).DeleteNotification), notification)
+}
+
+// SearchNotification mocks base method
+func (m *MockINotificationRepository) SearchNotification(criteria businesslogic.SearchNotificationCriteria) ([]businesslogic.Notification, error) {
+	ret := m.ctrl.Call(m, "SearchNotification", criteria)
+	ret0, _ := ret[0].([]businesslogic.Notification)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SearchNotification indicates an expected call of SearchNotification
+func (mr *MockINotificationRepositoryMockRecorder) SearchNotification(criteria interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchNotification", reflect.TypeOf((*MockINotificationRepository)(nil).SearchNotification), criteria)
+}
+
+// UpdateNotification mocks base method
+func (m *MockINotificationRepository) UpdateNotification(notification businesslogic.Notification) error {
+	ret := m.ctrl.Call(m, "UpdateNotification", notification)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateNotification indicates an expected call of UpdateNotification
+func (mr *MockINotificationRepositoryMockRecorder) UpdateNotification(notification interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateNotification", reflect.TypeOf((*MockINotificationRepository)(nil).UpdateNotification), notification)
+}

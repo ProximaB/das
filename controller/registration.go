@@ -65,7 +65,7 @@ func (server CompetitionRegistrationServer) CreateAthleteRegistrationHandler(w h
 		return
 	}
 
-	registrationService.CreateAthleteCompetitionEventEntry(account, *registrationDTO)
+	registrationService.CreateAthleteCompetitionEntry(account, *registrationDTO)
 
 	createEntryErr := registrationService.CreatePartnershipEventEntries(account, *registrationDTO)
 	dropEventErr := registrationService.DropPartnershipEventEntries(account, *registrationDTO)

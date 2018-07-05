@@ -3,3 +3,42 @@
 
 // Package mock_businesslogic is a generated GoMock package.
 package mock_businesslogic
+
+import (
+	businesslogic "github.com/DancesportSoftware/das/businesslogic"
+	gomock "github.com/golang/mock/gomock"
+	reflect "reflect"
+)
+
+// MockIPlacementRepository is a mock of IPlacementRepository interface
+type MockIPlacementRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockIPlacementRepositoryMockRecorder
+}
+
+// MockIPlacementRepositoryMockRecorder is the mock recorder for MockIPlacementRepository
+type MockIPlacementRepositoryMockRecorder struct {
+	mock *MockIPlacementRepository
+}
+
+// NewMockIPlacementRepository creates a new mock instance
+func NewMockIPlacementRepository(ctrl *gomock.Controller) *MockIPlacementRepository {
+	mock := &MockIPlacementRepository{ctrl: ctrl}
+	mock.recorder = &MockIPlacementRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockIPlacementRepository) EXPECT() *MockIPlacementRepositoryMockRecorder {
+	return m.recorder
+}
+
+// CreatePlacement mocks base method
+func (m *MockIPlacementRepository) CreatePlacement(placement *businesslogic.Placement) {
+	m.ctrl.Call(m, "CreatePlacement", placement)
+}
+
+// CreatePlacement indicates an expected call of CreatePlacement
+func (mr *MockIPlacementRepositoryMockRecorder) CreatePlacement(placement interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePlacement", reflect.TypeOf((*MockIPlacementRepository)(nil).CreatePlacement), placement)
+}

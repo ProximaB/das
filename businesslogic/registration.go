@@ -48,25 +48,40 @@ type EventRegistration struct {
 	StudioRepresented  int   `json:"studio"`
 }
 
+// Validate performs sanity check of EventRegistration
+func (registration EventRegistration) Validate() error {
+	if registration.PartnershipID < 1 {
+		return errors.New("partnership should be specified")
+	}
+	if registration.CompetitionID < 1 {
+		return errors.New("competition should be specified")
+	}
+	return nil
+}
+
 // CompetitionRegistrationService provides a high level operation for Competition Registration
 type CompetitionRegistrationService struct {
-	IAccountRepository
-	IPartnershipRepository
-	ICompetitionRepository
-	IEventRepository
-	IAthleteCompetitionEntryRepository
-	IPartnershipCompetitionEntryRepository
-	IPartnershipEventEntryRepository
+	AccountRepository               IAccountRepository
+	PartnershipRepository           IPartnershipRepository
+	CompetitionRepository           ICompetitionRepository
+	EventRepository                 IEventRepository
+	AthleteCompetitionEntryRepo     IAthleteCompetitionEntryRepository
+	PartnershipCompetitionEntryRepo IPartnershipCompetitionEntryRepository
+	PartnershipEventEntryRepo       IPartnershipEventEntryRepository
 }
 
 // ValidateEventRegistration validates if the registration data is valid. This does not create the registration
 func (service CompetitionRegistrationService) ValidateEventRegistration(currentUser Account, registration EventRegistration) error {
-	partnership, err := GetPartnershipByID(registration.PartnershipID, service.IPartnershipRepository)
+	if err := registration.Validate(); err != nil {
+		return err
+	}
+
+	partnership, err := GetPartnershipByID(registration.PartnershipID, service.PartnershipRepository)
 	if err != nil {
 		return err
 	}
 
-	competition, err := GetCompetitionByID(registration.CompetitionID, service.ICompetitionRepository)
+	competition, err := GetCompetitionByID(registration.CompetitionID, service.CompetitionRepository)
 	if err != nil {
 		return nil
 	}
@@ -76,7 +91,7 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 	}
 
 	// check if organizer is authorized to change this partnership's registration
-	organizer := GetAccountByID(competition.CreateUserID, service.IAccountRepository) // creator may not be the organizer of specified competition
+	organizer := GetAccountByID(competition.CreateUserID, service.AccountRepository) // creator may not be the organizer of specified competition
 	if currentUser.AccountTypeID == AccountTypeOrganizer && organizer.ID != currentUser.ID {
 		return errors.New("not an authorized organizer to update the registration")
 	}
@@ -89,12 +104,12 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 
 	// check if those events are valid and open for registration
 	for _, each := range registration.EventsAdded {
-		cbe, err := GetEventByID(each, service.IEventRepository)
+		cbe, err := GetEventByID(each, service.EventRepository)
 		if err != nil || cbe.ID == 0 {
 			return errors.New("competitive ballroom event does not exist")
 		}
 
-		event, searchErr := service.IEventRepository.SearchEvent(SearchEventCriteria{EventID: cbe.ID})
+		event, searchErr := service.EventRepository.SearchEvent(SearchEventCriteria{EventID: cbe.ID})
 		if searchErr != nil || len(event) != 1 {
 			return errors.New("event does not exist")
 		} else if event[0].StatusID != EVENT_STATUS_OPEN {
@@ -103,12 +118,12 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 	}
 
 	// create competition entry for the lead, if the entry has not been created yet
-	entries, hasEntryErr := service.IAthleteCompetitionEntryRepository.SearchAthleteCompetitionEntry(SearchAthleteCompetitionEntryCriteria{
+	entries, hasEntryErr := service.AthleteCompetitionEntryRepo.SearchAthleteCompetitionEntry(SearchAthleteCompetitionEntryCriteria{
 		CompetitionID: registration.CompetitionID,
 		AthleteID:     partnership.LeadID,
 	})
 	if len(entries) != 1 || hasEntryErr != nil {
-		service.IAthleteCompetitionEntryRepository.CreateAthleteCompetitionEntry(&AthleteCompetitionEntry{
+		service.AthleteCompetitionEntryRepo.CreateAthleteCompetitionEntry(&AthleteCompetitionEntry{
 			CompetitionEntry: CompetitionEntry{
 				CompetitionID: registration.CompetitionID,
 			},
@@ -117,12 +132,12 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 	}
 
 	// create competition entry for the follow, if the entry has not been created yet
-	entries, hasEntryErr = service.IAthleteCompetitionEntryRepository.SearchAthleteCompetitionEntry(SearchAthleteCompetitionEntryCriteria{
+	entries, hasEntryErr = service.AthleteCompetitionEntryRepo.SearchAthleteCompetitionEntry(SearchAthleteCompetitionEntryCriteria{
 		CompetitionID: registration.CompetitionID,
 		AthleteID:     partnership.FollowID,
 	})
 	if len(entries) != 1 || hasEntryErr != nil {
-		service.IAthleteCompetitionEntryRepository.CreateAthleteCompetitionEntry(&AthleteCompetitionEntry{
+		service.AthleteCompetitionEntryRepo.CreateAthleteCompetitionEntry(&AthleteCompetitionEntry{
 			CompetitionEntry: CompetitionEntry{
 				CompetitionID: registration.CompetitionID,
 			},
@@ -132,11 +147,11 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 
 	// check if added events are open
 	for _, each := range registration.EventsAdded {
-		cbe, findErr := GetEventByID(each, service.IEventRepository)
+		cbe, findErr := GetEventByID(each, service.EventRepository)
 		if findErr != nil {
 			return errors.New("a competitive ballroom event does not exist")
 		}
-		events, eventErr := service.IEventRepository.SearchEvent(SearchEventCriteria{
+		events, eventErr := service.EventRepository.SearchEvent(SearchEventCriteria{
 			EventID: cbe.ID,
 		})
 		if eventErr != nil || len(events) != 1 {
@@ -177,8 +192,8 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 
 // CreateAthleteCompetitionEntry takes the current user and the registration data and create new Competition Entry for
 // each of the athlete
-func (service CompetitionRegistrationService) CreateAthleteCompetitionEventEntry(currentUser Account, registration EventRegistration) error {
-	partnership, findPartnershipErr := GetPartnershipByID(registration.PartnershipID, service.IPartnershipRepository)
+func (service CompetitionRegistrationService) CreateAthleteCompetitionEntry(currentUser Account, registration EventRegistration) error {
+	partnership, findPartnershipErr := GetPartnershipByID(registration.PartnershipID, service.PartnershipRepository)
 	if findPartnershipErr != nil {
 		return findPartnershipErr
 	}
@@ -207,21 +222,21 @@ func (service CompetitionRegistrationService) CreateAthleteCompetitionEventEntry
 		PaymentReceivedIndicator: false,
 	}
 
-	leadCompEntry.createAthleteCompetitionEntry(service.ICompetitionRepository, service.IAthleteCompetitionEntryRepository)
-	followCompEntry.createAthleteCompetitionEntry(service.ICompetitionRepository, service.IAthleteCompetitionEntryRepository)
+	leadCompEntry.createAthleteCompetitionEntry(service.CompetitionRepository, service.AthleteCompetitionEntryRepo)
+	followCompEntry.createAthleteCompetitionEntry(service.CompetitionRepository, service.AthleteCompetitionEntryRepo)
 	return nil
 }
 
 // CreatePartnershipCompetitionEntry takes the current user and registration data and create a Competition Entry for
 // this Partnership
 func (service CompetitionRegistrationService) CreatePartnershipCompetitionEntry(currentUser Account, registration EventRegistration) error {
-	partnership, findPartnershipErr := GetPartnershipByID(registration.PartnershipID, service.IPartnershipRepository)
+	partnership, findPartnershipErr := GetPartnershipByID(registration.PartnershipID, service.PartnershipRepository)
 	if findPartnershipErr != nil {
 		return findPartnershipErr
 	}
 
 	partnershipEntry := PartnershipCompetitionEntry{
-		PartnershipID: partnership.PartnershipID,
+		PartnershipID: partnership.ID,
 		CompetitionEntry: CompetitionEntry{
 			CompetitionID:    registration.CompetitionID,
 			CheckInIndicator: false,
@@ -231,7 +246,7 @@ func (service CompetitionRegistrationService) CreatePartnershipCompetitionEntry(
 			DateTimeUpdated:  time.Now(),
 		},
 	}
-	partnershipEntry.createPartnershipCompetitionEntry(service.ICompetitionRepository, service.IPartnershipCompetitionEntryRepository)
+	partnershipEntry.createPartnershipCompetitionEntry(service.CompetitionRepository, service.PartnershipCompetitionEntryRepo)
 	return nil
 }
 
@@ -250,7 +265,7 @@ func (service CompetitionRegistrationService) CreatePartnershipEventEntries(curr
 				DateTimeUpdated: time.Now(),
 			},
 		}
-		createErr := service.IPartnershipEventEntryRepository.CreatePartnershipEventEntry(&eventEntry)
+		createErr := service.PartnershipEventEntryRepo.CreatePartnershipEventEntry(&eventEntry)
 		if createErr != nil {
 			return createErr
 		}
@@ -268,7 +283,7 @@ func (service CompetitionRegistrationService) DropPartnershipEventEntries(curren
 			},
 			PartnershipID: registration.PartnershipID,
 		}
-		dropErr := service.IPartnershipEventEntryRepository.DeletePartnershipEventEntry(eventEntry)
+		dropErr := service.PartnershipEventEntryRepo.DeletePartnershipEventEntry(eventEntry)
 		if dropErr != nil {
 			return dropErr
 		}

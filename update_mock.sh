@@ -6,7 +6,7 @@
 # $ bash update_mock.sh
 #
 # Dancesport Application System (DAS)
-# Copyright (C) 2017, 2018 Yubing Hou
+# Copyright (C) 2018 Yubing Hou
 #
 # This program is free software: you can redistribute it and/or modify
 # it under the terms of the GNU General Public License as published by

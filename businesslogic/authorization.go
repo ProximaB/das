@@ -23,6 +23,10 @@ import (
 	"github.com/DancesportSoftware/das/util"
 )
 
+type IAuthorizationService interface {
+	AuthorizeUser() error
+}
+
 func AuthenticateUser(email, password string, repo IAccountRepository) error {
 	if len(email) < 1 || len(password) < 1 {
 		return errors.New("username or password is missing")

@@ -37,7 +37,7 @@ const (
 // Partnership defines the combination of a lead and a follow. A partnership is uniquely identified
 // if the lead and follow are confirmed.
 type Partnership struct {
-	PartnershipID   int
+	ID              int
 	LeadID          int
 	FollowID        int
 	Lead            Account

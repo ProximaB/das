@@ -41,7 +41,7 @@ func GetCompetitiveBallroomEventRegistration(db *sql.DB, competitionID int, part
 	} else {
 		tx.QueryRow(stmt, args...).Scan(
 			&registration.ID,
-			&registration.PartnershipID,
+			&registration.ID,
 			&registration.CountryRepresented,
 			&registration.StateRepresented,
 			&registration.SchoolRepresented,

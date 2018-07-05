@@ -13,6 +13,14 @@ The reason we split the entire system into 3 separated subsystems is that each
 subsystems can be developed relatively independently from the other two. This
 helps us focus on the issue and allow each subsystem to be more maintainable.
 
+To summarize:
+- If you are interested in optimizing the database, you only need [dasdb](https://github.com/DancesportSoftware/dasdb).
+- If you are interested in back-end development, you need [dasdb](https://github.com/DancesportSoftware/dasdb)
+and [das](https://github.com/DancesportSoftware/das).
+- If you are interested in front-end development, you need [das-frontend](https://github.com/DancesportSoftware/das-frontend).
+However, setting up the back-end services will help you develop front end with data.
+
+
 # Assumptions
 * You are very comfortable with the command-line of the OS you choose
 
@@ -21,7 +29,7 @@ helps us focus on the issue and allow each subsystem to be more maintainable.
 * macOS
 * Linux
   * Note: Ubuntu (16.04) is the one that we primarily work on. This guide should work for other 
-  Linux distributions as well but primarily targets at the Ubuntu distribution.
+  Linux distributions as well.
 
 # Software Version
 Unlike most projects, DAS is very responsive to the change of the version its dependencies. Unless the dependency on a particular version is 
@@ -33,19 +41,19 @@ On the other hand, hosting environment does not always provide the most up-to-da
 Acceptable versions are listed with each component.
 
 # Necessary Software for Development
-* Go (1.8, 1.9, 1.10)
+* Go (1.8 or later)
   * Installation
       
-      To install Go package on Windows, please follow the instruction [here](https://golang.org/doc/install).
-      Once the installation is complete, please check in your terminal to see if `$GOROOT` and `%GOPATH` are defined. You can check it by running `$ echo $GOROOT` and `$ echo $GOPATH` in Linux.
-* PostgreSQL (9.5, 9.6, 10.1)
+      To install Go SDK, please follow the instruction [here](https://golang.org/doc/install).
+      Once the installation is complete, please check in your terminal to see if `$GOROOT` and `$GOPATH` are defined. 
+      You can check it by running `$ echo $GOROOT` and `$ echo $GOPATH` in Linux.
+* PostgreSQL (9.5 or later)
 * Git (2.0 or later)
 * IDE
 
   This is totally up to your personal preference.
   * Go
-    * IntelliJ IDEA CE (free)
-    * GoLand (subscription required)
+    * GoLand (JetBrains subscription required)
     * Visual Studio Code (free)
   * Database
     * Datagrip (subscription required)
@@ -97,8 +105,8 @@ Acceptable versions are listed with each component.
     * In your IDE, or terminal, you need to export a connection string for DAS to use.
     If you follow the instructions above, your should export `POSTGRES_CONNECTION` to
     your environment variable:
-    `$ export POSTGRES_CONNECTION=user=dasdev password=dAs\!@#\$1234 dbname=das sslmode=disable`
-    
+    `$ export POSTGRES_CONNECTION=user=dasdev password=dAs\!@#\$1234 dbname=das sslmode=disable`. 
+    If necessary, add this environment variable to your `~/.profile`
 
 # Source Code Compilation and Run
 * Check out the repository
@@ -108,7 +116,7 @@ Acceptable versions are listed with each component.
       * `$ git clone https://github.com/DancesportSoftware/dasdb`
     * Build the database schema and populate data:
       * Change directory: `$ cd dasdb`
-      * Build the database: `$ psql -d das -f build.sql`
+      * Build the database: `$ psql -U dasdev -d das -f build.sql`
   * das
     * Create directory for development:
       * Windows: `%GOPATH%\src\github.com\DancesportSoftware\`

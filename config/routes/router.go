@@ -37,12 +37,12 @@ var restAPIRouter = []Route{
 	// Competition
 
 	// Events
-	{"Public view of events", http.MethodGet, "/api/event", authorizeSingleRole(getEventHandler, businesslogic.AccountTypeNoAuth)},
-	{"Public view of competitive ballroom events", http.MethodGet, "/api/event/competitive/ballroom", authorizeSingleRole(getCompetitiveBallroomEventHandler, businesslogic.AccountTypeNoAuth)},
-	{"[Organizer] Create a competitive ballroom event", http.MethodPost, "/api/organizer/event", authorizeSingleRole(createEventHandler, businesslogic.AccountTypeOrganizer)},
+	{"Public view of events", http.MethodGet, "/api/eventdal", authorizeSingleRole(getEventHandler, businesslogic.AccountTypeNoAuth)},
+	{"Public view of competitive ballroom events", http.MethodGet, "/api/eventdal/competitive/ballroom", authorizeSingleRole(getCompetitiveBallroomEventHandler, businesslogic.AccountTypeNoAuth)},
+	{"[Organizer] Create a competitive ballroom eventdal", http.MethodPost, "/api/organizer/eventdal", authorizeSingleRole(createEventHandler, businesslogic.AccountTypeOrganizer)},
 
 	// Entries
-	{"add/drop competitive ballroom event entries", http.MethodPost, "/api/athlete/registration", authorizeSingleRole(createAthleteRegistrationHandler, businesslogic.AccountTypeAthlete)},
+	{"add/drop competitive ballroom eventdal entries", http.MethodPost, "/api/athlete/registration", authorizeSingleRole(createAthleteRegistrationHandler, businesslogic.AccountTypeAthlete)},
 	{"Get competitive ballroom entries for partnership", http.MethodGet, "/api/athlete/registration", authorizeSingleRole(getAthleteEventRegistrationHandler, businesslogic.AccountTypeAthlete)},
 	{"Get competitive ballroom entries for public view", http.MethodGet, "/api/public/entries", authorizeSingleRole(getCompetitiveBallroomEventEntryHandler, businesslogic.AccountTypeNoAuth)},
 }*/

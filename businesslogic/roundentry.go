@@ -42,7 +42,7 @@ type SearchPartnershipRoundEntryCriteria struct {
 	ID            int `schema:"entry"`
 	RoundID       int `schema:"round"`
 	PartnershipID int `schema:"partnership"`
-	EventID       int `schema:"event"`
+	EventID       int `schema:"eventdal"`
 }
 
 // IPartnershipRoundEntryRepository specifies the functions that need to be implemented to perform CRUD operations

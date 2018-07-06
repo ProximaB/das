@@ -35,7 +35,7 @@ type EventServer struct {
 	businesslogic.IEventRepository
 }
 
-// GET /api/event
+// GET /api/eventdal
 func (server EventServer) GetEventHandler(w http.ResponseWriter, r *http.Request) {
 	criteria := new(businesslogic.SearchEventCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
@@ -74,8 +74,8 @@ type SearchCompetitiveBallroomEventViewModel struct {
 	OpenRegistration bool `schema:"open"`
 }
 type CompetitiveBallroomEventViewModel struct {
-	ID                         int   `json:"eventID"` // competitive ballroom event id
-	CompetitiveBallroomEventID int   `json:"cbeID"`   // event id
+	ID                         int   `json:"eventID"` // competitive ballroom eventdal id
+	CompetitiveBallroomEventID int   `json:"cbeID"`   // eventdal id
 	FederationID               int   `json:"federation"`
 	DivisionID                 int   `json:"division"`
 	AgeID                      int   `json:"age"`
@@ -84,7 +84,7 @@ type CompetitiveBallroomEventViewModel struct {
 	Dances                     []int `json:"dances"`
 }
 
-// GET /api/event
+// GET /api/eventdal
 // This does not require identity as site visitors may want to see how it works, too.
 /*
 func getCompetitiveBallroomEventHandler(w http.ResponseWriter, r *http.Request) {
@@ -125,7 +125,7 @@ func getCompetitiveBallroomEventHandler(w http.ResponseWriter, r *http.Request) 
 	}
 }
 
-// POST /api/organizer/event
+// POST /api/organizer/eventdal
 func createEventHandler(w http.ResponseWriter, r *http.Request) {
 	account, _ := GetCurrentUser(r, accountRepository)
 	createDTO := new(viewmodel.CreateEventViewModel)
@@ -135,8 +135,8 @@ func createEventHandler(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	event := createDTO.ToDomainModel(*account, danceRepository)
-	err := businesslogic.CreateEvent(event, competitionRepository, eventRepo, eventDanceRepository)
+	eventdal := createDTO.ToDomainModel(*account, danceRepository)
+	err := businesslogic.CreateEvent(eventdal, competitionRepository, eventRepo, eventDanceRepository)
 	if err != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, err.Error(), nil)
 		return

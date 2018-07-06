@@ -26,7 +26,7 @@ type RoundOrder struct {
 	DateTimeUpdated time.Time
 }
 
-// Round defines the round for each event
+// Round defines the round for each eventdal
 type Round struct {
 	ID              int
 	EventID         int

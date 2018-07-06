@@ -79,7 +79,7 @@ type SearchAdjudicatorEventEntryCriteria struct {
 	Style         int `schema:"style"`
 }
 
-// EventEntryService abstracts the process of event entry management and  provides services functions that
+// EventEntryService abstracts the process of eventdal entry management and  provides services functions that
 // can be used by other packages to manage competition entries
 type EventEntryService struct {
 }
@@ -102,20 +102,20 @@ type EventEntryPublicView struct {
 	StudioRepresented               string
 }
 
-// PartnershipEventEntryList contains the ID of an event and the Partnerships that are competing in this event
+// PartnershipEventEntryList contains the ID of an eventdal and the Partnerships that are competing in this eventdal
 type PartnershipEventEntryList struct {
 	EventID   int
 	EntryList []PartnershipEventEntry
 }
 
-// AdjudicatorEventEntryList contains the ID of an event and the Adjudicators that are assigned to this event
+// AdjudicatorEventEntryList contains the ID of an eventdal and the Adjudicators that are assigned to this eventdal
 type AdjudicatorEventEntryList struct {
 	EventID   int
 	EntryList []AdjudicatorEventEntry
 }
 
 // CreatePartnershipEventEntry checks if an entry for the specified Partnership already exists in the specified Event. If
-// not, a new PartnershipEventEntry will be created for the specified event in the provided repository
+// not, a new PartnershipEventEntry will be created for the specified eventdal in the provided repository
 func CreatePartnershipEventEntry(entry PartnershipEventEntry, entryRepo IPartnershipEventEntryRepository) error {
 	// check if entries were already created
 	if searchedResults, err := entryRepo.SearchPartnershipEventEntry(SearchPartnershipEventEntryCriteria{
@@ -124,7 +124,7 @@ func CreatePartnershipEventEntry(entry PartnershipEventEntry, entryRepo IPartner
 	}); err != nil {
 		return err
 	} else if len(searchedResults) > 0 {
-		return errors.New(fmt.Sprintf("entry for partnership %d already exists for event %d", entry.PartnershipID, entry.EventEntry.EventID))
+		return errors.New(fmt.Sprintf("entry for partnership %d already exists for eventdal %d", entry.PartnershipID, entry.EventEntry.EventID))
 	}
 
 	// entry does not exist, create the entry

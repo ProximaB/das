@@ -29,7 +29,7 @@ type EntryServer struct {
 }
 
 // GET /api/entries
-// Public view for competitive event entry
+// Public view for competitive eventdal entry
 func (server EntryServer) getCompetitiveBallroomEventEntryHandler(w http.ResponseWriter, r *http.Request) {
 	criteria := new(businesslogic.SearchPartnershipEventEntryCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {

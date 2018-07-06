@@ -50,7 +50,7 @@ var searchCompetitionController = util.DasController{
 
 var searchCompetitionUniqueEventFederationController = util.DasController{
 	Name:         "SearchCompetitionUniqueEventFederationController",
-	Description:  "Search unique event federations of a competition",
+	Description:  "Search unique eventdal federations of a competition",
 	Method:       http.MethodGet,
 	Endpoint:     apiCompetitionFederationEndpoint,
 	Handler:      publicCompetitionServer.GetUniqueEventFederationHandler,
@@ -59,7 +59,7 @@ var searchCompetitionUniqueEventFederationController = util.DasController{
 
 var searchCompetitionUniqueEventDivisionController = util.DasController{
 	Name:         "SearchCompetitionUniqueEventDivisionController",
-	Description:  "Search unique event divisions of a competition",
+	Description:  "Search unique eventdal divisions of a competition",
 	Method:       http.MethodGet,
 	Endpoint:     apiCompetitionDivisionEndpoint,
 	Handler:      publicCompetitionServer.GetEventUniqueDivisionsHandler,
@@ -67,7 +67,7 @@ var searchCompetitionUniqueEventDivisionController = util.DasController{
 }
 var searchCompetitionUniqueEventAgeController = util.DasController{
 	Name:         "SearchCompetitionUniqueEventAgeController",
-	Description:  "Search unique event ages of a competition",
+	Description:  "Search unique eventdal ages of a competition",
 	Method:       http.MethodGet,
 	Endpoint:     apiCompetitionAgeEndpoint,
 	Handler:      publicCompetitionServer.GetEventUniqueAgesHandler,
@@ -75,7 +75,7 @@ var searchCompetitionUniqueEventAgeController = util.DasController{
 }
 var searchCompetitionUniqueEventProficiencyController = util.DasController{
 	Name:         "SearchCompetitionUniqueEventProficiencyController",
-	Description:  "Search unique event proficiencies of a competition",
+	Description:  "Search unique eventdal proficiencies of a competition",
 	Method:       http.MethodGet,
 	Endpoint:     apiCompetitionProficiencyEndpoint,
 	Handler:      publicCompetitionServer.GetEventUniqueProficienciesHandler,
@@ -83,7 +83,7 @@ var searchCompetitionUniqueEventProficiencyController = util.DasController{
 }
 var searchCompetitionUniqueEventStyleController = util.DasController{
 	Name:         "SearchCompetitionUniqueEventStyleController",
-	Description:  "Search unique event styles of a competition",
+	Description:  "Search unique eventdal styles of a competition",
 	Method:       http.MethodGet,
 	Endpoint:     apiCompetitionStyleEndpoint,
 	Handler:      publicCompetitionServer.GetEventUniqueStylesHandler,

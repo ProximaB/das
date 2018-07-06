@@ -202,7 +202,7 @@ func UpdateCompetition(user *Account, competition OrganizerUpdateCompetition, re
 
 	if competitions[0].GetStatus() == CompetitionStatusOpenRegistration ||
 		competitions[0].GetStatus() == CompetitionStatusClosedRegistration {
-		// TODO: reimplement event update
+		// TODO: reimplement eventdal update
 		/*if updateEventErr := dataaccess.UpdateCompetitionEventStatus(dataaccess.DATABASE, competition.ID, competitions[0].StatusID); updateEventErr != nil {
 			return updateEventErr
 		}*/

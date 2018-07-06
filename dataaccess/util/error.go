@@ -1,5 +1,5 @@
 // Dancesport Application System (DAS)
-// Copyright (C) 2017, 2018 Yubing Hou
+// Copyright (C) 2018 Yubing Hou
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,22 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package entry
+package dalutil
 
 import (
-	"database/sql"
-	"github.com/Masterminds/squirrel"
+	"fmt"
+	"reflect"
 )
 
-type PostgresPartnershipCompetitionRepresentationRepository struct {
-	Database   *sql.DB
-	SqlBuilder squirrel.StatementBuilderType
+// DataSourceNotSpecifiedError takes a Repository object and return a generic error message
+func DataSourceNotSpecifiedError(repo interface{}) string {
+	return fmt.Sprintf("data source of %s is not specified", reflect.TypeOf(repo).String())
 }
 
-func (repo PostgresPartnershipCompetitionRepresentationRepository) CreateCompetitionRepresentation() {
-
-}
-
-func (repo PostgresPartnershipCompetitionRepresentationRepository) SearchCompetitionRepresentation() {
-
-}
+const ErrorNilDatabase = "should throw an error when repository is not initialized correctly"

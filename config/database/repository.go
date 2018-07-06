@@ -19,8 +19,8 @@ package database
 import (
 	"github.com/DancesportSoftware/das/dataaccess/account"
 	"github.com/DancesportSoftware/das/dataaccess/competition"
-	"github.com/DancesportSoftware/das/dataaccess/entry"
-	"github.com/DancesportSoftware/das/dataaccess/event"
+	"github.com/DancesportSoftware/das/dataaccess/entrydal"
+	"github.com/DancesportSoftware/das/dataaccess/eventdal"
 	"github.com/DancesportSoftware/das/dataaccess/partnership"
 	"github.com/DancesportSoftware/das/dataaccess/provision"
 	"github.com/DancesportSoftware/das/dataaccess/referencedal"
@@ -119,22 +119,22 @@ var CompetitionRepository = competition.PostgresCompetitionRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var AthleteCompetitionEntryRepository = entry.PostgresAthleteCompetitionEntryRepository{
+var AthleteCompetitionEntryRepository = entrydal.PostgresAthleteCompetitionEntryRepository{
 	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var PartnershipCompetitionEntryRepository = entry.PostgresPartnershipCompetitionEntryRepository{
+var PartnershipCompetitionEntryRepository = entrydal.PostgresPartnershipCompetitionEntryRepository{
+	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
+var EventRepository = eventdal.PostgresEventRepository{
+	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
+var EventMetaRepository = eventdal.PostgresEventMetaRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var EventRepository = event.PostgresEventRepository{
-	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
-}
-
-var EventMetaRepository = event.PostgresEventMetaRepository{
-	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
-}
-
-var PartnershipEventEntryRepository = entry.PostgresPartnershipEventEntryRepository{
+var PartnershipEventEntryRepository = entrydal.PostgresPartnershipEventEntryRepository{
 	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }

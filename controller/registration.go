@@ -71,16 +71,16 @@ func (server CompetitionRegistrationServer) CreateAthleteRegistrationHandler(w h
 	dropEventErr := registrationService.DropPartnershipEventEntries(account, *registrationDTO)
 
 	if createEntryErr != nil {
-		util.RespondJsonResult(w, http.StatusInternalServerError, "error in creating event entry", createEntryErr.Error())
+		util.RespondJsonResult(w, http.StatusInternalServerError, "error in creating eventdal entry", createEntryErr.Error())
 		return
 	}
 
 	if dropEventErr != nil {
-		util.RespondJsonResult(w, http.StatusInternalServerError, "error in dropping event entry", dropEventErr.Error())
+		util.RespondJsonResult(w, http.StatusInternalServerError, "error in dropping eventdal entry", dropEventErr.Error())
 		return
 	}
 
-	util.RespondJsonResult(w, http.StatusOK, "event entries have been successfully added and/or dropped", nil)
+	util.RespondJsonResult(w, http.StatusOK, "eventdal entries have been successfully added and/or dropped", nil)
 }
 
 // GET /api/athlete/registration

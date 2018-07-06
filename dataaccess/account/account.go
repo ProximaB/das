@@ -24,6 +24,7 @@ import (
 
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -58,7 +59,7 @@ type PostgresAccountRepository struct {
 
 func (repo PostgresAccountRepository) CreateAccount(account *businesslogic.Account) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresAccountRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SQLBuilder.
 		Insert("").
@@ -88,7 +89,7 @@ func (repo PostgresAccountRepository) CreateAccount(account *businesslogic.Accou
 		account.MiddleNames, account.FirstName, account.DateOfBirth, account.Email, account.Phone,
 		account.EmailVerified, account.PhoneVerified, account.HashAlgorithm, account.PasswordSalt, account.PasswordHash, time.Now(), time.Now(),
 		account.ToSAccepted, account.PrivacyPolicyAccepted, account.ByGuardian, account.Signature,
-	).Suffix("RETURNING ID")
+	).Suffix(dalutil.SQLSuffixReturningID)
 
 	// parsing arguments to ... parameters: https://golang.org/ref/spec#Passing_arguments_to_..._parameters
 	// PostgreSQL does not return LastInsertID automatically: https://github.com/lib/pq/issues/24
@@ -105,7 +106,7 @@ func (repo PostgresAccountRepository) CreateAccount(account *businesslogic.Accou
 
 func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.SearchAccountCriteria) ([]businesslogic.Account, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresAccountRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SQLBuilder.
 		Select(
@@ -204,7 +205,7 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 
 func (repo PostgresAccountRepository) DeleteAccount(account businesslogic.Account) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresAccountRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	if account.ID > 0 {
 		stmt := repo.SQLBuilder.Delete("").From(DAS_USER_ACCOUNT_TABLE).Where(squirrel.Eq{common.PRIMARY_KEY: account.ID})
@@ -216,7 +217,7 @@ func (repo PostgresAccountRepository) DeleteAccount(account businesslogic.Accoun
 
 func (repo PostgresAccountRepository) UpdateAccount(account businesslogic.Account) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresAccountRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SQLBuilder.Update(DAS_USER_ACCOUNT_TABLE)
 	if account.ID > 0 {

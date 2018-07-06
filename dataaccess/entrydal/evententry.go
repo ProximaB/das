@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package entry
+package entrydal
 
 import (
 	"database/sql"
@@ -23,6 +23,7 @@ import (
 
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -33,19 +34,19 @@ type PostgresPartnershipEventEntryRepository struct {
 }
 
 const (
-	DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_TABLE                             = "DAS.EVENT_ENTRY_PARTNERSHIP"
-	DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID = "EVENT_ID"
-	DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_LEADTAG                       = "LEADTAG"
+	dasEventCompetitiveBallroomEntryTable = "DAS.EVENT_ENTRY_PARTNERSHIP"
+	leadTag                               = "LEADTAG"
 )
 
+// CreatePartnershipEventEntry creates a Partnership Event Entry in a Postgres database
 func (repo PostgresPartnershipEventEntryRepository) CreatePartnershipEventEntry(entry *businesslogic.PartnershipEventEntry) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresEventEntryRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	stmt := repo.SQLBuilder.Insert("").Into(DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_TABLE).Columns(
-		DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID,
+	stmt := repo.SQLBuilder.Insert("").Into(dasEventCompetitiveBallroomEntryTable).Columns(
+		common.COL_EVENT_ID,
 		common.COL_PARTNERSHIP_ID,
-		DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_LEADTAG,
+		leadTag,
 		common.COL_CREATE_USER_ID,
 		common.COL_DATETIME_CREATED,
 		common.COL_UPDATE_USER_ID,
@@ -58,7 +59,7 @@ func (repo PostgresPartnershipEventEntryRepository) CreatePartnershipEventEntry(
 		entry.EventEntry.DateTimeCreated,
 		entry.EventEntry.UpdateUserID,
 		entry.EventEntry.DateTimeUpdated,
-	).Suffix("RETURNING ID")
+	).Suffix(dalutil.SQLSuffixReturningID)
 	clause, args, err := stmt.ToSql()
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
 		return txErr
@@ -70,38 +71,49 @@ func (repo PostgresPartnershipEventEntryRepository) CreatePartnershipEventEntry(
 	return err
 }
 
+// DeletePartnershipEventEntry deletes a Partnership Event Entry from a Postgres database
 func (repo PostgresPartnershipEventEntryRepository) DeletePartnershipEventEntry(entry businesslogic.PartnershipEventEntry) error {
+	if repo.Database == nil {
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
 	clause := repo.SQLBuilder.Delete("").
-		From(DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_TABLE).
-		Where(squirrel.Eq{DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID: entry.EventEntry.EventID}).
+		From(dasEventCompetitiveBallroomEntryTable).
+		Where(squirrel.Eq{common.COL_EVENT_ID: entry.EventEntry.EventID}).
 		Where(squirrel.Eq{common.COL_PARTNERSHIP_ID: entry.PartnershipID})
 	_, err := clause.RunWith(repo.Database).Exec()
 	return err
 }
 
+// UpdatePartnershipEventEntry makes changes to a Partnership Event Entry in a Postgres database
 func (repo PostgresPartnershipEventEntryRepository) UpdatePartnershipEventEntry(entry businesslogic.PartnershipEventEntry) error {
+	if repo.Database == nil {
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
 	return errors.New("not implemented")
 }
 
-// Returns CompetitiveBallroomEventEntry, which is supposed to be used by competitor only
+// SearchPartnershipEventEntry returns CompetitiveBallroomEventEntry, which is supposed to be used by competitor only
 func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(criteria businesslogic.SearchPartnershipEventEntryCriteria) ([]businesslogic.PartnershipEventEntry, error) {
+	if repo.Database == nil {
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
 	clause := repo.SQLBuilder.Select(
 		fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
 			common.PRIMARY_KEY,
-			DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID,
+			common.COL_EVENT_ID,
 			common.COL_PARTNERSHIP_ID,
 			dasCompetitionEntryColCompetitorTag,
 			common.COL_CREATE_USER_ID,
 			common.COL_DATETIME_CREATED,
 			common.COL_UPDATE_USER_ID,
 			common.COL_DATETIME_UPDATED)).
-		From(DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_TABLE)
+		From(dasEventCompetitiveBallroomEntryTable)
 
 	if criteria.PartnershipID > 0 {
 		clause = clause.Where(squirrel.Eq{common.COL_PARTNERSHIP_ID: criteria.PartnershipID})
 	}
 	if criteria.EventID > 0 {
-		clause = clause.Where(squirrel.Eq{DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_COL_COMPETITIVE_BALLROOM_EVENT_ID: criteria.EventID})
+		clause = clause.Where(squirrel.Eq{common.COL_EVENT_ID: criteria.EventID})
 	}
 
 	entries := make([]businesslogic.PartnershipEventEntry, 0)
@@ -130,24 +142,41 @@ func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(
 	return entries, err
 }
 
+// PostgresAdjudicatorEventEntryRepository implements IAdjudicatorEventEntryRepository with a Postgres database
 type PostgresAdjudicatorEventEntryRepository struct {
 	Database   *sql.DB
 	SQLBuilder squirrel.StatementBuilderType
 }
 
+// CreateAdjudicatorEventEntry creates an Adjudicator Event Entry in a Postgres database
 func (repo PostgresAdjudicatorEventEntryRepository) CreateAdjudicatorEventEntry(entry *businesslogic.AdjudicatorEventEntry) error {
+	if repo.Database == nil {
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
 	return errors.New("not implemented")
 }
 
+// DeleteAdjudicatorEventEntry deletes an Adjudicator Event Entry from a Postgres database
 func (repo PostgresAdjudicatorEventEntryRepository) DeleteAdjudicatorEventEntry(entry businesslogic.AdjudicatorEventEntry) error {
+	if repo.Database == nil {
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
 	return errors.New("not implemented")
 }
 
+// SearchAdjudicatorEventEntry searches Adjudicator Event Entries in a Postgres database
 func (repo PostgresAdjudicatorEventEntryRepository) SearchAdjudicatorEventEntry(criteria businesslogic.SearchAdjudicatorEventEntryCriteria) ([]businesslogic.AdjudicatorEventEntry, error) {
+	if repo.Database == nil {
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
 	return nil, errors.New("not implemented")
 }
 
+// UpdateAdjudicatorEventEntry updates an Adjudicator Event Entry in a Postgres database
 func (repo PostgresAdjudicatorEventEntryRepository) UpdateAdjudicatorEventEntry(entry businesslogic.AdjudicatorEventEntry) error {
+	if repo.Database == nil {
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
 	return errors.New("not implemented")
 }
 
@@ -157,12 +186,12 @@ func (repo PostgresAdjudicatorEventEntryRepository) UpdateAdjudicatorEventEntry(
 func GetCompetitiveBallroomEventEntrylist(criteria *businesslogic.SearchEventEntryCriteria) ([]businesslogic.EventEntryPublicView, error) {
 	entries := make([]businesslogic.EventEntryPublicView, 0)
 
-	clause := repo.SqlBuilder.Select(`ECBE.ID, ECB.ID, E.ID, C.ID, P.ID, P.LEAD, P.FOLLOW,
+	clause := repo.SQLBuilder.Select(`ECBE.ID, ECB.ID, E.ID, C.ID, P.ID, P.LEAD, P.FOLLOW,
 					AL.FIRST_NAME, AL.LAST_NAME,
 					AF.FIRST_NAME, AF.LAST_NAME,
 					RC.NAME, RST.NAME, RSC.NAME, RSO.NAME
 			`).
-		From(DAS_EVENT_COMPETITIVE_BALLROOM_ENTRY_TABLE).
+		From(dasEventCompetitiveBallroomEntryTable).
 		Where(sq.Eq{"E.COMPETITION_ID": criteria.ID})
 
 	if criteria.Federation > 0 {

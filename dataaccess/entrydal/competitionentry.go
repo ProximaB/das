@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package entry
+package entrydal
 
 import (
 	"database/sql"
@@ -23,11 +23,15 @@ import (
 
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
 const (
-	dasCompetitionEntryTable              = "DAS.COMPETITION_ENTRY_ATHLETE"
+	dasAthleteCompetitionEntryTable       = "DAS.COMPETITION_ENTRY_ATHLETE"
+	dasPartnershipCompetitionEntryTable   = "DAS.COMPETITION_ENTRY_PARTNERSHIP"
+	dasAdjudicatorCompetitionEntryTable   = "DAS.COMPETITION_ENTRY_ADJUDICATOR"
+	dasScrutineerCompetitionEntryTable    = "DAS.COMPETITION_ENTRY_SCRUTINEER"
 	dasCompetitionEntryColCheckinInd      = "CHECKIN_IND"
 	dasCompetitionEntryColCheckinDateTime = "CHECKIN_DATETIME"
 	dasCompetitionEntryColCompetitorTag   = "LEADTAG"
@@ -39,30 +43,45 @@ type PostgresAthleteCompetitionEntryRepository struct {
 	SQLBuilder squirrel.StatementBuilderType
 }
 
-// CreateAthleteCompetitionEntry creates a AthleteCompetitionEntry in the repository and update the ID of the AthleteCompetitionEntry
+// CreateAthleteCompetitionEntry creates an AthleteCompetitionEntry in a Postgres database
 func (repo PostgresAthleteCompetitionEntryRepository) CreateAthleteCompetitionEntry(entry *businesslogic.AthleteCompetitionEntry) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresCompetitionEntryRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	clause := repo.SQLBuilder.Insert("").
-		Into(dasCompetitionEntryTable).
-		Columns(common.COL_COMPETITION_ID,
+	stmt := repo.SQLBuilder.Insert("").
+		Into(dasAthleteCompetitionEntryTable).
+		Columns(
+			common.COL_COMPETITION_ID,
 			common.COL_ACCOUNT_ID,
+			dasCompetitionEntryColCheckinInd,
+			dasCompetitionEntryColCheckinDateTime,
 			common.COL_CREATE_USER_ID,
 			common.COL_DATETIME_CREATED,
 			common.COL_UPDATE_USER_ID,
-			common.COL_DATETIME_UPDATED).Values(
-		entry.CompetitionEntry.CompetitionID,
-		entry.AthleteID,
-		entry.CompetitionEntry.CreateUserID,
-		entry.CompetitionEntry.DateTimeCreated,
-		entry.CompetitionEntry.UpdateUserID,
-		entry.CompetitionEntry.DateTimeUpdated).Suffix("RETURNING ID")
+			common.COL_DATETIME_UPDATED).
+		Values(
+			entry.CompetitionEntry.CompetitionID,
+			entry.AthleteID,
+			entry.CompetitionEntry.CheckInIndicator,
+			entry.CompetitionEntry.DateTimeCheckIn,
+			entry.CompetitionEntry.CreateUserID,
+			entry.CompetitionEntry.DateTimeCreated,
+			entry.CompetitionEntry.UpdateUserID,
+			entry.CompetitionEntry.DateTimeUpdated).
+		Suffix("RETURNING ID")
 
-	_, err := clause.RunWith(repo.Database).Exec() // it's okay if the error is duplicate entry, since db has unique constraint on it
+	clause, args, err := stmt.ToSql()
+	if tx, txErr := repo.Database.Begin(); txErr != nil {
+		return txErr
+	} else {
+		row := repo.Database.QueryRow(clause, args...)
+		row.Scan(&entry.ID)
+		tx.Commit()
+	}
 	return err
 }
 
+// SearchAthleteCompetitionEntry searches AthleteCompetitionEntry in a Postgres database
 func (repo PostgresAthleteCompetitionEntryRepository) SearchAthleteCompetitionEntry(criteria businesslogic.SearchAthleteCompetitionEntryCriteria) ([]businesslogic.AthleteCompetitionEntry, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresCompetitionEntryRepository is not specified")
@@ -76,7 +95,7 @@ func (repo PostgresAthleteCompetitionEntryRepository) SearchAthleteCompetitionEn
 		common.COL_CREATE_USER_ID,
 		common.COL_DATETIME_CREATED,
 		common.COL_UPDATE_USER_ID,
-		common.COL_DATETIME_UPDATED)).From(dasCompetitionEntryTable)
+		common.COL_DATETIME_UPDATED)).From(dasAthleteCompetitionEntryTable)
 
 	if criteria.ID > 0 {
 		clause = clause.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.ID})
@@ -114,58 +133,125 @@ func (repo PostgresAthleteCompetitionEntryRepository) SearchAthleteCompetitionEn
 	return entries, err
 }
 
+// DeleteAthleteCompetitionEntry deletes an AthleteCompetitionEntry from a Postgres database
 func (repo PostgresAthleteCompetitionEntryRepository) DeleteAthleteCompetitionEntry(entry businesslogic.AthleteCompetitionEntry) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresCompetitionEntryRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	return errors.New("not implemented")
 }
 
+// UpdateAthleteCompetitionEntry updates an AthleteCompetitionEntry from a Postgres database
 func (repo PostgresAthleteCompetitionEntryRepository) UpdateAthleteCompetitionEntry(entry businesslogic.AthleteCompetitionEntry) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresCompetitionEntryRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	return errors.New("not implemented")
 }
 
+// PostgresPartnershipCompetitionEntryRepository implements a IPartnershipCompetitionEntryRepository with Postgres database
 type PostgresPartnershipCompetitionEntryRepository struct {
 	Database   *sql.DB
-	SqlBuilder squirrel.StatementBuilderType
+	SQLBuilder squirrel.StatementBuilderType
 }
 
+// CreatePartnershipCompetitionEntry creates a PartnershipCompetitionEntry in a Postgres database
 func (repo PostgresPartnershipCompetitionEntryRepository) CreatePartnershipCompetitionEntry(entry *businesslogic.PartnershipCompetitionEntry) error {
-	return errors.New("not implemented")
+	if repo.Database == nil {
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
+	stmt := repo.SQLBuilder.
+		Insert("").
+		Into(dasPartnershipCompetitionEntryTable).
+		Columns(
+			common.COL_COMPETITION_ID,
+			common.COL_PARTNERSHIP_ID,
+			dasCompetitionEntryColCheckinInd,
+			dasCompetitionEntryColCheckinDateTime,
+			common.COL_CREATE_USER_ID,
+			common.COL_DATETIME_CREATED,
+			common.COL_UPDATE_USER_ID,
+			common.COL_DATETIME_UPDATED).
+		Values(
+			entry.CompetitionEntry.CompetitionID,
+			entry.PartnershipID,
+			entry.CompetitionEntry.CheckInIndicator,
+			entry.CompetitionEntry.DateTimeCheckIn,
+			entry.CompetitionEntry.CreateUserID,
+			entry.CompetitionEntry.DateTimeCreated,
+			entry.CompetitionEntry.UpdateUserID,
+			entry.CompetitionEntry.DateTimeUpdated).
+		Suffix(dalutil.SQLSuffixReturningID)
+
+	clause, args, err := stmt.ToSql()
+	if tx, txErr := repo.Database.Begin(); txErr != nil {
+		return txErr
+	} else {
+		row := repo.Database.QueryRow(clause, args...)
+		row.Scan(&entry.ID)
+		tx.Commit()
+	}
+	return err
 }
 
+// DeletePartnershipCompetitionEntry deletes a PartnershipCompetitionEntry from a Postgres database
 func (repo PostgresPartnershipCompetitionEntryRepository) DeletePartnershipCompetitionEntry(entry businesslogic.PartnershipCompetitionEntry) error {
+	if repo.Database == nil {
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
 	return errors.New("not implemented")
 }
 
+// SearchPartnershipCompetitionEntry searches PartnershipCompetitionEntry in a Postgres database
 func (repo PostgresPartnershipCompetitionEntryRepository) SearchPartnershipCompetitionEntry(criteria businesslogic.SearchPartnershipCompetitionEntryCriteria) ([]businesslogic.PartnershipCompetitionEntry, error) {
+	if repo.Database == nil {
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
 	return nil, errors.New("not implemented")
 }
 
+// UpdatePartnershipCompetitionEntry updates a PartnershipCompetitionEntry in a Postgres database
 func (repo PostgresPartnershipCompetitionEntryRepository) UpdatePartnershipCompetitionEntry(entry businesslogic.PartnershipCompetitionEntry) error {
+	if repo.Database == nil {
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
 	return errors.New("not implemented")
 }
 
+// PostgresAdjudicatorCompetitionEntryRepository implements the IAdjudicatorCompetitionEntryRepository with a Postgres database
 type PostgresAdjudicatorCompetitionEntryRepository struct {
 	Database   *sql.DB
 	SQLBuilder squirrel.StatementBuilderType
 }
 
+// CreateAdjudicatorCompetitionEntry creates an AdjudicatorCompetitionEntry in a Postgres database
 func (repo PostgresAdjudicatorCompetitionEntryRepository) CreateAdjudicatorCompetitionEntry(entry *businesslogic.AdjudicatorCompetitionEntry) error {
+	if repo.Database == nil {
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
 	return errors.New("not implemented")
 }
 
+// DeleteAdjudicatorCompetitionEntry deletes an AdjudicatorCompetitionEntry from a Postgres database
 func (repo PostgresAdjudicatorCompetitionEntryRepository) DeleteAdjudicatorCompetitionEntry(entry businesslogic.AdjudicatorCompetitionEntry) error {
+	if repo.Database == nil {
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
 	return errors.New("not implemented")
 }
 
+// SearchAdjudicatorCompetitionEntry searches AdjudicatorCompetitionEntry in a Postgres database
 func (repo PostgresAdjudicatorCompetitionEntryRepository) SearchAdjudicatorCompetitionEntry(criteria businesslogic.SearchAdjudicatorCompetitionEntryCriteria) ([]businesslogic.AdjudicatorCompetitionEntry, error) {
+	if repo.Database == nil {
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
 	return nil, errors.New("not implemented")
 }
 
+// UpdateAdjudicatorCompetitionEntry updates an AdjudicatorCompetitionEntry in a Postgres database
 func (repo PostgresAdjudicatorCompetitionEntryRepository) UpdateAdjudicatorCompetitionEntry(entry businesslogic.AdjudicatorCompetitionEntry) error {
+	if repo.Database == nil {
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
 	return errors.New("not implemented")
 }

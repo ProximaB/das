@@ -36,12 +36,12 @@ type PartnershipCompetitionRepresentation struct {
 	DateTimeUpdated               time.Time
 }
 
-// EventRegistration specifies the data needed to create/update/drop event registration
+// EventRegistration specifies the data needed to create/update/drop eventdal registration
 type EventRegistration struct {
 	CompetitionID      int   `json:"competition"`
 	PartnershipID      int   `json:"partnership"`
-	EventsAdded        []int `json:"added"`   // event id, should not be competitive ballroom event id
-	EventsDropped      []int `json:"dropped"` // event id, should not be competitive ballroom event id
+	EventsAdded        []int `json:"added"`   // eventdal id, should not be competitive ballroom eventdal id
+	EventsDropped      []int `json:"dropped"` // eventdal id, should not be competitive ballroom eventdal id
 	CountryRepresented int   `json:"country"`
 	StateRepresented   int   `json:"state"`
 	SchoolRepresented  int   `json:"school"`
@@ -106,14 +106,14 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 	for _, each := range registration.EventsAdded {
 		cbe, err := GetEventByID(each, service.EventRepository)
 		if err != nil || cbe.ID == 0 {
-			return errors.New("competitive ballroom event does not exist")
+			return errors.New("competitive ballroom eventdal does not exist")
 		}
 
 		event, searchErr := service.EventRepository.SearchEvent(SearchEventCriteria{EventID: cbe.ID})
 		if searchErr != nil || len(event) != 1 {
-			return errors.New("event does not exist")
+			return errors.New("eventdal does not exist")
 		} else if event[0].StatusID != EVENT_STATUS_OPEN {
-			return errors.New("event is not open for registration")
+			return errors.New("eventdal is not open for registration")
 		}
 	}
 
@@ -149,16 +149,16 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 	for _, each := range registration.EventsAdded {
 		cbe, findErr := GetEventByID(each, service.EventRepository)
 		if findErr != nil {
-			return errors.New("a competitive ballroom event does not exist")
+			return errors.New("a competitive ballroom eventdal does not exist")
 		}
 		events, eventErr := service.EventRepository.SearchEvent(SearchEventCriteria{
 			EventID: cbe.ID,
 		})
 		if eventErr != nil || len(events) != 1 {
-			return errors.New("a competitive ballroom event is invalid")
+			return errors.New("a competitive ballroom eventdal is invalid")
 		}
 		if events[0].StatusID != EVENT_STATUS_OPEN {
-			return errors.New("event is no longer open for registration")
+			return errors.New("eventdal is no longer open for registration")
 		}
 	}
 
@@ -168,7 +168,7 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 
 	// check if dropped events are added
 
-	// check event entries, and see if this partnership is still eligible for entering these events
+	// check eventdal entries, and see if this partnership is still eligible for entering these events
 	// TODO: eligibility check
 	for _, each := range registration.EventsAdded {
 		eventEntry := PartnershipEventEntry{
@@ -273,7 +273,7 @@ func (service CompetitionRegistrationService) CreatePartnershipEventEntries(curr
 	return nil
 }
 
-// DropPartnershipEventEntries takes the current user and registration data and removes specified entries from the event
+// DropPartnershipEventEntries takes the current user and registration data and removes specified entries from the eventdal
 func (service CompetitionRegistrationService) DropPartnershipEventEntries(currentUser Account, registration EventRegistration) error {
 	for _, each := range registration.EventsDropped {
 		eventEntry := PartnershipEventEntry{
@@ -296,7 +296,7 @@ func checkEventEligibility(entry PartnershipEventEntry) error {
 	return errors.New("not implemented")
 }
 
-// GetEventRegistration get event registration for the provided competition and partnership
+// GetEventRegistration get eventdal registration for the provided competition and partnership
 func GetEventRegistration(competitionID int, partnershipID int, user *Account, partnershipRepo IPartnershipRepository) (EventRegistration, error) {
 	// check if user is part of the partnership
 	results, err := partnershipRepo.SearchPartnership(SearchPartnershipCriteria{PartnershipID: partnershipID})

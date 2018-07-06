@@ -47,7 +47,7 @@ type SearchEventCriteria struct {
 	StatusID      int `schema:"status"`
 }
 
-// Event contains data that are used for a generic competitive ballroom event, though it can be used for
+// Event contains data that are used for a generic competitive ballroom eventdal, though it can be used for
 // theatre art or cabaret events as well by leaving unnecessary fields empty or with default values.
 type Event struct {
 	ID              int
@@ -83,7 +83,7 @@ type IEventRepository interface {
 	DeleteEvent(event Event) error
 }
 
-// GetDances returns the ID of dances of the caller event
+// GetDances returns the ID of dances of the caller eventdal
 func (event Event) GetDances() []int {
 	keys := make([]int, 0)
 	for k := range event.dances {
@@ -100,14 +100,14 @@ func (event *Event) AddDance(danceID int) {
 	}
 }
 
-// RemoveDance removes the dance of the provided ID from the event
+// RemoveDance removes the dance of the provided ID from the eventdal
 func (event *Event) RemoveDance(danceID int) {
 	if event.dances[danceID] {
 		delete(event.dances, danceID)
 	}
 }
 
-// SetDances replaces the dances of the event with the new dances
+// SetDances replaces the dances of the eventdal with the new dances
 func (event *Event) SetDances(dances []int) {
 	event.dances = make(map[int]bool)
 	for _, each := range dances {
@@ -115,7 +115,7 @@ func (event *Event) SetDances(dances []int) {
 	}
 }
 
-// HasDance checks if a dance of the provided ID is in the event
+// HasDance checks if a dance of the provided ID is in the eventdal
 func (event Event) HasDance(danceID int) bool {
 	return event.dances[danceID]
 }
@@ -156,7 +156,7 @@ func GetEventByID(id int, repo IEventRepository) (Event, error) {
 	return results[0], err
 }
 
-// CreateEvent will check if event is valid, and create the in the provided IEventRepository. If competition
+// CreateEvent will check if eventdal is valid, and create the in the provided IEventRepository. If competition
 func CreateEvent(event Event, compRepo ICompetitionRepository, eventRepo IEventRepository, eventDanceRepo IEventDanceRepository) error {
 
 	competition, _ := GetCompetitionByID(event.CompetitionID, compRepo)
@@ -165,7 +165,7 @@ func CreateEvent(event Event, compRepo ICompetitionRepository, eventRepo IEventR
 	if competition.GetStatus() != CompetitionStatusPreRegistration {
 		return errors.New("events can only be added when competition is in pre-registration")
 	} else if competition.CreateUserID != event.CreateUserID {
-		return errors.New("not authorized to create event for this competition")
+		return errors.New("not authorized to create eventdal for this competition")
 	}
 
 	// check if specified events were created
@@ -179,23 +179,23 @@ func CreateEvent(event Event, compRepo ICompetitionRepository, eventRepo IEventR
 		StyleID:       event.StyleID,
 	})
 
-	// for each similar event, check if they share dances
+	// for each similar eventdal, check if they share dances
 	for _, eachEvent := range similarEvents {
 		for _, eachDance := range event.GetDances() {
 			if eachEvent.HasDance(eachDance) {
-				return errors.New("specified dance is already in this event")
+				return errors.New("specified dance is already in this eventdal")
 			}
 		}
 	}
 
-	// if no errors, create the event
-	// step 1: create an event
+	// if no errors, create the eventdal
+	// step 1: create an eventdal
 	createEventErr := eventRepo.CreateEvent(&event)
 	if createEventErr != nil {
 		return createEventErr
 	}
 	if event.ID == 0 {
-		return errors.New("event could not be created")
+		return errors.New("eventdal could not be created")
 	}
 
 	// step 2: create all the eventDances. requires primary key returned from the previous step

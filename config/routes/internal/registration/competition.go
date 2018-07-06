@@ -40,7 +40,7 @@ var athleteCompetitionRegistrationServer = controller.CompetitionRegistrationSer
 
 var createCompetitionRegistrationController = util.DasController{
 	Name:         "CreateCompetitionRegistrationController",
-	Description:  "Create competition and eventdal registration in DAS",
+	Description:  "Create competition and event registration in DAS",
 	Method:       http.MethodPost,
 	Endpoint:     apiAthleteCompetitionRegistrationEndpoint,
 	Handler:      athleteCompetitionRegistrationServer.CreateAthleteRegistrationHandler,

@@ -60,11 +60,11 @@ func GetCompetitiveBallroomEventRegistration(db *sql.DB, competitionID int, part
 
 	rows, _ := clause.RunWith(db).Query()
 	for rows.Next() {
-		eventdal := 0
+		event := 0
 		rows.Scan(
-			&eventdal,
+			&event,
 		)
-		registration.EventsAdded = append(registration.EventsAdded, eventdal)
+		registration.EventsAdded = append(registration.EventsAdded, event)
 	}
 	// find all the events entered
 	return registration, nil

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-// Package businesslogic defines the core system of DAS: competition registration, eventdal scheduling, and score
+// Package businesslogic defines the core system of DAS: competition registration, event scheduling, and score
 // calculation. The design of businesslogic follows the principle of Dependency Inversion. businesslogic virtually
 // has no dependencies on the Controller and Data Access layer. Any data access functions are provided to businesslogic
 // package through dependency injection.

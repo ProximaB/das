@@ -114,7 +114,7 @@ func TestCreateEvent(t *testing.T) {
 	eventRepository.EXPECT().CreateEvent(event).Return(errors.New("should not allow wrong events to be created"))
 
 	err := eventRepository.CreateEvent(event)
-	assert.NotNil(t, err, "creating an uninitialized eventdal should result in an error")
+	assert.NotNil(t, err, "creating an uninitialized event should result in an error")
 }
 
 func TestCreateEvent_BadCompetitionStatus(t *testing.T) {
@@ -144,5 +144,5 @@ func TestCreateEvent_BadCompetitionStatus(t *testing.T) {
 	}, nil)
 
 	err := businesslogic.CreateEvent(*event, compRepository, eventRepository, eventDancerepository)
-	assert.NotNil(t, err, "creating eventdal for competition that is closed for registration should throw an error")
+	assert.NotNil(t, err, "creating event for competition that is closed for registration should throw an error")
 }

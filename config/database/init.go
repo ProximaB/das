@@ -1,6 +1,18 @@
-// Copyright 2017, 2018 Yubing Hou. All rights reserved.
-// Use of this source code is governed by GPL license
-// that can be found in the LICENSE file
+// Dancesport Application System (DAS)
+// Copyright (C) 2017, 2018 Yubing Hou
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package database
 
@@ -11,18 +23,18 @@ import (
 	"os"
 )
 
+const envarDBConnectionString = "POSTGRES_CONNECTION"
+
+var dbConnectionString = os.Getenv(envarDBConnectionString)
+
 func openDatabaseConnection() {
-	connectionString := os.Getenv("POSTGRES_CONNECTION")
 	// for testing, use default connection
-	if len(connectionString) == 0 {
-		log.Println("using default connection string")
-		connectionString = `user=dasdev password=dAs\!@#\$1234 dbname=das sslmode=disable`
-	} else {
-		log.Println("using connection string from environment variable")
+	if len(dbConnectionString) == 0 {
+		log.Println("[error] cannot find database connection string")
 	}
 
 	var err error
-	PostgresDatabase, err = sql.Open("postgres", connectionString)
+	PostgresDatabase, err = sql.Open("postgres", dbConnectionString)
 	if err != nil {
 		log.Printf("[error] cannot establish connection to database: %s\n", err)
 	}
@@ -31,7 +43,7 @@ func openDatabaseConnection() {
 		log.Printf("[error] cannot ping database without error: %s\n", err.Error())
 	}
 	if err == nil {
-		log.Println("[success] connected to database with given connection string")
+		log.Println("[success] connected to database with the given connection string")
 	}
 	if PostgresDatabase == nil {
 		log.Fatal("cannot create connection to the database")

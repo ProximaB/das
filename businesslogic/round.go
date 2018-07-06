@@ -1,33 +1,34 @@
-// Copyright 2017, 2018 Yubing Hou. All rights reserved.
-// Use of this source code is governed by GPL license
-// that can be found in the LICENSE file
+// Dancesport Application System (DAS)
+// Copyright (C) 2018 Yubing Hou
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package businesslogic
 
 import "time"
 
+// RoundOrder defines the order of the round, from lowest to the highest
 type RoundOrder struct {
-	Name string
-	Rank int
+	ID              int
+	Rank            int
+	DateTimeCreated time.Time
+	DateTimeUpdated time.Time
 }
 
-var (
-	ROUND_ORDER_FINAL   = RoundOrder{"Final", 1}
-	ROUND_ORDER_SEMI    = RoundOrder{"Semi-Final", 2}
-	ROUND_ORDER_QUARTER = RoundOrder{"Quarter Final", 3}
-	ROUND_ORDER_1_8     = RoundOrder{"1/8 Final", 4}
-	ROUND_ORDER_1_16    = RoundOrder{"1/16 Final", 5}
-	ROUND_ORDER_1_32    = RoundOrder{"1/32 Final", 6}
-	ROUND_ORDER_1_64    = RoundOrder{"1/64 Final", 7}
-	ROUND_ORDER_1_128   = RoundOrder{"1/128 Final", 8}
-	ROUND_ORDER_1_256   = RoundOrder{"1/256 Final", 9}
-	ROUND_ORDER_1_512   = RoundOrder{"1/512 Final", 10}
-	ROUND_ORDER_1_1024  = RoundOrder{"1/1024 Final", 11}
-	ROUND_ORDER_1_2048  = RoundOrder{"1/2048 Final", 12}
-)
-
+// Round defines the round for each event
 type Round struct {
-	RoundID         int
+	ID              int
 	EventID         int
 	Order           RoundOrder
 	Entries         []EventEntry
@@ -37,4 +38,19 @@ type Round struct {
 	CreateUserID    int
 	DateTimeUpdated time.Time
 	UpdateUserID    int
+}
+
+// SearchRoundCriteria specifies the parameters that can be used to search Rounds in a Repository
+type SearchRoundCriteria struct {
+	CompetitionID int
+	EventID       int
+	RoundOrderID  int
+}
+
+// IRoundRepository specifies the interface that a Round Repository should implement
+type IRoundRepository interface {
+	CreateRound(round *Round) error
+	DeleteRound(round Round) error
+	SearchRound(criteria SearchRoundCriteria) ([]Round, error)
+	UpdateRound(round Round) error
 }

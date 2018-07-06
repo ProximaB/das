@@ -1,6 +1,18 @@
-// Copyright 2017, 2018 Yubing Hou. All rights reserved.
-// Use of this source code is governed by GPL license
-// that can be found in the LICENSE file
+// Dancesport Application System (DAS)
+// Copyright (C) 2017, 2018 Yubing Hou
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package account
 
@@ -8,10 +20,12 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"time"
+
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
-	"time"
 )
 
 const (
@@ -40,14 +54,14 @@ const (
 
 type PostgresAccountRepository struct {
 	Database   *sql.DB
-	SqlBuilder squirrel.StatementBuilderType
+	SQLBuilder squirrel.StatementBuilderType
 }
 
 func (repo PostgresAccountRepository) CreateAccount(account *businesslogic.Account) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresAccountRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	stmt := repo.SqlBuilder.
+	stmt := repo.SQLBuilder.
 		Insert("").
 		Into(DAS_USER_ACCOUNT_TABLE).
 		Columns(DAS_USER_ACCOUNT_COL_USER_TYPE_ID,
@@ -75,7 +89,7 @@ func (repo PostgresAccountRepository) CreateAccount(account *businesslogic.Accou
 		account.MiddleNames, account.FirstName, account.DateOfBirth, account.Email, account.Phone,
 		account.EmailVerified, account.PhoneVerified, account.HashAlgorithm, account.PasswordSalt, account.PasswordHash, time.Now(), time.Now(),
 		account.ToSAccepted, account.PrivacyPolicyAccepted, account.ByGuardian, account.Signature,
-	).Suffix("RETURNING ID")
+	).Suffix(dalutil.SQLSuffixReturningID)
 
 	// parsing arguments to ... parameters: https://golang.org/ref/spec#Passing_arguments_to_..._parameters
 	// PostgreSQL does not return LastInsertID automatically: https://github.com/lib/pq/issues/24
@@ -92,9 +106,9 @@ func (repo PostgresAccountRepository) CreateAccount(account *businesslogic.Accou
 
 func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.SearchAccountCriteria) ([]businesslogic.Account, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresAccountRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	stmt := repo.SqlBuilder.
+	stmt := repo.SQLBuilder.
 		Select(
 			fmt.Sprintf(
 				"%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
@@ -191,10 +205,10 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 
 func (repo PostgresAccountRepository) DeleteAccount(account businesslogic.Account) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresAccountRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	if account.ID > 0 {
-		stmt := repo.SqlBuilder.Delete("").From(DAS_USER_ACCOUNT_TABLE).Where(squirrel.Eq{common.PRIMARY_KEY: account.ID})
+		stmt := repo.SQLBuilder.Delete("").From(DAS_USER_ACCOUNT_TABLE).Where(squirrel.Eq{common.PRIMARY_KEY: account.ID})
 		_, err := stmt.RunWith(repo.Database).Exec()
 		return err
 	}
@@ -203,9 +217,9 @@ func (repo PostgresAccountRepository) DeleteAccount(account businesslogic.Accoun
 
 func (repo PostgresAccountRepository) UpdateAccount(account businesslogic.Account) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresAccountRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	stmt := repo.SqlBuilder.Update(DAS_USER_ACCOUNT_TABLE)
+	stmt := repo.SQLBuilder.Update(DAS_USER_ACCOUNT_TABLE)
 	if account.ID > 0 {
 		if len(account.PasswordSalt) > 0 {
 			stmt = stmt.Set(DAS_USER_ACCOUNT_COL_PASSWORD_SALT, account.PasswordSalt)

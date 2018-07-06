@@ -1,17 +1,28 @@
-// Copyright 2017, 2018 Yubing Hou. All rights reserved.
-// Use of this source code is governed by GPL license
-// that can be found in the LICENSE file
+// Dancesport Application System (DAS)
+// Copyright (C) 2017, 2018 Yubing Hou
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package businesslogic
 
 import (
 	"errors"
 	"fmt"
-	"log"
 	"time"
 )
 
-// EventEntry defines the
+// EventEntry defines the base struct of an Entry at an Event
 type EventEntry struct {
 	ID              int
 	EventID         int
@@ -23,7 +34,7 @@ type EventEntry struct {
 	DateTimeUpdated time.Time
 }
 
-// PartnershipEventEntry defines the participation of a Partnership at an Event.
+// PartnershipEventEntry defines the Entry of a Partnership at an Event
 type PartnershipEventEntry struct {
 	ID            int
 	EventEntry    EventEntry
@@ -33,8 +44,7 @@ type PartnershipEventEntry struct {
 	CheckInTime   time.Time
 }
 
-// SearchPartnershipEventEntryCriteria specifies the parameters that can be used to search the Event Entry of a
-// Partnership in DAS.
+// SearchPartnershipEventEntryCriteria specifies the parameters that can be used to search the Event Entry of a Partnership
 type SearchPartnershipEventEntryCriteria struct {
 	PartnershipID int
 	EventID       int
@@ -69,22 +79,9 @@ type SearchAdjudicatorEventEntryCriteria struct {
 	Style         int `schema:"style"`
 }
 
-type EventEntryPublicView struct {
-	CompetitiveBallroomEventEntryID int
-	CompetitiveBallroomEventID      int
-	EventID                         int
-	CompetitionID                   int
-	PartnershipID                   int
-	LeadID                          int
-	LeadFirstName                   string
-	LeadLastName                    string
-	FollowID                        int
-	FollowFirstName                 string
-	FollowLastName                  string
-	CountryRepresented              string
-	StateRepresented                string
-	SchoolRepresented               string
-	StudioRepresented               string
+// EventEntryService abstracts the process of event entry management and  provides services functions that
+// can be used by other packages to manage competition entries
+type EventEntryService struct {
 }
 
 // PartnershipEventEntryList contains the ID of an event and the Partnerships that are competing in this event
@@ -99,19 +96,21 @@ type AdjudicatorEventEntryList struct {
 	EntryList []AdjudicatorEventEntry
 }
 
-func createEventEntry(entry PartnershipEventEntry, entryRepo IPartnershipEventEntryRepository) error {
+// CreatePartnershipEventEntry checks if an entry for the specified Partnership already exists in the specified Event. If
+// not, a new PartnershipEventEntry will be created for the specified event in the provided repository
+func CreatePartnershipEventEntry(entry PartnershipEventEntry, entryRepo IPartnershipEventEntryRepository) error {
 	// check if entries were already created
-	searchCriteria := SearchPartnershipEventEntryCriteria{
-		///PartnershipID:              entry.PartnershipID,
-		//CompetitiveBallroomEventID: entry.CompetitiveBallroomEventID,
+	searchedResults, err := entryRepo.SearchPartnershipEventEntry(SearchPartnershipEventEntryCriteria{
+		PartnershipID: entry.PartnershipID,
+		EventID:       entry.EventEntry.EventID,
+	})
+	if err != nil {
+		return err
 	}
-	existingEntries, _ := entryRepo.SearchPartnershipEventEntry(searchCriteria)
-
-	if len(existingEntries) == 1 {
-		return errors.New("event is already added")
-	} else if len(existingEntries) > 1 {
-		log.Println(errors.New(fmt.Sprintf("more than 1 entry has been added: %v", entry)))
+	if len(searchedResults) > 0 {
+		return errors.New(fmt.Sprintf("entry for partnership %d already exists for event %d", entry.PartnershipID, entry.EventEntry.EventID))
 	}
 
+	// entry does not exist, create the entry
 	return entryRepo.CreatePartnershipEventEntry(&entry)
 }

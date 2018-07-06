@@ -1,6 +1,18 @@
-// Copyright 2017, 2018 Yubing Hou. All rights reserved.
-// Use of this source code is governed by GPL license
-// that can be found in the LICENSE file
+// Dancesport Application System (DAS)
+// Copyright (C) 2017, 2018 Yubing Hou
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package businesslogic_test
 
@@ -103,4 +115,34 @@ func TestCreateEvent(t *testing.T) {
 
 	err := eventRepository.CreateEvent(event)
 	assert.NotNil(t, err, "creating an uninitialized event should result in an error")
+}
+
+func TestCreateEvent_BadCompetitionStatus(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	event := businesslogic.NewEvent()
+	event.CompetitionID = 22
+	event.FederationID = 3
+	event.DivisionID = 19
+	event.AgeID = 19
+	event.ProficiencyID = 10
+	event.StyleID = 7
+	event.StatusID = businesslogic.EVENT_STATUS_DRAFT
+
+	event.SetDances(testDances)
+
+	compRepository := mock_businesslogic.NewMockICompetitionRepository(mockCtrl)
+	eventRepository := mock_businesslogic.NewMockIEventRepository(mockCtrl)
+	eventDancerepository := mock_businesslogic.NewMockIEventDanceRepository(mockCtrl)
+
+	expectedCompetition := businesslogic.Competition{ID: 22}
+	expectedCompetition.UpdateStatus(businesslogic.CompetitionStatusClosedRegistration)
+
+	compRepository.EXPECT().SearchCompetition(gomock.Any()).Return([]businesslogic.Competition{
+		expectedCompetition,
+	}, nil)
+
+	err := businesslogic.CreateEvent(*event, compRepository, eventRepository, eventDancerepository)
+	assert.NotNil(t, err, "creating event for competition that is closed for registration should throw an error")
 }

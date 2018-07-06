@@ -1,8 +1,20 @@
-// Copyright 2017, 2018 Yubing Hou. All rights reserved.
-// Use of this source code is governed by GPL license
-// that can be found in the LICENSE file
+// Dancesport Application System (DAS)
+// Copyright (C) 2017, 2018 Yubing Hou
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package event
+package eventdal
 
 import (
 	"database/sql"
@@ -15,36 +27,38 @@ import (
 )
 
 const (
-	DAS_EVENT_TABLE                 = "DAS.EVENT"
-	DAS_EVENT_COL_EVENT_CATEGORY_ID = "EVENT_CATEGORY_ID"
-	DAS_EVENT_COL_EVENT_STATUS_ID   = "EVENT_STATUS_ID"
+	dasEventTable                 = "DAS.EVENT"
+	dasEventColumnEventCategoryID = "EVENT_CATEGORY_ID"
+	dasEventColumnEventStatusID   = "EVENT_STATUS_ID"
 )
 
+// PostgresEventRepository implements IEventRepository with a Postgres database
 type PostgresEventRepository struct {
 	Database   *sql.DB
-	SqlBuilder squirrel.StatementBuilderType
+	SQLBuilder squirrel.StatementBuilderType
 }
 
+// SearchEvent searches Event in a Postgres database
 func (repo PostgresEventRepository) SearchEvent(criteria businesslogic.SearchEventCriteria) ([]businesslogic.Event, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresEventRepository is not specified")
 	}
-	stmt := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
+	stmt := repo.SQLBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
 		common.PRIMARY_KEY,
 		common.COL_COMPETITION_ID,
-		DAS_EVENT_COL_EVENT_CATEGORY_ID,
+		dasEventColumnEventCategoryID,
 		common.COL_FEDERATION_ID,
 		common.COL_DIVISION_ID,
 		common.COL_AGE_ID,
 		common.COL_PROFICIENCY_ID,
 		common.COL_STYLE_ID,
 		common.COL_DESCRIPTION,
-		DAS_EVENT_COL_EVENT_STATUS_ID,
+		dasEventColumnEventStatusID,
 		common.COL_CREATE_USER_ID,
 		common.COL_DATETIME_CREATED,
 		common.COL_UPDATE_USER_ID,
 		common.COL_DATETIME_UPDATED,
-	)).From(DAS_EVENT_TABLE).OrderBy(common.PRIMARY_KEY)
+	)).From(dasEventTable).OrderBy(common.PRIMARY_KEY)
 	if criteria.CompetitionID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_COMPETITION_ID: criteria.CompetitionID})
 	}
@@ -67,7 +81,7 @@ func (repo PostgresEventRepository) SearchEvent(criteria businesslogic.SearchEve
 		stmt = stmt.Where(squirrel.Eq{common.COL_STYLE_ID: criteria.StyleID})
 	}
 	if criteria.StatusID > 0 {
-		stmt = stmt.Where(squirrel.Eq{DAS_EVENT_COL_EVENT_STATUS_ID: criteria.StatusID})
+		stmt = stmt.Where(squirrel.Eq{dasEventColumnEventStatusID: criteria.StatusID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
 	events := make([]businesslogic.Event, 0)
@@ -98,22 +112,23 @@ func (repo PostgresEventRepository) SearchEvent(criteria businesslogic.SearchEve
 	return events, err
 }
 
+// CreateEvent creates an Event in a Postgres database
 func (repo PostgresEventRepository) CreateEvent(event *businesslogic.Event) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresEventRepository is not specified")
 	}
-	stmt := repo.SqlBuilder.Insert("").
-		Into(DAS_EVENT_TABLE).
+	stmt := repo.SQLBuilder.Insert("").
+		Into(dasEventTable).
 		Columns(
 			common.COL_COMPETITION_ID,
-			DAS_EVENT_COL_EVENT_CATEGORY_ID,
+			dasEventColumnEventCategoryID,
 			common.COL_FEDERATION_ID,
 			common.COL_DIVISION_ID,
 			common.COL_AGE_ID,
 			common.COL_PROFICIENCY_ID,
 			common.COL_STYLE_ID,
 			common.COL_DESCRIPTION,
-			DAS_EVENT_COL_EVENT_STATUS_ID,
+			dasEventColumnEventStatusID,
 			common.COL_CREATE_USER_ID,
 			common.COL_DATETIME_CREATED,
 			common.COL_UPDATE_USER_ID,
@@ -139,31 +154,33 @@ func (repo PostgresEventRepository) CreateEvent(event *businesslogic.Event) erro
 		return err
 	}
 
-	if tx, txErr := repo.Database.Begin(); txErr != nil {
+	tx, txErr := repo.Database.Begin()
+	if txErr != nil {
 		return txErr
-	} else {
-		tx.QueryRow(clause, args...).Scan(&event.ID)
-		tx.Commit()
-		return nil
 	}
+	tx.QueryRow(clause, args...).Scan(&event.ID)
+	tx.Commit()
+	return nil
 }
 
+// UpdateEvent updates an Event in a Postgres database
 func (repo PostgresEventRepository) UpdateEvent(event businesslogic.Event) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresEventRepository is not specified")
 	}
-	stmt := repo.SqlBuilder.Update("").Table(DAS_EVENT_TABLE).
-		Set(DAS_EVENT_COL_EVENT_STATUS_ID, event.StatusID).
+	stmt := repo.SQLBuilder.Update("").Table(dasEventTable).
+		Set(dasEventColumnEventStatusID, event.StatusID).
 		Where(squirrel.Eq{common.COL_COMPETITION_ID: event.CompetitionID})
-	if tx, txErr := repo.Database.Begin(); txErr != nil {
+	tx, txErr := repo.Database.Begin()
+	if txErr != nil {
 		return txErr
-	} else {
-		_, err := stmt.RunWith(repo.Database).Exec()
-		err = tx.Commit()
-		return err
 	}
+	_, err := stmt.RunWith(repo.Database).Exec()
+	err = tx.Commit()
+	return err
 }
 
+// DeleteEvent deletes an Event from a Postgres database
 func (repo PostgresEventRepository) DeleteEvent(event businesslogic.Event) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresEventRepository is not specified")

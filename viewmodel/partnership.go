@@ -1,6 +1,18 @@
-// Copyright 2017, 2018 Yubing Hou. All rights reserved.
-// Use of this source code is governed by GPL license
-// that can be found in the LICENSE file
+// Dancesport Application System (DAS)
+// Copyright (C) 2017, 2018 Yubing Hou
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package viewmodel
 
@@ -20,7 +32,7 @@ type Partnership struct {
 
 func PartnershipDataModelToViewModel(partnership businesslogic.Partnership) Partnership {
 	return Partnership{
-		ID:         partnership.PartnershipID,
+		ID:         partnership.ID,
 		LeadName:   partnership.Lead.GetName(),
 		FollowName: partnership.Follow.GetName(),
 		Since:      partnership.DateTimeCreated,

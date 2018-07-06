@@ -1,6 +1,18 @@
-// Copyright 2017, 2018 Yubing Hou. All rights reserved.
-// Use of this source code is governed by GPL license
-// that can be found in the LICENSE file
+// Dancesport Application System (DAS)
+// Copyright (C) 2017, 2018 Yubing Hou
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package account
 
@@ -31,8 +43,8 @@ func TestAccountGenderHandler_GetAccountGenderHandler(t *testing.T) {
 
 	// test with zero param
 	mockedGenderRepo.EXPECT().GetAllGenders().Return([]referencebll.Gender{
-		referencebll.Gender{ID: 1, Name: "Female"},
-		referencebll.Gender{ID: 2, Name: "Male"},
+		{ID: 1, Name: "Female"},
+		{ID: 2, Name: "Male"},
 	}, nil)
 	server.GetAccountGenderHandler(w, req)
 	genders := make([]viewmodel.Gender, 0)
@@ -46,8 +58,8 @@ func TestAccountGenderHandler_GetAccountGenderHandler(t *testing.T) {
 	req.URL.RawQuery = query.Encode()
 	// log.Printf("GET %s\n", req.URL.String())
 	mockedGenderRepo.EXPECT().GetAllGenders().Return([]referencebll.Gender{
-		referencebll.Gender{ID: 1, Name: "Female"},
-		referencebll.Gender{ID: 2, Name: "Male"},
+		{ID: 1, Name: "Female"},
+		{ID: 2, Name: "Male"},
 	}, nil)
 	server.GetAccountGenderHandler(w, req)
 	// log.Println(w.Body)

@@ -1,6 +1,18 @@
-// Copyright 2017, 2018 Yubing Hou. All rights reserved.
-// Use of this source code is governed by GPL license
-// that can be found in the LICENSE file
+// Dancesport Application System (DAS)
+// Copyright (C) 2017, 2018 Yubing Hou
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package partnership
 
@@ -15,12 +27,11 @@ import (
 )
 
 const (
-	DAS_PARTNERSHIP_TABLE              = "DAS.PARTNERSHIP"
-	DAS_PARTNERSHIP_COL_PARTNERSHIP_ID = "PARTNERSHIP_ID"
-	DAS_PARTNERSHIP_COL_LEAD_ID        = "LEAD_ID"
-	DAS_PARTNERSHIP_COL_FOLLOW_ID      = "FOLLOW_ID"
-	DAS_PARTNERSHIP_COL_SAMESEX_IND    = "SAMESEX_IND"
-	DAS_PARTNERSHIP_COL_FAVORITE       = "FAVORITE"
+	DasPartnershipTable                  = "DAS.PARTNERSHIP"
+	DasPartnershipColumnLeadID           = "LEAD_ID"
+	DasPartnershipColumnFollowID         = "FOLLOW_ID"
+	DasPartnershipColumnSameSexIndicator = "SAMESEX_IND"
+	DasPartnershipColumnFavorite         = "FAVORITE"
 )
 
 const (
@@ -37,12 +48,12 @@ func (repo PostgresPartnershipRepository) CreatePartnership(partnership *busines
 		return errors.New("data source of PostgresPartnershipRepository is not specified")
 	}
 	clause := repo.SqlBuilder.Insert("").
-		Into(DAS_PARTNERSHIP_TABLE).
+		Into(DasPartnershipTable).
 		Columns(
-			DAS_PARTNERSHIP_COL_LEAD_ID,
-			DAS_PARTNERSHIP_COL_FOLLOW_ID,
-			DAS_PARTNERSHIP_COL_SAMESEX_IND,
-			DAS_PARTNERSHIP_COL_FAVORITE,
+			DasPartnershipColumnLeadID,
+			DasPartnershipColumnFollowID,
+			DasPartnershipColumnSameSexIndicator,
+			DasPartnershipColumnFavorite,
 			common.COL_DATETIME_CREATED,
 			common.COL_DATETIME_UPDATED).Values(partnership.LeadID, partnership.FollowID, partnership.SameSex, partnership.FavoriteLead, partnership.DateTimeCreated, time.Now())
 
@@ -56,20 +67,20 @@ func (repo PostgresPartnershipRepository) SearchPartnership(criteria businesslog
 	}
 	stmt := repo.SqlBuilder.Select(fmt.Sprintf("%s,%s,%s,%s,%s,%s,%s",
 		common.PRIMARY_KEY,
-		DAS_PARTNERSHIP_COL_LEAD_ID,
-		DAS_PARTNERSHIP_COL_FOLLOW_ID,
-		DAS_PARTNERSHIP_COL_SAMESEX_IND,
-		DAS_PARTNERSHIP_COL_FAVORITE,
+		DasPartnershipColumnLeadID,
+		DasPartnershipColumnFollowID,
+		DasPartnershipColumnSameSexIndicator,
+		DasPartnershipColumnFavorite,
 		common.COL_DATETIME_CREATED,
-		common.COL_DATETIME_UPDATED)).From(DAS_PARTNERSHIP_TABLE)
+		common.COL_DATETIME_UPDATED)).From(DasPartnershipTable)
 	if criteria.PartnershipID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.PartnershipID})
 	}
 	if criteria.LeadID > 0 {
-		stmt = stmt.Where(squirrel.Eq{DAS_PARTNERSHIP_COL_LEAD_ID: criteria.LeadID})
+		stmt = stmt.Where(squirrel.Eq{DasPartnershipColumnLeadID: criteria.LeadID})
 	}
 	if criteria.FollowID > 0 {
-		stmt = stmt.Where(squirrel.Eq{DAS_PARTNERSHIP_COL_FOLLOW_ID: criteria.FollowID})
+		stmt = stmt.Where(squirrel.Eq{DasPartnershipColumnFollowID: criteria.FollowID})
 	}
 
 	partnerships := make([]businesslogic.Partnership, 0)
@@ -81,7 +92,7 @@ func (repo PostgresPartnershipRepository) SearchPartnership(criteria businesslog
 	for rows.Next() {
 		each := businesslogic.Partnership{}
 		rows.Scan(
-			&each.PartnershipID,
+			&each.ID,
 			&each.LeadID,
 			&each.FollowID,
 			&each.SameSex,

@@ -1,6 +1,18 @@
-// Copyright 2017, 2018 Yubing Hou. All rights reserved.
-// Use of this source code is governed by GPL license
-// that can be found in the LICENSE file
+// Dancesport Application System (DAS)
+// Copyright (C) 2017, 2018 Yubing Hou
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package businesslogic_test
 
@@ -54,13 +66,13 @@ func TestCreateCompetition(t *testing.T) {
 func TestCompetition_UpdateStatus(t *testing.T) {
 	comp := businesslogic.Competition{}
 
-	err_1 := comp.UpdateStatus(businesslogic.COMPETITION_STATUS_PRE_REGISTRATION)
+	err_1 := comp.UpdateStatus(businesslogic.CompetitionStatusPreRegistration)
 	assert.Nil(t, err_1, "change the status of newly instantiated competition should not result in error")
 
-	err_2 := comp.UpdateStatus(businesslogic.COMPETITION_STATUS_IN_PROGRESS)
+	err_2 := comp.UpdateStatus(businesslogic.CompetitionStatusInProgress)
 	assert.Nil(t, err_2, "change the status of competition from pre-registration to in-progress should not result in error")
 
-	err_3 := comp.UpdateStatus(businesslogic.COMPETITION_STATUS_OPEN_REGISTRATION)
+	err_3 := comp.UpdateStatus(businesslogic.CompetitionStatusOpenRegistration)
 	assert.NotNil(t, err_3, "cannot revert competition status from in-progress to open-registration")
 
 }

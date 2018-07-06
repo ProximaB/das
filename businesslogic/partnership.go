@@ -1,6 +1,18 @@
-// Copyright 2017, 2018 Yubing Hou. All rights reserved.
-// Use of this source code is governed by GPL license
-// that can be found in the LICENSE file
+// Dancesport Application System (DAS)
+// Copyright (C) 2017, 2018 Yubing Hou
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package businesslogic
 
@@ -25,7 +37,7 @@ const (
 // Partnership defines the combination of a lead and a follow. A partnership is uniquely identified
 // if the lead and follow are confirmed.
 type Partnership struct {
-	PartnershipID   int
+	ID              int
 	LeadID          int
 	FollowID        int
 	Lead            Account
@@ -78,6 +90,15 @@ func (account Account) GetAllPartnerships(repo IPartnershipRepository) ([]Partne
 	return allPartnerships, err
 }
 
+// GetPartnershipByID retrieves the Partnership in the provided repository by the specified ID
+func GetPartnershipByID(id int, repo IPartnershipRepository) (Partnership, error) {
+	searchResults, err := repo.SearchPartnership(SearchPartnershipCriteria{PartnershipID: id})
+	if err != nil || searchResults == nil || len(searchResults) != 1 {
+		return Partnership{}, err
+	}
+	return searchResults[0], err
+}
+
 // MustGetPartnershipByID uses an known ID and a concrete PartnershipRepository to find the
 // partnership by the ID provided. If such partnership is not found, system will panic.
 func MustGetPartnershipByID(id int, repo IPartnershipRepository) Partnership {
@@ -89,4 +110,9 @@ func MustGetPartnershipByID(id int, repo IPartnershipRepository) Partnership {
 		panic("cannot find partnership with this ID")
 	}
 	return searchResults[0]
+}
+
+// HasAthlete checks if the provided Athlete ID is in this partnership
+func (partnership Partnership) HasAthlete(athleteID int) bool {
+	return partnership.LeadID == athleteID || partnership.FollowID == athleteID
 }

@@ -1,6 +1,18 @@
-// Copyright 2017, 2018 Yubing Hou. All rights reserved.
-// Use of this source code is governed by GPL license
-// that can be found in the LICENSE file
+// Dancesport Application System (DAS)
+// Copyright (C) 2017, 2018 Yubing Hou
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package businesslogic
 
@@ -10,15 +22,21 @@ import (
 )
 
 const (
-	PARTNERSHIP_REQUEST_STATUS_ACCEPTED = 1
-	PARTNERSHIP_REQUEST_STATUS_PENDING  = 2
-	PARTNERSHIP_REQUEST_STATUS_DECLINED = 3
+	// PartnershipRequestStatusAccepted is the status of a request when it is accepted by the recipient
+	PartnershipRequestStatusAccepted = 1
+	// PartnershipRequestStatusPending is the status of a request when it is sent out, but not responded by recipient
+	PartnershipRequestStatusPending = 2
+	// PartnershipRequestStatusDeclined is the status of a request when it is declined by the recipient
+	PartnershipRequestStatusDeclined = 3
 )
 
+// PartnershipRequest is a request of partnership that can only be sent between Athletes who are not in the requested Partnership
 type PartnershipRequest struct {
 	PartnershipRequestID int
 	SenderID             int
 	RecipientID          int
+	senderAccount        *Account
+	recipientAccount     *Account
 	SenderRole           string
 	RecipientRole        string
 	Message              string
@@ -29,6 +47,7 @@ type PartnershipRequest struct {
 	DateTimeUpdated      time.Time
 }
 
+// PartnershipRequestResponse is the response that recipient can make towards a request
 type PartnershipRequestResponse struct {
 	RequestID       int
 	RecipientID     int
@@ -36,6 +55,7 @@ type PartnershipRequestResponse struct {
 	DateTimeCreated time.Time
 }
 
+// SearchPartnershipRequestCriteria defines the parameters that can be used to search particular partnership requests
 type SearchPartnershipRequestCriteria struct {
 	RequestID       int `schema:"id"`
 	Type            int `schema:"type"`
@@ -44,6 +64,8 @@ type SearchPartnershipRequestCriteria struct {
 	RequestStatusID int `schema:"status"`
 }
 
+// IPartnershipRequestRepository specifies the functions that need to be implemented to allow CRUD operations on
+// Partnership Request
 type IPartnershipRequestRepository interface {
 	CreatePartnershipRequest(request *PartnershipRequest) error
 	SearchPartnershipRequest(criteria SearchPartnershipRequestCriteria) ([]PartnershipRequest, error)
@@ -67,7 +89,7 @@ func (request PartnershipRequest) validateRoles() error {
 	return nil
 }
 
-func (request PartnershipRequest) hasValidSenderAndRecipient(accountRepo IAccountRepository) error {
+func (request *PartnershipRequest) hasValidSenderAndRecipient(accountRepo IAccountRepository) error {
 	senderAccounts, seErr := accountRepo.SearchAccount(SearchAccountCriteria{ID: request.SenderID})
 	recipientAccounts, recErr := accountRepo.SearchAccount(SearchAccountCriteria{ID: request.RecipientID})
 	if seErr != nil {
@@ -88,6 +110,8 @@ func (request PartnershipRequest) hasValidSenderAndRecipient(accountRepo IAccoun
 	if recipientAccounts[0].AccountTypeID != AccountTypeAthlete {
 		return errors.New("recipient is not an athlete")
 	}
+	request.senderAccount = &senderAccounts[0]
+	request.recipientAccount = &recipientAccounts[0]
 	return nil
 }
 
@@ -104,8 +128,15 @@ func (request PartnershipRequest) senderBlockedByRecipient(blacklistRepo IPartne
 // hasExistingPartnership checks if there is already a partnership between the two dancers
 func (request PartnershipRequest) hasExistingPartnership(accountRepo IAccountRepository, partnershipRepo IPartnershipRepository) bool {
 	// configure search partnershipCriteria
-	senderAccount := GetAccountByID(request.SenderID, accountRepo)
-	recipientAccount := GetAccountByID(request.RecipientID, accountRepo)
+
+	var senderAccount = *request.senderAccount
+	var recipientAccount = *request.recipientAccount
+	if request.senderAccount == nil {
+		senderAccount = GetAccountByID(request.SenderID, accountRepo)
+	}
+	if request.recipientAccount == nil {
+		recipientAccount = GetAccountByID(request.RecipientID, accountRepo)
+	}
 
 	partnershipCriteria := new(SearchPartnershipCriteria)
 	if request.SenderRole == PartnershipRoleLead {
@@ -130,7 +161,7 @@ func (request PartnershipRequest) hasPendingRequest(requestRepo IPartnershipRequ
 	requests, _ := requestRepo.SearchPartnershipRequest(SearchPartnershipRequestCriteria{
 		Recipient:       request.RecipientID,
 		Sender:          request.SenderID,
-		RequestStatusID: PARTNERSHIP_REQUEST_STATUS_PENDING,
+		RequestStatusID: PartnershipRequestStatusPending,
 	})
 	if len(requests) == 1 {
 		return true
@@ -175,7 +206,6 @@ func CreatePartnershipRequest(request PartnershipRequest, partnershipRepo IPartn
 	return requestRepo.CreatePartnershipRequest(&request)
 }
 
-// verify if the response to a partnership request is valid
 func validatePartnershipRequestResponse(response PartnershipRequestResponse, repo IPartnershipRequestRepository) error {
 	if response.RecipientID == 0 {
 		return errors.New("recipient must be specified")
@@ -193,7 +223,7 @@ func validatePartnershipRequestResponse(response PartnershipRequestResponse, rep
 		return searchErr
 	} else if len(requests) != 1 {
 		return errors.New("cannot find request for this recipient")
-	} else if requests[0].Status == PARTNERSHIP_REQUEST_STATUS_ACCEPTED || requests[0].Status == PARTNERSHIP_REQUEST_STATUS_DECLINED {
+	} else if requests[0].Status == PartnershipRequestStatusAccepted || requests[0].Status == PartnershipRequestStatusDeclined {
 		return errors.New("this request is already responded")
 	}
 
@@ -210,7 +240,7 @@ func RespondPartnershipRequest(response PartnershipRequestResponse,
 	}
 
 	// respond partnership
-	if response.Response == PARTNERSHIP_REQUEST_STATUS_ACCEPTED || response.Response == PARTNERSHIP_REQUEST_STATUS_DECLINED {
+	if response.Response == PartnershipRequestStatusAccepted || response.Response == PartnershipRequestStatusDeclined {
 		requests, err := requestRepo.SearchPartnershipRequest(SearchPartnershipRequestCriteria{
 			RequestID: response.RequestID,
 			Recipient: response.RecipientID,
@@ -225,7 +255,7 @@ func RespondPartnershipRequest(response PartnershipRequestResponse,
 		}
 
 		// optional: create partnership if accepted
-		if response.Response == PARTNERSHIP_REQUEST_STATUS_ACCEPTED {
+		if response.Response == PartnershipRequestStatusAccepted {
 			partnership := Partnership{}
 			requests, _ := requestRepo.SearchPartnershipRequest(SearchPartnershipRequestCriteria{
 				RequestID: response.RequestID,

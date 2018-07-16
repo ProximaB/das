@@ -46,9 +46,9 @@ func (repo PostgresCityRepository) CreateCity(city *referencebll.City) error {
 		Into(dasCityTable).
 		Columns(common.COL_NAME,
 			common.COL_STATE_ID,
-			common.COL_CREATE_USER_ID,
+			common.ColumnCreateUserID,
 			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
+			common.ColumnUpdateUserID,
 			common.COL_DATETIME_UPDATED).
 		Values(
 			city.Name,
@@ -76,7 +76,7 @@ func (repo PostgresCityRepository) DeleteCity(city referencebll.City) error {
 	}
 	stmt := repo.SqlBuilder.Delete("").From(dasCityTable)
 	if city.ID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: city.ID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: city.ID})
 	}
 	if len(city.Name) > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: city.Name})
@@ -100,10 +100,10 @@ func (repo PostgresCityRepository) UpdateCity(city referencebll.City) error {
 	}
 	stmt := repo.SqlBuilder.Update("").Table(dasCityTable).
 		SetMap(squirrel.Eq{common.COL_NAME: city.Name, common.COL_STATE_ID: city.StateID}).
-		SetMap(squirrel.Eq{common.COL_DATETIME_UPDATED: city.DateTimeUpdated}).Where(squirrel.Eq{common.PRIMARY_KEY: city.ID})
+		SetMap(squirrel.Eq{common.COL_DATETIME_UPDATED: city.DateTimeUpdated}).Where(squirrel.Eq{common.ColumnPrimaryKey: city.ID})
 
 	if city.UpdateUserID != nil {
-		stmt = stmt.SetMap(squirrel.Eq{common.COL_UPDATE_USER_ID: city.UpdateUserID})
+		stmt = stmt.SetMap(squirrel.Eq{common.ColumnUpdateUserID: city.UpdateUserID})
 	}
 
 	var err error
@@ -124,14 +124,14 @@ func (repo PostgresCityRepository) SearchCity(criteria referencebll.SearchCityCr
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s",
-			common.PRIMARY_KEY,
+			common.ColumnPrimaryKey,
 			common.COL_NAME,
 			common.COL_STATE_ID,
-			common.COL_CREATE_USER_ID,
+			common.ColumnCreateUserID,
 			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
+			common.ColumnUpdateUserID,
 			common.COL_DATETIME_UPDATED)).
-		From(dasCityTable).OrderBy(common.PRIMARY_KEY)
+		From(dasCityTable).OrderBy(common.ColumnPrimaryKey)
 	if len(criteria.Name) > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: criteria.Name})
 	}
@@ -139,7 +139,7 @@ func (repo PostgresCityRepository) SearchCity(criteria referencebll.SearchCityCr
 		stmt = stmt.Where(squirrel.Eq{common.COL_STATE_ID: criteria.StateID})
 	}
 	if criteria.CityID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.CityID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.CityID})
 	}
 
 	rows, err := stmt.RunWith(repo.Database).Query()

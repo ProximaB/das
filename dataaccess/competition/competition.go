@@ -76,9 +76,9 @@ func (repo PostgresCompetitionRepository) CreateCompetition(competition *busines
 			DAS_COMPETITION_COL_CONTACT_NAME,
 			DAS_COMPETITION_COL_CONTACT_PHONE,
 			DAS_COMPETITION_COL_CONTACT_EMAIL,
-			common.COL_CREATE_USER_ID,
+			common.ColumnCreateUserID,
 			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
+			common.ColumnUpdateUserID,
 			common.COL_DATETIME_UPDATED).
 		Values(competition.FederationID,
 			competition.Name,
@@ -126,7 +126,7 @@ func (repo PostgresCompetitionRepository) UpdateCompetition(competition business
 			Set(DAS_COMPETITION_COL_CONTACT_PHONE, competition.ContactPhone).
 			Set(common.COL_DATETIME_UPDATED, time.Now())
 	}
-	stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: competition.ID})
+	stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: competition.ID})
 
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
 		return txErr
@@ -143,7 +143,7 @@ func (repo PostgresCompetitionRepository) DeleteCompetition(competition business
 	}
 	stmt := repo.SqlBuilder.Delete("").From(DAS_COMPETITION_TABLE)
 	if competition.ID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: competition.ID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: competition.ID})
 	}
 
 	var err error
@@ -162,7 +162,7 @@ func (repo PostgresCompetitionRepository) SearchCompetition(criteria businesslog
 	}
 	stmt := repo.SqlBuilder.Select(fmt.Sprintf(
 		"%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
-		common.PRIMARY_KEY,
+		common.ColumnPrimaryKey,
 		common.COL_FEDERATION_ID,
 		common.COL_NAME,
 		common.COL_ADDRESS,
@@ -177,15 +177,15 @@ func (repo PostgresCompetitionRepository) SearchCompetition(criteria businesslog
 		DAS_COMPETITION_COL_WEBSITE,
 		DAS_COMPETITION_COL_STATUS_ID,
 		DAS_COMPETITION_COL_ATTENDANCE,
-		common.COL_CREATE_USER_ID,
+		common.ColumnCreateUserID,
 		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
+		common.ColumnUpdateUserID,
 		common.COL_DATETIME_UPDATED),
 	).From(DAS_COMPETITION_TABLE).
 		OrderBy(DAS_COMPETITION_COL_DATETIME_START)
 
 	if criteria.ID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.ID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ID})
 	}
 	if len(criteria.Name) > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: criteria.Name})
@@ -204,7 +204,7 @@ func (repo PostgresCompetitionRepository) SearchCompetition(criteria businesslog
 		stmt = stmt.Where(squirrel.Eq{DAS_COMPETITION_COL_DATETIME_START: criteria.StartDateTime})
 	}
 	if criteria.OrganizerID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.COL_CREATE_USER_ID: criteria.OrganizerID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnCreateUserID: criteria.OrganizerID})
 	}
 	if criteria.StatusID > 0 {
 		stmt = stmt.Where(squirrel.Eq{DAS_COMPETITION_COL_STATUS_ID: criteria.StatusID})

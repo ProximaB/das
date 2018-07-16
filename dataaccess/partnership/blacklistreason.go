@@ -35,13 +35,13 @@ func (repo PostgresPartnershipRequestBlacklistReasonRepository) GetPartnershipRe
 		return nil, errors.New("data source of PostgresPartnershipRequestBlacklistReasonRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s",
-		common.PRIMARY_KEY,
+		common.ColumnPrimaryKey,
 		common.COL_NAME,
 		common.COL_DESCRIPTION,
 		common.COL_DATETIME_CREATED,
 		common.COL_DATETIME_UPDATED,
 	)).From(DAS_PARTNERSHIP_REQUEST_BLACKLIST_REASON_TABLE).
-		OrderBy(common.PRIMARY_KEY)
+		OrderBy(common.ColumnPrimaryKey)
 	rows, err := stmt.RunWith(repo.Database).Query()
 	output := make([]businesslogic.PartnershipRequestBlacklistReason, 0)
 	if err != nil {

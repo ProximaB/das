@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package account
+package accountdal
 
 import (
 	"database/sql"
@@ -26,11 +26,11 @@ import (
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
+	"log"
 )
 
 const (
-	DAS_USER_ACCOUNT_TABLE                  = "DAS.ACCOUNT"
-	DAS_USER_ACCOUNT_COL_USER_TYPE_ID       = "ACCOUNT_TYPE_ID"
+	DasUserAccountTable                     = "DAS.ACCOUNT"
 	DAS_USER_ACCOUNT_COL_USER_STATUS_ID     = "ACCOUNT_STATUS_ID"
 	DAS_USER_ACCOUNT_COL_USER_GENDER_ID     = "USER_GENDER_ID"
 	DAS_USER_ACCOUNT_COL_LAST_NAME          = "LAST_NAME"
@@ -63,9 +63,9 @@ func (repo PostgresAccountRepository) CreateAccount(account *businesslogic.Accou
 	}
 	stmt := repo.SQLBuilder.
 		Insert("").
-		Into(DAS_USER_ACCOUNT_TABLE).
-		Columns(DAS_USER_ACCOUNT_COL_USER_TYPE_ID,
-			common.COL_UUID,
+		Into(DasUserAccountTable).
+		Columns(
+			common.ColumnUUID,
 			DAS_USER_ACCOUNT_COL_USER_STATUS_ID,
 			DAS_USER_ACCOUNT_COL_USER_GENDER_ID,
 			DAS_USER_ACCOUNT_COL_LAST_NAME,
@@ -84,12 +84,29 @@ func (repo PostgresAccountRepository) CreateAccount(account *businesslogic.Accou
 			DAS_USER_ACCOUNT_COL_TOS_ACCEPTED,
 			DAS_USER_ACCOUNT_COL_PP_ACCEPTED,
 			DAS_USER_ACCOUNT_COL_BY_GUARDIAN,
-			DAS_USER_ACCOUNT_COL_GUARDIAN_SIGNATURE).Values(
-		account.AccountTypeID, account.UUID, account.AccountStatusID, account.UserGenderID, account.LastName,
-		account.MiddleNames, account.FirstName, account.DateOfBirth, account.Email, account.Phone,
-		account.EmailVerified, account.PhoneVerified, account.HashAlgorithm, account.PasswordSalt, account.PasswordHash, time.Now(), time.Now(),
-		account.ToSAccepted, account.PrivacyPolicyAccepted, account.ByGuardian, account.Signature,
-	).Suffix(dalutil.SQLSuffixReturningID)
+			DAS_USER_ACCOUNT_COL_GUARDIAN_SIGNATURE).
+		Values(
+			account.UUID,
+			account.AccountStatusID,
+			account.UserGenderID,
+			account.LastName,
+			account.MiddleNames,
+			account.FirstName,
+			account.DateOfBirth,
+			account.Email,
+			account.Phone,
+			account.EmailVerified,
+			account.PhoneVerified,
+			account.HashAlgorithm,
+			account.PasswordSalt,
+			account.PasswordHash,
+			time.Now(),
+			time.Now(),
+			account.ToSAccepted,
+			account.PrivacyPolicyAccepted,
+			account.ByGuardian,
+			account.Signature,
+		).Suffix(dalutil.SQLSuffixReturningID)
 
 	// parsing arguments to ... parameters: https://golang.org/ref/spec#Passing_arguments_to_..._parameters
 	// PostgreSQL does not return LastInsertID automatically: https://github.com/lib/pq/issues/24
@@ -99,7 +116,7 @@ func (repo PostgresAccountRepository) CreateAccount(account *businesslogic.Accou
 	} else {
 		row := repo.Database.QueryRow(clause, args...)
 		row.Scan(&account.ID)
-		tx.Commit()
+		err = tx.Commit()
 	}
 	return err
 }
@@ -111,10 +128,9 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 	stmt := repo.SQLBuilder.
 		Select(
 			fmt.Sprintf(
-				"%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
-				common.PRIMARY_KEY,
-				common.COL_UUID,
-				DAS_USER_ACCOUNT_COL_USER_TYPE_ID,
+				"%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
+				common.ColumnPrimaryKey,
+				common.ColumnUUID,
 				DAS_USER_ACCOUNT_COL_USER_STATUS_ID,
 				DAS_USER_ACCOUNT_COL_USER_GENDER_ID,
 				DAS_USER_ACCOUNT_COL_LAST_NAME,
@@ -134,15 +150,13 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 				DAS_USER_ACCOUNT_COL_PP_ACCEPTED,
 				DAS_USER_ACCOUNT_COL_BY_GUARDIAN,
 				DAS_USER_ACCOUNT_COL_GUARDIAN_SIGNATURE,
-			)).From(DAS_USER_ACCOUNT_TABLE)
-	if criteria.AccountType > 0 {
-		stmt = stmt.Where(squirrel.Eq{DAS_USER_ACCOUNT_COL_USER_TYPE_ID: criteria.AccountType})
-	}
+			)).From(DasUserAccountTable)
+
 	if len(criteria.UUID) != 0 {
-		stmt = stmt.Where(squirrel.Eq{common.COL_UUID: criteria.UUID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnUUID: criteria.UUID})
 	}
 	if criteria.ID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.ID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ID})
 	}
 	if criteria.AccountStatus > 0 {
 		stmt = stmt.Where(squirrel.Eq{DAS_USER_ACCOUNT_COL_USER_STATUS_ID: criteria.AccountStatus})
@@ -162,9 +176,10 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 	if len(criteria.FirstName) > 0 {
 		stmt = stmt.Where(squirrel.Eq{DAS_USER_ACCOUNT_COL_FIRST_NAME: criteria.FirstName})
 	}
-	if &criteria.DateOfBirth != nil && (time.Now().Year()-criteria.DateOfBirth.Year()) < 120 {
-		stmt = stmt.Where(squirrel.Eq{DAS_USER_ACCOUNT_COL_DATE_OF_BIRTH: criteria.DateOfBirth})
-	}
+
+	clause, args, _ := stmt.ToSql()
+	log.Println(clause)
+	log.Println(args)
 
 	accounts := make([]businesslogic.Account, 0)
 	rows, err := stmt.RunWith(repo.Database).Query()
@@ -176,7 +191,6 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 		rows.Scan(
 			&each.ID,
 			&each.UUID,
-			&each.AccountTypeID,
 			&each.AccountStatusID,
 			&each.UserGenderID,
 			&each.LastName,
@@ -208,7 +222,7 @@ func (repo PostgresAccountRepository) DeleteAccount(account businesslogic.Accoun
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	if account.ID > 0 {
-		stmt := repo.SQLBuilder.Delete("").From(DAS_USER_ACCOUNT_TABLE).Where(squirrel.Eq{common.PRIMARY_KEY: account.ID})
+		stmt := repo.SQLBuilder.Delete("").From(DasUserAccountTable).Where(squirrel.Eq{common.ColumnPrimaryKey: account.ID})
 		_, err := stmt.RunWith(repo.Database).Exec()
 		return err
 	}
@@ -219,7 +233,7 @@ func (repo PostgresAccountRepository) UpdateAccount(account businesslogic.Accoun
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	stmt := repo.SQLBuilder.Update(DAS_USER_ACCOUNT_TABLE)
+	stmt := repo.SQLBuilder.Update(DasUserAccountTable)
 	if account.ID > 0 {
 		if len(account.PasswordSalt) > 0 {
 			stmt = stmt.Set(DAS_USER_ACCOUNT_COL_PASSWORD_SALT, account.PasswordSalt)

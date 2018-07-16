@@ -55,9 +55,9 @@ func (repo PostgresAthleteCompetitionEntryRepository) CreateAthleteCompetitionEn
 			common.COL_ACCOUNT_ID,
 			dasCompetitionEntryColCheckinInd,
 			dasCompetitionEntryColCheckinDateTime,
-			common.COL_CREATE_USER_ID,
+			common.ColumnCreateUserID,
 			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
+			common.ColumnUpdateUserID,
 			common.COL_DATETIME_UPDATED).
 		Values(
 			entry.CompetitionEntry.CompetitionID,
@@ -87,18 +87,18 @@ func (repo PostgresAthleteCompetitionEntryRepository) SearchAthleteCompetitionEn
 		return nil, errors.New("data source of PostgresCompetitionEntryRepository is not specified")
 	}
 	clause := repo.SQLBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s",
-		common.PRIMARY_KEY,
+		common.ColumnPrimaryKey,
 		common.COL_COMPETITION_ID,
 		common.COL_ACCOUNT_ID,
 		dasCompetitionEntryColCheckinInd,
 		dasCompetitionEntryColCheckinDateTime,
-		common.COL_CREATE_USER_ID,
+		common.ColumnCreateUserID,
 		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
+		common.ColumnUpdateUserID,
 		common.COL_DATETIME_UPDATED)).From(dasAthleteCompetitionEntryTable)
 
 	if criteria.ID > 0 {
-		clause = clause.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.ID})
+		clause = clause.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ID})
 	}
 	if criteria.AthleteID > 0 {
 		clause = clause.Where(squirrel.Eq{common.COL_ACCOUNT_ID: criteria.AthleteID})
@@ -168,9 +168,9 @@ func (repo PostgresPartnershipCompetitionEntryRepository) CreatePartnershipCompe
 			common.COL_PARTNERSHIP_ID,
 			dasCompetitionEntryColCheckinInd,
 			dasCompetitionEntryColCheckinDateTime,
-			common.COL_CREATE_USER_ID,
+			common.ColumnCreateUserID,
 			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
+			common.ColumnUpdateUserID,
 			common.COL_DATETIME_UPDATED).
 		Values(
 			entry.CompetitionEntry.CompetitionID,

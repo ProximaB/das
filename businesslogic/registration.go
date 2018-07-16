@@ -86,18 +86,18 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 		return nil
 	}
 
-	if currentUser.AccountTypeID == AccountTypeAthlete && competition.GetStatus() != CompetitionStatusOpenRegistration {
+	if currentUser.HasRole(AccountTypeAthlete) && competition.GetStatus() != CompetitionStatusOpenRegistration {
 		return errors.New("registration is no longer open")
 	}
 
 	// check if organizer is authorized to change this partnership's registration
 	organizer := GetAccountByID(competition.CreateUserID, service.AccountRepository) // creator may not be the organizer of specified competition
-	if currentUser.AccountTypeID == AccountTypeOrganizer && organizer.ID != currentUser.ID {
+	if currentUser.HasRole(AccountTypeOrganizer) && organizer.ID != currentUser.ID {
 		return errors.New("not an authorized organizer to update the registration")
 	}
 
 	// check if the creator of the entry is competitor
-	if currentUser.AccountTypeID == AccountTypeAthlete && (!partnership.HasAthlete(currentUser.ID)) {
+	if currentUser.HasRole(AccountTypeAthlete) && (!partnership.HasAthlete(currentUser.ID)) {
 		// request was sent by people who are neither the lead or the follow of this partnership
 		return errors.New("not an authorized athlete to update the registration")
 	}
@@ -307,7 +307,7 @@ func GetEventRegistration(competitionID int, partnershipID int, user *Account, p
 		return EventRegistration{}, errors.New("cannot find partnership for registration")
 	}
 	partnership := results[0]
-	if user.ID == 0 || user.AccountTypeID != AccountTypeAthlete || (user.ID != partnership.LeadID && user.ID != partnership.FollowID) {
+	if user.ID == 0 || user.HasRole(AccountTypeAthlete) || (user.ID != partnership.LeadID && user.ID != partnership.FollowID) {
 		return EventRegistration{}, errors.New("not authorized to request this information")
 	}
 

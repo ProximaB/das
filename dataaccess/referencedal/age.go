@@ -48,9 +48,9 @@ func (repo PostgresAgeRepository) CreateAge(age *referencebll.Age) error {
 		DAS_AGE_COL_ENFORCED,
 		DAS_AGE_COL_MINIMUM_AGE,
 		DAS_AGE_COL_MAXIMUM_AGE,
-		common.COL_CREATE_USER_ID,
+		common.ColumnCreateUserID,
 		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
+		common.ColumnUpdateUserID,
 		common.COL_DATETIME_UPDATED,
 	).Values(
 		age.Name,
@@ -80,7 +80,7 @@ func (repo PostgresAgeRepository) DeleteAge(age referencebll.Age) error {
 		return errors.New("data source of PostgresAgeRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.Delete("").From(DAS_AGE_TABLE).
-		Where(squirrel.Eq{common.PRIMARY_KEY: age.ID})
+		Where(squirrel.Eq{common.ColumnPrimaryKey: age.ID})
 	var err error
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
 		return txErr
@@ -97,24 +97,24 @@ func (repo PostgresAgeRepository) SearchAge(criteria referencebll.SearchAgeCrite
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
-			common.PRIMARY_KEY,
+			common.ColumnPrimaryKey,
 			common.COL_NAME,
 			common.COL_DESCRIPTION,
 			common.COL_DIVISION_ID,
 			DAS_AGE_COL_ENFORCED,
 			DAS_AGE_COL_MINIMUM_AGE,
 			DAS_AGE_COL_MAXIMUM_AGE,
-			common.COL_CREATE_USER_ID,
+			common.ColumnCreateUserID,
 			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
+			common.ColumnUpdateUserID,
 			common.COL_DATETIME_UPDATED)).
 		From(DAS_AGE_TABLE).
-		OrderBy(common.PRIMARY_KEY)
+		OrderBy(common.ColumnPrimaryKey)
 	if criteria.DivisionID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_DIVISION_ID: criteria.DivisionID})
 	}
 	if criteria.AgeID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.AgeID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.AgeID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
 	output := make([]referencebll.Age, 0)
@@ -154,7 +154,7 @@ func (repo PostgresAgeRepository) UpdateAge(age referencebll.Age) error {
 			Set(DAS_AGE_COL_MINIMUM_AGE, age.AgeMinimum).
 			Set(DAS_AGE_COL_MAXIMUM_AGE, age.AgeMaximum).
 			Set(DAS_AGE_COL_ENFORCED, age.Enforced).
-			Set(common.COL_UPDATE_USER_ID, age.UpdateUserID).
+			Set(common.ColumnUpdateUserID, age.UpdateUserID).
 			Set(common.COL_DATETIME_UPDATED, age.DateTimeUpdated)
 	}
 	var err error

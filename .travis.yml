@@ -1,6 +1,8 @@
 # This program provides specification for Travis CI and may is not part of DAS
 language: go
-sudo: false
+sudo: required
+services:
+  - docker
 go:
   - master
 before_install:

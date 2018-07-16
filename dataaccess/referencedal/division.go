@@ -40,21 +40,21 @@ func (repo PostgresDivisionRepository) SearchDivision(criteria referencebll.Sear
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
-			common.PRIMARY_KEY,
+			common.ColumnPrimaryKey,
 			common.COL_NAME,
-			common.COL_ABBREVIATION,
+			common.ColumnAbbreviation,
 			common.COL_DESCRIPTION,
 			common.COL_NOTE,
 			common.COL_FEDERATION_ID,
 			common.COL_DATETIME_CREATED,
 			common.COL_DATETIME_UPDATED)).
 		From(DAS_DIVISION_TABLE).
-		OrderBy(common.PRIMARY_KEY)
+		OrderBy(common.ColumnPrimaryKey)
 	if criteria.FederationID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_FEDERATION_ID: criteria.FederationID})
 	}
 	if criteria.ID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.ID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
 	divisions := make([]referencebll.Division, 0)
@@ -85,13 +85,13 @@ func (repo PostgresDivisionRepository) CreateDivision(division *referencebll.Div
 	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_DIVISION_TABLE).Columns(
 		common.COL_NAME,
-		common.COL_ABBREVIATION,
+		common.ColumnAbbreviation,
 		common.COL_DESCRIPTION,
 		common.COL_NOTE,
 		common.COL_FEDERATION_ID,
-		common.COL_CREATE_USER_ID,
+		common.ColumnCreateUserID,
 		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
+		common.ColumnUpdateUserID,
 		common.COL_DATETIME_UPDATED,
 	).Values(
 		division.Name,
@@ -125,11 +125,11 @@ func (repo PostgresDivisionRepository) UpdateDivision(division referencebll.Divi
 	stmt := repo.SqlBuilder.Update("").Table(DAS_DIVISION_TABLE)
 	if division.ID > 0 {
 		stmt = stmt.Set(common.COL_NAME, division.Name).
-			Set(common.COL_ABBREVIATION, division.Abbreviation).
+			Set(common.ColumnAbbreviation, division.Abbreviation).
 			Set(common.COL_DESCRIPTION, division.Description).
 			Set(common.COL_NOTE, division.Note).
 			Set(common.COL_FEDERATION_ID, division.FederationID).
-			Set(common.COL_UPDATE_USER_ID, division.UpdateUserID).
+			Set(common.ColumnUpdateUserID, division.UpdateUserID).
 			Set(common.COL_DATETIME_UPDATED, division.DateTimeUpdated)
 
 		var err error
@@ -152,7 +152,7 @@ func (repo PostgresDivisionRepository) DeleteDivision(division referencebll.Divi
 	stmt := repo.SqlBuilder.
 		Delete("").
 		From(DAS_DIVISION_TABLE).
-		Where(squirrel.Eq{common.PRIMARY_KEY: division.ID})
+		Where(squirrel.Eq{common.ColumnPrimaryKey: division.ID})
 	var err error
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
 		return txErr

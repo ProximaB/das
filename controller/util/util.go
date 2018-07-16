@@ -50,6 +50,6 @@ func RespondJsonResult(w http.ResponseWriter, status int, message string, data i
 		Data:    data,
 	}
 	output, _ := json.Marshal(result)
-	//w.WriteHeader(status) // this affects the behavior on angular
+	w.WriteHeader(status)
 	w.Write(output)
 }

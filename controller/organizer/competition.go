@@ -69,8 +69,8 @@ func (server OrganizerCompetitionServer) OrganizerSearchCompetitionHandler(w htt
 	} else {
 		account, _ := server.GetCurrentUser(r, server.IAccountRepository)
 		if account.ID == 0 ||
-			(account.AccountTypeID != businesslogic.AccountTypeOrganizer &&
-				account.AccountTypeID != businesslogic.AccountTypeAdministrator) {
+			(!account.HasRole(businesslogic.AccountTypeOrganizer) &&
+				!account.HasRole(businesslogic.AccountTypeAdministrator)) {
 			util.RespondJsonResult(w, http.StatusUnauthorized, "you are not authorized to look up this information", nil)
 			return
 		}

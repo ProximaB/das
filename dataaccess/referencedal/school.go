@@ -41,9 +41,9 @@ func (repo PostgresSchoolRepository) CreateSchool(school *referencebll.School) e
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_SCHOOL_TABLE).Columns(
 		common.COL_NAME,
 		common.COL_CITY_ID,
-		common.COL_CREATE_USER_ID,
+		common.ColumnCreateUserID,
 		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
+		common.ColumnUpdateUserID,
 		common.COL_DATETIME_UPDATED,
 	).Values(
 		school.Name,
@@ -75,7 +75,7 @@ func (repo PostgresSchoolRepository) UpdateSchool(school referencebll.School) er
 	if school.ID > 0 {
 		stmt = stmt.Set(common.COL_NAME, school.Name).
 			Set(common.COL_CITY_ID, school.CityID).
-			Set(common.COL_UPDATE_USER_ID, school.UpdateUserID).
+			Set(common.ColumnUpdateUserID, school.UpdateUserID).
 			Set(common.COL_DATETIME_UPDATED, school.DateTimeUpdated)
 		var err error
 		if tx, txErr := repo.Database.Begin(); txErr != nil {
@@ -99,7 +99,7 @@ func (repo PostgresSchoolRepository) DeleteSchool(school referencebll.School) er
 	stmt := repo.SqlBuilder.
 		Delete("").
 		From(DAS_SCHOOL_TABLE).
-		Where(squirrel.Eq{common.PRIMARY_KEY: school.ID})
+		Where(squirrel.Eq{common.ColumnPrimaryKey: school.ID})
 	var err error
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
 		return txErr
@@ -119,12 +119,12 @@ func (repo PostgresSchoolRepository) SearchSchool(criteria referencebll.SearchSc
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf(
 			`%s,%s, %s,%s, %s, %s, %s`,
-			common.PRIMARY_KEY,
+			common.ColumnPrimaryKey,
 			common.COL_NAME,
 			common.COL_CITY_ID,
-			common.COL_CREATE_USER_ID,
+			common.ColumnCreateUserID,
 			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
+			common.ColumnUpdateUserID,
 			common.COL_DATETIME_UPDATED)).
 		From(DAS_SCHOOL_TABLE).
 		OrderBy(`DAS.SCHOOL.ID`)

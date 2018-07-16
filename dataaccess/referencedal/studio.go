@@ -41,21 +41,21 @@ func (repo PostgresStudioRepository) SearchStudio(criteria referencebll.SearchSt
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf(`DAS.STUDIO.%s, DAS.STUDIO.%s, DAS.STUDIO.%s, DAS.STUDIO.%s, 
 		DAS.STUDIO.%s, DAS.STUDIO.%s, DAS.STUDIO.%s, DAS.STUDIO.%s, DAS.STUDIO.%s`,
-			common.PRIMARY_KEY,
+			common.ColumnPrimaryKey,
 			common.COL_NAME,
 			common.COL_ADDRESS,
 			common.COL_CITY_ID,
 			common.COL_WEBSITE,
-			common.COL_CREATE_USER_ID,
+			common.ColumnCreateUserID,
 			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
+			common.ColumnUpdateUserID,
 			common.COL_DATETIME_UPDATED)).
-		From(DAS_STUDIO_TABLE).OrderBy(common.PRIMARY_KEY)
+		From(DAS_STUDIO_TABLE).OrderBy(common.ColumnPrimaryKey)
 	if len(criteria.Name) > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: criteria.Name})
 	}
 	if criteria.ID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.ID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ID})
 	}
 	if criteria.CityID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_CITY_ID: criteria.CityID})
@@ -98,9 +98,9 @@ func (repo PostgresStudioRepository) CreateStudio(studio *referencebll.Studio) e
 		common.COL_ADDRESS,
 		common.COL_CITY_ID,
 		common.COL_WEBSITE,
-		common.COL_CREATE_USER_ID,
+		common.ColumnCreateUserID,
 		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
+		common.ColumnUpdateUserID,
 		common.COL_DATETIME_UPDATED,
 	).Values(
 		studio.Name,
@@ -136,7 +136,7 @@ func (repo PostgresStudioRepository) UpdateStudio(studio referencebll.Studio) er
 			Set(common.COL_ADDRESS, studio.Address).
 			Set(common.COL_CITY_ID, studio.CityID).
 			Set(common.COL_WEBSITE, studio.Website).
-			Set(common.COL_UPDATE_USER_ID, studio.UpdateUserID).
+			Set(common.ColumnUpdateUserID, studio.UpdateUserID).
 			Set(common.COL_DATETIME_UPDATED, studio.DateTimeUpdated)
 		var err error
 		if tx, txErr := repo.Database.Begin(); txErr != nil {
@@ -155,7 +155,7 @@ func (repo PostgresStudioRepository) DeleteStudio(studio referencebll.Studio) er
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStudioRepository is not specified")
 	}
-	stmt := repo.SqlBuilder.Delete("").From(DAS_STUDIO_TABLE).Where(squirrel.Eq{common.PRIMARY_KEY: studio.ID})
+	stmt := repo.SqlBuilder.Delete("").From(DAS_STUDIO_TABLE).Where(squirrel.Eq{common.ColumnPrimaryKey: studio.ID})
 	var err error
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
 		return txErr

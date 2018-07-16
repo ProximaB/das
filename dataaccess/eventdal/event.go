@@ -44,7 +44,7 @@ func (repo PostgresEventRepository) SearchEvent(criteria businesslogic.SearchEve
 		return nil, errors.New("data source of PostgresEventRepository is not specified")
 	}
 	stmt := repo.SQLBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
-		common.PRIMARY_KEY,
+		common.ColumnPrimaryKey,
 		common.COL_COMPETITION_ID,
 		dasEventColumnEventCategoryID,
 		common.COL_FEDERATION_ID,
@@ -54,16 +54,16 @@ func (repo PostgresEventRepository) SearchEvent(criteria businesslogic.SearchEve
 		common.COL_STYLE_ID,
 		common.COL_DESCRIPTION,
 		dasEventColumnEventStatusID,
-		common.COL_CREATE_USER_ID,
+		common.ColumnCreateUserID,
 		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
+		common.ColumnUpdateUserID,
 		common.COL_DATETIME_UPDATED,
-	)).From(dasEventTable).OrderBy(common.PRIMARY_KEY)
+	)).From(dasEventTable).OrderBy(common.ColumnPrimaryKey)
 	if criteria.CompetitionID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_COMPETITION_ID: criteria.CompetitionID})
 	}
 	if criteria.EventID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.EventID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.EventID})
 	}
 	if criteria.FederationID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_FEDERATION_ID: criteria.FederationID})
@@ -129,9 +129,9 @@ func (repo PostgresEventRepository) CreateEvent(event *businesslogic.Event) erro
 			common.COL_STYLE_ID,
 			common.COL_DESCRIPTION,
 			dasEventColumnEventStatusID,
-			common.COL_CREATE_USER_ID,
+			common.ColumnCreateUserID,
 			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
+			common.ColumnUpdateUserID,
 			common.COL_DATETIME_UPDATED).
 		Values(
 			event.CompetitionID,

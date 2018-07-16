@@ -45,15 +45,15 @@ func (repo PostgresPartnershipRequestBlacklistRepository) SearchPartnershipReque
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
-			common.PRIMARY_KEY,
+			common.ColumnPrimaryKey,
 			DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_REPORTER_ID,
 			DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_BLOCKED_USER_ID,
 			DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_BLACKLIST_REASON_ID,
 			DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_DETAIL,
 			DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_WHITELISTED_IND,
-			common.COL_CREATE_USER_ID,
+			common.ColumnCreateUserID,
 			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
+			common.ColumnUpdateUserID,
 			common.COL_DATETIME_UPDATED)).
 		From(DAS_PARTNERSHIP_REQUEST_BLACKLIST_TABLE).
 		OrderBy(common.COL_DATETIME_CREATED)
@@ -102,9 +102,9 @@ func (repo PostgresPartnershipRequestBlacklistRepository) CreatePartnershipReque
 		DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_BLACKLIST_REASON_ID,
 		DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_DETAIL,
 		DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_WHITELISTED_IND,
-		common.COL_CREATE_USER_ID,
+		common.ColumnCreateUserID,
 		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
+		common.ColumnUpdateUserID,
 		common.COL_DATETIME_UPDATED,
 	).Values(
 		blacklist.ReporterID,
@@ -137,7 +137,7 @@ func (repo PostgresPartnershipRequestBlacklistRepository) DeletePartnershipReque
 	stmt := repo.SqlBuilder.
 		Delete("").
 		From(DAS_PARTNERSHIP_REQUEST_BLACKLIST_TABLE).
-		Where(squirrel.Eq{common.PRIMARY_KEY: blacklist.ID})
+		Where(squirrel.Eq{common.ColumnPrimaryKey: blacklist.ID})
 	var err error
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
 		return txErr

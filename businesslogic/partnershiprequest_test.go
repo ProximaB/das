@@ -44,10 +44,10 @@ func TestCreatePartnershipRequest(t *testing.T) {
 
 	// specify behaviors
 	accountRepo.EXPECT().SearchAccount(gomock.Any()).Return([]businesslogic.Account{
-		{ID: 12, AccountTypeID: businesslogic.AccountTypeAthlete},
+		{ID: 12},
 	}, nil)
 	accountRepo.EXPECT().SearchAccount(gomock.Any()).Return([]businesslogic.Account{
-		{ID: 33, AccountTypeID: businesslogic.AccountTypeAthlete},
+		{ID: 33},
 	}, nil)
 	blacklistRepo.EXPECT().SearchPartnershipRequestBlacklist(gomock.Any()).Return([]businesslogic.PartnershipRequestBlacklistEntry{}, nil)
 	partnershipRepo.EXPECT().SearchPartnership(gomock.Any()).Return([]businesslogic.Partnership{}, nil)

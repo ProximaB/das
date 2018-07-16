@@ -14,59 +14,54 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package account
+package accountdal
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 )
 
-const DAS_ACCOUNT_STATUS_TABLE = "DAS.ACCOUNT_STATUS"
+const (
+	DAS_ACCOUNT_TYPE_TABLE = "DAS.ACCOUNT_TYPE"
+)
 
-type PostgresAccountStatusRepository struct {
+type PostgresAccountTypeRepository struct {
 	Database   *sql.DB
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresAccountStatusRepository) GetAccountStatus() ([]businesslogic.AccountStatus, error) {
-	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresAccountStatusRepository is not specified")
-	}
+func (repo PostgresAccountTypeRepository) GetAccountTypes() ([]businesslogic.AccountType, error) {
+	accountTypes := make([]businesslogic.AccountType, 0)
 	stmt := repo.SqlBuilder.
-		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s",
-			common.PRIMARY_KEY,
-			common.COL_NAME,
-			common.COL_ABBREVIATION,
-			common.COL_DESCRIPTION,
-			common.COL_DATETIME_CREATED,
-			common.COL_DATETIME_UPDATED)).
-		From(DAS_ACCOUNT_STATUS_TABLE).
-		OrderBy(common.PRIMARY_KEY)
-
-	status := make([]businesslogic.AccountStatus, 0)
+		Select(
+			fmt.Sprintf(
+				"%s, %s, %s, %s, %s",
+				common.ColumnPrimaryKey,
+				common.COL_NAME,
+				common.COL_DESCRIPTION,
+				common.COL_DATETIME_CREATED,
+				common.COL_DATETIME_UPDATED)).
+		From(DAS_ACCOUNT_TYPE_TABLE).
+		OrderBy(common.ColumnPrimaryKey)
 	rows, err := stmt.RunWith(repo.Database).Query()
-
 	if err != nil {
-		return status, err
+		return accountTypes, err
 	}
 
 	for rows.Next() {
-		each := businesslogic.AccountStatus{}
+		each := businesslogic.AccountType{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
-			&each.Abbreviation,
 			&each.Description,
 			&each.DateTimeCreated,
 			&each.DateTimeUpdated,
 		)
-		status = append(status, each)
+		accountTypes = append(accountTypes, each)
 	}
 	rows.Close()
-
-	return status, err
+	return accountTypes, err
 }

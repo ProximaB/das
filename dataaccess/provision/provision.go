@@ -48,9 +48,9 @@ func (repo PostgresOrganizerProvisionRepository) CreateOrganizerProvision(provis
 			DAS_ORGANIZER_PROVISION_COL_ORGANIZER_ID,
 			DAS_ORGANIZER_PROVISION_COL_HOSTED,
 			DAS_ORGANIZER_PROVISION_COL_AVAILABLE,
-			common.COL_CREATE_USER_ID,
+			common.ColumnCreateUserID,
 			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
+			common.ColumnUpdateUserID,
 			common.COL_DATETIME_UPDATED,
 		).Values(provision.OrganizerID, provision.Hosted, provision.Available, provision.CreateUserID, provision.DateTimeCreated, provision.UpdateUserID, provision.DateTimeUpdated)
 	_, err := stmt.RunWith(repo.Database).Exec()
@@ -88,13 +88,13 @@ func (repo PostgresOrganizerProvisionRepository) SearchOrganizerProvision(
 	}
 
 	stmt := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
-		common.PRIMARY_KEY,
+		common.ColumnPrimaryKey,
 		DAS_ORGANIZER_PROVISION_COL_ORGANIZER_ID,
 		DAS_ORGANIZER_PROVISION_COL_HOSTED,
 		DAS_ORGANIZER_PROVISION_COL_AVAILABLE,
-		common.COL_CREATE_USER_ID,
+		common.ColumnCreateUserID,
 		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
+		common.ColumnUpdateUserID,
 		common.COL_DATETIME_UPDATED)).
 		From(DAS_ORGANIZER_PROVISION).Where(squirrel.Eq{DAS_ORGANIZER_PROVISION_COL_ORGANIZER_ID: criteria.OrganizerID})
 

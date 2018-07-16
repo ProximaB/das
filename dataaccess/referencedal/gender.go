@@ -38,9 +38,9 @@ func (repo PostgresGenderRepository) GetAllGenders() ([]referencebll.Gender, err
 	stmt := repo.SqlBuilder.Select(
 		fmt.Sprintf(
 			"%s, %s, %s, %s, %s, %s",
-			common.PRIMARY_KEY,
+			common.ColumnPrimaryKey,
 			common.COL_NAME,
-			common.COL_ABBREVIATION,
+			common.ColumnAbbreviation,
 			common.COL_DESCRIPTION,
 			common.COL_DATETIME_CREATED,
 			common.COL_DATETIME_UPDATED,

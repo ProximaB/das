@@ -59,43 +59,15 @@ func (server Server) RegisterAccountHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	account := businesslogic.Account{
-		AccountTypeID:         createAccount.AccountType,
-		FirstName:             createAccount.FirstName,
-		MiddleNames:           createAccount.MiddleNames,
-		LastName:              createAccount.LastName,
-		DateOfBirth:           createAccount.DateOfBirth,
-		UserGenderID:          createAccount.Gender,
-		Email:                 createAccount.Email,
-		Phone:                 createAccount.Phone,
-		ToSAccepted:           createAccount.ToSAccepted,
-		PrivacyPolicyAccepted: createAccount.PPAccepted,
-		ByGuardian:            createAccount.ByGuardian,
-		Signature:             createAccount.Signature,
-	}
-
-	var strategy businesslogic.ICreateAccountStrategy
-	switch account.AccountTypeID {
-	case businesslogic.AccountTypeOrganizer:
-		strategy = businesslogic.CreateOrganizerAccountStrategy{
-			AccountRepo:   server.IAccountRepository,
-			ProvisionRepo: server.IOrganizerProvisionRepository,
-			HistoryRepo:   server.IOrganizerProvisionHistoryRepository,
-		}
-	case businesslogic.AccountTypeAdministrator:
-		util.RespondJsonResult(w, http.StatusBadRequest, "invalid account type", nil)
+	if err := createAccount.Validate(); err != nil {
+		util.RespondJsonResult(w, http.StatusBadRequest, err.Error(), nil)
 		return
-	default:
-		strategy = businesslogic.CreateAccountStrategy{
-			AccountRepo: server.IAccountRepository,
-		}
 	}
 
-	// check if parental account is needed
-	if account.AccountTypeID == businesslogic.AccountTypeAthlete && account.ByGuardian {
-		strategy = businesslogic.CreateParentalAccountStrategy{
-			AccountRepo: server.IAccountRepository,
-		}
+	account := createAccount.ToAccountModel()
+
+	strategy := businesslogic.CreateAccountStrategy{
+		AccountRepo: server.IAccountRepository,
 	}
 
 	if err := strategy.CreateAccount(account, createAccount.Password); err != nil {
@@ -147,14 +119,12 @@ func (server Server) AccountAuthenticationHandler(w http.ResponseWriter, r *http
 			log.Printf("[error] generating client credential: %s\n", err.Error())
 			util.RespondJsonResult(w, http.StatusUnauthorized, "error in generating client credential", nil)
 			return
-		} else {
-			response := struct {
-				Token    string `json:"token"`
-				UserType int    `json:"type"`
-			}{Token: authString, UserType: account.AccountTypeID}
-			util.RespondJsonResult(w, http.StatusOK, "authorized", response)
-			return
 		}
+		response := struct {
+			Token string `json:"token"`
+		}{Token: authString}
+		util.RespondJsonResult(w, http.StatusOK, "authorized", response)
+		return
 	}
 }
 

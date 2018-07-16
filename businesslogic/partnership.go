@@ -34,19 +34,26 @@ const (
 	PartnershipRoleFollow = "FOLLOW"
 )
 
+const (
+	PartnershipStatusRegular   = "Regular"
+	PartnershipStatusTemporary = "Temporary"
+	PartnershipStatusPending   = "Pending"
+)
+
 // Partnership defines the combination of a lead and a follow. A partnership is uniquely identified
 // if the lead and follow are confirmed.
 type Partnership struct {
-	ID              int
-	LeadID          int
-	FollowID        int
-	Lead            Account
-	Follow          Account
-	SameSex         bool
-	FavoriteLead    bool
-	FavoriteFollow  bool
-	DateTimeCreated time.Time
-	DateTimeUpdated time.Time
+	ID               int
+	LeadID           int
+	FollowID         int
+	Lead             Account
+	Follow           Account
+	StatusID         int
+	SameSex          bool
+	FavoriteByLead   bool
+	FavoriteByFollow bool
+	DateTimeCreated  time.Time
+	DateTimeUpdated  time.Time
 }
 
 // IPartnershipRepository defines the interface that a partnership repository should implement

@@ -43,9 +43,9 @@ func (repo PostgresStyleRepository) CreateStyle(style *referencebll.Style) error
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_STYLE_TABLE).Columns(
 		common.COL_NAME,
 		common.COL_DESCRIPTION,
-		common.COL_CREATE_USER_ID,
+		common.ColumnCreateUserID,
 		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
+		common.ColumnUpdateUserID,
 		common.COL_DATETIME_UPDATED,
 	).Values(
 		style.Name,
@@ -76,7 +76,7 @@ func (repo PostgresStyleRepository) DeleteStyle(style referencebll.Style) error 
 	stmt := repo.SqlBuilder.
 		Delete("").
 		From(DAS_STYLE_TABLE).
-		Where(squirrel.Eq{common.PRIMARY_KEY: style.ID})
+		Where(squirrel.Eq{common.ColumnPrimaryKey: style.ID})
 	var err error
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
 		return txErr
@@ -93,17 +93,17 @@ func (repo PostgresStyleRepository) SearchStyle(criteria referencebll.SearchStyl
 	}
 	stmt := repo.SqlBuilder.Select(
 		fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s",
-			common.PRIMARY_KEY,
+			common.ColumnPrimaryKey,
 			common.COL_NAME,
 			common.COL_DESCRIPTION,
-			common.COL_CREATE_USER_ID,
+			common.ColumnCreateUserID,
 			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
+			common.ColumnUpdateUserID,
 			common.COL_DATETIME_UPDATED)).
 		From(DAS_STYLE_TABLE).
-		OrderBy(common.PRIMARY_KEY)
+		OrderBy(common.ColumnPrimaryKey)
 	if criteria.StyleID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.StyleID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.StyleID})
 	}
 	if len(criteria.Name) > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: criteria.Name})
@@ -138,7 +138,7 @@ func (repo PostgresStyleRepository) UpdateStyle(style referencebll.Style) error 
 	if style.ID > 0 {
 		stmt = stmt.Set(common.COL_NAME, style.Name).
 			Set(common.COL_DESCRIPTION, style.Description).
-			Set(common.COL_UPDATE_USER_ID, style.UpdateUserID).
+			Set(common.ColumnUpdateUserID, style.UpdateUserID).
 			Set(common.COL_DATETIME_UPDATED, style.DateTimeUpdated)
 		var err error
 		if tx, txErr := repo.Database.Begin(); txErr != nil {

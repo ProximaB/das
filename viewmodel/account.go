@@ -17,8 +17,9 @@
 package viewmodel
 
 import (
+	"errors"
 	"github.com/DancesportSoftware/das/businesslogic"
-	"time"
+	"github.com/DancesportSoftware/das/businesslogic/reference"
 )
 
 type AccountType struct {
@@ -34,19 +35,42 @@ func AccountTypeDataModelToViewModel(dm businesslogic.AccountType) AccountType {
 }
 
 type CreateAccount struct {
-	AccountType int       `json:"accounttype"`
-	Email       string    `json:"email"`
-	Phone       string    `json:"phone"`
-	FirstName   string    `json:"firstname"`
-	MiddleNames string    `json:"middlenames"`
-	LastName    string    `json:"lastname"`
-	DateOfBirth time.Time `json:"dateofbirth"`
-	Gender      int       `json:"gender"`
-	Password    string    `json:"password"`
-	ToSAccepted bool      `json:"tosaccepted"`
-	PPAccepted  bool      `json:"ppaccepted"`
-	ByGuardian  bool      `json:"byguardian"`
-	Signature   string    `json:"signature"`
+	Email       string `json:"email"`
+	Phone       string `json:"phone"`
+	FirstName   string `json:"firstname"`
+	LastName    string `json:"lastname"`
+	Password    string `json:"password"`
+	ToSAccepted bool   `json:"tosaccepted"`
+	PPAccepted  bool   `json:"ppaccepted"`
+}
+
+func (dto CreateAccount) Validate() error {
+	if len(dto.FirstName) < 2 || len(dto.LastName) < 2 {
+		return errors.New("name is too short")
+	}
+	if len(dto.FirstName) > 18 || len(dto.LastName) > 18 {
+		return errors.New("name is too long")
+	}
+	if len(dto.Email) < 5 {
+		return errors.New("invalid email address")
+	}
+	if len(dto.Phone) < 3 {
+		return errors.New("invalid phone number")
+	}
+	return nil
+}
+
+func (dto CreateAccount) ToAccountModel() businesslogic.Account {
+	account := businesslogic.Account{
+		FirstName:             dto.FirstName,
+		LastName:              dto.LastName,
+		UserGenderID:          referencebll.GENDER_UNKNOWN,
+		Email:                 dto.Email,
+		Phone:                 dto.Phone,
+		ToSAccepted:           dto.ToSAccepted,
+		PrivacyPolicyAccepted: dto.PPAccepted,
+	}
+	return account
 }
 
 type Login struct {

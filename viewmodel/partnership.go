@@ -37,7 +37,7 @@ func PartnershipDataModelToViewModel(partnership businesslogic.Partnership) Part
 		FollowName: partnership.Follow.GetName(),
 		Since:      partnership.DateTimeCreated,
 		SameSexIND: partnership.SameSex,
-		Favorite:   partnership.FavoriteLead,
+		Favorite:   partnership.FavoriteByLead,
 	}
 }
 

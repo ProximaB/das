@@ -17,17 +17,18 @@
 package common
 
 const (
-	PRIMARY_KEY          = "ID"
+	ColumnPrimaryKey     = "ID"
 	COL_NAME             = "NAME"
 	COL_ACCOUNT_ID       = "ACCOUNT_ID"
-	COL_UUID             = "UUID"
-	COL_ABBREVIATION     = "ABBREVIATION"
+	ColumnAccountTypeID  = "ACCOUNT_TYPE_ID"
+	ColumnUUID           = "UUID"
+	ColumnAbbreviation   = "ABBREVIATION"
 	COL_DESCRIPTION      = "DESCRIPTION"
 	COL_NOTE             = "NOTE"
 	COL_DATETIME_CREATED = "DATETIME_CREATED"
 	COL_DATETIME_UPDATED = "DATETIME_UPDATED"
-	COL_CREATE_USER_ID   = "CREATE_USER_ID"
-	COL_UPDATE_USER_ID   = "UPDATE_USER_ID"
+	ColumnCreateUserID   = "CREATE_USER_ID"
+	ColumnUpdateUserID   = "UPDATE_USER_ID"
 
 	COL_COMPETITION_ID = "COMPETITION_ID"
 	COL_EVENT_ID       = "EVENT_ID"

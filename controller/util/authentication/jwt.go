@@ -71,7 +71,6 @@ func (strategy JwtAuthenticationStrategy) SetAuthorizationResponse(w http.Respon
 func GenerateAuthenticationToken(account businesslogic.Account) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		JWT_AUTH_CLAIM_EMAIL:      account.Email,
-		JWT_AUTH_CLAIM_TYPE:       strconv.Itoa(account.AccountTypeID),
 		JWT_AUTH_CLAIM_USERNAME:   account.FirstName + " " + account.LastName,
 		JWT_AUTH_CLAIM_UUID:       account.UUID,
 		JWT_AUTH_CLAIM_EXPIRATION: time.Now().Add(time.Hour * time.Duration(HMAC_VALID_HOURS)).Unix(),

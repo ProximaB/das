@@ -45,9 +45,9 @@ func (repo PostgresOrganizerProvisionHistoryRepository) CreateOrganizerProvision
 		DAS_ORGANIZER_PROVISION_HISTORY_COL_ORGANIZER_ID,
 		DAS_ORGANIZER_PROVISION_HISTORY_COL_AMOUNT,
 		DAS_ORGANIZER_PROVISION_HISTORY_COL_NOTE,
-		common.COL_CREATE_USER_ID,
+		common.ColumnCreateUserID,
 		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
+		common.ColumnUpdateUserID,
 		common.COL_DATETIME_UPDATED,
 	).Values(
 		history.OrganizerID,
@@ -75,13 +75,13 @@ func (repo PostgresOrganizerProvisionHistoryRepository) SearchOrganizerProvision
 		return nil, errors.New("data source of PostgresOrganizerProvisionHistoryRepository is not specified")
 	}
 	clause := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
-		common.PRIMARY_KEY,
+		common.ColumnPrimaryKey,
 		DAS_ORGANIZER_PROVISION_COL_ORGANIZER_ID,
 		DAS_ORGANIZER_PROVISION_HISTORY_COL_AMOUNT,
 		common.COL_NOTE,
-		common.COL_CREATE_USER_ID,
+		common.ColumnCreateUserID,
 		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
+		common.ColumnUpdateUserID,
 		common.COL_DATETIME_UPDATED)).
 		From(DAS_ORGANIZER_PROVISION_HISTORY).
 		Where(squirrel.Eq{"ORGANIZER_ID": criteria.OrganizerID})

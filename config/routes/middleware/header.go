@@ -1,5 +1,5 @@
 // Dancesport Application System (DAS)
-// Copyright (C) 2017, 2018 Yubing Hou
+// Copyright (C) 2018 Yubing Hou
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,27 +14,22 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package referencebll
+package middleware
 
-import (
-	"time"
-)
+import "net/http"
 
-const (
-	GENDER_MALE    = 2
-	GENDER_FEMALE  = 1
-	GENDER_UNKNOWN = 3 // registering a new account no longer requires specifying gender
-)
+func SetResponseHeader(h http.HandlerFunc) http.HandlerFunc {
+	return func(w http.ResponseWriter, r *http.Request) {
+		w.Header().Set("Access-Control-Allow-Origin", "*")
+		w.Header().Set("Content-Type", "application/json")
+		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
+		w.Header().Set("Access-Control-Allow-Headers",
+			"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Cookie")
 
-type IGenderRepository interface {
-	GetAllGenders() ([]Gender, error)
-}
-
-type Gender struct {
-	ID              int
-	Name            string
-	Abbreviation    string
-	Description     string
-	DateTimeCreated time.Time
-	DateTimeUpdated time.Time
+		if r.Method == http.MethodOptions {
+			w.WriteHeader(http.StatusOK)
+			return
+		}
+		h.ServeHTTP(w, r)
+	}
 }

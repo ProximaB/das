@@ -42,9 +42,9 @@ func (repo PostgresProficiencyRepository) CreateProficiency(proficiency *referen
 		common.COL_NAME,
 		common.COL_DIVISION_ID,
 		common.COL_DESCRIPTION,
-		common.COL_CREATE_USER_ID,
+		common.ColumnCreateUserID,
 		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
+		common.ColumnUpdateUserID,
 		common.COL_DATETIME_UPDATED,
 	).Values(
 		proficiency.Name,
@@ -78,7 +78,7 @@ func (repo PostgresProficiencyRepository) UpdateProficiency(proficiency referenc
 		stmt = stmt.Set(common.COL_NAME, proficiency.Name).
 			Set(common.COL_DIVISION_ID, proficiency.DivisionID).
 			Set(common.COL_DESCRIPTION, proficiency.Description).
-			Set(common.COL_UPDATE_USER_ID, proficiency.UpdateUserID).
+			Set(common.ColumnUpdateUserID, proficiency.UpdateUserID).
 			Set(common.COL_DATETIME_UPDATED, proficiency.DateTImeUpdated)
 		var err error
 		if tx, txErr := repo.Database.Begin(); txErr != nil {
@@ -103,7 +103,7 @@ func (repo PostgresProficiencyRepository) DeleteProficiency(proficiency referenc
 	stmt := repo.SqlBuilder.
 		Delete("").
 		From(DAS_PROFICIENCY_TABLE).
-		Where(squirrel.Eq{common.PRIMARY_KEY: proficiency.ID})
+		Where(squirrel.Eq{common.ColumnPrimaryKey: proficiency.ID})
 	var err error
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
 		return txErr
@@ -121,13 +121,13 @@ func (repo PostgresProficiencyRepository) SearchProficiency(criteria referencebl
 		return nil, errors.New("data source of PostgresProficiencyRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
-		common.PRIMARY_KEY,
+		common.ColumnPrimaryKey,
 		common.COL_NAME,
 		common.COL_DIVISION_ID,
 		common.COL_DESCRIPTION,
-		common.COL_CREATE_USER_ID,
+		common.ColumnCreateUserID,
 		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
+		common.ColumnUpdateUserID,
 		common.COL_DATETIME_UPDATED)).
 		From(DAS_PROFICIENCY_TABLE)
 
@@ -135,7 +135,7 @@ func (repo PostgresProficiencyRepository) SearchProficiency(criteria referencebl
 		stmt = stmt.Where(squirrel.Eq{common.COL_DIVISION_ID: criteria.DivisionID})
 	}
 	if criteria.ProficiencyID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.ProficiencyID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ProficiencyID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
 	proficiencies := make([]referencebll.Proficiency, 0)

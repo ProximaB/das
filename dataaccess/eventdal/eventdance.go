@@ -41,15 +41,15 @@ func (repo PostgresEventDanceRepository) SearchEventDance(criteria businesslogic
 	}
 	stmt := repo.SqlBuilder.Select(
 		fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s",
-			common.PRIMARY_KEY,
+			common.ColumnPrimaryKey,
 			common.COL_EVENT_ID,
 			common.COL_DANCE_ID,
-			common.COL_CREATE_USER_ID,
+			common.ColumnCreateUserID,
 			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
+			common.ColumnUpdateUserID,
 			common.COL_DATETIME_UPDATED),
 	).From(DAS_EVENT_DANCES_TABLE).
-		OrderBy(common.PRIMARY_KEY)
+		OrderBy(common.ColumnPrimaryKey)
 	if criteria.CompetitionID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_COMPETITION_ID: criteria.CompetitionID})
 	}
@@ -81,9 +81,9 @@ func (repo PostgresEventDanceRepository) CreateEventDance(eventDance *businesslo
 		Columns(
 			common.COL_EVENT_ID,
 			common.COL_DANCE_ID,
-			common.COL_CREATE_USER_ID,
+			common.ColumnCreateUserID,
 			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
+			common.ColumnUpdateUserID,
 			common.COL_DATETIME_UPDATED).
 		Values(
 			eventDance.EventID,

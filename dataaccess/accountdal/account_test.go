@@ -14,10 +14,11 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package account
+package accountdal_test
 
 import (
 	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/dataaccess/accountdal"
 	"github.com/Masterminds/squirrel"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
@@ -25,7 +26,7 @@ import (
 	"time"
 )
 
-var accountRepository = PostgresAccountRepository{
+var accountRepository = accountdal.PostgresAccountRepository{
 	Database:   nil,
 	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
@@ -65,4 +66,30 @@ func TestPostgresAccountRepository_SearchAccount(t *testing.T) {
 
 	assert.Nil(t, err, "Database schema should match")
 	assert.NotNil(t, results, "should return at least empty slice of accounts")
+}
+
+func TestPostgresAccountRepository_CreateAccount(t *testing.T) {
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
+
+	defer db.Close()
+	accountRepository.Database = db
+	rows := sqlmock.NewRows(
+		[]string{
+			"ID",
+			"UUID",
+		},
+	).AddRow(
+		1,
+		"abc",
+	)
+
+	mock.ExpectQuery("SELECT").WillReturnRows(rows)
+	account := businesslogic.Account{}
+	results := accountRepository.CreateAccount(&account)
+
+	assert.Nil(t, results)
+	assert.NotEqual(t, account.ID, 0)
 }

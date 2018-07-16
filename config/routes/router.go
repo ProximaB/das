@@ -17,15 +17,13 @@
 package routes
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/config/authentication"
-	"github.com/DancesportSoftware/das/config/database"
 	"github.com/DancesportSoftware/das/config/routes/internal/account"
 	"github.com/DancesportSoftware/das/config/routes/internal/competition"
 	"github.com/DancesportSoftware/das/config/routes/internal/organizer"
 	"github.com/DancesportSoftware/das/config/routes/internal/partnership"
 	"github.com/DancesportSoftware/das/config/routes/internal/reference"
 	"github.com/DancesportSoftware/das/config/routes/internal/registration"
+	"github.com/DancesportSoftware/das/config/routes/middleware"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/gorilla/mux"
 	"log"
@@ -47,30 +45,8 @@ var restAPIRouter = []Route{
 	{"Get competitive ballroom entries for public view", http.MethodGet, "/api/public/entries", authorizeSingleRole(getCompetitiveBallroomEventEntryHandler, businesslogic.AccountTypeNoAuth)},
 }*/
 
-func setResponseHeader(h http.HandlerFunc) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		w.Header().Set("Access-Control-Allow-Origin", "*")
-		w.Header().Set("Content-Type", "application/json")
-		w.Header().Set("Access-Control-Allow-Methods", "POST, GET, OPTIONS, PUT, DELETE")
-		w.Header().Set("Access-Control-Allow-Headers",
-			"Accept, Content-Type, Content-Length, Accept-Encoding, X-CSRF-Token, Authorization, Cookie")
-
-		if r.Method == http.MethodOptions {
-			w.WriteHeader(http.StatusOK)
-			return
-		}
-		h.ServeHTTP(w, r)
-	}
-}
-
 // TODO: this part needs careful rework
-func getRequestUserRole(r *http.Request) (int, error) {
-	account, err := authentication.AuthenticationStrategy.GetCurrentUser(r, database.AccountRepository)
-	if err != nil {
-		return businesslogic.AccountTypeUnauthorized, err
-	}
-	return account.AccountTypeID, nil
-}
+
 func addDasController(router *mux.Router, handler util.DasController) {
 	if len(handler.Name) < 1 {
 		log.Fatalf("Name of %v is missing\n", handler)
@@ -94,43 +70,7 @@ func addDasController(router *mux.Router, handler util.DasController) {
 		Methods(handler.Method, http.MethodOptions).
 		Path(handler.Endpoint).
 		Name(handler.Description).
-		Handler(setResponseHeader(authorizeMultipleRoles(handler.Handler, handler.AllowedRoles)))
-}
-func authorizeMultipleRoles(h http.HandlerFunc, roles []int) http.HandlerFunc {
-	return func(w http.ResponseWriter, r *http.Request) {
-		allowNoAuth := false
-		for _, each := range roles {
-			if each == businesslogic.AccountTypeNoAuth {
-				allowNoAuth = true
-				break
-			}
-		}
-
-		userRole, authErr := getRequestUserRole(r)
-		if authErr != nil && !allowNoAuth {
-			util.RespondJsonResult(w, http.StatusUnauthorized, "invalid authorization token", nil)
-			return
-		}
-
-		authorized := false
-		for _, each := range roles {
-			if each == userRole {
-				authorized = true
-			}
-		}
-
-		if authErr != nil && !allowNoAuth {
-			util.RespondJsonResult(w, http.StatusUnauthorized, "unauthorized", nil)
-			return
-		} else if allowNoAuth {
-			h.ServeHTTP(w, r)
-		} else if authorized {
-			h.ServeHTTP(w, r)
-		} else {
-			util.RespondJsonResult(w, http.StatusUnauthorized, "unauthorized", nil)
-			return
-		}
-	}
+		Handler(middleware.SetResponseHeader(middleware.AuthorizeMultipleRoles(handler.Handler, handler.AllowedRoles)))
 }
 
 func addDasControllerGroup(router *mux.Router, group util.DasControllerGroup) {
@@ -144,6 +84,7 @@ func NewDasRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	router.Schemes("https")
 
+	// reference data
 	addDasControllerGroup(router, reference.CountryControllerGroup)
 	addDasControllerGroup(router, reference.StateControllerGroup)
 	addDasControllerGroup(router, reference.CityControllerGroup)

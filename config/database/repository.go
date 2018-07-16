@@ -17,7 +17,7 @@
 package database
 
 import (
-	"github.com/DancesportSoftware/das/dataaccess/account"
+	"github.com/DancesportSoftware/das/dataaccess/accountdal"
 	"github.com/DancesportSoftware/das/dataaccess/competition"
 	"github.com/DancesportSoftware/das/dataaccess/entrydal"
 	"github.com/DancesportSoftware/das/dataaccess/eventdal"
@@ -71,11 +71,11 @@ var StudioRepository = referencedal.PostgresStudioRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var AccountRepository = account.PostgresAccountRepository{
+var AccountRepository = accountdal.PostgresAccountRepository{
 	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var AccountTypeRepository = account.PostgresAccountTypeRepository{
+var AccountTypeRepository = accountdal.PostgresAccountTypeRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 

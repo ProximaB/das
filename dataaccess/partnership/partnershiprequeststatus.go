@@ -41,11 +41,11 @@ func (repo PostgresPartnershipRequestStatusRepository) GetPartnershipRequestStat
 		return nil, errors.New("data source of PostgresPartnershipRequestStatusRepository is not specified")
 	}
 	clause := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s",
-		common.PRIMARY_KEY,
+		common.ColumnPrimaryKey,
 		DAS_PARTNERSHIP_REQUEST_STATUS_COL_CODE,
 		common.COL_DESCRIPTION,
 		common.COL_DATETIME_CREATED,
-		common.COL_DATETIME_UPDATED)).From(DAS_PARTNERSHIP_REQUEST_STATUS_TABLE).OrderBy(common.PRIMARY_KEY)
+		common.COL_DATETIME_UPDATED)).From(DAS_PARTNERSHIP_REQUEST_STATUS_TABLE).OrderBy(common.ColumnPrimaryKey)
 	rows, err := clause.RunWith(repo.Database).Query()
 	output := make([]businesslogic.PartnershipRequestStatus, 0)
 	if err != nil {

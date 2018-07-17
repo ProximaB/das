@@ -49,9 +49,9 @@ func (repo PostgresAgeRepository) CreateAge(age *referencebll.Age) error {
 		DAS_AGE_COL_MINIMUM_AGE,
 		DAS_AGE_COL_MAXIMUM_AGE,
 		common.ColumnCreateUserID,
-		common.COL_DATETIME_CREATED,
+		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
-		common.COL_DATETIME_UPDATED,
+		common.ColumnDateTimeUpdated,
 	).Values(
 		age.Name,
 		age.Description,
@@ -105,9 +105,9 @@ func (repo PostgresAgeRepository) SearchAge(criteria referencebll.SearchAgeCrite
 			DAS_AGE_COL_MINIMUM_AGE,
 			DAS_AGE_COL_MAXIMUM_AGE,
 			common.ColumnCreateUserID,
-			common.COL_DATETIME_CREATED,
+			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.COL_DATETIME_UPDATED)).
+			common.ColumnDateTimeUpdated)).
 		From(DAS_AGE_TABLE).
 		OrderBy(common.ColumnPrimaryKey)
 	if criteria.DivisionID > 0 {
@@ -155,7 +155,7 @@ func (repo PostgresAgeRepository) UpdateAge(age referencebll.Age) error {
 			Set(DAS_AGE_COL_MAXIMUM_AGE, age.AgeMaximum).
 			Set(DAS_AGE_COL_ENFORCED, age.Enforced).
 			Set(common.ColumnUpdateUserID, age.UpdateUserID).
-			Set(common.COL_DATETIME_UPDATED, age.DateTimeUpdated)
+			Set(common.ColumnDateTimeUpdated, age.DateTimeUpdated)
 	}
 	var err error
 	if tx, txErr := repo.Database.Begin(); txErr != nil {

@@ -56,9 +56,9 @@ func (repo PostgresAthleteCompetitionEntryRepository) CreateAthleteCompetitionEn
 			dasCompetitionEntryColCheckinInd,
 			dasCompetitionEntryColCheckinDateTime,
 			common.ColumnCreateUserID,
-			common.COL_DATETIME_CREATED,
+			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.COL_DATETIME_UPDATED).
+			common.ColumnDateTimeUpdated).
 		Values(
 			entry.CompetitionEntry.CompetitionID,
 			entry.AthleteID,
@@ -93,9 +93,9 @@ func (repo PostgresAthleteCompetitionEntryRepository) SearchAthleteCompetitionEn
 		dasCompetitionEntryColCheckinInd,
 		dasCompetitionEntryColCheckinDateTime,
 		common.ColumnCreateUserID,
-		common.COL_DATETIME_CREATED,
+		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
-		common.COL_DATETIME_UPDATED)).From(dasAthleteCompetitionEntryTable)
+		common.ColumnDateTimeUpdated)).From(dasAthleteCompetitionEntryTable)
 
 	if criteria.ID > 0 {
 		clause = clause.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ID})
@@ -169,9 +169,9 @@ func (repo PostgresPartnershipCompetitionEntryRepository) CreatePartnershipCompe
 			dasCompetitionEntryColCheckinInd,
 			dasCompetitionEntryColCheckinDateTime,
 			common.ColumnCreateUserID,
-			common.COL_DATETIME_CREATED,
+			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.COL_DATETIME_UPDATED).
+			common.ColumnDateTimeUpdated).
 		Values(
 			entry.CompetitionEntry.CompetitionID,
 			entry.PartnershipID,

@@ -45,9 +45,9 @@ func (repo PostgresStateRepository) SearchState(criteria referencebll.SearchStat
 			common.ColumnAbbreviation,
 			common.COL_COUNTRY_ID,
 			common.ColumnCreateUserID,
-			common.COL_DATETIME_CREATED,
+			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.COL_DATETIME_UPDATED)).
+			common.ColumnDateTimeUpdated)).
 		From(DAS_STATE_TABLE)
 	if criteria.CountryID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_COUNTRY_ID: criteria.CountryID})
@@ -96,9 +96,9 @@ func (repo PostgresStateRepository) CreateState(state *referencebll.State) error
 		common.ColumnAbbreviation,
 		common.COL_COUNTRY_ID,
 		common.ColumnCreateUserID,
-		common.COL_DATETIME_CREATED,
+		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
-		common.COL_DATETIME_UPDATED,
+		common.ColumnDateTimeUpdated,
 	).Values(
 		state.Name,
 		state.Abbreviation,
@@ -132,7 +132,7 @@ func (repo PostgresStateRepository) UpdateState(state referencebll.State) error 
 			Set(common.ColumnAbbreviation, state.Abbreviation).
 			Set(common.COL_COUNTRY_ID, state.CountryID).
 			Set(common.ColumnUpdateUserID, state.UpdateUserID).
-			Set(common.COL_DATETIME_UPDATED, state.DateTimeUpdated)
+			Set(common.ColumnDateTimeUpdated, state.DateTimeUpdated)
 
 		var err error
 		if tx, txErr := repo.Database.Begin(); txErr != nil {

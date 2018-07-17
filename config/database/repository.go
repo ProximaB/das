@@ -21,7 +21,7 @@ import (
 	"github.com/DancesportSoftware/das/dataaccess/competition"
 	"github.com/DancesportSoftware/das/dataaccess/entrydal"
 	"github.com/DancesportSoftware/das/dataaccess/eventdal"
-	"github.com/DancesportSoftware/das/dataaccess/partnership"
+	"github.com/DancesportSoftware/das/dataaccess/partnershipdal"
 	"github.com/DancesportSoftware/das/dataaccess/provision"
 	"github.com/DancesportSoftware/das/dataaccess/referencedal"
 	"github.com/Masterminds/squirrel"
@@ -79,23 +79,23 @@ var AccountTypeRepository = accountdal.PostgresAccountTypeRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var PartnershipRepository = partnership.PostgresPartnershipRepository{
+var PartnershipRepository = partnershipdal.PostgresPartnershipRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var PartnershipRequestRepository = partnership.PostgresPartnershipRequestRepository{
+var PartnershipRequestRepository = partnershipdal.PostgresPartnershipRequestRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var PartnershipRequestStatusRepository = partnership.PostgresPartnershipRequestStatusRepository{
+var PartnershipRequestStatusRepository = partnershipdal.PostgresPartnershipRequestStatusRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var PartnershipRequestBlacklistRepository = partnership.PostgresPartnershipRequestBlacklistRepository{
+var PartnershipRequestBlacklistRepository = partnershipdal.PostgresPartnershipRequestBlacklistRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var PartnershipRequestBlacklistReasonRepository = partnership.PostgresPartnershipRequestBlacklistReasonRepository{
+var PartnershipRequestBlacklistReasonRepository = partnershipdal.PostgresPartnershipRequestBlacklistReasonRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 

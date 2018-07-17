@@ -44,9 +44,9 @@ func (repo PostgresStyleRepository) CreateStyle(style *referencebll.Style) error
 		common.COL_NAME,
 		common.COL_DESCRIPTION,
 		common.ColumnCreateUserID,
-		common.COL_DATETIME_CREATED,
+		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
-		common.COL_DATETIME_UPDATED,
+		common.ColumnDateTimeUpdated,
 	).Values(
 		style.Name,
 		style.Description,
@@ -97,9 +97,9 @@ func (repo PostgresStyleRepository) SearchStyle(criteria referencebll.SearchStyl
 			common.COL_NAME,
 			common.COL_DESCRIPTION,
 			common.ColumnCreateUserID,
-			common.COL_DATETIME_CREATED,
+			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.COL_DATETIME_UPDATED)).
+			common.ColumnDateTimeUpdated)).
 		From(DAS_STYLE_TABLE).
 		OrderBy(common.ColumnPrimaryKey)
 	if criteria.StyleID > 0 {
@@ -139,7 +139,7 @@ func (repo PostgresStyleRepository) UpdateStyle(style referencebll.Style) error 
 		stmt = stmt.Set(common.COL_NAME, style.Name).
 			Set(common.COL_DESCRIPTION, style.Description).
 			Set(common.ColumnUpdateUserID, style.UpdateUserID).
-			Set(common.COL_DATETIME_UPDATED, style.DateTimeUpdated)
+			Set(common.ColumnDateTimeUpdated, style.DateTimeUpdated)
 		var err error
 		if tx, txErr := repo.Database.Begin(); txErr != nil {
 			return txErr

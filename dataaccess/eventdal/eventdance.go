@@ -45,9 +45,9 @@ func (repo PostgresEventDanceRepository) SearchEventDance(criteria businesslogic
 			common.COL_EVENT_ID,
 			common.COL_DANCE_ID,
 			common.ColumnCreateUserID,
-			common.COL_DATETIME_CREATED,
+			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.COL_DATETIME_UPDATED),
+			common.ColumnDateTimeUpdated),
 	).From(DAS_EVENT_DANCES_TABLE).
 		OrderBy(common.ColumnPrimaryKey)
 	if criteria.CompetitionID > 0 {
@@ -82,9 +82,9 @@ func (repo PostgresEventDanceRepository) CreateEventDance(eventDance *businesslo
 			common.COL_EVENT_ID,
 			common.COL_DANCE_ID,
 			common.ColumnCreateUserID,
-			common.COL_DATETIME_CREATED,
+			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.COL_DATETIME_UPDATED).
+			common.ColumnDateTimeUpdated).
 		Values(
 			eventDance.EventID,
 			eventDance.DanceID,

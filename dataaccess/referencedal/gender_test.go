@@ -43,8 +43,8 @@ func TestPostgresGenderRepository_GetAllGenders(t *testing.T) {
 			common.COL_NAME,
 			common.ColumnAbbreviation,
 			common.COL_DESCRIPTION,
-			common.COL_DATETIME_CREATED,
-			common.COL_DATETIME_UPDATED,
+			common.ColumnDateTimeCreated,
+			common.ColumnDateTimeUpdated,
 		},
 	).AddRow(
 		1, "Female", "F", "Biologicially female", time.Now(), time.Now(),

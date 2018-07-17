@@ -43,9 +43,9 @@ func (repo PostgresProficiencyRepository) CreateProficiency(proficiency *referen
 		common.COL_DIVISION_ID,
 		common.COL_DESCRIPTION,
 		common.ColumnCreateUserID,
-		common.COL_DATETIME_CREATED,
+		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
-		common.COL_DATETIME_UPDATED,
+		common.ColumnDateTimeUpdated,
 	).Values(
 		proficiency.Name,
 		proficiency.DivisionID,
@@ -79,7 +79,7 @@ func (repo PostgresProficiencyRepository) UpdateProficiency(proficiency referenc
 			Set(common.COL_DIVISION_ID, proficiency.DivisionID).
 			Set(common.COL_DESCRIPTION, proficiency.Description).
 			Set(common.ColumnUpdateUserID, proficiency.UpdateUserID).
-			Set(common.COL_DATETIME_UPDATED, proficiency.DateTImeUpdated)
+			Set(common.ColumnDateTimeUpdated, proficiency.DateTImeUpdated)
 		var err error
 		if tx, txErr := repo.Database.Begin(); txErr != nil {
 			return txErr
@@ -126,9 +126,9 @@ func (repo PostgresProficiencyRepository) SearchProficiency(criteria referencebl
 		common.COL_DIVISION_ID,
 		common.COL_DESCRIPTION,
 		common.ColumnCreateUserID,
-		common.COL_DATETIME_CREATED,
+		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
-		common.COL_DATETIME_UPDATED)).
+		common.ColumnDateTimeUpdated)).
 		From(DAS_PROFICIENCY_TABLE)
 
 	if criteria.DivisionID > 0 {

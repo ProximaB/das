@@ -46,9 +46,9 @@ func (repo PostgresOrganizerProvisionHistoryRepository) CreateOrganizerProvision
 		DAS_ORGANIZER_PROVISION_HISTORY_COL_AMOUNT,
 		DAS_ORGANIZER_PROVISION_HISTORY_COL_NOTE,
 		common.ColumnCreateUserID,
-		common.COL_DATETIME_CREATED,
+		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
-		common.COL_DATETIME_UPDATED,
+		common.ColumnDateTimeUpdated,
 	).Values(
 		history.OrganizerID,
 		history.Amount,
@@ -80,9 +80,9 @@ func (repo PostgresOrganizerProvisionHistoryRepository) SearchOrganizerProvision
 		DAS_ORGANIZER_PROVISION_HISTORY_COL_AMOUNT,
 		common.COL_NOTE,
 		common.ColumnCreateUserID,
-		common.COL_DATETIME_CREATED,
+		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
-		common.COL_DATETIME_UPDATED)).
+		common.ColumnDateTimeUpdated)).
 		From(DAS_ORGANIZER_PROVISION_HISTORY).
 		Where(squirrel.Eq{"ORGANIZER_ID": criteria.OrganizerID})
 

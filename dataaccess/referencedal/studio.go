@@ -47,9 +47,9 @@ func (repo PostgresStudioRepository) SearchStudio(criteria referencebll.SearchSt
 			common.COL_CITY_ID,
 			common.COL_WEBSITE,
 			common.ColumnCreateUserID,
-			common.COL_DATETIME_CREATED,
+			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.COL_DATETIME_UPDATED)).
+			common.ColumnDateTimeUpdated)).
 		From(DAS_STUDIO_TABLE).OrderBy(common.ColumnPrimaryKey)
 	if len(criteria.Name) > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: criteria.Name})
@@ -99,9 +99,9 @@ func (repo PostgresStudioRepository) CreateStudio(studio *referencebll.Studio) e
 		common.COL_CITY_ID,
 		common.COL_WEBSITE,
 		common.ColumnCreateUserID,
-		common.COL_DATETIME_CREATED,
+		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
-		common.COL_DATETIME_UPDATED,
+		common.ColumnDateTimeUpdated,
 	).Values(
 		studio.Name,
 		studio.Address,
@@ -137,7 +137,7 @@ func (repo PostgresStudioRepository) UpdateStudio(studio referencebll.Studio) er
 			Set(common.COL_CITY_ID, studio.CityID).
 			Set(common.COL_WEBSITE, studio.Website).
 			Set(common.ColumnUpdateUserID, studio.UpdateUserID).
-			Set(common.COL_DATETIME_UPDATED, studio.DateTimeUpdated)
+			Set(common.ColumnDateTimeUpdated, studio.DateTimeUpdated)
 		var err error
 		if tx, txErr := repo.Database.Begin(); txErr != nil {
 			return txErr

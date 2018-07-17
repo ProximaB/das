@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package partnership
+package partnershipdal
 
 import (
 	"database/sql"
@@ -54,9 +54,9 @@ func (repo PostgresPartnershipRequestRepository) SearchPartnershipRequest(criter
 		DAS_PARTNERSHIP_REQUEST_COL_MESSAGE,
 		DAS_PARTNERSHIP_REQUEST_COL_REQUEST_STATUS,
 		common.ColumnCreateUserID,
-		common.COL_DATETIME_CREATED,
+		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
-		common.COL_DATETIME_UPDATED)).From(DAS_PARTNERSHIP_REQUEST_TABLE).OrderBy(common.ColumnPrimaryKey)
+		common.ColumnDateTimeUpdated)).From(DAS_PARTNERSHIP_REQUEST_TABLE).OrderBy(common.ColumnPrimaryKey)
 
 	if criteria.Sender > 0 {
 		stmt = stmt.Where(squirrel.Eq{DAS_PARTNERSHIP_REQUEST_COL_SENDER_ID: criteria.Sender})
@@ -112,9 +112,9 @@ func (repo PostgresPartnershipRequestRepository) CreatePartnershipRequest(reques
 		DAS_PARTNERSHIP_REQUEST_COL_MESSAGE,
 		DAS_PARTNERSHIP_REQUEST_COL_REQUEST_STATUS,
 		common.ColumnCreateUserID,
-		common.COL_DATETIME_CREATED,
+		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
-		common.COL_DATETIME_UPDATED,
+		common.ColumnDateTimeUpdated,
 	).Values(
 		request.SenderID,
 		request.RecipientID,
@@ -149,7 +149,7 @@ func (repo PostgresPartnershipRequestRepository) UpdatePartnershipRequest(reques
 		Table(DAS_PARTNERSHIP_REQUEST_TABLE).
 		Set(DAS_PARTNERSHIP_REQUEST_COL_REQUEST_STATUS, request.Status).
 		Set(common.ColumnUpdateUserID, request.RecipientID).
-		Set(common.COL_DATETIME_UPDATED, request.DateTimeUpdated).
+		Set(common.ColumnDateTimeUpdated, request.DateTimeUpdated).
 		Where(squirrel.Eq{common.ColumnPrimaryKey: request.PartnershipRequestID})
 
 	_, err := clause.RunWith(repo.Database).Exec()

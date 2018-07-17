@@ -45,9 +45,9 @@ func (repo PostgresCountryRepository) CreateCountry(country *referencebll.Countr
 		Columns(common.COL_NAME,
 			common.ColumnAbbreviation,
 			common.ColumnCreateUserID,
-			common.COL_DATETIME_CREATED,
+			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.COL_DATETIME_UPDATED).
+			common.ColumnDateTimeUpdated).
 		Values(
 			country.Name,
 			country.Abbreviation,
@@ -93,7 +93,7 @@ func (repo PostgresCountryRepository) UpdateCountry(country referencebll.Country
 	if country.ID > 0 {
 		stmt = stmt.Set(common.COL_NAME, country.Name).
 			Set(common.ColumnAbbreviation, country.Abbreviation).
-			Set(common.COL_DATETIME_UPDATED, time.Now()).
+			Set(common.ColumnDateTimeUpdated, time.Now()).
 			Where(squirrel.Eq{common.ColumnPrimaryKey: country.ID})
 		if country.UpdateUserID != nil {
 			stmt = stmt.Set(common.ColumnUpdateUserID, country.UpdateUserID)
@@ -123,9 +123,9 @@ func (repo PostgresCountryRepository) SearchCountry(criteria referencebll.Search
 			common.COL_NAME,
 			common.ColumnAbbreviation,
 			common.ColumnCreateUserID,
-			common.COL_DATETIME_CREATED,
+			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.COL_DATETIME_UPDATED)).
+			common.ColumnDateTimeUpdated)).
 		From(DAS_COUNTRY_TABLE).
 		OrderBy(common.ColumnPrimaryKey)
 	if criteria.CountryID > 0 {

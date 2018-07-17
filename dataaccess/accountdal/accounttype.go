@@ -42,8 +42,8 @@ func (repo PostgresAccountTypeRepository) GetAccountTypes() ([]businesslogic.Acc
 				common.ColumnPrimaryKey,
 				common.COL_NAME,
 				common.COL_DESCRIPTION,
-				common.COL_DATETIME_CREATED,
-				common.COL_DATETIME_UPDATED)).
+				common.ColumnDateTimeCreated,
+				common.ColumnDateTimeUpdated)).
 		From(DAS_ACCOUNT_TYPE_TABLE).
 		OrderBy(common.ColumnPrimaryKey)
 	rows, err := stmt.RunWith(repo.Database).Query()

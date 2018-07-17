@@ -48,9 +48,9 @@ func (repo PostgresPartnershipEventEntryRepository) CreatePartnershipEventEntry(
 		common.COL_PARTNERSHIP_ID,
 		leadTag,
 		common.ColumnCreateUserID,
-		common.COL_DATETIME_CREATED,
+		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
-		common.COL_DATETIME_UPDATED,
+		common.ColumnDateTimeUpdated,
 	).Values(
 		entry.EventEntry.EventID,
 		entry.PartnershipID,
@@ -104,9 +104,9 @@ func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(
 			common.COL_PARTNERSHIP_ID,
 			dasCompetitionEntryColCompetitorTag,
 			common.ColumnCreateUserID,
-			common.COL_DATETIME_CREATED,
+			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.COL_DATETIME_UPDATED)).
+			common.ColumnDateTimeUpdated)).
 		From(dasEventCompetitiveBallroomEntryTable)
 
 	if criteria.PartnershipID > 0 {

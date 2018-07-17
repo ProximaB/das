@@ -49,9 +49,9 @@ func (repo PostgresFederationRepository) CreateFederation(federation *referenceb
 			DAS_FEDERATION_COL_YEAR_FOUNDED,
 			common.COL_COUNTRY_ID,
 			common.ColumnCreateUserID,
-			common.COL_DATETIME_CREATED,
+			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.COL_DATETIME_UPDATED,
+			common.ColumnDateTimeUpdated,
 		).Values(
 		federation.Name,
 		federation.Abbreviation,
@@ -88,9 +88,9 @@ func (repo PostgresFederationRepository) SearchFederation(criteria referencebll.
 			DAS_FEDERATION_COL_YEAR_FOUNDED,
 			common.COL_COUNTRY_ID,
 			common.ColumnCreateUserID,
-			common.COL_DATETIME_CREATED,
+			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.COL_DATETIME_UPDATED)).
+			common.ColumnDateTimeUpdated)).
 		From(DAS_FEDERATION_TABLE).OrderBy(common.ColumnPrimaryKey)
 	if criteria.CountryID > 0 {
 		stmt = stmt.Where(squirrel.Eq{
@@ -155,7 +155,7 @@ func (repo PostgresFederationRepository) UpdateFederation(federation referencebl
 			Set(DAS_FEDERATION_COL_YEAR_FOUNDED, federation.YearFounded).
 			Set(common.COL_COUNTRY_ID, federation.CountryID).
 			Set(common.ColumnUpdateUserID, federation.UpdateUserID).
-			Set(common.COL_DATETIME_UPDATED, federation.DateTimeUpdated)
+			Set(common.ColumnDateTimeUpdated, federation.DateTimeUpdated)
 		var err error
 		if tx, txErr := repo.Database.Begin(); txErr != nil {
 			return txErr

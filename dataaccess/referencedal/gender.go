@@ -42,8 +42,8 @@ func (repo PostgresGenderRepository) GetAllGenders() ([]referencebll.Gender, err
 			common.COL_NAME,
 			common.ColumnAbbreviation,
 			common.COL_DESCRIPTION,
-			common.COL_DATETIME_CREATED,
-			common.COL_DATETIME_UPDATED,
+			common.ColumnDateTimeCreated,
+			common.ColumnDateTimeUpdated,
 		)).From(DAS_USER_GENDER_TABLE)
 
 	rows, err := stmt.RunWith(repo.Database).Query()

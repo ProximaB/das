@@ -77,9 +77,9 @@ func (repo PostgresCompetitionRepository) CreateCompetition(competition *busines
 			DAS_COMPETITION_COL_CONTACT_PHONE,
 			DAS_COMPETITION_COL_CONTACT_EMAIL,
 			common.ColumnCreateUserID,
-			common.COL_DATETIME_CREATED,
+			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.COL_DATETIME_UPDATED).
+			common.ColumnDateTimeUpdated).
 		Values(competition.FederationID,
 			competition.Name,
 			competition.Website,
@@ -124,7 +124,7 @@ func (repo PostgresCompetitionRepository) UpdateCompetition(competition business
 			Set(DAS_COMPETITION_COL_CONTACT_NAME, competition.ContactName).
 			Set(DAS_COMPETITION_COL_CONTACT_EMAIL, competition.ContactEmail).
 			Set(DAS_COMPETITION_COL_CONTACT_PHONE, competition.ContactPhone).
-			Set(common.COL_DATETIME_UPDATED, time.Now())
+			Set(common.ColumnDateTimeUpdated, time.Now())
 	}
 	stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: competition.ID})
 
@@ -178,9 +178,9 @@ func (repo PostgresCompetitionRepository) SearchCompetition(criteria businesslog
 		DAS_COMPETITION_COL_STATUS_ID,
 		DAS_COMPETITION_COL_ATTENDANCE,
 		common.ColumnCreateUserID,
-		common.COL_DATETIME_CREATED,
+		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
-		common.COL_DATETIME_UPDATED),
+		common.ColumnDateTimeUpdated),
 	).From(DAS_COMPETITION_TABLE).
 		OrderBy(DAS_COMPETITION_COL_DATETIME_START)
 

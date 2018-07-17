@@ -42,9 +42,9 @@ func (repo PostgresSchoolRepository) CreateSchool(school *referencebll.School) e
 		common.COL_NAME,
 		common.COL_CITY_ID,
 		common.ColumnCreateUserID,
-		common.COL_DATETIME_CREATED,
+		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
-		common.COL_DATETIME_UPDATED,
+		common.ColumnDateTimeUpdated,
 	).Values(
 		school.Name,
 		school.CityID,
@@ -76,7 +76,7 @@ func (repo PostgresSchoolRepository) UpdateSchool(school referencebll.School) er
 		stmt = stmt.Set(common.COL_NAME, school.Name).
 			Set(common.COL_CITY_ID, school.CityID).
 			Set(common.ColumnUpdateUserID, school.UpdateUserID).
-			Set(common.COL_DATETIME_UPDATED, school.DateTimeUpdated)
+			Set(common.ColumnDateTimeUpdated, school.DateTimeUpdated)
 		var err error
 		if tx, txErr := repo.Database.Begin(); txErr != nil {
 			return txErr
@@ -123,9 +123,9 @@ func (repo PostgresSchoolRepository) SearchSchool(criteria referencebll.SearchSc
 			common.COL_NAME,
 			common.COL_CITY_ID,
 			common.ColumnCreateUserID,
-			common.COL_DATETIME_CREATED,
+			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.COL_DATETIME_UPDATED)).
+			common.ColumnDateTimeUpdated)).
 		From(DAS_SCHOOL_TABLE).
 		OrderBy(`DAS.SCHOOL.ID`)
 	if criteria.ID > 0 {

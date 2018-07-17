@@ -46,8 +46,8 @@ func (repo PostgresDivisionRepository) SearchDivision(criteria referencebll.Sear
 			common.COL_DESCRIPTION,
 			common.COL_NOTE,
 			common.COL_FEDERATION_ID,
-			common.COL_DATETIME_CREATED,
-			common.COL_DATETIME_UPDATED)).
+			common.ColumnDateTimeCreated,
+			common.ColumnDateTimeUpdated)).
 		From(DAS_DIVISION_TABLE).
 		OrderBy(common.ColumnPrimaryKey)
 	if criteria.FederationID > 0 {
@@ -90,9 +90,9 @@ func (repo PostgresDivisionRepository) CreateDivision(division *referencebll.Div
 		common.COL_NOTE,
 		common.COL_FEDERATION_ID,
 		common.ColumnCreateUserID,
-		common.COL_DATETIME_CREATED,
+		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
-		common.COL_DATETIME_UPDATED,
+		common.ColumnDateTimeUpdated,
 	).Values(
 		division.Name,
 		division.Abbreviation,
@@ -130,7 +130,7 @@ func (repo PostgresDivisionRepository) UpdateDivision(division referencebll.Divi
 			Set(common.COL_NOTE, division.Note).
 			Set(common.COL_FEDERATION_ID, division.FederationID).
 			Set(common.ColumnUpdateUserID, division.UpdateUserID).
-			Set(common.COL_DATETIME_UPDATED, division.DateTimeUpdated)
+			Set(common.ColumnDateTimeUpdated, division.DateTimeUpdated)
 
 		var err error
 		if tx, txErr := repo.Database.Begin(); txErr != nil {

@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package partnership
+package partnershipdal
 
 import (
 	"database/sql"
@@ -22,16 +22,17 @@ import (
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
 const (
-	DAS_PARTNERSHIP_REQUEST_BLACKLIST_TABLE                   = "DAS.PARTNERSHIP_REQUEST_BLACKLIST"
-	DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_REPORTER_ID         = "REPORTER_ID"
-	DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_BLOCKED_USER_ID     = "BLOCKED_USER_ID"
-	DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_BLACKLIST_REASON_ID = "BLACKLIST_REASON_ID"
-	DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_DETAIL              = "DETAIL"
-	DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_WHITELISTED_IND     = "WHITELISTED_IND"
+	DasPartnershipRequestBlacklistTable                   = "DAS.PARTNERSHIP_REQUEST_BLACKLIST"
+	DasPartnershipRequestBlacklistColumnReporterID        = "REPORTER_ID"
+	DasPartnershipRequestBlacklistColumnBlockedUserID     = "BLOCKED_USER_ID"
+	DasPartnershipRequestBlacklistColumnBlacklistReasonID = "BLACKLIST_REASON_ID"
+	DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_DETAIL          = "DETAIL"
+	DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_WHITELISTED_IND = "WHITELISTED_IND"
 )
 
 type PostgresPartnershipRequestBlacklistRepository struct {
@@ -41,30 +42,30 @@ type PostgresPartnershipRequestBlacklistRepository struct {
 
 func (repo PostgresPartnershipRequestBlacklistRepository) SearchPartnershipRequestBlacklist(criteria businesslogic.SearchPartnershipRequestBlacklistCriteria) ([]businesslogic.PartnershipRequestBlacklistEntry, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresPartnershipRequestBlacklistRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
 			common.ColumnPrimaryKey,
-			DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_REPORTER_ID,
-			DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_BLOCKED_USER_ID,
-			DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_BLACKLIST_REASON_ID,
+			DasPartnershipRequestBlacklistColumnReporterID,
+			DasPartnershipRequestBlacklistColumnBlockedUserID,
+			DasPartnershipRequestBlacklistColumnBlacklistReasonID,
 			DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_DETAIL,
 			DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_WHITELISTED_IND,
 			common.ColumnCreateUserID,
-			common.COL_DATETIME_CREATED,
+			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.COL_DATETIME_UPDATED)).
-		From(DAS_PARTNERSHIP_REQUEST_BLACKLIST_TABLE).
-		OrderBy(common.COL_DATETIME_CREATED)
+			common.ColumnDateTimeUpdated)).
+		From(DasPartnershipRequestBlacklistTable).
+		OrderBy(common.ColumnDateTimeCreated)
 	if criteria.ReporterID > 0 {
-		stmt = stmt.Where(squirrel.Eq{DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_REPORTER_ID: criteria.ReporterID})
+		stmt = stmt.Where(squirrel.Eq{DasPartnershipRequestBlacklistColumnReporterID: criteria.ReporterID})
 	}
 	if criteria.BlockedUserID > 0 {
-		stmt = stmt.Where(squirrel.Eq{DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_BLOCKED_USER_ID: criteria.BlockedUserID})
+		stmt = stmt.Where(squirrel.Eq{DasPartnershipRequestBlacklistColumnBlockedUserID: criteria.BlockedUserID})
 	}
 	if criteria.ReasonID > 0 {
-		stmt = stmt.Where(squirrel.Eq{DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_BLACKLIST_REASON_ID: criteria.ReasonID})
+		stmt = stmt.Where(squirrel.Eq{DasPartnershipRequestBlacklistColumnBlacklistReasonID: criteria.ReasonID})
 	}
 	stmt = stmt.Where(squirrel.Eq{DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_WHITELISTED_IND: criteria.Whitelisted})
 
@@ -96,16 +97,16 @@ func (repo PostgresPartnershipRequestBlacklistRepository) CreatePartnershipReque
 	if repo.Database == nil {
 		return errors.New("data source of PostgresPartnershipRequestBlacklistRepository is not specified")
 	}
-	stmt := repo.SqlBuilder.Insert("").Into(DAS_PARTNERSHIP_REQUEST_BLACKLIST_TABLE).Columns(
-		DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_REPORTER_ID,
-		DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_BLOCKED_USER_ID,
-		DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_BLACKLIST_REASON_ID,
+	stmt := repo.SqlBuilder.Insert("").Into(DasPartnershipRequestBlacklistTable).Columns(
+		DasPartnershipRequestBlacklistColumnReporterID,
+		DasPartnershipRequestBlacklistColumnBlockedUserID,
+		DasPartnershipRequestBlacklistColumnBlacklistReasonID,
 		DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_DETAIL,
 		DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_WHITELISTED_IND,
 		common.ColumnCreateUserID,
-		common.COL_DATETIME_CREATED,
+		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
-		common.COL_DATETIME_UPDATED,
+		common.ColumnDateTimeUpdated,
 	).Values(
 		blacklist.ReporterID,
 		blacklist.BlockedUserID,
@@ -136,7 +137,7 @@ func (repo PostgresPartnershipRequestBlacklistRepository) DeletePartnershipReque
 	}
 	stmt := repo.SqlBuilder.
 		Delete("").
-		From(DAS_PARTNERSHIP_REQUEST_BLACKLIST_TABLE).
+		From(DasPartnershipRequestBlacklistTable).
 		Where(squirrel.Eq{common.ColumnPrimaryKey: blacklist.ID})
 	var err error
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
@@ -154,7 +155,7 @@ func (repo PostgresPartnershipRequestBlacklistRepository) UpdatePartnershipReque
 	if repo.Database == nil {
 		return errors.New("data source of PostgresPartnershipRequestBlacklistRepository is not specified")
 	}
-	stmt := repo.SqlBuilder.Update("").Table(DAS_PARTNERSHIP_REQUEST_BLACKLIST_TABLE)
+	stmt := repo.SqlBuilder.Update("").Table(DasPartnershipRequestBlacklistTable)
 	if blacklist.ID > 0 {
 		stmt = stmt.Set(DAS_PARTNERSHIP_REQUEST_BLACKLIST_COL_WHITELISTED_IND, blacklist.Whitelisted)
 

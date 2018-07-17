@@ -40,7 +40,7 @@ func (repo PostgresEventStatusRepository) GetEventStatus() ([]businesslogic.Even
 		fmt.Sprintf("%s, %s, %s, %s, %s, %s",
 			common.ColumnPrimaryKey, common.COL_NAME,
 			common.ColumnAbbreviation, common.COL_DESCRIPTION,
-			common.COL_DATETIME_CREATED, common.COL_DATETIME_UPDATED)).From(DAS_EVENT_STATUS_TABLE)
+			common.ColumnDateTimeCreated, common.ColumnDateTimeUpdated)).From(DAS_EVENT_STATUS_TABLE)
 
 	status := make([]businesslogic.EventStatus, 0)
 	rows, err := stmt.RunWith(repo.Database).Query()

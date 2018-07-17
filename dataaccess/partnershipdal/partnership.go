@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package partnership
+package partnershipdal
 
 import (
 	"database/sql"
@@ -54,8 +54,8 @@ func (repo PostgresPartnershipRepository) CreatePartnership(partnership *busines
 			DasPartnershipColumnFollowID,
 			DasPartnershipColumnSameSexIndicator,
 			DasPartnershipColumnFavorite,
-			common.COL_DATETIME_CREATED,
-			common.COL_DATETIME_UPDATED).Values(partnership.LeadID, partnership.FollowID, partnership.SameSex, partnership.FavoriteByLead, partnership.DateTimeCreated, time.Now())
+			common.ColumnDateTimeCreated,
+			common.ColumnDateTimeUpdated).Values(partnership.LeadID, partnership.FollowID, partnership.SameSex, partnership.FavoriteByLead, partnership.DateTimeCreated, time.Now())
 
 	_, err := clause.RunWith(repo.Database).Exec()
 	return err
@@ -71,8 +71,8 @@ func (repo PostgresPartnershipRepository) SearchPartnership(criteria businesslog
 		DasPartnershipColumnFollowID,
 		DasPartnershipColumnSameSexIndicator,
 		DasPartnershipColumnFavorite,
-		common.COL_DATETIME_CREATED,
-		common.COL_DATETIME_UPDATED)).From(DasPartnershipTable)
+		common.ColumnDateTimeCreated,
+		common.ColumnDateTimeUpdated)).From(DasPartnershipTable)
 	if criteria.PartnershipID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.PartnershipID})
 	}

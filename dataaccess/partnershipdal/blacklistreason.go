@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package partnership
+package partnershipdal
 
 import (
 	"database/sql"
@@ -25,37 +25,34 @@ import (
 	"github.com/Masterminds/squirrel"
 )
 
-const (
-	DAS_PARTNERSHIP_REQUEST_STATUS_TABLE                 = "DAS.PARTNERSHIP_REQUEST_STATUS"
-	DAS_PARTNERSHIP_REQUEST_STATUS_COL_REQUEST_STATUS_ID = "REQUEST_STATUS_ID"
-	DAS_PARTNERSHIP_REQUEST_STATUS_COL_CODE              = "CODE"
-)
-
-type PostgresPartnershipRequestStatusRepository struct {
+type PostgresPartnershipRequestBlacklistReasonRepository struct {
 	Database   *sql.DB
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresPartnershipRequestStatusRepository) GetPartnershipRequestStatus() ([]businesslogic.PartnershipRequestStatus, error) {
+func (repo PostgresPartnershipRequestBlacklistReasonRepository) GetPartnershipRequestBlacklistReasons() ([]businesslogic.PartnershipRequestBlacklistReason, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresPartnershipRequestStatusRepository is not specified")
+		return nil, errors.New("data source of PostgresPartnershipRequestBlacklistReasonRepository is not specified")
 	}
-	clause := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s",
+	stmt := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s",
 		common.ColumnPrimaryKey,
-		DAS_PARTNERSHIP_REQUEST_STATUS_COL_CODE,
+		common.COL_NAME,
 		common.COL_DESCRIPTION,
-		common.COL_DATETIME_CREATED,
-		common.COL_DATETIME_UPDATED)).From(DAS_PARTNERSHIP_REQUEST_STATUS_TABLE).OrderBy(common.ColumnPrimaryKey)
-	rows, err := clause.RunWith(repo.Database).Query()
-	output := make([]businesslogic.PartnershipRequestStatus, 0)
+		common.ColumnDateTimeCreated,
+		common.ColumnDateTimeUpdated,
+	)).From(DAS_PARTNERSHIP_REQUEST_BLACKLIST_REASON_TABLE).
+		OrderBy(common.ColumnPrimaryKey)
+	rows, err := stmt.RunWith(repo.Database).Query()
+	output := make([]businesslogic.PartnershipRequestBlacklistReason, 0)
 	if err != nil {
 		return output, err
 	}
+
 	for rows.Next() {
-		each := businesslogic.PartnershipRequestStatus{}
+		each := businesslogic.PartnershipRequestBlacklistReason{}
 		rows.Scan(
 			&each.ID,
-			&each.Code,
+			&each.Name,
 			&each.Description,
 			&each.DateTimeCreated,
 			&each.DateTimeUpdated,
@@ -64,5 +61,4 @@ func (repo PostgresPartnershipRequestStatusRepository) GetPartnershipRequestStat
 	}
 	rows.Close()
 	return output, err
-
 }

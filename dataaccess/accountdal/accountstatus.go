@@ -42,8 +42,8 @@ func (repo PostgresAccountStatusRepository) GetAccountStatus() ([]businesslogic.
 			common.COL_NAME,
 			common.ColumnAbbreviation,
 			common.COL_DESCRIPTION,
-			common.COL_DATETIME_CREATED,
-			common.COL_DATETIME_UPDATED)).
+			common.ColumnDateTimeCreated,
+			common.ColumnDateTimeUpdated)).
 		From(dasAccountStatusTable).
 		OrderBy(common.ColumnPrimaryKey)
 

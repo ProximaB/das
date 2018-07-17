@@ -55,9 +55,9 @@ func (repo PostgresEventRepository) SearchEvent(criteria businesslogic.SearchEve
 		common.COL_DESCRIPTION,
 		dasEventColumnEventStatusID,
 		common.ColumnCreateUserID,
-		common.COL_DATETIME_CREATED,
+		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
-		common.COL_DATETIME_UPDATED,
+		common.ColumnDateTimeUpdated,
 	)).From(dasEventTable).OrderBy(common.ColumnPrimaryKey)
 	if criteria.CompetitionID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_COMPETITION_ID: criteria.CompetitionID})
@@ -130,9 +130,9 @@ func (repo PostgresEventRepository) CreateEvent(event *businesslogic.Event) erro
 			common.COL_DESCRIPTION,
 			dasEventColumnEventStatusID,
 			common.ColumnCreateUserID,
-			common.COL_DATETIME_CREATED,
+			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.COL_DATETIME_UPDATED).
+			common.ColumnDateTimeUpdated).
 		Values(
 			event.CompetitionID,
 			event.CategoryID,

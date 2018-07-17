@@ -47,9 +47,9 @@ func (repo PostgresDanceRepository) SearchDance(criteria referencebll.SearchDanc
 			common.COL_DESCRIPTION,
 			common.COL_STYLE_ID,
 			common.ColumnCreateUserID,
-			common.COL_DATETIME_CREATED,
+			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.COL_DATETIME_UPDATED)).
+			common.ColumnDateTimeUpdated)).
 		From(DAS_DANCE_TABLE).OrderBy(common.ColumnPrimaryKey)
 	if len(criteria.Name) > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: criteria.Name})
@@ -92,9 +92,9 @@ func (repo PostgresDanceRepository) CreateDance(dance *referencebll.Dance) error
 		common.COL_DESCRIPTION,
 		common.COL_STYLE_ID,
 		common.ColumnCreateUserID,
-		common.COL_DATETIME_CREATED,
+		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
-		common.COL_DATETIME_UPDATED,
+		common.ColumnDateTimeUpdated,
 	).Values(
 		dance.Name,
 		dance.Abbreviation,
@@ -127,7 +127,7 @@ func (repo PostgresDanceRepository) UpdateDance(dance referencebll.Dance) error 
 			Set(common.COL_DESCRIPTION, dance.Description).
 			Set(common.COL_STYLE_ID, dance.StyleID).
 			Set(common.ColumnUpdateUserID, dance.UpdateUserID).
-			Set(common.COL_DATETIME_UPDATED, dance.DateTimeUpdated)
+			Set(common.ColumnDateTimeUpdated, dance.DateTimeUpdated)
 
 		var err error
 		if tx, txErr := repo.Database.Begin(); txErr != nil {

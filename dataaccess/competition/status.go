@@ -43,8 +43,8 @@ func (repo PostgresCompetitionStatusRepository) GetCompetitionAllStatus() ([]bus
 		common.COL_NAME,
 		common.ColumnAbbreviation,
 		common.COL_DESCRIPTION,
-		common.COL_DATETIME_CREATED,
-		common.COL_DATETIME_UPDATED)).
+		common.ColumnDateTimeCreated,
+		common.ColumnDateTimeUpdated)).
 		From(DAS_COMPETITION_STATUS_TABLE).OrderBy(common.ColumnPrimaryKey)
 	rows, err := clause.RunWith(repo.Database).Query()
 	status := make([]businesslogic.CompetitionStatus, 0)

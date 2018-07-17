@@ -47,9 +47,9 @@ func (repo PostgresCityRepository) CreateCity(city *referencebll.City) error {
 		Columns(common.COL_NAME,
 			common.COL_STATE_ID,
 			common.ColumnCreateUserID,
-			common.COL_DATETIME_CREATED,
+			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.COL_DATETIME_UPDATED).
+			common.ColumnDateTimeUpdated).
 		Values(
 			city.Name,
 			city.StateID,
@@ -100,7 +100,7 @@ func (repo PostgresCityRepository) UpdateCity(city referencebll.City) error {
 	}
 	stmt := repo.SqlBuilder.Update("").Table(dasCityTable).
 		SetMap(squirrel.Eq{common.COL_NAME: city.Name, common.COL_STATE_ID: city.StateID}).
-		SetMap(squirrel.Eq{common.COL_DATETIME_UPDATED: city.DateTimeUpdated}).Where(squirrel.Eq{common.ColumnPrimaryKey: city.ID})
+		SetMap(squirrel.Eq{common.ColumnDateTimeUpdated: city.DateTimeUpdated}).Where(squirrel.Eq{common.ColumnPrimaryKey: city.ID})
 
 	if city.UpdateUserID != nil {
 		stmt = stmt.SetMap(squirrel.Eq{common.ColumnUpdateUserID: city.UpdateUserID})
@@ -128,9 +128,9 @@ func (repo PostgresCityRepository) SearchCity(criteria referencebll.SearchCityCr
 			common.COL_NAME,
 			common.COL_STATE_ID,
 			common.ColumnCreateUserID,
-			common.COL_DATETIME_CREATED,
+			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.COL_DATETIME_UPDATED)).
+			common.ColumnDateTimeUpdated)).
 		From(dasCityTable).OrderBy(common.ColumnPrimaryKey)
 	if len(criteria.Name) > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: criteria.Name})

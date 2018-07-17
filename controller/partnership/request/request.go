@@ -26,6 +26,7 @@ import (
 	"time"
 )
 
+// PartnershipRequestServer serves requests that are related to Partnership Requests
 type PartnershipRequestServer struct {
 	authentication.IAuthenticationStrategy
 	businesslogic.IAccountRepository
@@ -158,4 +159,9 @@ func (server PartnershipRequestServer) UpdatePartnershipRequestHandler(w http.Re
 
 func (server PartnershipRequestServer) DeletePartnershipRequestHandler(w http.ResponseWriter, r *http.Request) {
 	util.RespondJsonResult(w, http.StatusNotImplemented, "not implemented", nil)
+}
+
+// GET /api/v1/partnership/role
+func (server PartnershipRequestServer) PartnershipRoleHandler(w http.ResponseWriter, r *http.Request) {
+
 }

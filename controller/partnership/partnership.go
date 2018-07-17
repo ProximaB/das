@@ -25,6 +25,7 @@ import (
 	"net/http"
 )
 
+// PartnershipServer serves requests that are related with partnership
 type PartnershipServer struct {
 	authentication.IAuthenticationStrategy
 	businesslogic.IAccountRepository

@@ -34,11 +34,34 @@ const (
 	PartnershipRoleFollow = "FOLLOW"
 )
 
+// PartnershipRole defines roles within a Partnership: lead and follow
+type PartnershipRole struct {
+	ID              int
+	Name            string
+	DateTimeCreated time.Time
+	DateTimeUpdated time.Time
+}
+
+type IPartnershipRoleRepository interface {
+	GetAllPartnershipRoles() ([]PartnershipRole, error)
+}
+
 const (
-	PartnershipStatusRegular   = "Regular"
-	PartnershipStatusTemporary = "Temporary"
-	PartnershipStatusPending   = "Pending"
+	PartnershipStatusRegular   = 1
+	PartnershipStatusTemporary = 2
+	PartnershipStatusPending   = 3
 )
+
+type PartnershipStatus struct {
+	ID              int
+	Name            string
+	DateTimeCreated time.Time
+	DateTimeUpdated time.Time
+}
+
+type IPartnershipStatusRepository interface {
+	GetAllPartnershipStatus() ([]PartnershipStatus, error)
+}
 
 // Partnership defines the combination of a lead and a follow. A partnership is uniquely identified
 // if the lead and follow are confirmed.

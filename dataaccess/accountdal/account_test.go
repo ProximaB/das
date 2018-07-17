@@ -23,7 +23,6 @@ import (
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"
-	"time"
 )
 
 var accountRepository = accountdal.PostgresAccountRepository{
@@ -32,33 +31,39 @@ var accountRepository = accountdal.PostgresAccountRepository{
 }
 
 func TestPostgresAccountRepository_SearchAccount(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
+	db, mock, _ := sqlmock.New()
 	defer db.Close()
+
+	res1, err := accountRepository.SearchAccount(businesslogic.SearchAccountCriteria{})
+	assert.NotNil(t, err, "should return an error when database connection is not specified")
+	assert.Nil(t, res1, "should not return a concrete object if database connection does not even exist")
+
 	accountRepository.Database = db
 	rows := sqlmock.NewRows(
 		[]string{
 			"ID",
-			"NAME",
-			"ABBREVIATION",
-			"YEAR_FOUNDED",
-			"COUNTRY_ID",
-			"CREATE_USER_ID",
+			"UUID",
+			"ACCOUNT_STATUS_ID",
+			"USER_GENDER_ID",
+			"LAST_NAME",
+			"MIDDLE_NAMES",
+			"FIRST_NAME",
+			"DATE_OF_BIRTH",
+			"EMAIl",
+			"PHONE",
+			"EMAIL_VERIFIED",
+			"PHONE_VERIFIED",
+			"HASH_ALGORITHM",
+			"PASSWORD_SALT",
+			"PASSWORD_HASH",
 			"DATETIME_CREATED",
-			"UPDATE_USER_ID",
 			"DATETIME_UPDATED",
+			"TOS_ACCEPTED",
+			"PP_ACCEPTED",
+			"BY_GUARDIAN",
+			"GUARDIAN_SIGNATURE",
 		},
-	).AddRow(1,
-		"Pre Teen I",
-		"Pre",
-		1233,
-		8,
-		2,
-		time.Now(),
-		3,
-		time.Now())
+	)
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
 	results, err := accountRepository.SearchAccount(businesslogic.SearchAccountCriteria{
 		Email: "test",
@@ -69,21 +74,34 @@ func TestPostgresAccountRepository_SearchAccount(t *testing.T) {
 }
 
 func TestPostgresAccountRepository_CreateAccount(t *testing.T) {
-	db, mock, err := sqlmock.New()
-	if err != nil {
-		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
-	}
-
+	db, mock, _ := sqlmock.New()
 	defer db.Close()
+
 	accountRepository.Database = db
 	rows := sqlmock.NewRows(
 		[]string{
 			"ID",
 			"UUID",
+			"ACCOUNT_STATUS_ID",
+			"USER_GENDER_ID",
+			"LAST_NAME",
+			"MIDDLE_NAMES",
+			"FIRST_NAME",
+			"DATE_OF_BIRTH",
+			"EMAIl",
+			"PHONE",
+			"EMAIL_VERIFIED",
+			"PHONE_VERIFIED",
+			"HASH_ALGORITHM",
+			"PASSWORD_SALT",
+			"PASSWORD_HASH",
+			"DATETIME_CREATED",
+			"DATETIME_UPDATED",
+			"TOS_ACCEPTED",
+			"PP_ACCEPTED",
+			"BY_GUARDIAN",
+			"GUARDIAN_SIGNATURE",
 		},
-	).AddRow(
-		1,
-		"abc",
 	)
 
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)

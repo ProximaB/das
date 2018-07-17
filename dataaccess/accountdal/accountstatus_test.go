@@ -14,9 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package accountdal
+package accountdal_test
 
 import (
+	"github.com/DancesportSoftware/das/dataaccess/accountdal"
 	"github.com/Masterminds/squirrel"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
@@ -24,7 +25,7 @@ import (
 	"time"
 )
 
-var accountStatusRepo = PostgresAccountStatusRepository{
+var accountStatusRepo = accountdal.PostgresAccountStatusRepository{
 	Database:   nil,
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }

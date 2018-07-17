@@ -26,7 +26,6 @@ import (
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
-	"log"
 )
 
 const (
@@ -176,10 +175,6 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 	if len(criteria.FirstName) > 0 {
 		stmt = stmt.Where(squirrel.Eq{DAS_USER_ACCOUNT_COL_FIRST_NAME: criteria.FirstName})
 	}
-
-	clause, args, _ := stmt.ToSql()
-	log.Println(clause)
-	log.Println(args)
 
 	accounts := make([]businesslogic.Account, 0)
 	rows, err := stmt.RunWith(repo.Database).Query()

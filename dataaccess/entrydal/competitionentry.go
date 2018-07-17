@@ -52,7 +52,7 @@ func (repo PostgresAthleteCompetitionEntryRepository) CreateAthleteCompetitionEn
 		Into(dasAthleteCompetitionEntryTable).
 		Columns(
 			common.COL_COMPETITION_ID,
-			common.COL_ACCOUNT_ID,
+			common.ColumnAccountID,
 			dasCompetitionEntryColCheckinInd,
 			dasCompetitionEntryColCheckinDateTime,
 			common.ColumnCreateUserID,
@@ -89,7 +89,7 @@ func (repo PostgresAthleteCompetitionEntryRepository) SearchAthleteCompetitionEn
 	clause := repo.SQLBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s",
 		common.ColumnPrimaryKey,
 		common.COL_COMPETITION_ID,
-		common.COL_ACCOUNT_ID,
+		common.ColumnAccountID,
 		dasCompetitionEntryColCheckinInd,
 		dasCompetitionEntryColCheckinDateTime,
 		common.ColumnCreateUserID,
@@ -101,7 +101,7 @@ func (repo PostgresAthleteCompetitionEntryRepository) SearchAthleteCompetitionEn
 		clause = clause.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ID})
 	}
 	if criteria.AthleteID > 0 {
-		clause = clause.Where(squirrel.Eq{common.COL_ACCOUNT_ID: criteria.AthleteID})
+		clause = clause.Where(squirrel.Eq{common.ColumnAccountID: criteria.AthleteID})
 	}
 	if criteria.CompetitionID > 0 {
 		clause = clause.Where(squirrel.Eq{common.COL_COMPETITION_ID: criteria.CompetitionID})

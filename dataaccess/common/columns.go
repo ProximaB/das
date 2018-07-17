@@ -19,7 +19,7 @@ package common
 const (
 	ColumnPrimaryKey      = "ID"
 	COL_NAME              = "NAME"
-	COL_ACCOUNT_ID        = "ACCOUNT_ID"
+	ColumnAccountID       = "ACCOUNT_ID"
 	ColumnAccountTypeID   = "ACCOUNT_TYPE_ID"
 	ColumnUUID            = "UUID"
 	ColumnAbbreviation    = "ABBREVIATION"

@@ -18,12 +18,14 @@ package controller
 
 import (
 	"encoding/json"
+	"net/http"
+
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/controller/util/authentication"
-	"net/http"
 )
 
+// CompetitionRegistrationServer handles requests that create or update competition registrations
 type CompetitionRegistrationServer struct {
 	businesslogic.IAccountRepository
 	businesslogic.ICompetitionRepository
@@ -36,7 +38,7 @@ type CompetitionRegistrationServer struct {
 }
 
 // CreateAthleteRegistrationHandler handles the request
-//	POST /api/athlete/registration
+//	POST /api/competition/registration
 // This DasController is for athlete use only. Organizer will have to use a different DasController
 func (server CompetitionRegistrationServer) CreateAthleteRegistrationHandler(w http.ResponseWriter, r *http.Request) {
 	// validate identity first

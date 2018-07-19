@@ -24,7 +24,7 @@ import (
 	"net/http"
 )
 
-const apiReferenceCountryEndpoint = "/api/reference/country"
+const apiReferenceCountryEndpoint = "/api/v1.0/reference/country"
 
 var countryServer = reference.CountryServer{
 	database.CountryRepository,

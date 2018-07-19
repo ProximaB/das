@@ -24,7 +24,7 @@ import (
 	"net/http"
 )
 
-const apiReferenceDanceEndpoint = "/api/reference/dance"
+const apiReferenceDanceEndpoint = "/api/v1.0/reference/dance"
 
 var danceServer = reference.DanceServer{
 	database.DanceRepository,

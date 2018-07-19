@@ -24,7 +24,7 @@ import (
 	"net/http"
 )
 
-const apiReferenceSchoolEndpoint = "/api/reference/school"
+const apiReferenceSchoolEndpoint = "/api/v1.0/reference/school"
 
 var schoolServer = reference.SchoolServer{
 	database.SchoolRepository,

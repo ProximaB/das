@@ -24,7 +24,7 @@ import (
 	"net/http"
 )
 
-const apiReferenceStudioEndpoint = "/api/reference/studio"
+const apiReferenceStudioEndpoint = "/api/v1.0/reference/studio"
 
 var studioServer = reference.StudioServer{
 	database.StudioRepository,

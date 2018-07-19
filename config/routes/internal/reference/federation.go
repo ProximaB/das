@@ -24,7 +24,7 @@ import (
 	"net/http"
 )
 
-const apiReferenceFederationEndpoint = "/api/reference/federation"
+const apiReferenceFederationEndpoint = "/api/v1.0/reference/federation"
 
 var federationServer = reference.FederationServer{
 	database.FederationRepository,

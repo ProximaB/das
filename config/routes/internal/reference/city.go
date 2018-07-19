@@ -24,7 +24,7 @@ import (
 	"net/http"
 )
 
-const apiReferenceCityEndpoint = "/api/reference/city"
+const apiReferenceCityEndpoint = "/api/v1.0/reference/city"
 
 var cityServer = reference.CityServer{
 	ICityRepository: database.CityRepository,

@@ -26,12 +26,12 @@ import (
 )
 
 type StateServer struct {
-	referencebll.IStateRepository
+	reference.IStateRepository
 }
 
 // GET /api/reference/state
 func (server StateServer) SearchStateHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(referencebll.SearchStateCriteria)
+	criteria := new(reference.SearchStateCriteria)
 	err := util.ParseRequestData(r, criteria)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

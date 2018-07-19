@@ -36,7 +36,7 @@ type PostgresFederationRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresFederationRepository) CreateFederation(federation *referencebll.Federation) error {
+func (repo PostgresFederationRepository) CreateFederation(federation *reference.Federation) error {
 	if repo.Database == nil {
 		log.Println(common.ErrorMessageEmptyDatabase)
 	}
@@ -76,7 +76,7 @@ func (repo PostgresFederationRepository) CreateFederation(federation *referenceb
 	return err
 }
 
-func (repo PostgresFederationRepository) SearchFederation(criteria referencebll.SearchFederationCriteria) ([]referencebll.Federation, error) {
+func (repo PostgresFederationRepository) SearchFederation(criteria reference.SearchFederationCriteria) ([]reference.Federation, error) {
 	if repo.Database == nil {
 		log.Println(common.ErrorMessageEmptyDatabase)
 	}
@@ -103,13 +103,13 @@ func (repo PostgresFederationRepository) SearchFederation(criteria referencebll.
 		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ID})
 	}
 
-	federations := make([]referencebll.Federation, 0)
+	federations := make([]reference.Federation, 0)
 	rows, err := stmt.RunWith(repo.Database).Query()
 	if err != nil {
 		return federations, err
 	}
 	for rows.Next() {
-		each := referencebll.Federation{}
+		each := reference.Federation{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -127,7 +127,7 @@ func (repo PostgresFederationRepository) SearchFederation(criteria referencebll.
 	return federations, err
 }
 
-func (repo PostgresFederationRepository) DeleteFederation(federation referencebll.Federation) error {
+func (repo PostgresFederationRepository) DeleteFederation(federation reference.Federation) error {
 	if repo.Database == nil {
 		log.Println(common.ErrorMessageEmptyDatabase)
 	}
@@ -143,7 +143,7 @@ func (repo PostgresFederationRepository) DeleteFederation(federation referencebl
 	return err
 }
 
-func (repo PostgresFederationRepository) UpdateFederation(federation referencebll.Federation) error {
+func (repo PostgresFederationRepository) UpdateFederation(federation reference.Federation) error {
 	if repo.Database == nil {
 		log.Println(common.ErrorMessageEmptyDatabase)
 	}

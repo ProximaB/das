@@ -35,7 +35,7 @@ type PostgresDanceRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresDanceRepository) SearchDance(criteria referencebll.SearchDanceCriteria) ([]referencebll.Dance, error) {
+func (repo PostgresDanceRepository) SearchDance(criteria reference.SearchDanceCriteria) ([]reference.Dance, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresDanceRepository is not specified")
 	}
@@ -61,13 +61,13 @@ func (repo PostgresDanceRepository) SearchDance(criteria referencebll.SearchDanc
 		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.DanceID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	dances := make([]referencebll.Dance, 0)
+	dances := make([]reference.Dance, 0)
 	if err != nil {
 		return dances, err
 	}
 
 	for rows.Next() {
-		each := referencebll.Dance{}
+		each := reference.Dance{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -85,7 +85,7 @@ func (repo PostgresDanceRepository) SearchDance(criteria referencebll.SearchDanc
 	return dances, err
 }
 
-func (repo PostgresDanceRepository) CreateDance(dance *referencebll.Dance) error {
+func (repo PostgresDanceRepository) CreateDance(dance *reference.Dance) error {
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_DANCE_TABLE).Columns(
 		common.COL_NAME,
 		common.ColumnAbbreviation,
@@ -119,7 +119,7 @@ func (repo PostgresDanceRepository) CreateDance(dance *referencebll.Dance) error
 	return err
 }
 
-func (repo PostgresDanceRepository) UpdateDance(dance referencebll.Dance) error {
+func (repo PostgresDanceRepository) UpdateDance(dance reference.Dance) error {
 	stmt := repo.SqlBuilder.Update("").Table(DAS_DANCE_TABLE)
 	if dance.ID > 0 {
 		stmt = stmt.Set(common.COL_NAME, dance.Name).
@@ -141,7 +141,7 @@ func (repo PostgresDanceRepository) UpdateDance(dance referencebll.Dance) error 
 	return errors.New("not implemented")
 }
 
-func (repo PostgresDanceRepository) DeleteDance(dance referencebll.Dance) error {
+func (repo PostgresDanceRepository) DeleteDance(dance reference.Dance) error {
 	if repo.Database == nil {
 		log.Println(common.ErrorMessageEmptyDatabase)
 	}

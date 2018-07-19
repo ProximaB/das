@@ -35,7 +35,7 @@ type PostgresCountryRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresCountryRepository) CreateCountry(country *referencebll.Country) error {
+func (repo PostgresCountryRepository) CreateCountry(country *reference.Country) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCountryRepository is not specified")
 	}
@@ -69,7 +69,7 @@ func (repo PostgresCountryRepository) CreateCountry(country *referencebll.Countr
 	return err
 }
 
-func (repo PostgresCountryRepository) DeleteCountry(country referencebll.Country) error {
+func (repo PostgresCountryRepository) DeleteCountry(country reference.Country) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCountryRepository is not specified")
 	}
@@ -85,7 +85,7 @@ func (repo PostgresCountryRepository) DeleteCountry(country referencebll.Country
 	return err
 }
 
-func (repo PostgresCountryRepository) UpdateCountry(country referencebll.Country) error {
+func (repo PostgresCountryRepository) UpdateCountry(country reference.Country) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCountryRepository is not specified")
 	}
@@ -113,7 +113,7 @@ func (repo PostgresCountryRepository) UpdateCountry(country referencebll.Country
 	}
 }
 
-func (repo PostgresCountryRepository) SearchCountry(criteria referencebll.SearchCountryCriteria) ([]referencebll.Country, error) {
+func (repo PostgresCountryRepository) SearchCountry(criteria reference.SearchCountryCriteria) ([]reference.Country, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresCountryRepository is not specified")
 	}
@@ -139,12 +139,12 @@ func (repo PostgresCountryRepository) SearchCountry(criteria referencebll.Search
 	}
 
 	rows, err := stmt.RunWith(repo.Database).Query()
-	countries := make([]referencebll.Country, 0)
+	countries := make([]reference.Country, 0)
 	if err != nil {
 		return countries, err
 	}
 	for rows.Next() {
-		each := referencebll.Country{}
+		each := reference.Country{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,

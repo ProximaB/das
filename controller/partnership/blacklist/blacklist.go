@@ -41,7 +41,7 @@ type PartnershipRequestBlacklistServer struct {
 // GET /api/partnership/blacklist
 func (server PartnershipRequestBlacklistServer) GetBlacklistedAccountHandler(w http.ResponseWriter, r *http.Request) {
 	ctx := appengine.NewContext(r)
-	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
+	account, _ := server.GetCurrentUser(r)
 
 	blacklist, err := account.GetBlacklistedAccounts(server.IAccountRepository, server.IPartnershipRequestBlacklistRepository)
 

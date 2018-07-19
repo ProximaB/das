@@ -45,7 +45,7 @@ func (server PartnershipRequestServer) CreatePartnershipRequestHandler(w http.Re
 		return
 	}
 
-	sender, _ := server.GetCurrentUser(r, server.IAccountRepository)
+	sender, _ := server.GetCurrentUser(r)
 	recipient := businesslogic.GetAccountByEmail(dto.RecipientEmail, server.IAccountRepository)
 
 	if recipient.ID == 0 {
@@ -87,7 +87,7 @@ func (server PartnershipRequestServer) CreatePartnershipRequestHandler(w http.Re
 // GET /api/partnership/request
 // Get a list of received partnership requests
 func (server PartnershipRequestServer) SearchPartnershipRequestHandler(w http.ResponseWriter, r *http.Request) {
-	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
+	account, _ := server.GetCurrentUser(r)
 	criteria := new(businesslogic.SearchPartnershipRequestCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
@@ -113,8 +113,8 @@ func (server PartnershipRequestServer) SearchPartnershipRequestHandler(w http.Re
 	for _, each := range requests {
 		data = append(data, viewmodel.PartnershipRequest{
 			ID:              each.PartnershipRequestID,
-			Sender:          businesslogic.GetAccountByID(each.SenderID, server.IAccountRepository).GetName(),
-			Recipient:       businesslogic.GetAccountByID(each.RecipientID, server.IAccountRepository).GetName(),
+			Sender:          businesslogic.GetAccountByID(each.SenderID, server.IAccountRepository).FullName(),
+			Recipient:       businesslogic.GetAccountByID(each.RecipientID, server.IAccountRepository).FullName(),
 			Message:         each.Message,
 			Status:          each.Status,
 			DateTimeCreated: each.DateTimeCreated,
@@ -128,7 +128,7 @@ func (server PartnershipRequestServer) SearchPartnershipRequestHandler(w http.Re
 
 // PUT /api/partnership/request
 func (server PartnershipRequestServer) UpdatePartnershipRequestHandler(w http.ResponseWriter, r *http.Request) {
-	currentUser, _ := server.GetCurrentUser(r, server.IAccountRepository)
+	currentUser, _ := server.GetCurrentUser(r)
 
 	respondDTO := new(viewmodel.PartnershipRequestResponse)
 	if parseErr := util.ParseRequestBodyData(r, respondDTO); parseErr != nil {

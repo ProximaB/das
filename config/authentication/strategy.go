@@ -21,6 +21,6 @@ import (
 	"github.com/DancesportSoftware/das/controller/util/authentication"
 )
 
-var AuthenticationStrategy = authentication.JwtAuthenticationStrategy{
+var AuthenticationStrategy = authentication.JWTAuthenticationStrategy{
 	database.AccountRepository,
 }

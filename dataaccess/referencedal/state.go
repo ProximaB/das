@@ -34,7 +34,7 @@ type PostgresStateRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresStateRepository) SearchState(criteria referencebll.SearchStateCriteria) ([]referencebll.State, error) {
+func (repo PostgresStateRepository) SearchState(criteria reference.SearchStateCriteria) ([]reference.State, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresStateRepository is not specified")
 	}
@@ -61,14 +61,14 @@ func (repo PostgresStateRepository) SearchState(criteria referencebll.SearchStat
 	stmt = stmt.OrderBy(common.ColumnPrimaryKey,
 		common.COL_NAME)
 
-	states := make([]referencebll.State, 0)
+	states := make([]reference.State, 0)
 	rows, err := stmt.RunWith(repo.Database).Query()
 	if err != nil {
 		return states, err
 	}
 
 	for rows.Next() {
-		each := referencebll.State{}
+		each := reference.State{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -87,7 +87,7 @@ func (repo PostgresStateRepository) SearchState(criteria referencebll.SearchStat
 	return states, nil
 }
 
-func (repo PostgresStateRepository) CreateState(state *referencebll.State) error {
+func (repo PostgresStateRepository) CreateState(state *reference.State) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStateRepository is not specified")
 	}
@@ -122,7 +122,7 @@ func (repo PostgresStateRepository) CreateState(state *referencebll.State) error
 	return err
 }
 
-func (repo PostgresStateRepository) UpdateState(state referencebll.State) error {
+func (repo PostgresStateRepository) UpdateState(state reference.State) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStateRepository is not specified")
 	}
@@ -149,7 +149,7 @@ func (repo PostgresStateRepository) UpdateState(state referencebll.State) error 
 	}
 }
 
-func (repo PostgresStateRepository) DeleteState(state referencebll.State) error {
+func (repo PostgresStateRepository) DeleteState(state reference.State) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStateRepository is not specified")
 	}

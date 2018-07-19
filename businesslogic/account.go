@@ -87,8 +87,8 @@ type SearchAccountCriteria struct {
 	AccountStatus int
 }
 
-// GetName returns the full name of a user (excluding middle name, if any)
-func (account Account) GetName() string {
+// FullName returns the full name of a user (excluding middle name, if any)
+func (account Account) FullName() string {
 	return account.FirstName + " " + account.LastName
 }
 

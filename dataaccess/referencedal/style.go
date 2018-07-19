@@ -36,7 +36,7 @@ type PostgresStyleRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresStyleRepository) CreateStyle(style *referencebll.Style) error {
+func (repo PostgresStyleRepository) CreateStyle(style *reference.Style) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStyleRepository is not specified")
 	}
@@ -69,7 +69,7 @@ func (repo PostgresStyleRepository) CreateStyle(style *referencebll.Style) error
 	return err
 }
 
-func (repo PostgresStyleRepository) DeleteStyle(style referencebll.Style) error {
+func (repo PostgresStyleRepository) DeleteStyle(style reference.Style) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStyleRepository is not specified")
 	}
@@ -87,7 +87,7 @@ func (repo PostgresStyleRepository) DeleteStyle(style referencebll.Style) error 
 	return err
 }
 
-func (repo PostgresStyleRepository) SearchStyle(criteria referencebll.SearchStyleCriteria) ([]referencebll.Style, error) {
+func (repo PostgresStyleRepository) SearchStyle(criteria reference.SearchStyleCriteria) ([]reference.Style, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresStyleRepository is not specified")
 	}
@@ -109,12 +109,12 @@ func (repo PostgresStyleRepository) SearchStyle(criteria referencebll.SearchStyl
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: criteria.Name})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	styles := make([]referencebll.Style, 0)
+	styles := make([]reference.Style, 0)
 	if err != nil {
 		return styles, err
 	}
 	for rows.Next() {
-		each := referencebll.Style{}
+		each := reference.Style{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -130,7 +130,7 @@ func (repo PostgresStyleRepository) SearchStyle(criteria referencebll.SearchStyl
 	return styles, err
 }
 
-func (repo PostgresStyleRepository) UpdateStyle(style referencebll.Style) error {
+func (repo PostgresStyleRepository) UpdateStyle(style reference.Style) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStyleRepository is not specified")
 	}

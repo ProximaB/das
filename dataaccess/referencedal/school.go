@@ -34,7 +34,7 @@ type PostgresSchoolRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresSchoolRepository) CreateSchool(school *referencebll.School) error {
+func (repo PostgresSchoolRepository) CreateSchool(school *reference.School) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresSchoolRepository is not specified")
 	}
@@ -67,7 +67,7 @@ func (repo PostgresSchoolRepository) CreateSchool(school *referencebll.School) e
 	return err
 }
 
-func (repo PostgresSchoolRepository) UpdateSchool(school referencebll.School) error {
+func (repo PostgresSchoolRepository) UpdateSchool(school reference.School) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresSchoolRepository is not specified")
 	}
@@ -92,7 +92,7 @@ func (repo PostgresSchoolRepository) UpdateSchool(school referencebll.School) er
 	}
 }
 
-func (repo PostgresSchoolRepository) DeleteSchool(school referencebll.School) error {
+func (repo PostgresSchoolRepository) DeleteSchool(school reference.School) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresSchoolRepository is not specified")
 	}
@@ -112,7 +112,7 @@ func (repo PostgresSchoolRepository) DeleteSchool(school referencebll.School) er
 	return err
 }
 
-func (repo PostgresSchoolRepository) SearchSchool(criteria referencebll.SearchSchoolCriteria) ([]referencebll.School, error) {
+func (repo PostgresSchoolRepository) SearchSchool(criteria reference.SearchSchoolCriteria) ([]reference.School, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresSchoolRepository is not specified")
 	}
@@ -142,12 +142,12 @@ func (repo PostgresSchoolRepository) SearchSchool(criteria referencebll.SearchSc
 			Where(squirrel.Eq{`C.STATE_ID`: criteria.StateID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	schools := make([]referencebll.School, 0)
+	schools := make([]reference.School, 0)
 	if err != nil {
 		return schools, err
 	}
 	for rows.Next() {
-		each := referencebll.School{}
+		each := reference.School{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,

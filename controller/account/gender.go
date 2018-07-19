@@ -25,7 +25,7 @@ import (
 
 // GenderServer serves requests that ask for all possible gender options in DAS
 type GenderServer struct {
-	referencebll.IGenderRepository
+	reference.IGenderRepository
 }
 
 // GetAccountGenderHandler handles request

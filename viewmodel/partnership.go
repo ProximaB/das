@@ -33,8 +33,8 @@ type Partnership struct {
 func PartnershipDataModelToViewModel(partnership businesslogic.Partnership) Partnership {
 	return Partnership{
 		ID:         partnership.ID,
-		LeadName:   partnership.Lead.GetName(),
-		FollowName: partnership.Follow.GetName(),
+		LeadName:   partnership.Lead.FullName(),
+		FollowName: partnership.Follow.FullName(),
 		Since:      partnership.DateTimeCreated,
 		SameSexIND: partnership.SameSex,
 		Favorite:   partnership.FavoriteByLead,

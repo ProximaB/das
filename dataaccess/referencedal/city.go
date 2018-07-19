@@ -37,7 +37,7 @@ type PostgresCityRepository struct {
 }
 
 // CreateCity inserts a new City record in the database and updates the ID key of city
-func (repo PostgresCityRepository) CreateCity(city *referencebll.City) error {
+func (repo PostgresCityRepository) CreateCity(city *reference.City) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCityRepository is not specified")
 	}
@@ -70,7 +70,7 @@ func (repo PostgresCityRepository) CreateCity(city *referencebll.City) error {
 }
 
 // DeleteCity removes the City record from the database
-func (repo PostgresCityRepository) DeleteCity(city referencebll.City) error {
+func (repo PostgresCityRepository) DeleteCity(city reference.City) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCityRepository is not specified")
 	}
@@ -94,7 +94,7 @@ func (repo PostgresCityRepository) DeleteCity(city referencebll.City) error {
 }
 
 // UpdateCity updates the value in a City record
-func (repo PostgresCityRepository) UpdateCity(city referencebll.City) error {
+func (repo PostgresCityRepository) UpdateCity(city reference.City) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCityRepository is not specified")
 	}
@@ -118,7 +118,7 @@ func (repo PostgresCityRepository) UpdateCity(city referencebll.City) error {
 }
 
 // SearchCity selects cityes
-func (repo PostgresCityRepository) SearchCity(criteria referencebll.SearchCityCriteria) ([]referencebll.City, error) {
+func (repo PostgresCityRepository) SearchCity(criteria reference.SearchCityCriteria) ([]reference.City, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresCityRepository is not specified")
 	}
@@ -143,12 +143,12 @@ func (repo PostgresCityRepository) SearchCity(criteria referencebll.SearchCityCr
 	}
 
 	rows, err := stmt.RunWith(repo.Database).Query()
-	cities := make([]referencebll.City, 0)
+	cities := make([]reference.City, 0)
 	if err != nil {
 		return cities, err
 	}
 	for rows.Next() {
-		each := referencebll.City{}
+		each := reference.City{}
 		scanErr := rows.Scan(
 			&each.ID,
 			&each.Name,

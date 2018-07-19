@@ -46,7 +46,7 @@ func TestPostgresProficiencyRepository_SearchProficiency(t *testing.T) {
 	).AddRow(1, "Gold", 3, "USA DANCE Gold", 3, time.Now(), 4, time.Now())
 
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
-	proficienies, _ := proficiencyRepo.SearchProficiency(referencebll.SearchProficiencyCriteria{})
+	proficienies, _ := proficiencyRepo.SearchProficiency(reference.SearchProficiencyCriteria{})
 
 	assert.EqualValues(t, 1, len(proficienies))
 }
@@ -59,7 +59,7 @@ func TestPostgresProficiencyRepository_CreateProficiency(t *testing.T) {
 	defer db.Close()
 	proficiencyRepo.Database = db
 
-	args := referencebll.Proficiency{Name: "Gold"}
+	args := reference.Proficiency{Name: "Gold"}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`INSERT INTO DAS.PROFICIENCY (NAME, DIVISION_ID, DESCRIPTION, CREATE_USER_ID,
@@ -78,7 +78,7 @@ func TestPostgresProficiencyRepository_DeleteProficiency(t *testing.T) {
 	defer db.Close()
 	proficiencyRepo.Database = db
 
-	args := referencebll.Proficiency{ID: 12, Name: "Gold"}
+	args := reference.Proficiency{ID: 12, Name: "Gold"}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`DELETE FROM DAS.PROFICIENCY`).WillReturnResult(sqlmock.NewResult(12, 1))
@@ -96,7 +96,7 @@ func TestPostgresProficiencyRepository_UpdateProficiency(t *testing.T) {
 	defer db.Close()
 	proficiencyRepo.Database = db
 
-	args := referencebll.Proficiency{ID: 12, Name: "Gold"}
+	args := reference.Proficiency{ID: 12, Name: "Gold"}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`UPDATE DAS.PROFICIENCY`).WillReturnResult(sqlmock.NewResult(12, 1))

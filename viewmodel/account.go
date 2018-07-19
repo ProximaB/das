@@ -64,7 +64,7 @@ func (dto CreateAccount) ToAccountModel() businesslogic.Account {
 	account := businesslogic.Account{
 		FirstName:             dto.FirstName,
 		LastName:              dto.LastName,
-		UserGenderID:          referencebll.GENDER_UNKNOWN,
+		UserGenderID:          reference.GENDER_UNKNOWN,
 		Email:                 dto.Email,
 		Phone:                 dto.Phone,
 		ToSAccepted:           dto.ToSAccepted,

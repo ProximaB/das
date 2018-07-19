@@ -25,12 +25,12 @@ import (
 )
 
 type SchoolServer struct {
-	referencebll.ISchoolRepository
+	reference.ISchoolRepository
 }
 
 // GET /api/reference/school
 func (server SchoolServer) SearchSchoolHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(referencebll.SearchSchoolCriteria)
+	criteria := new(reference.SearchSchoolCriteria)
 
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())

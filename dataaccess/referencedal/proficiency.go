@@ -34,7 +34,7 @@ type PostgresProficiencyRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresProficiencyRepository) CreateProficiency(proficiency *referencebll.Proficiency) error {
+func (repo PostgresProficiencyRepository) CreateProficiency(proficiency *reference.Proficiency) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresProficiencyRepository is not specified")
 	}
@@ -69,7 +69,7 @@ func (repo PostgresProficiencyRepository) CreateProficiency(proficiency *referen
 	return err
 }
 
-func (repo PostgresProficiencyRepository) UpdateProficiency(proficiency referencebll.Proficiency) error {
+func (repo PostgresProficiencyRepository) UpdateProficiency(proficiency reference.Proficiency) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresProficiencyRepository is not specified")
 	}
@@ -96,7 +96,7 @@ func (repo PostgresProficiencyRepository) UpdateProficiency(proficiency referenc
 	}
 }
 
-func (repo PostgresProficiencyRepository) DeleteProficiency(proficiency referencebll.Proficiency) error {
+func (repo PostgresProficiencyRepository) DeleteProficiency(proficiency reference.Proficiency) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresProficiencyRepository is not specified")
 	}
@@ -116,7 +116,7 @@ func (repo PostgresProficiencyRepository) DeleteProficiency(proficiency referenc
 	}
 }
 
-func (repo PostgresProficiencyRepository) SearchProficiency(criteria referencebll.SearchProficiencyCriteria) ([]referencebll.Proficiency, error) {
+func (repo PostgresProficiencyRepository) SearchProficiency(criteria reference.SearchProficiencyCriteria) ([]reference.Proficiency, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresProficiencyRepository is not specified")
 	}
@@ -138,12 +138,12 @@ func (repo PostgresProficiencyRepository) SearchProficiency(criteria referencebl
 		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ProficiencyID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	proficiencies := make([]referencebll.Proficiency, 0)
+	proficiencies := make([]reference.Proficiency, 0)
 	if err != nil {
 		return proficiencies, err
 	}
 	for rows.Next() {
-		each := referencebll.Proficiency{}
+		each := reference.Proficiency{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,

@@ -42,7 +42,7 @@ type CompetitionRegistrationServer struct {
 // This DasController is for athlete use only. Organizer will have to use a different DasController
 func (server CompetitionRegistrationServer) CreateAthleteRegistrationHandler(w http.ResponseWriter, r *http.Request) {
 	// validate identity first
-	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
+	account, _ := server.GetCurrentUser(r)
 
 	registrationDTO := new(businesslogic.EventRegistration)
 	if parseErr := util.ParseRequestBodyData(r, registrationDTO); parseErr != nil {
@@ -89,7 +89,7 @@ func (server CompetitionRegistrationServer) CreateAthleteRegistrationHandler(w h
 // This DasController is for athlete use only. Organizer will have to use a different DasController
 // THis is not for public view. For public view, see getCompetitiveBallroomEventEntryHandler()
 func (server CompetitionRegistrationServer) GetAthleteEventRegistrationHandler(w http.ResponseWriter, r *http.Request) {
-	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
+	account, _ := server.GetCurrentUser(r)
 
 	if account.ID == 0 || !account.HasRole(businesslogic.AccountTypeAthlete) {
 		w.WriteHeader(http.StatusUnauthorized)

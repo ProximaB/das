@@ -37,7 +37,7 @@ type PostgresAgeRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresAgeRepository) CreateAge(age *referencebll.Age) error {
+func (repo PostgresAgeRepository) CreateAge(age *reference.Age) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresAgeRepository is not specified")
 	}
@@ -75,7 +75,7 @@ func (repo PostgresAgeRepository) CreateAge(age *referencebll.Age) error {
 	return err
 }
 
-func (repo PostgresAgeRepository) DeleteAge(age referencebll.Age) error {
+func (repo PostgresAgeRepository) DeleteAge(age reference.Age) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresAgeRepository is not specified")
 	}
@@ -91,7 +91,7 @@ func (repo PostgresAgeRepository) DeleteAge(age referencebll.Age) error {
 	return err
 }
 
-func (repo PostgresAgeRepository) SearchAge(criteria referencebll.SearchAgeCriteria) ([]referencebll.Age, error) {
+func (repo PostgresAgeRepository) SearchAge(criteria reference.SearchAgeCriteria) ([]reference.Age, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresAgeRepository is not specified")
 	}
@@ -117,12 +117,12 @@ func (repo PostgresAgeRepository) SearchAge(criteria referencebll.SearchAgeCrite
 		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.AgeID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	output := make([]referencebll.Age, 0)
+	output := make([]reference.Age, 0)
 	if err != nil {
 		return output, err
 	}
 	for rows.Next() {
-		age := referencebll.Age{}
+		age := reference.Age{}
 		rows.Scan(
 			&age.ID,
 			&age.Name,
@@ -142,7 +142,7 @@ func (repo PostgresAgeRepository) SearchAge(criteria referencebll.SearchAgeCrite
 	return output, err
 }
 
-func (repo PostgresAgeRepository) UpdateAge(age referencebll.Age) error {
+func (repo PostgresAgeRepository) UpdateAge(age reference.Age) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresAgeRepository is not specified")
 	}

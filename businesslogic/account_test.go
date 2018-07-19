@@ -30,7 +30,7 @@ import (
 var testAthleteAccount = businesslogic.Account{
 	FirstName:             "First Name",
 	LastName:              "Last Name",
-	UserGenderID:          referencebll.GENDER_MALE,
+	UserGenderID:          reference.GENDER_MALE,
 	DateOfBirth:           time.Date(2017, time.January, 1, 1, 1, 1, 1, time.UTC),
 	ToSAccepted:           true,
 	PrivacyPolicyAccepted: true,
@@ -43,7 +43,7 @@ var testAthleteAccount = businesslogic.Account{
 var testOrganizerAccount = businesslogic.Account{
 	FirstName:             "Mighty",
 	LastName:              "Meerkat",
-	UserGenderID:          referencebll.GENDER_FEMALE,
+	UserGenderID:          reference.GENDER_FEMALE,
 	DateOfBirth:           time.Date(1997, time.May, 22, 1, 1, 1, 1, time.UTC),
 	ToSAccepted:           true,
 	PrivacyPolicyAccepted: true,

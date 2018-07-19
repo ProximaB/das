@@ -26,12 +26,12 @@ import (
 )
 
 type FederationServer struct {
-	referencebll.IFederationRepository
+	reference.IFederationRepository
 }
 
 // GET /api/reference/federation
 func (server FederationServer) SearchFederationHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(referencebll.SearchFederationCriteria)
+	criteria := new(reference.SearchFederationCriteria)
 	if err := util.ParseRequestData(r, criteria); err != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, err.Error())
 		return

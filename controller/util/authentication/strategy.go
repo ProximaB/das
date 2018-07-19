@@ -22,6 +22,6 @@ import (
 )
 
 type IAuthenticationStrategy interface {
-	GetCurrentUser(r *http.Request, repository businesslogic.IAccountRepository) (businesslogic.Account, error)
+	GetCurrentUser(r *http.Request) (businesslogic.Account, error)
 	SetAuthorizationResponse(w http.ResponseWriter)
 }

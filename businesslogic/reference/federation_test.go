@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package referencebll_test
+package reference_test
 
 import (
 	"errors"
 	"github.com/DancesportSoftware/das/businesslogic/reference"
-	mock_reference "github.com/DancesportSoftware/das/mock/businesslogic/reference"
+	"github.com/DancesportSoftware/das/mock/businesslogic/reference"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -32,16 +32,16 @@ func TestFederation_GetDivisions(t *testing.T) {
 	mockRepo := mock_reference.NewMockIDivisionRepository(mockCtrl)
 
 	// behavior 1
-	mockRepo.EXPECT().SearchDivision(referencebll.SearchDivisionCriteria{FederationID: 1}).Return([]referencebll.Division{
+	mockRepo.EXPECT().SearchDivision(reference.SearchDivisionCriteria{FederationID: 1}).Return([]reference.Division{
 		{ID: 1, Name: "Correct Division 1", FederationID: 1},
 		{ID: 2, Name: "Correct Division 2", FederationID: 2},
 	}, nil)
 
 	// behavior 2
-	mockRepo.EXPECT().SearchDivision(referencebll.SearchDivisionCriteria{FederationID: 2}).Return(nil, errors.New("invalid search"))
+	mockRepo.EXPECT().SearchDivision(reference.SearchDivisionCriteria{FederationID: 2}).Return(nil, errors.New("invalid search"))
 
-	federation_1 := referencebll.Federation{ID: 1}
-	federation_2 := referencebll.Federation{ID: 2}
+	federation_1 := reference.Federation{ID: 1}
+	federation_2 := reference.Federation{ID: 2}
 
 	result_1, err_1 := federation_1.GetDivisions(mockRepo)
 	assert.EqualValues(t, 2, len(result_1))

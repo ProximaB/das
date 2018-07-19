@@ -49,7 +49,7 @@ func (server OrganizerCompetitionServer) OrganizerCreateCompetitionHandler(w htt
 		return
 	}
 
-	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
+	account, _ := server.GetCurrentUser(r)
 	competition := createDTO.ToCompetitionDataModel(account)
 
 	err := businesslogic.CreateCompetition(competition, server.ICompetitionRepository, server.IOrganizerProvisionRepository, server.IOrganizerProvisionHistoryRepository)
@@ -67,7 +67,7 @@ func (server OrganizerCompetitionServer) OrganizerSearchCompetitionHandler(w htt
 	if parseErr := util.ParseRequestData(r, searchDTO); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
 	} else {
-		account, _ := server.GetCurrentUser(r, server.IAccountRepository)
+		account, _ := server.GetCurrentUser(r)
 		if account.ID == 0 ||
 			(!account.HasRole(businesslogic.AccountTypeOrganizer) &&
 				!account.HasRole(businesslogic.AccountTypeAdministrator)) {
@@ -98,7 +98,7 @@ func (server OrganizerCompetitionServer) OrganizerSearchCompetitionHandler(w htt
 
 // PUT /api/organizer/competition
 func (server OrganizerCompetitionServer) OrganizerUpdateCompetitionHandler(w http.ResponseWriter, r *http.Request) {
-	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
+	account, _ := server.GetCurrentUser(r)
 	updateDTO := new(businesslogic.OrganizerUpdateCompetition)
 
 	if parseErr := util.ParseRequestBodyData(r, updateDTO); parseErr != nil {

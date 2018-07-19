@@ -87,9 +87,9 @@ func (createDTO CreateCompetition) ToCompetitionDataModel(user businesslogic.Acc
 		Name:         createDTO.Name,
 		Website:      createDTO.WebsiteUrl,
 
-		Country: referencebll.Country{},
-		State:   referencebll.State{},
-		City:    referencebll.City{},
+		Country: reference.Country{},
+		State:   reference.State{},
+		City:    reference.City{},
 		Street:  createDTO.VenueStreet,
 
 		ContactName:  createDTO.ContactName,

@@ -3,13 +3,12 @@ package middleware
 import (
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/config/authentication"
-	"github.com/DancesportSoftware/das/config/database"
 	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
 )
 
 func getRequestUserRole(r *http.Request) ([]int, error) {
-	account, err := authentication.AuthenticationStrategy.GetCurrentUser(r, database.AccountRepository)
+	account, err := authentication.AuthenticationStrategy.GetCurrentUser(r)
 	if err != nil {
 		return nil, err
 	}

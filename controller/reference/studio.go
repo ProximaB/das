@@ -25,12 +25,12 @@ import (
 )
 
 type StudioServer struct {
-	referencebll.IStudioRepository
+	reference.IStudioRepository
 }
 
 // GET /api/reference/studio
 func (server StudioServer) SearchStudioHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(referencebll.SearchStudioCriteria)
+	criteria := new(reference.SearchStudioCriteria)
 
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())

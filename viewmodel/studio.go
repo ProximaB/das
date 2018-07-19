@@ -26,7 +26,7 @@ type Studio struct {
 	Website string `json:"website"`
 }
 
-func StudioDataModelToViewModel(dm referencebll.Studio) Studio {
+func StudioDataModelToViewModel(dm reference.Studio) Studio {
 	return Studio{
 		ID:      dm.ID,
 		Name:    dm.Name,

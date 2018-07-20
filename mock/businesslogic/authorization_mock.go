@@ -5,8 +5,8 @@
 package mock_businesslogic
 
 import (
-	gomock "github.com/golang/mock/gomock"
-	reflect "reflect"
+	"github.com/golang/mock/gomock"
+	"reflect"
 )
 
 // MockIAuthorizationService is a mock of IAuthorizationService interface

@@ -108,7 +108,7 @@ func getAuthenticatedRequestIdentity(token *jwt.Token) AuthorizedIdentity {
 
 // caution: this method assumes that request r has already been authenticated and no security check is performed here.
 func getAuthenticatedRequestToken(r *http.Request) (*jwt.Token, error) {
-	authHeader := r.Header.Get("authorization")
+	authHeader := r.Header.Get("Authorization")
 	if len(authHeader) < 1 {
 		return nil, errors.New("empty authentication token")
 	}

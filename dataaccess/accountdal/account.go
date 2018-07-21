@@ -209,6 +209,41 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 		accounts = append(accounts, each)
 	}
 	rows.Close()
+
+	// now query roles for each account
+
+	for _, each := range accounts {
+		queryRoleStmt := repo.SQLBuilder.Select(fmt.Sprintf(
+			"%s, %s, %s, %s, %s, %s, %s",
+			common.ColumnPrimaryKey,
+			common.ColumnAccountID,
+			common.ColumnAccountTypeID,
+			common.ColumnCreateUserID,
+			common.ColumnDateTimeCreated,
+			common.ColumnUpdateUserID,
+			common.ColumnDateTimeUpdated,
+		)).From(dasAccountRoleTable).Where(squirrel.Eq{common.ColumnAccountID: each.ID})
+		rows, err := queryRoleStmt.RunWith(repo.Database).Query()
+		if err != nil {
+			return nil, err
+		}
+		roles := make([]businesslogic.AccountRole, 0)
+		for rows.Next() {
+			eachRole := businesslogic.AccountRole{}
+			rows.Scan(
+				&eachRole.ID,
+				&eachRole.AccountID,
+				&eachRole.AccountTypeID,
+				&eachRole.CreateUserID,
+				&eachRole.DateTimeCreated,
+				&eachRole.UpdateUserID,
+				&eachRole.DateTimeUpdated,
+			)
+			roles = append(roles, eachRole)
+		}
+		each.SetRoles(roles)
+	}
+
 	return accounts, err
 }
 

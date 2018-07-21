@@ -42,12 +42,31 @@ func TestCreatePartnershipRequest(t *testing.T) {
 	partnershipRepo := mock_businesslogic.NewMockIPartnershipRepository(mockCtrl)
 	blacklistRepo := mock_businesslogic.NewMockIPartnershipRequestBlacklistRepository(mockCtrl)
 
+	rolesOfLeadAccount := []businesslogic.AccountRole{
+		{ID: 1, AccountID: 1, AccountTypeID: businesslogic.AccountTypeOrganizer},
+		{ID: 2, AccountID: 1, AccountTypeID: businesslogic.AccountTypeAthlete},
+	}
+	leadAccount := businesslogic.Account{
+		ID: 1,
+	}
+	leadAccount.SetRoles(rolesOfLeadAccount)
+
+	rolesOfFollowAccount := []businesslogic.AccountRole{
+		{ID: 3, AccountID: 2, AccountTypeID: businesslogic.AccountTypeAdjudicator},
+		{ID: 4, AccountID: 2, AccountTypeID: businesslogic.AccountTypeDeckCaptain},
+		{ID: 5, AccountID: 2, AccountTypeID: businesslogic.AccountTypeAthlete},
+	}
+	followAccount := businesslogic.Account{
+		ID: 2,
+	}
+	followAccount.SetRoles(rolesOfFollowAccount)
+
 	// specify behaviors
 	accountRepo.EXPECT().SearchAccount(gomock.Any()).Return([]businesslogic.Account{
-		{ID: 12},
+		leadAccount,
 	}, nil)
 	accountRepo.EXPECT().SearchAccount(gomock.Any()).Return([]businesslogic.Account{
-		{ID: 33},
+		followAccount,
 	}, nil)
 	blacklistRepo.EXPECT().SearchPartnershipRequestBlacklist(gomock.Any()).Return([]businesslogic.PartnershipRequestBlacklistEntry{}, nil)
 	partnershipRepo.EXPECT().SearchPartnership(gomock.Any()).Return([]businesslogic.Partnership{}, nil)

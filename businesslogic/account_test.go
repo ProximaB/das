@@ -170,3 +170,37 @@ func TestCreateOrganizerAccountStrategy_CreateAccount(t *testing.T) {
 	err := strategy.CreateAccount(testOrganizerAccount, "testpassword")
 	assert.Nil(t, err, "should create organizer account with CreateOrganizerAccountStrategy")
 }
+
+func TestAccount_GetRoles(t *testing.T) {
+	rolesOfUserAccount := []businesslogic.AccountRole{
+		{ID: 1, AccountID: 1, AccountTypeID: businesslogic.AccountTypeOrganizer},
+		{ID: 2, AccountID: 1, AccountTypeID: businesslogic.AccountTypeAthlete},
+	}
+	userAccount := businesslogic.Account{
+		ID: 1,
+	}
+	userAccount.SetRoles(rolesOfUserAccount)
+
+	assert.Equal(t, 2, len(userAccount.GetRoles()))
+	assert.True(t, userAccount.HasRole(businesslogic.AccountTypeOrganizer))
+	assert.True(t, userAccount.HasRole(businesslogic.AccountTypeAthlete))
+}
+
+func TestAccount_SetRoles(t *testing.T) {
+	rolesOfUserAccount := []businesslogic.AccountRole{
+		{ID: 1, AccountID: 1, AccountTypeID: businesslogic.AccountTypeOrganizer},
+		{ID: 2, AccountID: 1, AccountTypeID: businesslogic.AccountTypeAthlete},
+	}
+	userAccount := businesslogic.Account{
+		ID: 1,
+	}
+	userAccount.SetRoles(rolesOfUserAccount)
+
+	assert.True(t, userAccount.HasRole(businesslogic.AccountTypeAthlete))
+	assert.True(t, userAccount.HasRole(businesslogic.AccountTypeOrganizer))
+	assert.False(t, userAccount.HasRole(businesslogic.AccountTypeAdjudicator))
+	assert.False(t, userAccount.HasRole(businesslogic.AccountTypeScrutineer))
+	assert.False(t, userAccount.HasRole(businesslogic.AccountTypeEmcee))
+	assert.False(t, userAccount.HasRole(businesslogic.AccountTypeDeckCaptain))
+	assert.False(t, userAccount.HasRole(businesslogic.AccountTypeAdministrator))
+}

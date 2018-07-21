@@ -17,7 +17,6 @@
 package businesslogic
 
 import (
-	"errors"
 	"time"
 )
 
@@ -42,8 +41,4 @@ type SearchAccountRoleCriteria struct {
 type IAccountRoleRepository interface {
 	CreateAccountRole(role *AccountRole) error
 	SearchAccountRole(criteria SearchAccountRoleCriteria) ([]AccountRole, error)
-}
-
-func ProvisionRole(repo IAccountRoleRepository, roleID int) error {
-	return errors.New("not implemented")
 }

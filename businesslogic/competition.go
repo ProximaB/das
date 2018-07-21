@@ -48,6 +48,11 @@ type Competition struct {
 
 // UpdateStatus will attempt to change the status of the caller competition to statusID, if the change is in logical order
 func (comp *Competition) UpdateStatus(statusID int) error {
+	if comp.statusID == 0 {
+		// initialize competition status
+		comp.statusID = CompetitionStatusPreRegistration
+		return nil
+	}
 	if comp.statusID >= statusID && comp.statusID != 0 {
 		return errors.New("cannot revert competition status")
 	}

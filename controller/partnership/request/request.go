@@ -35,8 +35,9 @@ type PartnershipRequestServer struct {
 	businesslogic.IPartnershipRequestBlacklistRepository
 }
 
-// POST /api/partnership/request
-// Submit a new partnership request
+// CreatePartnershipRequestHandler handles the request:
+//	POST /api/partnership/request
+// which allows user to submit a new partnership request
 func (server PartnershipRequestServer) CreatePartnershipRequestHandler(w http.ResponseWriter, r *http.Request) {
 	dto := new(viewmodel.CreatePartnershipRequest)
 

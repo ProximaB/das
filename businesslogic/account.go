@@ -29,7 +29,7 @@ import (
 type Account struct {
 	ID                    int    // userID will be account ID, too
 	UUID                  string // uuid that will be used in communicating with client
-	roles                 map[int]bool
+	accountRoles          map[int]AccountRole
 	AccountStatusID       int
 	UserGenderID          int
 	FirstName             string
@@ -51,15 +51,25 @@ type Account struct {
 	Signature             string
 }
 
+func (account *Account) SetRoles(roles []AccountRole) {
+	account.accountRoles = make(map[int]AccountRole)
+	for _, each := range roles {
+		account.accountRoles[each.AccountTypeID] = each
+	}
+}
+
 // HasRole checks if account has a particular role
 func (account Account) HasRole(roleID int) bool {
-	return account.roles[roleID]
+	if _, ok := account.accountRoles[roleID]; ok {
+		return true
+	}
+	return false
 }
 
 // GetRoles returns all the roles that the caller account is associated with
 func (account Account) GetRoles() []int {
 	roles := make([]int, 0)
-	for k := range account.roles {
+	for k := range account.accountRoles {
 		roles = append(roles, k)
 	}
 	return roles

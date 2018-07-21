@@ -51,6 +51,7 @@ type AuthorizedIdentity struct {
 func (strategy JWTAuthenticationStrategy) GetCurrentUser(r *http.Request) (businesslogic.Account, error) {
 	token, tokenErr := getAuthenticatedRequestToken(r)
 	if tokenErr != nil {
+		log.Printf(" %v %v: authorization failed for request: %v\n", r.Method, r.RequestURI, tokenErr)
 		return businesslogic.Account{}, tokenErr
 	}
 	identity := getAuthenticatedRequestIdentity(token)
@@ -61,9 +62,11 @@ func (strategy JWTAuthenticationStrategy) GetCurrentUser(r *http.Request) (busin
 	}
 	account := searchResults[0]
 	if account.ID == 0 {
-		return businesslogic.Account{}, errors.New(fmt.Sprintf("account with identity %+v is not found", identity))
+		err := errors.New(fmt.Sprintf("account with identity %+v is not found", identity))
+		log.Println(err)
+		return businesslogic.Account{}, err
 	}
-	return businesslogic.Account{}, nil
+	return account, nil
 }
 
 func (strategy JWTAuthenticationStrategy) SetAuthorizationResponse(w http.ResponseWriter) {

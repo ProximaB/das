@@ -2,34 +2,43 @@ package middleware
 
 import (
 	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/config/authentication"
 	"github.com/DancesportSoftware/das/controller/util"
+	"log"
 	"net/http"
 )
 
 func getRequestUserRole(r *http.Request) ([]int, error) {
-	account, err := authentication.AuthenticationStrategy.GetCurrentUser(r)
+	account, err := AuthenticationStrategy.GetCurrentUser(r)
 	if err != nil {
 		return nil, err
 	}
 	return account.GetRoles(), nil
 }
 
+func allowUnauthorizedRequest(roles []int) bool {
+	allowNoAuth := false
+	for _, each := range roles {
+		if each == businesslogic.AccountTypeNoAuth {
+			allowNoAuth = true
+			break
+		}
+	}
+	return allowNoAuth
+}
+
 func AuthorizeMultipleRoles(h http.HandlerFunc, roles []int) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		allowNoAuth := false
-		for _, each := range roles {
-			if each == businesslogic.AccountTypeNoAuth {
-				allowNoAuth = true
-				break
-			}
-		}
+		log.Printf("authorizing request %v %v\n", r.Method, r.RequestURI)
+
+		allowNoAuth := allowUnauthorizedRequest(roles)
 
 		userRoles, authErr := getRequestUserRole(r)
 		if authErr != nil && !allowNoAuth {
+			log.Println(authErr)
 			util.RespondJsonResult(w, http.StatusUnauthorized, "invalid authorization token", nil)
 			return
 		}
+		log.Printf("uri %v allow unauthorized request: %v\n", r.RequestURI, allowNoAuth)
 
 		authorized := false
 		for _, each := range roles {
@@ -41,12 +50,18 @@ func AuthorizeMultipleRoles(h http.HandlerFunc, roles []int) http.HandlerFunc {
 			}
 		}
 
+		log.Printf("request %v %v is authorized: %v", r.Method, r.RequestURI, authorized)
+
+		// authorization token is invalid, and request does not allow unauthorized request
 		if authErr != nil && !allowNoAuth {
+			log.Println(authErr)
 			util.RespondJsonResult(w, http.StatusUnauthorized, "unauthorized", nil)
 			return
-		} else if allowNoAuth {
+		}
+		// unauthorized request is allowed
+		if allowNoAuth {
 			h.ServeHTTP(w, r)
-		} else if authorized {
+		} else if authorized && !allowNoAuth {
 			h.ServeHTTP(w, r)
 		} else {
 			util.RespondJsonResult(w, http.StatusUnauthorized, "unauthorized", nil)

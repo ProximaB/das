@@ -18,8 +18,8 @@ package organizer
 
 import (
 	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/config/authentication"
 	"github.com/DancesportSoftware/das/config/database"
+	"github.com/DancesportSoftware/das/config/routes/middleware"
 	"github.com/DancesportSoftware/das/controller/admin"
 	"github.com/DancesportSoftware/das/controller/organizer"
 	"github.com/DancesportSoftware/das/controller/util"
@@ -55,7 +55,7 @@ const apiOrganizerProvisionSummaryEndpoint = "/api/organizer/provision/summary"
 const apiOrganizerProvisionHistoryEndpoint = "/api/organizer/provision/history"
 
 var organizerProvisionServer = organizer.OrganizerProvisionServer{
-	authentication.AuthenticationStrategy,
+	middleware.AuthenticationStrategy,
 	database.AccountRepository,
 	database.OrganizerProvisionRepository,
 }
@@ -70,7 +70,7 @@ var getOrganizerProvisionSummaryController = util.DasController{
 }
 
 var organizerProvisionHistoryServer = organizer.OrganizerProvisionHistoryServer{
-	authentication.AuthenticationStrategy,
+	middleware.AuthenticationStrategy,
 	database.AccountRepository,
 	database.OrganizerProvisionHistoryRepository,
 }

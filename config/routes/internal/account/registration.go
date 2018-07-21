@@ -24,8 +24,8 @@ import (
 	"net/http"
 )
 
-const apiAccountRegistrationEndpoint = "/api/account/register"
-const apiAccountAuthenticationEndpoint = "/api/account/authenticate"
+const apiAccountRegistrationEndpoint = "/api/v1.0/account/register"
+const apiAccountAuthenticationEndpoint = "/api/v1.0/account/authenticate"
 
 var accountServer = account.Server{
 	database.AccountRepository,

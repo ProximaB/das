@@ -26,6 +26,7 @@ import (
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
+	"log"
 )
 
 const (
@@ -211,7 +212,6 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 	rows.Close()
 
 	// now query roles for each account
-
 	for _, each := range accounts {
 		queryRoleStmt := repo.SQLBuilder.Select(fmt.Sprintf(
 			"%s, %s, %s, %s, %s, %s, %s",
@@ -221,16 +221,16 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 			common.ColumnCreateUserID,
 			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.ColumnDateTimeUpdated,
-		)).From(dasAccountRoleTable).Where(squirrel.Eq{common.ColumnAccountID: each.ID})
-		rows, err := queryRoleStmt.RunWith(repo.Database).Query()
-		if err != nil {
-			return nil, err
+			common.ColumnDateTimeUpdated)).From(dasAccountRoleTable).
+			Where(squirrel.Eq{common.ColumnAccountID: each.ID})
+		roleRows, roleErr := queryRoleStmt.RunWith(repo.Database).Query()
+		if roleErr != nil {
+			return nil, roleErr
 		}
-		roles := make([]businesslogic.AccountRole, 0)
-		for rows.Next() {
+		accountRoles := make([]businesslogic.AccountRole, 0)
+		for roleRows.Next() {
 			eachRole := businesslogic.AccountRole{}
-			rows.Scan(
+			roleRows.Scan(
 				&eachRole.ID,
 				&eachRole.AccountID,
 				&eachRole.AccountTypeID,
@@ -239,11 +239,17 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 				&eachRole.UpdateUserID,
 				&eachRole.DateTimeUpdated,
 			)
-			roles = append(roles, eachRole)
+			accountRoles = append(accountRoles, eachRole)
 		}
-		each.SetRoles(roles)
+		// TODO: High Priority[BUG] Roles are not set to accounts for some reason.
+		each.SetRoles(accountRoles)
+		log.Println(each.GetRoles())
+		roleRows.Close()
 	}
 
+	for _, each := range accounts {
+		log.Println(each.GetRoles())
+	}
 	return accounts, err
 }
 

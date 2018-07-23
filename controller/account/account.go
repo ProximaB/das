@@ -35,22 +35,12 @@ type Server struct {
 // 	POST /api/account/register
 // Accepted JSON parameters:
 //	{
-//		"accounttype": 1,
 //		"email": "awesomeuser@email.com",
 //		"phone": 1234567890,
-//		"firstname": "John",
-//		"middlename": "Adams",
-//		"lastname": "Smith",
-//		"dateofbirth: "1990-01-01T06:00:00.0000Z",
-//		"gender": 2,
 //		"password": !@#$1234,
 //		"tosaccepted": true,
 //		"ppaccepted": true
 //	}
-// In case an user of under-13 registers an account, parental control will be required and
-// additional parameters will be required as well:
-// 	"byguardian": true
-//	"signature": "John Smith Sr."
 func (server Server) RegisterAccountHandler(w http.ResponseWriter, r *http.Request) {
 	createAccount := new(viewmodel.CreateAccount)
 
@@ -105,27 +95,25 @@ func (server Server) AccountAuthenticationHandler(w http.ResponseWriter, r *http
 	}
 
 	err = businesslogic.AuthenticateUser(loginDTO.Email, loginDTO.Password, server.IAccountRepository)
-	// util.RespondJsonResult(w, http.StatusNotImplemented, "authentication is not implemented", nil)
 
 	if err != nil {
 		util.RespondJsonResult(w, http.StatusUnauthorized, err.Error(), nil)
 		return
-	} else {
-		account := businesslogic.GetAccountByEmail(loginDTO.Email, server.IAccountRepository)
+	}
+	account := businesslogic.GetAccountByEmail(loginDTO.Email, server.IAccountRepository)
 
-		// user jwt authentication
-		authString := authentication.GenerateAuthenticationToken(account)
-		if err != nil {
-			log.Printf("[error] generating client credential: %s\n", err.Error())
-			util.RespondJsonResult(w, http.StatusUnauthorized, "error in generating client credential", nil)
-			return
-		}
-		response := struct {
-			Token string `json:"token"`
-		}{Token: authString}
-		util.RespondJsonResult(w, http.StatusOK, "authorized", response)
+	// user jwt authentication
+	authString := authentication.GenerateAuthenticationToken(account)
+	if err != nil {
+		log.Printf("[error] generating client credential: %s\n", err.Error())
+		util.RespondJsonResult(w, http.StatusUnauthorized, "error in generating client credential", nil)
 		return
 	}
+	response := struct {
+		Token string `json:"token"`
+	}{Token: authString}
+	util.RespondJsonResult(w, http.StatusOK, "authorized", response)
+	return
 }
 
 /*

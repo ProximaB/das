@@ -59,7 +59,7 @@ func (account *Account) SetRoles(roles []AccountRole) {
 }
 
 // HasRole checks if account has a particular role
-func (account Account) HasRole(roleID int) bool {
+func (account *Account) HasRole(roleID int) bool {
 	if _, ok := account.accountRoles[roleID]; ok {
 		return true
 	}
@@ -67,7 +67,7 @@ func (account Account) HasRole(roleID int) bool {
 }
 
 // GetRoles returns all the roles that the caller account is associated with
-func (account Account) GetRoles() []int {
+func (account *Account) GetRoles() []int {
 	roles := make([]int, 0)
 	for k := range account.accountRoles {
 		roles = append(roles, k)
@@ -180,9 +180,12 @@ func createAccount(account *Account, password string, repo IAccountRepository) e
 // GetAccountByEmail will retrieve account from repo by email. This function will return either a matched account
 // or an empty account
 func GetAccountByEmail(email string, repo IAccountRepository) Account {
-	accounts, _ := repo.SearchAccount(SearchAccountCriteria{
+	accounts, err := repo.SearchAccount(SearchAccountCriteria{
 		Email: email,
 	})
+	if err != nil {
+		return Account{}
+	}
 	if len(accounts) != 1 {
 		return Account{}
 	}

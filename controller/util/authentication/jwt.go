@@ -20,10 +20,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/util"
 	"github.com/dgrijalva/jwt-go"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -42,28 +42,28 @@ type JWTAuthenticationStrategy struct {
 }
 
 type AuthorizedIdentity struct {
-	Username    string
-	Email       string
-	AccountType int
-	AccountID   string
+	Username   string
+	Email      string
+	Roles      []int
+	AccountID  string
+	ValidFrom  int64
+	ValidUntil int64
 }
 
+// GetCurrentUser parses the authorization token from JWT and check if valid user information exists in the token
 func (strategy JWTAuthenticationStrategy) GetCurrentUser(r *http.Request) (businesslogic.Account, error) {
 	token, tokenErr := getAuthenticatedRequestToken(r)
 	if tokenErr != nil {
-		log.Printf(" %v %v: authorization failed for request: %v\n", r.Method, r.RequestURI, tokenErr)
 		return businesslogic.Account{}, tokenErr
 	}
 	identity := getAuthenticatedRequestIdentity(token)
 	searchResults, searchErr := strategy.SearchAccount(businesslogic.SearchAccountCriteria{UUID: identity.AccountID})
 	if searchErr != nil || len(searchResults) != 1 {
-		log.Println(searchErr)
 		return businesslogic.Account{}, errors.New("cannot be authorized")
 	}
 	account := searchResults[0]
 	if account.ID == 0 {
 		err := errors.New(fmt.Sprintf("account with identity %+v is not found", identity))
-		log.Println(err)
 		return businesslogic.Account{}, err
 	}
 	return account, nil
@@ -77,9 +77,11 @@ func GenerateAuthenticationToken(account businesslogic.Account) string {
 		JWT_AUTH_CLAIM_EMAIL:      account.Email,
 		JWT_AUTH_CLAIM_USERNAME:   account.FullName(),
 		JWT_AUTH_CLAIM_UUID:       account.UUID,
+		JWT_AUTH_CLAIM_TYPE:       account.GetRoles(),
 		JWT_AUTH_CLAIM_ISSUEDON:   time.Now().Unix(),
 		JWT_AUTH_CLAIM_EXPIRATION: time.Now().Add(time.Hour * time.Duration(HMAC_VALID_HOURS)).Unix(),
 	})
+	log.Println(account.GetRoles())
 	authString, err := token.SignedString([]byte(HMAC_SIGNING_KEY))
 	if err != nil {
 		log.Printf("failed to generate authentication token for legit user: %s\n", err)
@@ -97,14 +99,25 @@ func ValidateToken(tokenString string) error {
 	return err
 }
 
+func hasClaim(token *jwt.Token, claim string) bool {
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if ok && token.Valid {
+		return claims[claim] == nil
+	}
+	return ok
+}
+
 func getAuthenticatedRequestIdentity(token *jwt.Token) AuthorizedIdentity {
 	var identity AuthorizedIdentity
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		identity.Username = claims[JWT_AUTH_CLAIM_USERNAME].(string)
+		if hasClaim(token, JWT_AUTH_CLAIM_USERNAME) {
+			identity.Username = claims[JWT_AUTH_CLAIM_USERNAME].(string)
+		}
 		identity.Email = claims[JWT_AUTH_CLAIM_EMAIL].(string)
 		identity.AccountID = claims[JWT_AUTH_CLAIM_UUID].(string)
-		accountType, _ := claims[JWT_AUTH_CLAIM_TYPE].(string)
-		identity.AccountType, _ = strconv.Atoi(accountType)
+		identity.Roles = util.InterfaceSliceToIntSlice(claims[JWT_AUTH_CLAIM_TYPE].([]interface{}))
+		identity.ValidUntil = int64(claims[JWT_AUTH_CLAIM_EXPIRATION].(float64))
+		identity.ValidFrom = int64(claims[JWT_AUTH_CLAIM_ISSUEDON].(float64))
 	}
 	return identity
 }

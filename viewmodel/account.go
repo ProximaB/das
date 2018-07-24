@@ -67,8 +67,8 @@ func (dto CreateAccount) ToAccountModel() businesslogic.Account {
 		UserGenderID:          reference.GENDER_UNKNOWN,
 		Email:                 dto.Email,
 		Phone:                 dto.Phone,
-		ToSAccepted:           dto.ToSAccepted,
-		PrivacyPolicyAccepted: dto.PPAccepted,
+		ToSAccepted:           true,
+		PrivacyPolicyAccepted: true,
 	}
 	return account
 }

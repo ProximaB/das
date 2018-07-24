@@ -203,4 +203,16 @@ func TestAccount_SetRoles(t *testing.T) {
 	assert.False(t, userAccount.HasRole(businesslogic.AccountTypeEmcee))
 	assert.False(t, userAccount.HasRole(businesslogic.AccountTypeDeckCaptain))
 	assert.False(t, userAccount.HasRole(businesslogic.AccountTypeAdministrator))
+
+	accounts := [3]businesslogic.Account{
+		{},
+		{},
+		{},
+	}
+	for i := 0; i < len(accounts); i++ {
+		accounts[i].SetRoles(rolesOfUserAccount)
+	}
+	for _, each := range accounts {
+		assert.True(t, each.HasRole(businesslogic.AccountTypeAthlete))
+	}
 }

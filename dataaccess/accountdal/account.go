@@ -26,7 +26,6 @@ import (
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
-	"log"
 )
 
 const (
@@ -212,7 +211,7 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 	rows.Close()
 
 	// now query roles for each account
-	for _, each := range accounts {
+	for i := 0; i < len(accounts); i++ {
 		queryRoleStmt := repo.SQLBuilder.Select(fmt.Sprintf(
 			"%s, %s, %s, %s, %s, %s, %s",
 			common.ColumnPrimaryKey,
@@ -222,7 +221,7 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
 			common.ColumnDateTimeUpdated)).From(dasAccountRoleTable).
-			Where(squirrel.Eq{common.ColumnAccountID: each.ID})
+			Where(squirrel.Eq{common.ColumnAccountID: accounts[i].ID})
 		roleRows, roleErr := queryRoleStmt.RunWith(repo.Database).Query()
 		if roleErr != nil {
 			return nil, roleErr
@@ -241,14 +240,8 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 			)
 			accountRoles = append(accountRoles, eachRole)
 		}
-		// TODO: High Priority[BUG] Roles are not set to accounts for some reason.
-		each.SetRoles(accountRoles)
-		log.Println(each.GetRoles())
 		roleRows.Close()
-	}
-
-	for _, each := range accounts {
-		log.Println(each.GetRoles())
+		accounts[i].SetRoles(accountRoles)
 	}
 	return accounts, err
 }

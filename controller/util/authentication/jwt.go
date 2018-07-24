@@ -81,7 +81,6 @@ func GenerateAuthenticationToken(account businesslogic.Account) string {
 		JWT_AUTH_CLAIM_ISSUEDON:   time.Now().Unix(),
 		JWT_AUTH_CLAIM_EXPIRATION: time.Now().Add(time.Hour * time.Duration(HMAC_VALID_HOURS)).Unix(),
 	})
-	log.Println(account.GetRoles())
 	authString, err := token.SignedString([]byte(HMAC_SIGNING_KEY))
 	if err != nil {
 		log.Printf("failed to generate authentication token for legit user: %s\n", err)

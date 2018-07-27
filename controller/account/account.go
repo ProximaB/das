@@ -38,8 +38,8 @@ type Server struct {
 //		"email": "awesomeuser@email.com",
 //		"phone": 1234567890,
 //		"password": !@#$1234,
-//		"tosaccepted": true,
-//		"ppaccepted": true
+//		"firstname": "Awesome",
+//		"lastname": "User"
 //	}
 func (server Server) RegisterAccountHandler(w http.ResponseWriter, r *http.Request) {
 	createAccount := new(viewmodel.CreateAccount)
@@ -80,7 +80,6 @@ func (server Server) RegisterAccountHandler(w http.ResponseWriter, r *http.Reque
 //		"message": "authorized",
 //		"data": {
 //			"token": "some.jwt.token",
-//			"type: 3
 //		}
 //	}
 func (server Server) AccountAuthenticationHandler(w http.ResponseWriter, r *http.Request) {

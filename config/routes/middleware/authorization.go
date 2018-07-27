@@ -28,8 +28,6 @@ func allowUnauthorizedRequest(roles []int) bool {
 
 func AuthorizeMultipleRoles(h http.HandlerFunc, roles []int) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
-		log.Printf("authorizing request %v %v\n", r.Method, r.RequestURI)
-
 		allowNoAuth := allowUnauthorizedRequest(roles)
 
 		userRoles, authErr := getRequestUserRole(r)

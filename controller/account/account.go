@@ -25,10 +25,13 @@ import (
 	"net/http"
 )
 
-type Server struct {
+// AccountServer provides a virtual server that handles requests that are related to Account
+type AccountServer struct {
 	businesslogic.IAccountRepository
+	businesslogic.IAccountRoleRepository
 	businesslogic.IOrganizerProvisionRepository
 	businesslogic.IOrganizerProvisionHistoryRepository
+	businesslogic.IUserPreferenceRepository
 }
 
 // RegisterAccountHandler handle the request
@@ -41,7 +44,7 @@ type Server struct {
 //		"firstname": "Awesome",
 //		"lastname": "User"
 //	}
-func (server Server) RegisterAccountHandler(w http.ResponseWriter, r *http.Request) {
+func (server AccountServer) RegisterAccountHandler(w http.ResponseWriter, r *http.Request) {
 	createAccount := new(viewmodel.CreateAccount)
 
 	if err := util.ParseRequestBodyData(r, createAccount); err != nil {
@@ -57,7 +60,9 @@ func (server Server) RegisterAccountHandler(w http.ResponseWriter, r *http.Reque
 	account := createAccount.ToAccountModel()
 
 	strategy := businesslogic.CreateAccountStrategy{
-		AccountRepo: server.IAccountRepository,
+		AccountRepo:          server.IAccountRepository,
+		RoleRepository:       server.IAccountRoleRepository,
+		PreferenceRepository: server.IUserPreferenceRepository,
 	}
 
 	if err := strategy.CreateAccount(account, createAccount.Password); err != nil {
@@ -82,7 +87,7 @@ func (server Server) RegisterAccountHandler(w http.ResponseWriter, r *http.Reque
 //			"token": "some.jwt.token",
 //		}
 //	}
-func (server Server) AccountAuthenticationHandler(w http.ResponseWriter, r *http.Request) {
+func (server AccountServer) AccountAuthenticationHandler(w http.ResponseWriter, r *http.Request) {
 	loginDTO := new(viewmodel.Login)
 	err := util.ParseRequestBodyData(r, loginDTO)
 	if err != nil {

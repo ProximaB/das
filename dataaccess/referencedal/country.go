@@ -30,11 +30,13 @@ const (
 	DAS_COUNTRY_TABLE = "DAS.COUNTRY"
 )
 
+// PostgresCountryRepository implements the ICountryRepository with a Postgres database
 type PostgresCountryRepository struct {
 	Database   *sql.DB
 	SqlBuilder squirrel.StatementBuilderType
 }
 
+// CreateCountry inserts a Country object into a Postgres database
 func (repo PostgresCountryRepository) CreateCountry(country *reference.Country) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCountryRepository is not specified")
@@ -69,6 +71,7 @@ func (repo PostgresCountryRepository) CreateCountry(country *reference.Country) 
 	return err
 }
 
+// DeleteCountry deletes a Country object from a Postgres database
 func (repo PostgresCountryRepository) DeleteCountry(country reference.Country) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCountryRepository is not specified")
@@ -85,6 +88,7 @@ func (repo PostgresCountryRepository) DeleteCountry(country reference.Country) e
 	return err
 }
 
+// UpdateCountry updates a Country object in a Postgres database
 func (repo PostgresCountryRepository) UpdateCountry(country reference.Country) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCountryRepository is not specified")
@@ -113,6 +117,7 @@ func (repo PostgresCountryRepository) UpdateCountry(country reference.Country) e
 	}
 }
 
+// SearchCountry searches the Country object in a Postgres database with the provided criteria
 func (repo PostgresCountryRepository) SearchCountry(criteria reference.SearchCountryCriteria) ([]reference.Country, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresCountryRepository is not specified")

@@ -51,6 +51,7 @@ type Account struct {
 	Signature             string
 }
 
+// SetRoles set a list of roles to Account
 func (account *Account) SetRoles(roles []AccountRole) {
 	account.accountRoles = make(map[int]AccountRole)
 	for _, each := range roles {
@@ -109,12 +110,52 @@ type ICreateAccountStrategy interface {
 
 // CreateAccountStrategy can create an account that only has record in IAccountRepository
 type CreateAccountStrategy struct {
-	AccountRepo IAccountRepository
+	AccountRepo          IAccountRepository
+	RoleRepository       IAccountRoleRepository
+	PreferenceRepository IUserPreferenceRepository
 }
 
 // CreateAccount creates a non-organizer account
 func (strategy CreateAccountStrategy) CreateAccount(account Account, password string) error {
-	return createAccount(&account, password, strategy.AccountRepo)
+	if err := createAccount(&account, password, strategy.AccountRepo); err != nil {
+		return err
+	}
+
+	// create default role for the account, which is athlete
+	var createRoleErr error
+	if strategy.RoleRepository != nil {
+		defaultRole := AccountRole{
+			AccountID:       account.ID,
+			AccountTypeID:   AccountTypeAthlete,
+			CreateUserID:    account.ID,
+			DateTimeCreated: time.Now(),
+			UpdateUserID:    account.ID,
+			DateTimeUpdated: time.Now(),
+		}
+		createRoleErr = strategy.RoleRepository.CreateAccountRole(&defaultRole)
+	}
+	if createRoleErr != nil {
+		return createRoleErr
+	}
+
+	// initiate account preference data
+	var createPrefErr error
+	if strategy.PreferenceRepository != nil {
+		defaultPreference := UserPreference{
+			AccountID:       account.ID,
+			DefaultRole:     AccountTypeAthlete,
+			CreateUserID:    account.ID,
+			DateTimeCreated: time.Now(),
+			UpdateUserID:    account.ID,
+			DateTimeUpdated: time.Now(),
+		}
+		createPrefErr = strategy.PreferenceRepository.CreatePreference(&defaultPreference)
+	}
+	if createPrefErr != nil {
+		return createPrefErr
+	}
+
+	return nil
 }
 
 // CreateOrganizerAccountStrategy creates an organizer account, which follows a different procedure from other accounts

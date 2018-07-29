@@ -27,10 +27,12 @@ import (
 const apiAccountRegistrationEndpoint = "/api/v1.0/account/register"
 const apiAccountAuthenticationEndpoint = "/api/v1.0/account/authenticate"
 
-var accountServer = account.Server{
+var accountServer = account.AccountServer{
 	database.AccountRepository,
+	database.AccountRoleRepository,
 	database.OrganizerProvisionRepository,
 	database.OrganizerProvisionHistoryRepository,
+	database.UserPreferenceRepository,
 }
 
 var accountRegistrationController = util.DasController{

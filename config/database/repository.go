@@ -75,6 +75,10 @@ var AccountRepository = accountdal.PostgresAccountRepository{
 	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
+var AccountRoleRepository = accountdal.PostgresAccountRoleRepository{
+	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
 var UserPreferenceRepository = accountdal.PostgresUserPreferenceRepository{
 	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }

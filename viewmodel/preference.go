@@ -14,27 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package businesslogic
+package viewmodel
 
-import "time"
+import "github.com/DancesportSoftware/das/businesslogic"
 
-// UserPreference stores the basic preferences of user
-type UserPreference struct {
-	ID              int
-	AccountID       int
-	DefaultRole     int
-	CreateUserID    int
-	DateTimeCreated time.Time
-	UpdateUserID    int
-	DateTimeUpdated time.Time
+type UserPreferenceViewModel struct {
+	DefaultRole int `json:"defaultRole"`
 }
 
-type SearchUserPreferenceCriteria struct {
-	AccountID int
-}
-
-type IUserPreferenceRepository interface {
-	CreatePreference(preference *UserPreference) error
-	SearchPreference(criteria SearchUserPreferenceCriteria) ([]UserPreference, error)
-	UpdatePreference(preference UserPreference) error
+func UserPreferenceDataModelToViewModel(model businesslogic.UserPreference) UserPreferenceViewModel {
+	return UserPreferenceViewModel{
+		DefaultRole: model.DefaultRole,
+	}
 }

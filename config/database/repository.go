@@ -91,6 +91,10 @@ var PartnershipRepository = partnershipdal.PostgresPartnershipRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
+var PartnershipRoleRepository = partnershipdal.PostgresPartnershipRoleRepository{
+	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
 var PartnershipRequestRepository = partnershipdal.PostgresPartnershipRequestRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }

@@ -82,6 +82,7 @@ func init() {
 	PartnershipRequestStatusRepository.Database = PostgresDatabase
 
 	// Partnership
+	PartnershipRoleRepository.Database = PostgresDatabase
 	PartnershipRepository.Database = PostgresDatabase
 
 	// organizer

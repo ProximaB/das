@@ -25,7 +25,7 @@ import (
 	"net/http"
 )
 
-const apiPartnershipEndpoint = "/api/partnership"
+const apiPartnershipEndpoint = "/api/v1.0/partnership"
 
 var partnershipServer = partnership.PartnershipServer{
 	middleware.AuthenticationStrategy,
@@ -51,6 +51,8 @@ var updatePartnershipController = util.DasController{
 	AllowedRoles: []int{businesslogic.AccountTypeAthlete},
 }
 
+// PartnershipControllerGroup contains a collection of HTTP request handler functions for
+// Partnership related request
 var PartnershipControllerGroup = util.DasControllerGroup{
 	Controllers: []util.DasController{
 		searchPartnershipController,

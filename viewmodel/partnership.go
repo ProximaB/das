@@ -75,3 +75,15 @@ type PartnershipRequestStatus struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
+
+type PartnershipRole struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+func PartnershipRoleDataModelToViewModel(dataModel businesslogic.PartnershipRole) PartnershipRole {
+	return PartnershipRole{
+		ID:   dataModel.ID,
+		Name: dataModel.Name,
+	}
+}

@@ -127,7 +127,8 @@ func (server PartnershipRequestServer) SearchPartnershipRequestHandler(w http.Re
 	w.Write(output)
 }
 
-// PUT /api/partnership/request
+// UpdatePartnershipRequestHandler handles the request
+//	PUT /api/partnership/request
 func (server PartnershipRequestServer) UpdatePartnershipRequestHandler(w http.ResponseWriter, r *http.Request) {
 	currentUser, _ := server.GetCurrentUser(r)
 
@@ -158,11 +159,8 @@ func (server PartnershipRequestServer) UpdatePartnershipRequestHandler(w http.Re
 	util.RespondJsonResult(w, http.StatusOK, "partnership request responded", nil)
 }
 
+// DeletePartnershipRequestHandler handles the request
+//	DELETE /api/v1.0/partnership
 func (server PartnershipRequestServer) DeletePartnershipRequestHandler(w http.ResponseWriter, r *http.Request) {
-	util.RespondJsonResult(w, http.StatusNotImplemented, "not implemented", nil)
-}
-
-// GET /api/v1/partnership/role
-func (server PartnershipRequestServer) PartnershipRoleHandler(w http.ResponseWriter, r *http.Request) {
-
+	util.RespondJsonResult(w, http.StatusMethodNotAllowed, "method is not allowed", nil)
 }

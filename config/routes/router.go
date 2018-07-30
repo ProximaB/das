@@ -108,6 +108,7 @@ func NewDasRouter() *mux.Router {
 	addDasControllerGroup(router, partnership.PartnershipRequestBlacklistControllerGroup)
 
 	// partnership request
+	addDasController(router, partnership.GetPartnershipRoleController)
 	addDasController(router, partnership.PartnershipRequestStatusController)
 	addDasControllerGroup(router, partnership.PartnershipRequestControllerGroup)
 

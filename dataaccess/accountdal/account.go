@@ -110,13 +110,14 @@ func (repo PostgresAccountRepository) CreateAccount(account *businesslogic.Accou
 	// parsing arguments to ... parameters: https://golang.org/ref/spec#Passing_arguments_to_..._parameters
 	// PostgreSQL does not return LastInsertID automatically: https://github.com/lib/pq/issues/24
 	clause, args, err := stmt.ToSql()
-	if tx, txErr := repo.Database.Begin(); txErr != nil {
+	tx, txErr := repo.Database.Begin()
+	if txErr != nil {
 		return txErr
-	} else {
-		row := repo.Database.QueryRow(clause, args...)
-		row.Scan(&account.ID)
-		err = tx.Commit()
 	}
+
+	row := repo.Database.QueryRow(clause, args...)
+	row.Scan(&account.ID)
+	tx.Commit()
 	return err
 }
 

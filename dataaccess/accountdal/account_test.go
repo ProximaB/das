@@ -71,43 +71,31 @@ func TestPostgresAccountRepository_SearchAccount(t *testing.T) {
 
 	assert.Nil(t, err, "Database schema should match")
 	assert.NotNil(t, results, "should return at least empty slice of accounts")
+
+	accountRepository.Database = nil
 }
 
 func TestPostgresAccountRepository_CreateAccount(t *testing.T) {
 	db, mock, _ := sqlmock.New()
 	defer db.Close()
 
-	accountRepository.Database = db
-	rows := sqlmock.NewRows(
-		[]string{
-			"ID",
-			"UUID",
-			"ACCOUNT_STATUS_ID",
-			"USER_GENDER_ID",
-			"LAST_NAME",
-			"MIDDLE_NAMES",
-			"FIRST_NAME",
-			"DATE_OF_BIRTH",
-			"EMAIl",
-			"PHONE",
-			"EMAIL_VERIFIED",
-			"PHONE_VERIFIED",
-			"HASH_ALGORITHM",
-			"PASSWORD_SALT",
-			"PASSWORD_HASH",
-			"DATETIME_CREATED",
-			"DATETIME_UPDATED",
-			"TOS_ACCEPTED",
-			"PP_ACCEPTED",
-			"BY_GUARDIAN",
-			"GUARDIAN_SIGNATURE",
-		},
-	)
+	account := businesslogic.Account{
+		UUID:            "abcd-efg",
+		AccountStatusID: businesslogic.AccountStatusUnverified,
+		FirstName:       "Alice",
+		LastName:        "Anderson",
+	}
+	noDbErr := accountRepository.CreateAccount(&account)
+	assert.NotNil(t, noDbErr, "should return an error if the data source is not specified")
 
-	mock.ExpectQuery("SELECT").WillReturnRows(rows)
-	account := businesslogic.Account{}
+	accountRepository.Database = db
+	mock.ExpectBegin()
+	mock.ExpectQuery(`INSERT INTO DAS.ACCOUNT (UUID, ACCOUNT_STATUS_ID, USER_GENDER_ID, LAST_NAME, 
+			MIDDLE_NAMES, FIRST_NAME, DATE_OF_BIRTH, EMAIL, PHONE, EMAIL_VERIFIED, PHONE_VERIFIED, HASH_ALGORITHM, 
+			PASSWORD_SALT, PASSWORD_HASH, DATETIME_CREATED, DATETIME_UPDATED, TOS_ACCEPTED, PP_ACCEPTED,  BY_GUARDIAN, 
+			GUARDIAN_SIGNATURE) VALUES`)
+	mock.ExpectCommit()
 	results := accountRepository.CreateAccount(&account)
 
-	assert.Nil(t, results)
-	assert.NotEqual(t, account.ID, 0)
+	assert.Nil(t, results, "should not return an error if data is correct")
 }

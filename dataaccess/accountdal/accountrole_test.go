@@ -48,7 +48,9 @@ func TestPostgresAccountRoleRepository_CreateAccountRole(t *testing.T) {
 	assert.NotNil(t, missingDBErr, "should return an error if database connection is not specified")
 
 	accountRoleRepo.Database = db
+	mock.ExpectBegin()
 	mock.ExpectQuery(`INSERT INTO DAS.ACCOUNT_ROLE (ACCOUNT_ID, ACCOUNT_TYPE_ID, CREATE_USER_ID, DATETIME_CREATED, UPDATE_USER_ID, DATETIME_UPDATED) VALUES`)
+	mock.ExpectCommit()
 
 	createErr := accountRoleRepo.CreateAccountRole(&role)
 	assert.Nil(t, createErr, "should insert legitimate AccountRole data without error")

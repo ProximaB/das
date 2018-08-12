@@ -46,12 +46,6 @@ type IPartnershipRoleRepository interface {
 	GetAllPartnershipRoles() ([]PartnershipRole, error)
 }
 
-const (
-	PartnershipStatusRegular   = 1
-	PartnershipStatusTemporary = 2
-	PartnershipStatusPending   = 3
-)
-
 type PartnershipStatus struct {
 	ID              int
 	Name            string
@@ -71,7 +65,6 @@ type Partnership struct {
 	FollowID         int
 	Lead             Account
 	Follow           Account
-	StatusID         int
 	SameSex          bool
 	FavoriteByLead   bool
 	FavoriteByFollow bool

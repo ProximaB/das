@@ -17,6 +17,7 @@
 package businesslogic
 
 import (
+	"errors"
 	"time"
 )
 
@@ -41,4 +42,33 @@ type SearchAccountRoleCriteria struct {
 type IAccountRoleRepository interface {
 	CreateAccountRole(role *AccountRole) error
 	SearchAccountRole(criteria SearchAccountRoleCriteria) ([]AccountRole, error)
+}
+
+type AccountRoleProvisionService struct {
+	accountRepo     IAccountRepository
+	accountRoleRepo IAccountRoleRepository
+}
+
+func NewAccountRoleProvisionService(accountRepo IAccountRepository, accountRoleRepo IAccountRoleRepository) *AccountRoleProvisionService {
+	service := AccountRoleProvisionService{
+		accountRepo:     accountRepo,
+		accountRoleRepo: accountRoleRepo,
+	}
+	return &service
+}
+
+func (service AccountRoleProvisionService) GrantRole(currentUser Account, account Account, usertype int) error {
+	if account.HasRole(usertype) {
+		return errors.New("this account already has this role")
+	}
+
+	newRole := AccountRole{
+		AccountID:       account.ID,
+		AccountTypeID:   usertype,
+		CreateUserID:    currentUser.ID,
+		DateTimeCreated: time.Now(),
+		UpdateUserID:    currentUser.ID,
+		DateTimeUpdated: time.Now(),
+	}
+	return service.accountRoleRepo.CreateAccountRole(&newRole)
 }

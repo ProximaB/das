@@ -155,13 +155,15 @@ func (repo PostgresRoleApplicationRepository) UpdateApplication(application busi
 		if application.StatusID > 0 && *application.ApprovalUserID > 0 {
 			stmt = stmt.Set(common.ColumnStatusID, application.StatusID)
 			stmt = stmt.Set(DasAccountRoleApplicationColumnApprovalUserID, *application.ApprovalUserID)
+			stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: application.ID})
 		}
+		tx, txErr := repo.Database.Begin()
+		if txErr != nil {
+			return txErr
+		}
+		_, err := stmt.RunWith(repo.Database).Exec()
+		tx.Commit()
+		return err
 	}
-	tx, txErr := repo.Database.Begin()
-	if txErr != nil {
-		return txErr
-	}
-	_, err := stmt.RunWith(repo.Database).Exec()
-	tx.Commit()
-	return err
+	return errors.New("the ID of role application is not specified")
 }

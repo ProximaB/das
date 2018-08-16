@@ -30,6 +30,7 @@ const (
 	ColumnCreateUserID    = "CREATE_USER_ID"
 	ColumnUpdateUserID    = "UPDATE_USER_ID"
 
+	ColumnStatusID     = "STATUS_ID"
 	COL_COMPETITION_ID = "COMPETITION_ID"
 	COL_EVENT_ID       = "EVENT_ID"
 

@@ -29,6 +29,7 @@ const (
 
 type SearchRoleApplicationCriteria struct {
 	AccountID      int
+	AppliedRoleID  int
 	StatusID       int
 	ApprovalUserID int
 }

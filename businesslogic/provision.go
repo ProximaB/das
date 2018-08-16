@@ -17,8 +17,107 @@
 package businesslogic
 
 import (
+	"errors"
 	"time"
 )
+
+const (
+	RoleApplicationStatusApproved = 1
+	RoleApplicationStatusDenied   = 2
+	RoleApplicationStatusPending  = 3
+)
+
+type SearchRoleApplicationCriteria struct {
+	AccountID      int
+	StatusID       int
+	ApprovalUserID int
+}
+
+type RoleApplication struct {
+	ID               int
+	AccountID        int
+	AppliedRoleID    int
+	Description      string
+	StatusID         int
+	ApprovalUserID   *int
+	DateTimeApproved time.Time
+	CreateUserID     int
+	DateTimeCreated  time.Time
+	UpdateUserID     int
+	DateTimeUpdated  time.Time
+}
+
+type IRoleApplicationRepository interface {
+	CreateApplication(application *RoleApplication) error
+	SearchApplication(criteria SearchRoleApplicationCriteria) ([]RoleApplication, error)
+	UpdateApplication(application RoleApplication) error
+}
+
+type RoleProvisionService struct {
+	accountRepo         IAccountRepository
+	roleApplicationRepo IRoleApplicationRepository
+}
+
+func NewRoleProvisionService(accountRepo IAccountRepository, roleApplicationRepo IRoleApplicationRepository) *RoleProvisionService {
+	service := RoleProvisionService{
+		accountRepo:         accountRepo,
+		roleApplicationRepo: roleApplicationRepo,
+	}
+	return &service
+}
+
+func (service RoleProvisionService) respondRoleApplication(currentUser Account, application *RoleApplication, action int) error {
+	application.StatusID = action
+	application.ApprovalUserID = &currentUser.ID
+	application.DateTimeApproved = time.Now()
+	return service.roleApplicationRepo.UpdateApplication(*application)
+}
+
+// UpdateApplication attempts to approve the Role application based on the privilege of current user.
+// If current user is admin, any application can be approved
+// If current user is organizer, only emcee and deck-captain can be approved
+// If current user is other roles, current user will be prohibited from performing such action
+func (service RoleProvisionService) UpdateApplication(currentUser Account, application *RoleApplication, action int) error {
+	// check if action is valid
+	if !(action == RoleApplicationStatusApproved || action == RoleApplicationStatusDenied) {
+		return errors.New("invalid response to role application")
+	}
+	// Only an Admin or Organizer user ca update user's role application
+	if !(currentUser.HasRole(AccountTypeOrganizer) || currentUser.HasRole(AccountTypeAdministrator)) {
+		return errors.New("unauthorized")
+	}
+	// should not allow users to provision themselves other than Admin
+	if currentUser.ID == application.AccountID && !currentUser.HasRole(AccountTypeAdministrator) {
+		return errors.New("not authorized to provision your own role application")
+	}
+	switch application.AppliedRoleID {
+	case AccountTypeAthlete:
+		return nil // Athlete role does not need to be provisioned
+	case AccountTypeAdjudicator:
+		if !currentUser.HasRole(AccountTypeAdministrator) {
+			return errors.New("not authorized to approve user's role application")
+		}
+	case AccountTypeScrutineer:
+		if !currentUser.HasRole(AccountTypeAdministrator) {
+			return errors.New("not authorized to approve user's role application")
+		}
+	case AccountTypeOrganizer:
+		if !currentUser.HasRole(AccountTypeAdministrator) {
+			return errors.New("not authorized to approve user's role application")
+		}
+	case AccountTypeDeckCaptain:
+		if !(currentUser.HasRole(AccountTypeAdministrator) || currentUser.HasRole(AccountTypeOrganizer)) {
+			return errors.New("not authorized to approve user's role application")
+		}
+	case AccountTypeEmcee:
+		if !(currentUser.HasRole(AccountTypeAdministrator) || currentUser.HasRole(AccountTypeOrganizer)) {
+			return errors.New("not authorized to approve user's role application")
+		}
+	default:
+		return errors.New("invalid role application")
+	}
+	return service.respondRoleApplication(currentUser, application, action)
+}
 
 type OrganizerProvision struct {
 	ID              int

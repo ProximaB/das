@@ -23,6 +23,7 @@ import (
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"testing"
+	"time"
 )
 
 func TestGetOrganizerProvision(t *testing.T) {
@@ -59,4 +60,139 @@ func TestGetOrganizerProvision_Invalid(t *testing.T) {
 
 	assert.Nil(t, res_2)
 	assert.NotNil(t, err_2)
+}
+
+func TestNewRowProvisionService(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mockAccountRepo := mock_businesslogic.NewMockIAccountRepository(mockCtrl)
+	mockRoleAppRepo := mock_businesslogic.NewMockIRoleApplicationRepository(mockCtrl)
+	service := businesslogic.NewRoleProvisionService(mockAccountRepo, mockRoleAppRepo)
+
+	assert.NotNil(t, service)
+}
+
+func TestRoleProvisionService_ApproveApplication(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mockAccountRepo := mock_businesslogic.NewMockIAccountRepository(mockCtrl)
+	mockRoleAppRepo := mock_businesslogic.NewMockIRoleApplicationRepository(mockCtrl)
+	service := businesslogic.NewRoleProvisionService(mockAccountRepo, mockRoleAppRepo)
+
+	application := businesslogic.RoleApplication{
+		AccountID:       33,
+		AppliedRoleID:   businesslogic.AccountTypeAthlete,
+		StatusID:        businesslogic.RoleApplicationStatusPending,
+		DateTimeCreated: time.Now(),
+		DateTimeUpdated: time.Now(),
+	}
+
+	currentUser := businesslogic.Account{
+		ID: 18,
+	}
+	currentUser.SetRoles([]businesslogic.AccountRole{
+		{ID: 3, AccountID: 18, AccountTypeID: businesslogic.AccountTypeAthlete},
+		{ID: 3, AccountID: 18, AccountTypeID: businesslogic.AccountTypeOrganizer},
+		{ID: 3, AccountID: 18, AccountTypeID: businesslogic.AccountTypeAdministrator},
+	})
+
+	err := service.UpdateApplication(currentUser, &application, businesslogic.RoleApplicationStatusApproved)
+	assert.Nil(t, err, "should not throw error when 'approving' an Athlete role application")
+}
+
+func TestRoleProvisionService_ApproveApplication_ApplyToBeAdmin(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mockAccountRepo := mock_businesslogic.NewMockIAccountRepository(mockCtrl)
+	mockRoleAppRepo := mock_businesslogic.NewMockIRoleApplicationRepository(mockCtrl)
+	service := businesslogic.NewRoleProvisionService(mockAccountRepo, mockRoleAppRepo)
+
+	application := businesslogic.RoleApplication{
+		AccountID:       33,
+		AppliedRoleID:   businesslogic.AccountTypeAdministrator,
+		StatusID:        businesslogic.RoleApplicationStatusPending,
+		DateTimeCreated: time.Now(),
+		DateTimeUpdated: time.Now(),
+	}
+
+	currentUser := businesslogic.Account{
+		ID: 18,
+	}
+	currentUser.SetRoles([]businesslogic.AccountRole{
+		{ID: 3, AccountID: 18, AccountTypeID: businesslogic.AccountTypeAthlete},
+		{ID: 4, AccountID: 18, AccountTypeID: businesslogic.AccountTypeAdjudicator},
+		{ID: 5, AccountID: 18, AccountTypeID: businesslogic.AccountTypeScrutineer},
+		{ID: 8, AccountID: 18, AccountTypeID: businesslogic.AccountTypeOrganizer},
+		{ID: 6, AccountID: 18, AccountTypeID: businesslogic.AccountTypeEmcee},
+		{ID: 7, AccountID: 18, AccountTypeID: businesslogic.AccountTypeDeckCaptain},
+		{ID: 3, AccountID: 18, AccountTypeID: businesslogic.AccountTypeAdministrator},
+	})
+
+	err := service.UpdateApplication(currentUser, &application, businesslogic.RoleApplicationStatusApproved)
+	assert.Error(t, err, "administrator role application should not be approved by another administrator")
+}
+
+func TestRoleProvisionService_ApproveApplication_LowPrivilegeAttemptsToProvisionHighPrivilege(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mockAccountRepo := mock_businesslogic.NewMockIAccountRepository(mockCtrl)
+	mockRoleAppRepo := mock_businesslogic.NewMockIRoleApplicationRepository(mockCtrl)
+	service := businesslogic.NewRoleProvisionService(mockAccountRepo, mockRoleAppRepo)
+
+	application := businesslogic.RoleApplication{
+		AccountID:       33,
+		AppliedRoleID:   businesslogic.AccountTypeOrganizer,
+		StatusID:        businesslogic.RoleApplicationStatusPending,
+		DateTimeCreated: time.Now(),
+		DateTimeUpdated: time.Now(),
+	}
+
+	currentUser := businesslogic.Account{
+		ID: 18,
+	}
+	currentUser.SetRoles([]businesslogic.AccountRole{
+		{ID: 3, AccountID: 18, AccountTypeID: businesslogic.AccountTypeAthlete},
+		{ID: 4, AccountID: 18, AccountTypeID: businesslogic.AccountTypeAdjudicator},
+		{ID: 5, AccountID: 18, AccountTypeID: businesslogic.AccountTypeScrutineer},
+		{ID: 6, AccountID: 18, AccountTypeID: businesslogic.AccountTypeEmcee},
+		{ID: 7, AccountID: 18, AccountTypeID: businesslogic.AccountTypeDeckCaptain},
+	})
+
+	err := service.UpdateApplication(currentUser, &application, businesslogic.RoleApplicationStatusApproved)
+	assert.Error(t, err, "athlete cannot approve any positions")
+}
+
+func TestRoleProvisionService_ApproveApplication_SelfApproval_OrganizerApproveScrutineer(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	mockAccountRepo := mock_businesslogic.NewMockIAccountRepository(mockCtrl)
+	mockRoleAppRepo := mock_businesslogic.NewMockIRoleApplicationRepository(mockCtrl)
+	service := businesslogic.NewRoleProvisionService(mockAccountRepo, mockRoleAppRepo)
+
+	application := businesslogic.RoleApplication{
+		AccountID:       33,
+		AppliedRoleID:   businesslogic.AccountTypeScrutineer,
+		StatusID:        businesslogic.RoleApplicationStatusPending,
+		DateTimeCreated: time.Now(),
+		DateTimeUpdated: time.Now(),
+	}
+
+	currentUser := businesslogic.Account{
+		ID: 33,
+	}
+	currentUser.SetRoles([]businesslogic.AccountRole{
+		{ID: 3, AccountID: 33, AccountTypeID: businesslogic.AccountTypeOrganizer},
+	})
+
+	err := service.UpdateApplication(currentUser, &application, businesslogic.RoleApplicationStatusApproved)
+	assert.Error(t, err, "organizer cannot approve a scrutineer role application")
+}
+
+func TestRoleProvisionService_ApproveApplication_SelfApproval(t *testing.T) {
+
 }

@@ -83,6 +83,10 @@ func (service RoleProvisionService) UpdateApplication(currentUser Account, appli
 	if !(action == RoleApplicationStatusApproved || action == RoleApplicationStatusDenied) {
 		return errors.New("invalid response to role application")
 	}
+	// check if application is pending
+	if application.StatusID != RoleApplicationStatusPending {
+		return errors.New("role application is already responded")
+	}
 	// Only an Admin or Organizer user ca update user's role application
 	if !(currentUser.HasRole(AccountTypeOrganizer) || currentUser.HasRole(AccountTypeAdministrator)) {
 		return errors.New("unauthorized")

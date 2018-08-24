@@ -57,12 +57,14 @@ type IRoleApplicationRepository interface {
 type RoleProvisionService struct {
 	accountRepo         IAccountRepository
 	roleApplicationRepo IRoleApplicationRepository
+	roleRepo            IAccountRoleRepository
 }
 
-func NewRoleProvisionService(accountRepo IAccountRepository, roleApplicationRepo IRoleApplicationRepository) *RoleProvisionService {
+func NewRoleProvisionService(accountRepo IAccountRepository, roleApplicationRepo IRoleApplicationRepository, roleRepo IAccountRoleRepository) *RoleProvisionService {
 	service := RoleProvisionService{
 		accountRepo:         accountRepo,
 		roleApplicationRepo: roleApplicationRepo,
+		roleRepo:            roleRepo,
 	}
 	return &service
 }
@@ -71,7 +73,21 @@ func (service RoleProvisionService) respondRoleApplication(currentUser Account, 
 	application.StatusID = action
 	application.ApprovalUserID = &currentUser.ID
 	application.DateTimeApproved = time.Now()
-	return service.roleApplicationRepo.UpdateApplication(*application)
+	if updateErr := service.roleApplicationRepo.UpdateApplication(*application); updateErr != nil {
+		return updateErr
+	}
+	if action == RoleApplicationStatusApproved {
+		role := AccountRole{
+			AccountID:       application.AccountID,
+			AccountTypeID:   application.AppliedRoleID,
+			CreateUserID:    currentUser.ID,
+			DateTimeCreated: time.Now(),
+			UpdateUserID:    currentUser.ID,
+			DateTimeUpdated: time.Now(),
+		}
+		return service.roleRepo.CreateAccountRole(&role)
+	}
+	return nil
 }
 
 // UpdateApplication attempts to approve the Role application based on the privilege of current user.

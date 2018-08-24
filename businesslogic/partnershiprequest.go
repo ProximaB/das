@@ -73,6 +73,27 @@ type IPartnershipRequestRepository interface {
 	UpdatePartnershipRequest(request PartnershipRequest) error
 }
 
+type PartnershipRequestService struct {
+	accountRepo     IAccountRepository
+	partnershipRepo IPartnershipRepository
+	blacklistRepo   IPartnershipRequestBlacklistRepository
+}
+
+func NewPartnershipRequestService(accountRepo IAccountRepository, partnershipRepo IPartnershipRepository, blacklistRepo IPartnershipRequestBlacklistRepository) *PartnershipRequestService {
+	service := new(PartnershipRequestService)
+	service.accountRepo = accountRepo
+	service.partnershipRepo = partnershipRepo
+	service.blacklistRepo = blacklistRepo
+	return service
+}
+
+func (service PartnershipRequestService) CreatePartnershipRequest(currentUser Account, request PartnershipRequest) error {
+	if currentUser.ID != request.SenderID {
+		return errors.New("not authorized to send this partnership request")
+	}
+	return errors.New("not implemented")
+}
+
 func (request PartnershipRequest) validateRoles() error {
 	if request.SenderRole != PartnershipRoleLead && request.SenderRole != PartnershipRoleFollow {
 		return errors.New("sender's role is not specified")

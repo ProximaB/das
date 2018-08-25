@@ -5,8 +5,7 @@
 package mock_reference
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic/reference"
-
+	reference "github.com/DancesportSoftware/das/businesslogic/reference"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )
@@ -35,7 +34,7 @@ func (m *MockIDanceRepository) EXPECT() *MockIDanceRepositoryMockRecorder {
 }
 
 // CreateDance mocks base method
-func (m *MockIDanceRepository) CreateDance(dance *businesslogic.Dance) error {
+func (m *MockIDanceRepository) CreateDance(dance *reference.Dance) error {
 	ret := m.ctrl.Call(m, "CreateDance", dance)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -47,9 +46,9 @@ func (mr *MockIDanceRepositoryMockRecorder) CreateDance(dance interface{}) *gomo
 }
 
 // SearchDance mocks base method
-func (m *MockIDanceRepository) SearchDance(criteria businesslogic.SearchDanceCriteria) ([]businesslogic.Dance, error) {
+func (m *MockIDanceRepository) SearchDance(criteria reference.SearchDanceCriteria) ([]reference.Dance, error) {
 	ret := m.ctrl.Call(m, "SearchDance", criteria)
-	ret0, _ := ret[0].([]businesslogic.Dance)
+	ret0, _ := ret[0].([]reference.Dance)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -60,7 +59,7 @@ func (mr *MockIDanceRepositoryMockRecorder) SearchDance(criteria interface{}) *g
 }
 
 // UpdateDance mocks base method
-func (m *MockIDanceRepository) UpdateDance(dance businesslogic.Dance) error {
+func (m *MockIDanceRepository) UpdateDance(dance reference.Dance) error {
 	ret := m.ctrl.Call(m, "UpdateDance", dance)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -72,7 +71,7 @@ func (mr *MockIDanceRepositoryMockRecorder) UpdateDance(dance interface{}) *gomo
 }
 
 // DeleteDance mocks base method
-func (m *MockIDanceRepository) DeleteDance(dance businesslogic.Dance) error {
+func (m *MockIDanceRepository) DeleteDance(dance reference.Dance) error {
 	ret := m.ctrl.Call(m, "DeleteDance", dance)
 	ret0, _ := ret[0].(error)
 	return ret0

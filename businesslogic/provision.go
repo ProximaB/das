@@ -69,6 +69,37 @@ func NewRoleProvisionService(accountRepo IAccountRepository, roleApplicationRepo
 	return &service
 }
 
+// CreateRoleApplication check the validity of the role application and create it if it's valid
+func (service RoleProvisionService) CreateRoleApplication(currentUser Account, application *RoleApplication) error {
+	// check if current user has the role
+	if currentUser.HasRole(application.AppliedRoleID) {
+		return errors.New("current user already has the applied role")
+	}
+
+	// check if has a pending application
+	searchResults, err := service.roleApplicationRepo.SearchApplication(SearchRoleApplicationCriteria{
+		AccountID:     currentUser.ID,
+		AppliedRoleID: application.AppliedRoleID,
+		StatusID:      RoleApplicationStatusPending,
+	})
+	if err != nil {
+		return err
+	}
+	if len(searchResults) != 0 {
+		return errors.New("previous application has not been responded")
+	}
+
+	// check what role that user is applying for
+	if application.AppliedRoleID == AccountTypeAthlete {
+		return errors.New("athlete role should be granted when the account was created")
+	}
+	if application.AppliedRoleID > AccountTypeEmcee {
+		return errors.New("invalid role")
+	}
+
+	return service.roleApplicationRepo.CreateApplication(application)
+}
+
 func (service RoleProvisionService) respondRoleApplication(currentUser Account, application *RoleApplication, action int) error {
 	application.StatusID = action
 	application.ApprovalUserID = &currentUser.ID
@@ -140,6 +171,7 @@ func (service RoleProvisionService) UpdateApplication(currentUser Account, appli
 	return service.respondRoleApplication(currentUser, application, action)
 }
 
+// OrganizerProvision
 type OrganizerProvision struct {
 	ID              int
 	OrganizerID     int
@@ -151,6 +183,7 @@ type OrganizerProvision struct {
 	DateTimeUpdated time.Time
 }
 
+// SearchOrganizerProvisionCriteria specifies the search criteria of Organizer's provision information
 type SearchOrganizerProvisionCriteria struct {
 	ID          int `schema:"organizer"`
 	OrganizerID int `schema:"organizer"`

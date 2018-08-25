@@ -5,8 +5,7 @@
 package mock_reference
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic/reference"
-
+	reference "github.com/DancesportSoftware/das/businesslogic/reference"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )
@@ -35,7 +34,7 @@ func (m *MockIDivisionRepository) EXPECT() *MockIDivisionRepositoryMockRecorder 
 }
 
 // CreateDivision mocks base method
-func (m *MockIDivisionRepository) CreateDivision(division *businesslogic.Division) error {
+func (m *MockIDivisionRepository) CreateDivision(division *reference.Division) error {
 	ret := m.ctrl.Call(m, "CreateDivision", division)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -47,9 +46,9 @@ func (mr *MockIDivisionRepositoryMockRecorder) CreateDivision(division interface
 }
 
 // SearchDivision mocks base method
-func (m *MockIDivisionRepository) SearchDivision(criteria businesslogic.SearchDivisionCriteria) ([]businesslogic.Division, error) {
+func (m *MockIDivisionRepository) SearchDivision(criteria reference.SearchDivisionCriteria) ([]reference.Division, error) {
 	ret := m.ctrl.Call(m, "SearchDivision", criteria)
-	ret0, _ := ret[0].([]businesslogic.Division)
+	ret0, _ := ret[0].([]reference.Division)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -60,7 +59,7 @@ func (mr *MockIDivisionRepositoryMockRecorder) SearchDivision(criteria interface
 }
 
 // UpdateDivision mocks base method
-func (m *MockIDivisionRepository) UpdateDivision(division businesslogic.Division) error {
+func (m *MockIDivisionRepository) UpdateDivision(division reference.Division) error {
 	ret := m.ctrl.Call(m, "UpdateDivision", division)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -72,7 +71,7 @@ func (mr *MockIDivisionRepositoryMockRecorder) UpdateDivision(division interface
 }
 
 // DeleteDivision mocks base method
-func (m *MockIDivisionRepository) DeleteDivision(division businesslogic.Division) error {
+func (m *MockIDivisionRepository) DeleteDivision(division reference.Division) error {
 	ret := m.ctrl.Call(m, "DeleteDivision", division)
 	ret0, _ := ret[0].(error)
 	return ret0

@@ -5,8 +5,7 @@
 package mock_reference
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic/reference"
-
+	reference "github.com/DancesportSoftware/das/businesslogic/reference"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )
@@ -35,9 +34,9 @@ func (m *MockIProficiencyRepository) EXPECT() *MockIProficiencyRepositoryMockRec
 }
 
 // SearchProficiency mocks base method
-func (m *MockIProficiencyRepository) SearchProficiency(criteria businesslogic.SearchProficiencyCriteria) ([]businesslogic.Proficiency, error) {
+func (m *MockIProficiencyRepository) SearchProficiency(criteria reference.SearchProficiencyCriteria) ([]reference.Proficiency, error) {
 	ret := m.ctrl.Call(m, "SearchProficiency", criteria)
-	ret0, _ := ret[0].([]businesslogic.Proficiency)
+	ret0, _ := ret[0].([]reference.Proficiency)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -48,7 +47,7 @@ func (mr *MockIProficiencyRepositoryMockRecorder) SearchProficiency(criteria int
 }
 
 // CreateProficiency mocks base method
-func (m *MockIProficiencyRepository) CreateProficiency(proficiency *businesslogic.Proficiency) error {
+func (m *MockIProficiencyRepository) CreateProficiency(proficiency *reference.Proficiency) error {
 	ret := m.ctrl.Call(m, "CreateProficiency", proficiency)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -60,7 +59,7 @@ func (mr *MockIProficiencyRepositoryMockRecorder) CreateProficiency(proficiency 
 }
 
 // UpdateProficiency mocks base method
-func (m *MockIProficiencyRepository) UpdateProficiency(proficiency businesslogic.Proficiency) error {
+func (m *MockIProficiencyRepository) UpdateProficiency(proficiency reference.Proficiency) error {
 	ret := m.ctrl.Call(m, "UpdateProficiency", proficiency)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -72,7 +71,7 @@ func (mr *MockIProficiencyRepositoryMockRecorder) UpdateProficiency(proficiency 
 }
 
 // DeleteProficiency mocks base method
-func (m *MockIProficiencyRepository) DeleteProficiency(proficiency businesslogic.Proficiency) error {
+func (m *MockIProficiencyRepository) DeleteProficiency(proficiency reference.Proficiency) error {
 	ret := m.ctrl.Call(m, "DeleteProficiency", proficiency)
 	ret0, _ := ret[0].(error)
 	return ret0

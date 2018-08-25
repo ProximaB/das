@@ -5,8 +5,7 @@
 package mock_reference
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic/reference"
-
+	reference "github.com/DancesportSoftware/das/businesslogic/reference"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )
@@ -35,7 +34,7 @@ func (m *MockIStudioRepository) EXPECT() *MockIStudioRepositoryMockRecorder {
 }
 
 // CreateStudio mocks base method
-func (m *MockIStudioRepository) CreateStudio(studio *businesslogic.Studio) error {
+func (m *MockIStudioRepository) CreateStudio(studio *reference.Studio) error {
 	ret := m.ctrl.Call(m, "CreateStudio", studio)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -47,9 +46,9 @@ func (mr *MockIStudioRepositoryMockRecorder) CreateStudio(studio interface{}) *g
 }
 
 // SearchStudio mocks base method
-func (m *MockIStudioRepository) SearchStudio(criteria businesslogic.SearchStudioCriteria) ([]businesslogic.Studio, error) {
+func (m *MockIStudioRepository) SearchStudio(criteria reference.SearchStudioCriteria) ([]reference.Studio, error) {
 	ret := m.ctrl.Call(m, "SearchStudio", criteria)
-	ret0, _ := ret[0].([]businesslogic.Studio)
+	ret0, _ := ret[0].([]reference.Studio)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -60,7 +59,7 @@ func (mr *MockIStudioRepositoryMockRecorder) SearchStudio(criteria interface{}) 
 }
 
 // DeleteStudio mocks base method
-func (m *MockIStudioRepository) DeleteStudio(studio businesslogic.Studio) error {
+func (m *MockIStudioRepository) DeleteStudio(studio reference.Studio) error {
 	ret := m.ctrl.Call(m, "DeleteStudio", studio)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -72,7 +71,7 @@ func (mr *MockIStudioRepositoryMockRecorder) DeleteStudio(studio interface{}) *g
 }
 
 // UpdateStudio mocks base method
-func (m *MockIStudioRepository) UpdateStudio(studio businesslogic.Studio) error {
+func (m *MockIStudioRepository) UpdateStudio(studio reference.Studio) error {
 	ret := m.ctrl.Call(m, "UpdateStudio", studio)
 	ret0, _ := ret[0].(error)
 	return ret0

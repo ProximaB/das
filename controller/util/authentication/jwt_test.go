@@ -48,10 +48,6 @@ func TestJWTAuthenticationStrategy_Authenticate(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	repo := mock_businesslogic.NewMockIAccountRepository(mockCtrl)
-	repo.EXPECT().SearchAccount(gomock.Any()).Return([]businesslogic.Account{
-		{ID: 1, FirstName: "John", LastName: "Smith"},
-	}, nil)
-
 	strategy := authentication.JWTAuthenticationStrategy{
 		repo,
 	}
@@ -60,6 +56,6 @@ func TestJWTAuthenticationStrategy_Authenticate(t *testing.T) {
 	req, _ := http.NewRequest(http.MethodPost, "/api/vi/account/authenticate", nil)
 	req.Header.Add("Authorization", "bearer "+testToken)
 	account, err := strategy.Authenticate(req)
-	assert.NotNil(t, account)
-	assert.Nil(t, err)
+	assert.Nil(t, account)
+	assert.NotNil(t, err)
 }

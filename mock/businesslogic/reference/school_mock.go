@@ -5,8 +5,7 @@
 package mock_reference
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic/reference"
-
+	reference "github.com/DancesportSoftware/das/businesslogic/reference"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )
@@ -35,7 +34,7 @@ func (m *MockISchoolRepository) EXPECT() *MockISchoolRepositoryMockRecorder {
 }
 
 // CreateSchool mocks base method
-func (m *MockISchoolRepository) CreateSchool(school *businesslogic.School) error {
+func (m *MockISchoolRepository) CreateSchool(school *reference.School) error {
 	ret := m.ctrl.Call(m, "CreateSchool", school)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -47,9 +46,9 @@ func (mr *MockISchoolRepositoryMockRecorder) CreateSchool(school interface{}) *g
 }
 
 // SearchSchool mocks base method
-func (m *MockISchoolRepository) SearchSchool(criteria businesslogic.SearchSchoolCriteria) ([]businesslogic.School, error) {
+func (m *MockISchoolRepository) SearchSchool(criteria reference.SearchSchoolCriteria) ([]reference.School, error) {
 	ret := m.ctrl.Call(m, "SearchSchool", criteria)
-	ret0, _ := ret[0].([]businesslogic.School)
+	ret0, _ := ret[0].([]reference.School)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -60,7 +59,7 @@ func (mr *MockISchoolRepositoryMockRecorder) SearchSchool(criteria interface{}) 
 }
 
 // UpdateSchool mocks base method
-func (m *MockISchoolRepository) UpdateSchool(school businesslogic.School) error {
+func (m *MockISchoolRepository) UpdateSchool(school reference.School) error {
 	ret := m.ctrl.Call(m, "UpdateSchool", school)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -72,7 +71,7 @@ func (mr *MockISchoolRepositoryMockRecorder) UpdateSchool(school interface{}) *g
 }
 
 // DeleteSchool mocks base method
-func (m *MockISchoolRepository) DeleteSchool(school businesslogic.School) error {
+func (m *MockISchoolRepository) DeleteSchool(school reference.School) error {
 	ret := m.ctrl.Call(m, "DeleteSchool", school)
 	ret0, _ := ret[0].(error)
 	return ret0

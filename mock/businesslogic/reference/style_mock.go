@@ -5,8 +5,9 @@
 package mock_reference
 
 import (
-	"github.com/golang/mock/gomock"
-	"reflect"
+	reference "github.com/DancesportSoftware/das/businesslogic/reference"
+	gomock "github.com/golang/mock/gomock"
+	reflect "reflect"
 )
 
 // MockIStyleRepository is a mock of IStyleRepository interface
@@ -33,7 +34,7 @@ func (m *MockIStyleRepository) EXPECT() *MockIStyleRepositoryMockRecorder {
 }
 
 // CreateStyle mocks base method
-func (m *MockIStyleRepository) CreateStyle(style *businesslogic.Style) error {
+func (m *MockIStyleRepository) CreateStyle(style *reference.Style) error {
 	ret := m.ctrl.Call(m, "CreateStyle", style)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -45,9 +46,9 @@ func (mr *MockIStyleRepositoryMockRecorder) CreateStyle(style interface{}) *gomo
 }
 
 // SearchStyle mocks base method
-func (m *MockIStyleRepository) SearchStyle(criteria businesslogic.SearchStyleCriteria) ([]businesslogic.Style, error) {
+func (m *MockIStyleRepository) SearchStyle(criteria reference.SearchStyleCriteria) ([]reference.Style, error) {
 	ret := m.ctrl.Call(m, "SearchStyle", criteria)
-	ret0, _ := ret[0].([]businesslogic.Style)
+	ret0, _ := ret[0].([]reference.Style)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -58,7 +59,7 @@ func (mr *MockIStyleRepositoryMockRecorder) SearchStyle(criteria interface{}) *g
 }
 
 // UpdateStyle mocks base method
-func (m *MockIStyleRepository) UpdateStyle(style businesslogic.Style) error {
+func (m *MockIStyleRepository) UpdateStyle(style reference.Style) error {
 	ret := m.ctrl.Call(m, "UpdateStyle", style)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -70,7 +71,7 @@ func (mr *MockIStyleRepositoryMockRecorder) UpdateStyle(style interface{}) *gomo
 }
 
 // DeleteStyle mocks base method
-func (m *MockIStyleRepository) DeleteStyle(style businesslogic.Style) error {
+func (m *MockIStyleRepository) DeleteStyle(style reference.Style) error {
 	ret := m.ctrl.Call(m, "DeleteStyle", style)
 	ret0, _ := ret[0].(error)
 	return ret0

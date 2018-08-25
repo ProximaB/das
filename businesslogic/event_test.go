@@ -134,15 +134,17 @@ func TestCreateEvent_BadCompetitionStatus(t *testing.T) {
 
 	compRepository := mock_businesslogic.NewMockICompetitionRepository(mockCtrl)
 	eventRepository := mock_businesslogic.NewMockIEventRepository(mockCtrl)
-	eventDancerepository := mock_businesslogic.NewMockIEventDanceRepository(mockCtrl)
+	eventDanceRepo := mock_businesslogic.NewMockIEventDanceRepository(mockCtrl)
 
 	expectedCompetition := businesslogic.Competition{ID: 22}
 	expectedCompetition.UpdateStatus(businesslogic.CompetitionStatusClosedRegistration)
+
+	assert.Equal(t, businesslogic.CompetitionStatusClosedRegistration, expectedCompetition.GetStatus(), "competition status should be updated")
 
 	compRepository.EXPECT().SearchCompetition(gomock.Any()).Return([]businesslogic.Competition{
 		expectedCompetition,
 	}, nil)
 
-	err := businesslogic.CreateEvent(*event, compRepository, eventRepository, eventDancerepository)
+	err := businesslogic.CreateEvent(*event, compRepository, eventRepository, eventDanceRepo)
 	assert.NotNil(t, err, "creating event for competition that is closed for registration should throw an error")
 }

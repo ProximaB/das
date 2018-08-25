@@ -5,8 +5,7 @@
 package mock_reference
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic/reference"
-
+	reference "github.com/DancesportSoftware/das/businesslogic/reference"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )
@@ -35,7 +34,7 @@ func (m *MockICityRepository) EXPECT() *MockICityRepositoryMockRecorder {
 }
 
 // CreateCity mocks base method
-func (m *MockICityRepository) CreateCity(city *businesslogic.City) error {
+func (m *MockICityRepository) CreateCity(city *reference.City) error {
 	ret := m.ctrl.Call(m, "CreateCity", city)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -47,9 +46,9 @@ func (mr *MockICityRepositoryMockRecorder) CreateCity(city interface{}) *gomock.
 }
 
 // SearchCity mocks base method
-func (m *MockICityRepository) SearchCity(criteria businesslogic.SearchCityCriteria) ([]businesslogic.City, error) {
+func (m *MockICityRepository) SearchCity(criteria reference.SearchCityCriteria) ([]reference.City, error) {
 	ret := m.ctrl.Call(m, "SearchCity", criteria)
-	ret0, _ := ret[0].([]businesslogic.City)
+	ret0, _ := ret[0].([]reference.City)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -60,7 +59,7 @@ func (mr *MockICityRepositoryMockRecorder) SearchCity(criteria interface{}) *gom
 }
 
 // UpdateCity mocks base method
-func (m *MockICityRepository) UpdateCity(city businesslogic.City) error {
+func (m *MockICityRepository) UpdateCity(city reference.City) error {
 	ret := m.ctrl.Call(m, "UpdateCity", city)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -72,7 +71,7 @@ func (mr *MockICityRepositoryMockRecorder) UpdateCity(city interface{}) *gomock.
 }
 
 // DeleteCity mocks base method
-func (m *MockICityRepository) DeleteCity(city businesslogic.City) error {
+func (m *MockICityRepository) DeleteCity(city reference.City) error {
 	ret := m.ctrl.Call(m, "DeleteCity", city)
 	ret0, _ := ret[0].(error)
 	return ret0

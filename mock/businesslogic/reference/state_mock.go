@@ -5,8 +5,7 @@
 package mock_reference
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic/reference"
-
+	reference "github.com/DancesportSoftware/das/businesslogic/reference"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )
@@ -35,7 +34,7 @@ func (m *MockIStateRepository) EXPECT() *MockIStateRepositoryMockRecorder {
 }
 
 // CreateState mocks base method
-func (m *MockIStateRepository) CreateState(state *businesslogic.State) error {
+func (m *MockIStateRepository) CreateState(state *reference.State) error {
 	ret := m.ctrl.Call(m, "CreateState", state)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -47,9 +46,9 @@ func (mr *MockIStateRepositoryMockRecorder) CreateState(state interface{}) *gomo
 }
 
 // SearchState mocks base method
-func (m *MockIStateRepository) SearchState(criteria businesslogic.SearchStateCriteria) ([]businesslogic.State, error) {
+func (m *MockIStateRepository) SearchState(criteria reference.SearchStateCriteria) ([]reference.State, error) {
 	ret := m.ctrl.Call(m, "SearchState", criteria)
-	ret0, _ := ret[0].([]businesslogic.State)
+	ret0, _ := ret[0].([]reference.State)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -60,7 +59,7 @@ func (mr *MockIStateRepositoryMockRecorder) SearchState(criteria interface{}) *g
 }
 
 // UpdateState mocks base method
-func (m *MockIStateRepository) UpdateState(state businesslogic.State) error {
+func (m *MockIStateRepository) UpdateState(state reference.State) error {
 	ret := m.ctrl.Call(m, "UpdateState", state)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -72,7 +71,7 @@ func (mr *MockIStateRepositoryMockRecorder) UpdateState(state interface{}) *gomo
 }
 
 // DeleteState mocks base method
-func (m *MockIStateRepository) DeleteState(state businesslogic.State) error {
+func (m *MockIStateRepository) DeleteState(state reference.State) error {
 	ret := m.ctrl.Call(m, "DeleteState", state)
 	ret0, _ := ret[0].(error)
 	return ret0

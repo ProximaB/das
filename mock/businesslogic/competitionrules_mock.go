@@ -5,7 +5,7 @@
 package mock_businesslogic
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic"
+	businesslogic "github.com/DancesportSoftware/das/businesslogic"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )

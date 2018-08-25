@@ -5,8 +5,7 @@
 package mock_reference
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic/reference"
-
+	reference "github.com/DancesportSoftware/das/businesslogic/reference"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )
@@ -35,9 +34,9 @@ func (m *MockIGenderRepository) EXPECT() *MockIGenderRepositoryMockRecorder {
 }
 
 // GetAllGenders mocks base method
-func (m *MockIGenderRepository) GetAllGenders() ([]businesslogic.Gender, error) {
+func (m *MockIGenderRepository) GetAllGenders() ([]reference.Gender, error) {
 	ret := m.ctrl.Call(m, "GetAllGenders")
-	ret0, _ := ret[0].([]businesslogic.Gender)
+	ret0, _ := ret[0].([]reference.Gender)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

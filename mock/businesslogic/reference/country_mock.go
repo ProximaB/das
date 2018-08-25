@@ -5,8 +5,7 @@
 package mock_reference
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic/reference"
-
+	reference "github.com/DancesportSoftware/das/businesslogic/reference"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )
@@ -35,7 +34,7 @@ func (m *MockICountryRepository) EXPECT() *MockICountryRepositoryMockRecorder {
 }
 
 // CreateCountry mocks base method
-func (m *MockICountryRepository) CreateCountry(country *businesslogic.Country) error {
+func (m *MockICountryRepository) CreateCountry(country *reference.Country) error {
 	ret := m.ctrl.Call(m, "CreateCountry", country)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -47,9 +46,9 @@ func (mr *MockICountryRepositoryMockRecorder) CreateCountry(country interface{})
 }
 
 // SearchCountry mocks base method
-func (m *MockICountryRepository) SearchCountry(criteria businesslogic.SearchCountryCriteria) ([]businesslogic.Country, error) {
+func (m *MockICountryRepository) SearchCountry(criteria reference.SearchCountryCriteria) ([]reference.Country, error) {
 	ret := m.ctrl.Call(m, "SearchCountry", criteria)
-	ret0, _ := ret[0].([]businesslogic.Country)
+	ret0, _ := ret[0].([]reference.Country)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -60,7 +59,7 @@ func (mr *MockICountryRepositoryMockRecorder) SearchCountry(criteria interface{}
 }
 
 // DeleteCountry mocks base method
-func (m *MockICountryRepository) DeleteCountry(country businesslogic.Country) error {
+func (m *MockICountryRepository) DeleteCountry(country reference.Country) error {
 	ret := m.ctrl.Call(m, "DeleteCountry", country)
 	ret0, _ := ret[0].(error)
 	return ret0
@@ -72,7 +71,7 @@ func (mr *MockICountryRepositoryMockRecorder) DeleteCountry(country interface{})
 }
 
 // UpdateCountry mocks base method
-func (m *MockICountryRepository) UpdateCountry(country businesslogic.Country) error {
+func (m *MockICountryRepository) UpdateCountry(country reference.Country) error {
 	ret := m.ctrl.Call(m, "UpdateCountry", country)
 	ret0, _ := ret[0].(error)
 	return ret0

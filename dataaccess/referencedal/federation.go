@@ -36,7 +36,7 @@ type PostgresFederationRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresFederationRepository) CreateFederation(federation *referencebll.Federation) error {
+func (repo PostgresFederationRepository) CreateFederation(federation *reference.Federation) error {
 	if repo.Database == nil {
 		log.Println(common.ErrorMessageEmptyDatabase)
 	}
@@ -44,14 +44,14 @@ func (repo PostgresFederationRepository) CreateFederation(federation *referenceb
 		Into(DAS_FEDERATION_TABLE).
 		Columns(
 			common.COL_NAME,
-			common.COL_ABBREVIATION,
+			common.ColumnAbbreviation,
 			common.COL_DESCRIPTION,
 			DAS_FEDERATION_COL_YEAR_FOUNDED,
 			common.COL_COUNTRY_ID,
-			common.COL_CREATE_USER_ID,
-			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
-			common.COL_DATETIME_UPDATED,
+			common.ColumnCreateUserID,
+			common.ColumnDateTimeCreated,
+			common.ColumnUpdateUserID,
+			common.ColumnDateTimeUpdated,
 		).Values(
 		federation.Name,
 		federation.Abbreviation,
@@ -76,22 +76,22 @@ func (repo PostgresFederationRepository) CreateFederation(federation *referenceb
 	return err
 }
 
-func (repo PostgresFederationRepository) SearchFederation(criteria referencebll.SearchFederationCriteria) ([]referencebll.Federation, error) {
+func (repo PostgresFederationRepository) SearchFederation(criteria reference.SearchFederationCriteria) ([]reference.Federation, error) {
 	if repo.Database == nil {
 		log.Println(common.ErrorMessageEmptyDatabase)
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s",
-			common.PRIMARY_KEY,
+			common.ColumnPrimaryKey,
 			common.COL_NAME,
-			common.COL_ABBREVIATION,
+			common.ColumnAbbreviation,
 			DAS_FEDERATION_COL_YEAR_FOUNDED,
 			common.COL_COUNTRY_ID,
-			common.COL_CREATE_USER_ID,
-			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
-			common.COL_DATETIME_UPDATED)).
-		From(DAS_FEDERATION_TABLE).OrderBy(common.PRIMARY_KEY)
+			common.ColumnCreateUserID,
+			common.ColumnDateTimeCreated,
+			common.ColumnUpdateUserID,
+			common.ColumnDateTimeUpdated)).
+		From(DAS_FEDERATION_TABLE).OrderBy(common.ColumnPrimaryKey)
 	if criteria.CountryID > 0 {
 		stmt = stmt.Where(squirrel.Eq{
 			common.COL_COUNTRY_ID: criteria.CountryID})
@@ -100,16 +100,16 @@ func (repo PostgresFederationRepository) SearchFederation(criteria referencebll.
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: criteria.Name})
 	}
 	if criteria.ID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.ID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ID})
 	}
 
-	federations := make([]referencebll.Federation, 0)
+	federations := make([]reference.Federation, 0)
 	rows, err := stmt.RunWith(repo.Database).Query()
 	if err != nil {
 		return federations, err
 	}
 	for rows.Next() {
-		each := referencebll.Federation{}
+		each := reference.Federation{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -127,11 +127,11 @@ func (repo PostgresFederationRepository) SearchFederation(criteria referencebll.
 	return federations, err
 }
 
-func (repo PostgresFederationRepository) DeleteFederation(federation referencebll.Federation) error {
+func (repo PostgresFederationRepository) DeleteFederation(federation reference.Federation) error {
 	if repo.Database == nil {
 		log.Println(common.ErrorMessageEmptyDatabase)
 	}
-	stmt := repo.SqlBuilder.Delete("").From(DAS_FEDERATION_TABLE).Where(squirrel.Eq{common.PRIMARY_KEY: federation.ID})
+	stmt := repo.SqlBuilder.Delete("").From(DAS_FEDERATION_TABLE).Where(squirrel.Eq{common.ColumnPrimaryKey: federation.ID})
 
 	var err error
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
@@ -143,19 +143,19 @@ func (repo PostgresFederationRepository) DeleteFederation(federation referencebl
 	return err
 }
 
-func (repo PostgresFederationRepository) UpdateFederation(federation referencebll.Federation) error {
+func (repo PostgresFederationRepository) UpdateFederation(federation reference.Federation) error {
 	if repo.Database == nil {
 		log.Println(common.ErrorMessageEmptyDatabase)
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_FEDERATION_TABLE)
 	if federation.ID > 0 {
 		stmt = stmt.Set(common.COL_NAME, federation.Name).
-			Set(common.COL_ABBREVIATION, federation.Abbreviation).
+			Set(common.ColumnAbbreviation, federation.Abbreviation).
 			Set(common.COL_DESCRIPTION, federation.Description).
 			Set(DAS_FEDERATION_COL_YEAR_FOUNDED, federation.YearFounded).
 			Set(common.COL_COUNTRY_ID, federation.CountryID).
-			Set(common.COL_UPDATE_USER_ID, federation.UpdateUserID).
-			Set(common.COL_DATETIME_UPDATED, federation.DateTimeUpdated)
+			Set(common.ColumnUpdateUserID, federation.UpdateUserID).
+			Set(common.ColumnDateTimeUpdated, federation.DateTimeUpdated)
 		var err error
 		if tx, txErr := repo.Database.Begin(); txErr != nil {
 			return txErr

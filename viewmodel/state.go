@@ -25,7 +25,7 @@ type State struct {
 	CountryID    int    `json:"country"`
 }
 
-func StateDataModelToViewModel(dm referencebll.State) State {
+func StateDataModelToViewModel(dm reference.State) State {
 	return State{
 		ID:           dm.ID,
 		Name:         dm.Name,

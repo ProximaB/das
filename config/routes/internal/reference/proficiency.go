@@ -24,7 +24,7 @@ import (
 	"net/http"
 )
 
-const apiReferenceProficiencyEndpoint = "/api/reference/proficiency"
+const apiReferenceProficiencyEndpoint = "/api/v1.0/reference/proficiency"
 
 var proficiencyServer = reference.ProficiencyServer{
 	database.ProficiencyRepository,

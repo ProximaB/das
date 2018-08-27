@@ -18,8 +18,8 @@ package registration
 
 import (
 	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/config/authentication"
 	"github.com/DancesportSoftware/das/config/database"
+	"github.com/DancesportSoftware/das/config/routes/middleware"
 	"github.com/DancesportSoftware/das/controller"
 	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
@@ -35,7 +35,7 @@ var athleteCompetitionRegistrationServer = controller.CompetitionRegistrationSer
 	database.PartnershipRepository,
 	database.EventRepository,
 	database.PartnershipEventEntryRepository,
-	authentication.AuthenticationStrategy,
+	middleware.AuthenticationStrategy,
 }
 
 var createCompetitionRegistrationController = util.DasController{

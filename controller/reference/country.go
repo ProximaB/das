@@ -28,7 +28,7 @@ import (
 
 // CountryServer serves requests that perform
 type CountryServer struct {
-	referencebll.ICountryRepository
+	reference.ICountryRepository
 }
 
 // CreateCountryHandler handles request
@@ -75,7 +75,7 @@ func (server CountryServer) DeleteCountryHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	country := referencebll.Country{
+	country := reference.Country{
 		ID: deleteDTO.CountryID,
 	}
 
@@ -99,7 +99,7 @@ func (server CountryServer) UpdateCountryHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	country := referencebll.Country{
+	country := reference.Country{
 		ID:           updateDTO.CountryID,
 		Name:         updateDTO.Name,
 		Abbreviation: updateDTO.Abbreviation,
@@ -135,7 +135,7 @@ func (server CountryServer) SearchCountryHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	searchDTO := new(referencebll.SearchCountryCriteria)
+	searchDTO := new(reference.SearchCountryCriteria)
 	if err := util.ParseRequestData(r, searchDTO); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return

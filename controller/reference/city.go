@@ -27,7 +27,7 @@ import (
 )
 
 type CityServer struct {
-	referencebll.ICityRepository
+	reference.ICityRepository
 }
 
 // POST /api/reference/city
@@ -56,7 +56,7 @@ func (server CityServer) DeleteCityHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	if cities, searchErr := server.ICityRepository.SearchCity(referencebll.SearchCityCriteria{CityID: deleteDTO.ID}); searchErr != nil {
+	if cities, searchErr := server.ICityRepository.SearchCity(reference.SearchCityCriteria{CityID: deleteDTO.ID}); searchErr != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, searchErr.Error(), nil)
 		return
 	} else if len(cities) != 1 {
@@ -86,7 +86,7 @@ func (server CityServer) UpdateCityHandler(w http.ResponseWriter, r *http.Reques
 
 // GET /api/reference/city
 func (server CityServer) SearchCityHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(referencebll.SearchCityCriteria)
+	criteria := new(reference.SearchCityCriteria)
 	err := util.ParseRequestData(r, criteria)
 	if err != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, err.Error())

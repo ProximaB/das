@@ -34,19 +34,42 @@ const (
 	PartnershipRoleFollow = "FOLLOW"
 )
 
+// PartnershipRole defines roles within a Partnership: lead and follow
+type PartnershipRole struct {
+	ID              int
+	Name            string
+	DateTimeCreated time.Time
+	DateTimeUpdated time.Time
+}
+
+type IPartnershipRoleRepository interface {
+	GetAllPartnershipRoles() ([]PartnershipRole, error)
+}
+
+type PartnershipStatus struct {
+	ID              int
+	Name            string
+	DateTimeCreated time.Time
+	DateTimeUpdated time.Time
+}
+
+type IPartnershipStatusRepository interface {
+	GetAllPartnershipStatus() ([]PartnershipStatus, error)
+}
+
 // Partnership defines the combination of a lead and a follow. A partnership is uniquely identified
 // if the lead and follow are confirmed.
 type Partnership struct {
-	ID              int
-	LeadID          int
-	FollowID        int
-	Lead            Account
-	Follow          Account
-	SameSex         bool
-	FavoriteLead    bool
-	FavoriteFollow  bool
-	DateTimeCreated time.Time
-	DateTimeUpdated time.Time
+	ID               int
+	LeadID           int
+	FollowID         int
+	Lead             Account
+	Follow           Account
+	SameSex          bool
+	FavoriteByLead   bool
+	FavoriteByFollow bool
+	DateTimeCreated  time.Time
+	DateTimeUpdated  time.Time
 }
 
 // IPartnershipRepository defines the interface that a partnership repository should implement

@@ -33,11 +33,11 @@ type Partnership struct {
 func PartnershipDataModelToViewModel(partnership businesslogic.Partnership) Partnership {
 	return Partnership{
 		ID:         partnership.ID,
-		LeadName:   partnership.Lead.GetName(),
-		FollowName: partnership.Follow.GetName(),
+		LeadName:   partnership.Lead.FullName(),
+		FollowName: partnership.Follow.FullName(),
 		Since:      partnership.DateTimeCreated,
 		SameSexIND: partnership.SameSex,
-		Favorite:   partnership.FavoriteLead,
+		Favorite:   partnership.FavoriteByLead,
 	}
 }
 
@@ -74,4 +74,16 @@ type PartnershipRequest struct {
 type PartnershipRequestStatus struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
+}
+
+type PartnershipRole struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+func PartnershipRoleDataModelToViewModel(dataModel businesslogic.PartnershipRole) PartnershipRole {
+	return PartnershipRole{
+		ID:   dataModel.ID,
+		Name: dataModel.Name,
+	}
 }

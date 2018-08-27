@@ -25,33 +25,26 @@ import (
 	"net/http"
 )
 
-type Server struct {
+// AccountServer provides a virtual server that handles requests that are related to Account
+type AccountServer struct {
 	businesslogic.IAccountRepository
+	businesslogic.IAccountRoleRepository
 	businesslogic.IOrganizerProvisionRepository
 	businesslogic.IOrganizerProvisionHistoryRepository
+	businesslogic.IUserPreferenceRepository
 }
 
 // RegisterAccountHandler handle the request
 // 	POST /api/account/register
 // Accepted JSON parameters:
 //	{
-//		"accounttype": 1,
 //		"email": "awesomeuser@email.com",
 //		"phone": 1234567890,
-//		"firstname": "John",
-//		"middlename": "Adams",
-//		"lastname": "Smith",
-//		"dateofbirth: "1990-01-01T06:00:00.0000Z",
-//		"gender": 2,
 //		"password": !@#$1234,
-//		"tosaccepted": true,
-//		"ppaccepted": true
+//		"firstname": "Awesome",
+//		"lastname": "User"
 //	}
-// In case an user of under-13 registers an account, parental control will be required and
-// additional parameters will be required as well:
-// 	"byguardian": true
-//	"signature": "John Smith Sr."
-func (server Server) RegisterAccountHandler(w http.ResponseWriter, r *http.Request) {
+func (server AccountServer) RegisterAccountHandler(w http.ResponseWriter, r *http.Request) {
 	createAccount := new(viewmodel.CreateAccount)
 
 	if err := util.ParseRequestBodyData(r, createAccount); err != nil {
@@ -59,43 +52,17 @@ func (server Server) RegisterAccountHandler(w http.ResponseWriter, r *http.Reque
 		return
 	}
 
-	account := businesslogic.Account{
-		AccountTypeID:         createAccount.AccountType,
-		FirstName:             createAccount.FirstName,
-		MiddleNames:           createAccount.MiddleNames,
-		LastName:              createAccount.LastName,
-		DateOfBirth:           createAccount.DateOfBirth,
-		UserGenderID:          createAccount.Gender,
-		Email:                 createAccount.Email,
-		Phone:                 createAccount.Phone,
-		ToSAccepted:           createAccount.ToSAccepted,
-		PrivacyPolicyAccepted: createAccount.PPAccepted,
-		ByGuardian:            createAccount.ByGuardian,
-		Signature:             createAccount.Signature,
-	}
-
-	var strategy businesslogic.ICreateAccountStrategy
-	switch account.AccountTypeID {
-	case businesslogic.AccountTypeOrganizer:
-		strategy = businesslogic.CreateOrganizerAccountStrategy{
-			AccountRepo:   server.IAccountRepository,
-			ProvisionRepo: server.IOrganizerProvisionRepository,
-			HistoryRepo:   server.IOrganizerProvisionHistoryRepository,
-		}
-	case businesslogic.AccountTypeAdministrator:
-		util.RespondJsonResult(w, http.StatusBadRequest, "invalid account type", nil)
+	if err := createAccount.Validate(); err != nil {
+		util.RespondJsonResult(w, http.StatusBadRequest, err.Error(), nil)
 		return
-	default:
-		strategy = businesslogic.CreateAccountStrategy{
-			AccountRepo: server.IAccountRepository,
-		}
 	}
 
-	// check if parental account is needed
-	if account.AccountTypeID == businesslogic.AccountTypeAthlete && account.ByGuardian {
-		strategy = businesslogic.CreateParentalAccountStrategy{
-			AccountRepo: server.IAccountRepository,
-		}
+	account := createAccount.ToAccountModel()
+
+	strategy := businesslogic.CreateAccountStrategy{
+		AccountRepo:          server.IAccountRepository,
+		RoleRepository:       server.IAccountRoleRepository,
+		PreferenceRepository: server.IUserPreferenceRepository,
 	}
 
 	if err := strategy.CreateAccount(account, createAccount.Password); err != nil {
@@ -118,10 +85,9 @@ func (server Server) RegisterAccountHandler(w http.ResponseWriter, r *http.Reque
 //		"message": "authorized",
 //		"data": {
 //			"token": "some.jwt.token",
-//			"type: 3
 //		}
 //	}
-func (server Server) AccountAuthenticationHandler(w http.ResponseWriter, r *http.Request) {
+func (server AccountServer) AccountAuthenticationHandler(w http.ResponseWriter, r *http.Request) {
 	loginDTO := new(viewmodel.Login)
 	err := util.ParseRequestBodyData(r, loginDTO)
 	if err != nil {
@@ -133,29 +99,25 @@ func (server Server) AccountAuthenticationHandler(w http.ResponseWriter, r *http
 	}
 
 	err = businesslogic.AuthenticateUser(loginDTO.Email, loginDTO.Password, server.IAccountRepository)
-	// util.RespondJsonResult(w, http.StatusNotImplemented, "authentication is not implemented", nil)
 
 	if err != nil {
 		util.RespondJsonResult(w, http.StatusUnauthorized, err.Error(), nil)
 		return
-	} else {
-		account := businesslogic.GetAccountByEmail(loginDTO.Email, server.IAccountRepository)
-
-		// user jwt authentication
-		authString := authentication.GenerateAuthenticationToken(account)
-		if err != nil {
-			log.Printf("[error] generating client credential: %s\n", err.Error())
-			util.RespondJsonResult(w, http.StatusUnauthorized, "error in generating client credential", nil)
-			return
-		} else {
-			response := struct {
-				Token    string `json:"token"`
-				UserType int    `json:"type"`
-			}{Token: authString, UserType: account.AccountTypeID}
-			util.RespondJsonResult(w, http.StatusOK, "authorized", response)
-			return
-		}
 	}
+	account := businesslogic.GetAccountByEmail(loginDTO.Email, server.IAccountRepository)
+
+	// user jwt authentication
+	authString := authentication.GenerateAuthenticationToken(account)
+	if err != nil {
+		log.Printf("[error] generating client credential: %s\n", err.Error())
+		util.RespondJsonResult(w, http.StatusUnauthorized, "error in generating client credential", nil)
+		return
+	}
+	response := struct {
+		Token string `json:"token"`
+	}{Token: authString}
+	util.RespondJsonResult(w, http.StatusOK, "authorized", response)
+	return
 }
 
 /*

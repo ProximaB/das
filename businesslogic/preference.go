@@ -1,5 +1,5 @@
 // Dancesport Application System (DAS)
-// Copyright (C) 2017, 2018 Yubing Hou
+// Copyright (C) 2018 Yubing Hou
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -14,13 +14,27 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package authentication
+package businesslogic
 
-import (
-	"github.com/DancesportSoftware/das/config/database"
-	"github.com/DancesportSoftware/das/controller/util/authentication"
-)
+import "time"
 
-var AuthenticationStrategy = authentication.JwtAuthenticationStrategy{
-	database.AccountRepository,
+// UserPreference stores the basic preferences of user
+type UserPreference struct {
+	ID              int
+	AccountID       int
+	DefaultRole     int
+	CreateUserID    int
+	DateTimeCreated time.Time
+	UpdateUserID    int
+	DateTimeUpdated time.Time
+}
+
+type SearchUserPreferenceCriteria struct {
+	AccountID int
+}
+
+type IUserPreferenceRepository interface {
+	CreatePreference(preference *UserPreference) error
+	SearchPreference(criteria SearchUserPreferenceCriteria) ([]UserPreference, error)
+	UpdatePreference(preference UserPreference) error
 }

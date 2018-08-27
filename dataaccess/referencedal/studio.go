@@ -34,28 +34,28 @@ type PostgresStudioRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresStudioRepository) SearchStudio(criteria referencebll.SearchStudioCriteria) ([]referencebll.Studio, error) {
+func (repo PostgresStudioRepository) SearchStudio(criteria reference.SearchStudioCriteria) ([]reference.Studio, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresStudioRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf(`DAS.STUDIO.%s, DAS.STUDIO.%s, DAS.STUDIO.%s, DAS.STUDIO.%s, 
 		DAS.STUDIO.%s, DAS.STUDIO.%s, DAS.STUDIO.%s, DAS.STUDIO.%s, DAS.STUDIO.%s`,
-			common.PRIMARY_KEY,
+			common.ColumnPrimaryKey,
 			common.COL_NAME,
 			common.COL_ADDRESS,
 			common.COL_CITY_ID,
 			common.COL_WEBSITE,
-			common.COL_CREATE_USER_ID,
-			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
-			common.COL_DATETIME_UPDATED)).
-		From(DAS_STUDIO_TABLE).OrderBy(common.PRIMARY_KEY)
+			common.ColumnCreateUserID,
+			common.ColumnDateTimeCreated,
+			common.ColumnUpdateUserID,
+			common.ColumnDateTimeUpdated)).
+		From(DAS_STUDIO_TABLE).OrderBy(common.ColumnPrimaryKey)
 	if len(criteria.Name) > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: criteria.Name})
 	}
 	if criteria.ID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.ID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ID})
 	}
 	if criteria.CityID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_CITY_ID: criteria.CityID})
@@ -65,13 +65,13 @@ func (repo PostgresStudioRepository) SearchStudio(criteria referencebll.SearchSt
 			Join(`DAS.STATE S ON S.ID = C.STATE_ID`).Where(squirrel.Eq{`S.ID`: criteria.StateID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	studios := make([]referencebll.Studio, 0)
+	studios := make([]reference.Studio, 0)
 	if err != nil {
 		return studios, err
 	}
 
 	for rows.Next() {
-		each := referencebll.Studio{}
+		each := reference.Studio{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -89,7 +89,7 @@ func (repo PostgresStudioRepository) SearchStudio(criteria referencebll.SearchSt
 	return studios, err
 }
 
-func (repo PostgresStudioRepository) CreateStudio(studio *referencebll.Studio) error {
+func (repo PostgresStudioRepository) CreateStudio(studio *reference.Studio) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStudioRepository is not specified")
 	}
@@ -98,10 +98,10 @@ func (repo PostgresStudioRepository) CreateStudio(studio *referencebll.Studio) e
 		common.COL_ADDRESS,
 		common.COL_CITY_ID,
 		common.COL_WEBSITE,
-		common.COL_CREATE_USER_ID,
-		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
-		common.COL_DATETIME_UPDATED,
+		common.ColumnCreateUserID,
+		common.ColumnDateTimeCreated,
+		common.ColumnUpdateUserID,
+		common.ColumnDateTimeUpdated,
 	).Values(
 		studio.Name,
 		studio.Address,
@@ -126,7 +126,7 @@ func (repo PostgresStudioRepository) CreateStudio(studio *referencebll.Studio) e
 	return err
 }
 
-func (repo PostgresStudioRepository) UpdateStudio(studio referencebll.Studio) error {
+func (repo PostgresStudioRepository) UpdateStudio(studio reference.Studio) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStudioRepository is not specified")
 	}
@@ -136,8 +136,8 @@ func (repo PostgresStudioRepository) UpdateStudio(studio referencebll.Studio) er
 			Set(common.COL_ADDRESS, studio.Address).
 			Set(common.COL_CITY_ID, studio.CityID).
 			Set(common.COL_WEBSITE, studio.Website).
-			Set(common.COL_UPDATE_USER_ID, studio.UpdateUserID).
-			Set(common.COL_DATETIME_UPDATED, studio.DateTimeUpdated)
+			Set(common.ColumnUpdateUserID, studio.UpdateUserID).
+			Set(common.ColumnDateTimeUpdated, studio.DateTimeUpdated)
 		var err error
 		if tx, txErr := repo.Database.Begin(); txErr != nil {
 			return txErr
@@ -151,11 +151,11 @@ func (repo PostgresStudioRepository) UpdateStudio(studio referencebll.Studio) er
 	}
 }
 
-func (repo PostgresStudioRepository) DeleteStudio(studio referencebll.Studio) error {
+func (repo PostgresStudioRepository) DeleteStudio(studio reference.Studio) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStudioRepository is not specified")
 	}
-	stmt := repo.SqlBuilder.Delete("").From(DAS_STUDIO_TABLE).Where(squirrel.Eq{common.PRIMARY_KEY: studio.ID})
+	stmt := repo.SqlBuilder.Delete("").From(DAS_STUDIO_TABLE).Where(squirrel.Eq{common.ColumnPrimaryKey: studio.ID})
 	var err error
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
 		return txErr

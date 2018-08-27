@@ -24,7 +24,7 @@ type Proficiency struct {
 	Division      int    `json:"division"`
 }
 
-func ProficiencyDataModelToViewModel(dm referencebll.Proficiency) Proficiency {
+func ProficiencyDataModelToViewModel(dm reference.Proficiency) Proficiency {
 	return Proficiency{
 		ProficiencyID: dm.ID,
 		Name:          dm.Name,

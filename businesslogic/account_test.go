@@ -30,27 +30,25 @@ import (
 var testAthleteAccount = businesslogic.Account{
 	FirstName:             "First Name",
 	LastName:              "Last Name",
-	UserGenderID:          referencebll.GENDER_MALE,
+	UserGenderID:          reference.GENDER_MALE,
 	DateOfBirth:           time.Date(2017, time.January, 1, 1, 1, 1, 1, time.UTC),
 	ToSAccepted:           true,
 	PrivacyPolicyAccepted: true,
-	AccountTypeID:         businesslogic.AccountTypeAthlete,
-	Email:                 "test@test.com",
-	Phone:                 "1232234442",
-	Signature:             "I am a parent",
-	ByGuardian:            true,
+	Email:      "test@test.com",
+	Phone:      "1232234442",
+	Signature:  "I am a parent",
+	ByGuardian: true,
 }
 
 var testOrganizerAccount = businesslogic.Account{
 	FirstName:             "Mighty",
 	LastName:              "Meerkat",
-	UserGenderID:          referencebll.GENDER_FEMALE,
+	UserGenderID:          reference.GENDER_FEMALE,
 	DateOfBirth:           time.Date(1997, time.May, 22, 1, 1, 1, 1, time.UTC),
 	ToSAccepted:           true,
 	PrivacyPolicyAccepted: true,
-	AccountTypeID:         businesslogic.AccountTypeOrganizer,
-	Email:                 "mighty.meerkat@email.com",
-	Phone:                 "3321231232",
+	Email: "mighty.meerkat@email.com",
+	Phone: "3321231232",
 }
 
 func TestGetAccountByEmail(t *testing.T) {
@@ -171,4 +169,50 @@ func TestCreateOrganizerAccountStrategy_CreateAccount(t *testing.T) {
 
 	err := strategy.CreateAccount(testOrganizerAccount, "testpassword")
 	assert.Nil(t, err, "should create organizer account with CreateOrganizerAccountStrategy")
+}
+
+func TestAccount_GetRoles(t *testing.T) {
+	rolesOfUserAccount := []businesslogic.AccountRole{
+		{ID: 1, AccountID: 1, AccountTypeID: businesslogic.AccountTypeOrganizer},
+		{ID: 2, AccountID: 1, AccountTypeID: businesslogic.AccountTypeAthlete},
+	}
+	userAccount := businesslogic.Account{
+		ID: 1,
+	}
+	userAccount.SetRoles(rolesOfUserAccount)
+
+	assert.Equal(t, 2, len(userAccount.GetRoles()))
+	assert.True(t, userAccount.HasRole(businesslogic.AccountTypeOrganizer))
+	assert.True(t, userAccount.HasRole(businesslogic.AccountTypeAthlete))
+}
+
+func TestAccount_SetRoles(t *testing.T) {
+	rolesOfUserAccount := []businesslogic.AccountRole{
+		{ID: 1, AccountID: 1, AccountTypeID: businesslogic.AccountTypeOrganizer},
+		{ID: 2, AccountID: 1, AccountTypeID: businesslogic.AccountTypeAthlete},
+	}
+	userAccount := businesslogic.Account{
+		ID: 1,
+	}
+	userAccount.SetRoles(rolesOfUserAccount)
+
+	assert.True(t, userAccount.HasRole(businesslogic.AccountTypeAthlete))
+	assert.True(t, userAccount.HasRole(businesslogic.AccountTypeOrganizer))
+	assert.False(t, userAccount.HasRole(businesslogic.AccountTypeAdjudicator))
+	assert.False(t, userAccount.HasRole(businesslogic.AccountTypeScrutineer))
+	assert.False(t, userAccount.HasRole(businesslogic.AccountTypeEmcee))
+	assert.False(t, userAccount.HasRole(businesslogic.AccountTypeDeckCaptain))
+	assert.False(t, userAccount.HasRole(businesslogic.AccountTypeAdministrator))
+
+	accounts := [3]businesslogic.Account{
+		{},
+		{},
+		{},
+	}
+	for i := 0; i < len(accounts); i++ {
+		accounts[i].SetRoles(rolesOfUserAccount)
+	}
+	for _, each := range accounts {
+		assert.True(t, each.HasRole(businesslogic.AccountTypeAthlete))
+	}
 }

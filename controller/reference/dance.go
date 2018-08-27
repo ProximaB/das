@@ -25,12 +25,12 @@ import (
 )
 
 type DanceServer struct {
-	referencebll.IDanceRepository
+	reference.IDanceRepository
 }
 
 // GET /api/reference/dance
 func (server DanceServer) SearchDanceHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(referencebll.SearchDanceCriteria)
+	criteria := new(reference.SearchDanceCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, "invalid request data", parseErr.Error())
 		return

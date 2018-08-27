@@ -10,6 +10,78 @@ import (
 	reflect "reflect"
 )
 
+// MockIPartnershipRoleRepository is a mock of IPartnershipRoleRepository interface
+type MockIPartnershipRoleRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockIPartnershipRoleRepositoryMockRecorder
+}
+
+// MockIPartnershipRoleRepositoryMockRecorder is the mock recorder for MockIPartnershipRoleRepository
+type MockIPartnershipRoleRepositoryMockRecorder struct {
+	mock *MockIPartnershipRoleRepository
+}
+
+// NewMockIPartnershipRoleRepository creates a new mock instance
+func NewMockIPartnershipRoleRepository(ctrl *gomock.Controller) *MockIPartnershipRoleRepository {
+	mock := &MockIPartnershipRoleRepository{ctrl: ctrl}
+	mock.recorder = &MockIPartnershipRoleRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockIPartnershipRoleRepository) EXPECT() *MockIPartnershipRoleRepositoryMockRecorder {
+	return m.recorder
+}
+
+// GetAllPartnershipRoles mocks base method
+func (m *MockIPartnershipRoleRepository) GetAllPartnershipRoles() ([]businesslogic.PartnershipRole, error) {
+	ret := m.ctrl.Call(m, "GetAllPartnershipRoles")
+	ret0, _ := ret[0].([]businesslogic.PartnershipRole)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllPartnershipRoles indicates an expected call of GetAllPartnershipRoles
+func (mr *MockIPartnershipRoleRepositoryMockRecorder) GetAllPartnershipRoles() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllPartnershipRoles", reflect.TypeOf((*MockIPartnershipRoleRepository)(nil).GetAllPartnershipRoles))
+}
+
+// MockIPartnershipStatusRepository is a mock of IPartnershipStatusRepository interface
+type MockIPartnershipStatusRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockIPartnershipStatusRepositoryMockRecorder
+}
+
+// MockIPartnershipStatusRepositoryMockRecorder is the mock recorder for MockIPartnershipStatusRepository
+type MockIPartnershipStatusRepositoryMockRecorder struct {
+	mock *MockIPartnershipStatusRepository
+}
+
+// NewMockIPartnershipStatusRepository creates a new mock instance
+func NewMockIPartnershipStatusRepository(ctrl *gomock.Controller) *MockIPartnershipStatusRepository {
+	mock := &MockIPartnershipStatusRepository{ctrl: ctrl}
+	mock.recorder = &MockIPartnershipStatusRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockIPartnershipStatusRepository) EXPECT() *MockIPartnershipStatusRepositoryMockRecorder {
+	return m.recorder
+}
+
+// GetAllPartnershipStatus mocks base method
+func (m *MockIPartnershipStatusRepository) GetAllPartnershipStatus() ([]businesslogic.PartnershipStatus, error) {
+	ret := m.ctrl.Call(m, "GetAllPartnershipStatus")
+	ret0, _ := ret[0].([]businesslogic.PartnershipStatus)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAllPartnershipStatus indicates an expected call of GetAllPartnershipStatus
+func (mr *MockIPartnershipStatusRepositoryMockRecorder) GetAllPartnershipStatus() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAllPartnershipStatus", reflect.TypeOf((*MockIPartnershipStatusRepository)(nil).GetAllPartnershipStatus))
+}
+
 // MockIPartnershipRepository is a mock of IPartnershipRepository interface
 type MockIPartnershipRepository struct {
 	ctrl     *gomock.Controller

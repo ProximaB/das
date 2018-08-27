@@ -25,12 +25,12 @@ import (
 )
 
 type ProficiencyServer struct {
-	referencebll.IProficiencyRepository
+	reference.IProficiencyRepository
 }
 
 // GET /api/reference/proficiency
 func (server ProficiencyServer) SearchProficiencyHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(referencebll.SearchProficiencyCriteria)
+	criteria := new(reference.SearchProficiencyCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, "invalid request data", parseErr.Error())
 		return

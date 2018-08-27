@@ -21,9 +21,7 @@ import (
 	"log"
 	"time"
 
-	"github.com/DancesportSoftware/das/businesslogic/reference"
 	"github.com/DancesportSoftware/das/util"
-	"github.com/bearbin/go-age"
 	"github.com/google/uuid"
 )
 
@@ -31,7 +29,7 @@ import (
 type Account struct {
 	ID                    int    // userID will be account ID, too
 	UUID                  string // uuid that will be used in communicating with client
-	AccountTypeID         int
+	accountRoles          map[int]AccountRole
 	AccountStatusID       int
 	UserGenderID          int
 	FirstName             string
@@ -51,6 +49,31 @@ type Account struct {
 	PrivacyPolicyAccepted bool
 	ByGuardian            bool
 	Signature             string
+}
+
+// SetRoles set a list of roles to Account
+func (account *Account) SetRoles(roles []AccountRole) {
+	account.accountRoles = make(map[int]AccountRole)
+	for _, each := range roles {
+		account.accountRoles[each.AccountTypeID] = each
+	}
+}
+
+// HasRole checks if account has a particular role
+func (account *Account) HasRole(roleID int) bool {
+	if _, ok := account.accountRoles[roleID]; ok {
+		return true
+	}
+	return false
+}
+
+// GetRoles returns all the roles that the caller account is associated with
+func (account *Account) GetRoles() []int {
+	roles := make([]int, 0)
+	for k := range account.accountRoles {
+		roles = append(roles, k)
+	}
+	return roles
 }
 
 // IAccountRepository specifies the interface that an account repository needs to implement.
@@ -75,8 +98,8 @@ type SearchAccountCriteria struct {
 	AccountStatus int
 }
 
-// GetName returns the full name of a user (excluding middle name, if any)
-func (account Account) GetName() string {
+// FullName returns the full name of a user (excluding middle name, if any)
+func (account Account) FullName() string {
 	return account.FirstName + " " + account.LastName
 }
 
@@ -87,15 +110,52 @@ type ICreateAccountStrategy interface {
 
 // CreateAccountStrategy can create an account that only has record in IAccountRepository
 type CreateAccountStrategy struct {
-	AccountRepo IAccountRepository
+	AccountRepo          IAccountRepository
+	RoleRepository       IAccountRoleRepository
+	PreferenceRepository IUserPreferenceRepository
 }
 
 // CreateAccount creates a non-organizer account
 func (strategy CreateAccountStrategy) CreateAccount(account Account, password string) error {
-	if account.AccountTypeID == AccountTypeOrganizer {
-		return errors.New("creating an organizer account with the wrong strategy")
+	if err := createAccount(&account, password, strategy.AccountRepo); err != nil {
+		return err
 	}
-	return createAccount(&account, password, strategy.AccountRepo)
+
+	// create default role for the account, which is athlete
+	var createRoleErr error
+	if strategy.RoleRepository != nil {
+		defaultRole := AccountRole{
+			AccountID:       account.ID,
+			AccountTypeID:   AccountTypeAthlete,
+			CreateUserID:    account.ID,
+			DateTimeCreated: time.Now(),
+			UpdateUserID:    account.ID,
+			DateTimeUpdated: time.Now(),
+		}
+		createRoleErr = strategy.RoleRepository.CreateAccountRole(&defaultRole)
+	}
+	if createRoleErr != nil {
+		return createRoleErr
+	}
+
+	// initiate account preference data
+	var createPrefErr error
+	if strategy.PreferenceRepository != nil {
+		defaultPreference := UserPreference{
+			AccountID:       account.ID,
+			DefaultRole:     AccountTypeAthlete,
+			CreateUserID:    account.ID,
+			DateTimeCreated: time.Now(),
+			UpdateUserID:    account.ID,
+			DateTimeUpdated: time.Now(),
+		}
+		createPrefErr = strategy.PreferenceRepository.CreatePreference(&defaultPreference)
+	}
+	if createPrefErr != nil {
+		return createPrefErr
+	}
+
+	return nil
 }
 
 // CreateOrganizerAccountStrategy creates an organizer account, which follows a different procedure from other accounts
@@ -116,9 +176,6 @@ func (strategy CreateOrganizerAccountStrategy) CreateAccount(account Account, pa
 	if strategy.ProvisionRepo == nil {
 		return errors.New("organizer repository is null")
 	}
-	if account.AccountTypeID != AccountTypeOrganizer {
-		return errors.New("not an organizer account")
-	}
 	if err := createAccount(&account, password, strategy.AccountRepo); err != nil {
 		return err
 	}
@@ -132,18 +189,6 @@ func (strategy CreateOrganizerAccountStrategy) CreateAccount(account Account, pa
 	return nil
 }
 
-// CreateParentalAccountStrategy allows exceptions where one parent uses his/her phone number for
-// children's accounts. The children's accounts will share the same phone number but different email
-// addresses.
-type CreateParentalAccountStrategy struct {
-	AccountRepo IAccountRepository
-}
-
-// CreateAccount allows creating accounts for competitors
-func (strategy CreateParentalAccountStrategy) CreateAccount(account Account, password string) error {
-	return errors.New("not implemented")
-}
-
 func createAccount(account *Account, password string, repo IAccountRepository) error {
 	if err := validateAccountRegistration(*account, repo); err != nil {
 		return err
@@ -153,6 +198,7 @@ func createAccount(account *Account, password string, repo IAccountRepository) e
 	account.PasswordHash = hash
 	account.PasswordSalt = salt
 	account.UUID = uuid.New().String()
+	account.HashAlgorithm = "SHA256"
 
 	// TODO: email and phone verification should be performed before account can be activated
 	account.AccountStatusID = AccountStatusActivated
@@ -163,9 +209,12 @@ func createAccount(account *Account, password string, repo IAccountRepository) e
 // GetAccountByEmail will retrieve account from repo by email. This function will return either a matched account
 // or an empty account
 func GetAccountByEmail(email string, repo IAccountRepository) Account {
-	accounts, _ := repo.SearchAccount(SearchAccountCriteria{
+	accounts, err := repo.SearchAccount(SearchAccountCriteria{
 		Email: email,
 	})
+	if err != nil {
+		return Account{}
+	}
 	if len(accounts) != 1 {
 		return Account{}
 	}
@@ -216,38 +265,13 @@ type IAccountValidationStrategy interface {
 	Validate(account Account, accountRepo IAccountRepository) error
 }
 
-type mvpAccountValidationStrategy struct{}
-
-func (strategy mvpAccountValidationStrategy) Validate(account Account, accountRepo IAccountRepository) error {
-	if checkEmailUsed(account.Email, accountRepo) {
-		return errors.New("this email address is already used")
-	}
-	return nil
-}
-
+// validateAccountRegistration is for use
 func validateAccountRegistration(account Account, accountRepo IAccountRepository) error {
-	if account.AccountTypeID > AccountTypeAdministrator || account.AccountTypeID < AccountTypeAthlete {
-		return errors.New("invalid account type")
-	}
-	if len(account.FirstName) < 2 || len(account.LastName) < 2 {
-		return errors.New("name is too short")
-	}
-	if len(account.FirstName) > 18 || len(account.LastName) > 18 {
-		return errors.New("name is too long")
-	}
-	if len(account.Email) < 5 {
-		return errors.New("invalid email address")
-	}
-	if len(account.Phone) < 3 {
-		return errors.New("invalid phone number")
-	}
+
 	if checkEmailUsed(account.Email, accountRepo) {
 		return errors.New("this email address is already used")
 	}
-	if account.UserGenderID != referencebll.GENDER_FEMALE && account.UserGenderID != referencebll.GENDER_MALE {
-		return errors.New("invalid gender")
-	}
-	if (time.Now().Year() - account.DateOfBirth.Year()) > 120 {
+	/*if (time.Now().Year() - account.DateOfBirth.Year()) > 120 {
 		return errors.New("invalid date of birth")
 	}
 	if age.AgeAt(account.DateOfBirth, time.Now()) < 13 && !account.ByGuardian {
@@ -255,7 +279,7 @@ func validateAccountRegistration(account Account, accountRepo IAccountRepository
 	}
 	if age.AgeAt(account.DateOfBirth, time.Now()) < 13 && len(account.Signature) < 3 {
 		return errors.New("must have consent from legal guardian")
-	}
+	}*/
 	if !account.ToSAccepted {
 		return errors.New("terms of services must be accepted")
 	}

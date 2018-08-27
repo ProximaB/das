@@ -14,11 +14,10 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package partnership
+package accountdal
 
 import (
 	"database/sql"
-	"errors"
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
@@ -26,43 +25,43 @@ import (
 )
 
 const (
-	DAS_PARTNERSHIP_REQUEST_STATUS_TABLE                 = "DAS.PARTNERSHIP_REQUEST_STATUS"
-	DAS_PARTNERSHIP_REQUEST_STATUS_COL_REQUEST_STATUS_ID = "REQUEST_STATUS_ID"
-	DAS_PARTNERSHIP_REQUEST_STATUS_COL_CODE              = "CODE"
+	DAS_ACCOUNT_TYPE_TABLE = "DAS.ACCOUNT_TYPE"
 )
 
-type PostgresPartnershipRequestStatusRepository struct {
+type PostgresAccountTypeRepository struct {
 	Database   *sql.DB
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresPartnershipRequestStatusRepository) GetPartnershipRequestStatus() ([]businesslogic.PartnershipRequestStatus, error) {
-	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresPartnershipRequestStatusRepository is not specified")
-	}
-	clause := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s",
-		common.PRIMARY_KEY,
-		DAS_PARTNERSHIP_REQUEST_STATUS_COL_CODE,
-		common.COL_DESCRIPTION,
-		common.COL_DATETIME_CREATED,
-		common.COL_DATETIME_UPDATED)).From(DAS_PARTNERSHIP_REQUEST_STATUS_TABLE).OrderBy(common.PRIMARY_KEY)
-	rows, err := clause.RunWith(repo.Database).Query()
-	output := make([]businesslogic.PartnershipRequestStatus, 0)
+func (repo PostgresAccountTypeRepository) GetAccountTypes() ([]businesslogic.AccountType, error) {
+	accountTypes := make([]businesslogic.AccountType, 0)
+	stmt := repo.SqlBuilder.
+		Select(
+			fmt.Sprintf(
+				"%s, %s, %s, %s, %s",
+				common.ColumnPrimaryKey,
+				common.COL_NAME,
+				common.COL_DESCRIPTION,
+				common.ColumnDateTimeCreated,
+				common.ColumnDateTimeUpdated)).
+		From(DAS_ACCOUNT_TYPE_TABLE).
+		OrderBy(common.ColumnPrimaryKey)
+	rows, err := stmt.RunWith(repo.Database).Query()
 	if err != nil {
-		return output, err
+		return accountTypes, err
 	}
+
 	for rows.Next() {
-		each := businesslogic.PartnershipRequestStatus{}
+		each := businesslogic.AccountType{}
 		rows.Scan(
 			&each.ID,
-			&each.Code,
+			&each.Name,
 			&each.Description,
 			&each.DateTimeCreated,
 			&each.DateTimeUpdated,
 		)
-		output = append(output, each)
+		accountTypes = append(accountTypes, each)
 	}
 	rows.Close()
-	return output, err
-
+	return accountTypes, err
 }

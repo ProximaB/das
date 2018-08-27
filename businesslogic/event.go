@@ -209,20 +209,20 @@ func CreateEvent(event Event, compRepo ICompetitionRepository, eventRepo IEventR
 }
 
 func (event Event) validate(dances []EventDance,
-	federationRepo referencebll.IFederationRepository,
-	divisionRepo referencebll.IDivisionRepository,
-	ageRepo referencebll.IAgeRepository,
-	proficiencyRepo referencebll.IProficiencyRepository,
-	styleRepo referencebll.IStyleRepository,
-	danceRepo referencebll.IDanceRepository) error {
+	federationRepo reference.IFederationRepository,
+	divisionRepo reference.IDivisionRepository,
+	ageRepo reference.IAgeRepository,
+	proficiencyRepo reference.IProficiencyRepository,
+	styleRepo reference.IStyleRepository,
+	danceRepo reference.IDanceRepository) error {
 	// check if federation exists
-	targetFederations, err := federationRepo.SearchFederation(referencebll.SearchFederationCriteria{ID: event.FederationID})
+	targetFederations, err := federationRepo.SearchFederation(reference.SearchFederationCriteria{ID: event.FederationID})
 	if err != nil {
 		return err
 	}
 
 	// check if division exists
-	divisions, err := divisionRepo.SearchDivision(referencebll.SearchDivisionCriteria{ID: event.DivisionID})
+	divisions, err := divisionRepo.SearchDivision(reference.SearchDivisionCriteria{ID: event.DivisionID})
 	if err != nil {
 		return err
 	}
@@ -234,7 +234,7 @@ func (event Event) validate(dances []EventDance,
 	}
 
 	// check if age category exists
-	targetAges, err := ageRepo.SearchAge(referencebll.SearchAgeCriteria{AgeID: event.AgeID})
+	targetAges, err := ageRepo.SearchAge(reference.SearchAgeCriteria{AgeID: event.AgeID})
 	if err != nil {
 		return err
 	}
@@ -245,13 +245,13 @@ func (event Event) validate(dances []EventDance,
 	}
 
 	// check if proficiency is part of this division
-	targetSkills, err := proficiencyRepo.SearchProficiency(referencebll.SearchProficiencyCriteria{ProficiencyID: event.ProficiencyID})
+	targetSkills, err := proficiencyRepo.SearchProficiency(reference.SearchProficiencyCriteria{ProficiencyID: event.ProficiencyID})
 	if targetSkills[0].DivisionID != targetDivision.ID {
 		return errors.New("specified proficiency is not part of this division")
 	}
 
 	// check if style exists
-	targetStyles, err := styleRepo.SearchStyle(referencebll.SearchStyleCriteria{StyleID: event.StyleID})
+	targetStyles, err := styleRepo.SearchStyle(reference.SearchStyleCriteria{StyleID: event.StyleID})
 	if err != nil {
 		return errors.New("specified style does not exist")
 	}
@@ -262,7 +262,7 @@ func (event Event) validate(dances []EventDance,
 	for _, each := range dances {
 		if unique[each.DanceID] == false {
 			// check if dance exists
-			dances, err := danceRepo.SearchDance(referencebll.SearchDanceCriteria{DanceID: each.DanceID})
+			dances, err := danceRepo.SearchDance(reference.SearchDanceCriteria{DanceID: each.DanceID})
 			if err != nil {
 				return err
 			}

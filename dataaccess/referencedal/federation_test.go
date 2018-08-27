@@ -60,7 +60,7 @@ func TestPostgresFederationRepository_SearchFederation(t *testing.T) {
 		3,
 		time.Now())
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
-	federations, err := federationRepo.SearchFederation(referencebll.SearchFederationCriteria{})
+	federations, err := federationRepo.SearchFederation(reference.SearchFederationCriteria{})
 	assert.Nil(t, err, "should be able to read federation table")
 	assert.NotZero(t, len(federations), "Database has more than 1 federation")
 }
@@ -73,7 +73,7 @@ func TestPostgresFederationRepository_CreateFederation(t *testing.T) {
 	defer db.Close()
 	federationRepo.Database = db
 
-	args := referencebll.Federation{Name: "SUPER DANCE", Description: "Super Dancesport Federation"}
+	args := reference.Federation{Name: "SUPER DANCE", Description: "Super Dancesport Federation"}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`INSERT INTO DAS.FEDERATION (NAME, ABBREVIATION, DESCRIPTION, 
@@ -92,7 +92,7 @@ func TestPostgresFederationRepository_DeleteFederation(t *testing.T) {
 	defer db.Close()
 	federationRepo.Database = db
 
-	args := referencebll.Federation{ID: 37, Name: "SUPER DANCE"}
+	args := reference.Federation{ID: 37, Name: "SUPER DANCE"}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`DELETE FROM DAS.FEDERATION`).WillReturnResult(sqlmock.NewResult(37, 1))
@@ -110,7 +110,7 @@ func TestPostgresFederationRepository_UpdateFederation(t *testing.T) {
 	defer db.Close()
 	federationRepo.Database = db
 
-	args := referencebll.Federation{ID: 37, Name: "SUPER DANCE"}
+	args := reference.Federation{ID: 37, Name: "SUPER DANCE"}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`UPDATE DAS.FEDERATION`).WillReturnResult(sqlmock.NewResult(37, 1))

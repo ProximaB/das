@@ -48,10 +48,10 @@ func (repo PostgresOrganizerProvisionRepository) CreateOrganizerProvision(provis
 			DAS_ORGANIZER_PROVISION_COL_ORGANIZER_ID,
 			DAS_ORGANIZER_PROVISION_COL_HOSTED,
 			DAS_ORGANIZER_PROVISION_COL_AVAILABLE,
-			common.COL_CREATE_USER_ID,
-			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
-			common.COL_DATETIME_UPDATED,
+			common.ColumnCreateUserID,
+			common.ColumnDateTimeCreated,
+			common.ColumnUpdateUserID,
+			common.ColumnDateTimeUpdated,
 		).Values(provision.OrganizerID, provision.Hosted, provision.Available, provision.CreateUserID, provision.DateTimeCreated, provision.UpdateUserID, provision.DateTimeUpdated)
 	_, err := stmt.RunWith(repo.Database).Exec()
 	if err != nil {
@@ -75,7 +75,7 @@ func (repo PostgresOrganizerProvisionRepository) UpdateOrganizerProvision(provis
 		Table(DAS_ORGANIZER_PROVISION).
 		Set(DAS_ORGANIZER_PROVISION_COL_AVAILABLE, provision.Available).
 		Set(DAS_ORGANIZER_PROVISION_COL_HOSTED, provision.Hosted).
-		Set(common.COL_DATETIME_UPDATED, provision.DateTimeUpdated).
+		Set(common.ColumnDateTimeUpdated, provision.DateTimeUpdated).
 		Where(squirrel.Eq{DAS_ORGANIZER_PROVISION_COL_ORGANIZER_ID: provision.OrganizerID})
 	_, err := stmt.RunWith(repo.Database).Exec()
 	return err
@@ -88,14 +88,14 @@ func (repo PostgresOrganizerProvisionRepository) SearchOrganizerProvision(
 	}
 
 	stmt := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
-		common.PRIMARY_KEY,
+		common.ColumnPrimaryKey,
 		DAS_ORGANIZER_PROVISION_COL_ORGANIZER_ID,
 		DAS_ORGANIZER_PROVISION_COL_HOSTED,
 		DAS_ORGANIZER_PROVISION_COL_AVAILABLE,
-		common.COL_CREATE_USER_ID,
-		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
-		common.COL_DATETIME_UPDATED)).
+		common.ColumnCreateUserID,
+		common.ColumnDateTimeCreated,
+		common.ColumnUpdateUserID,
+		common.ColumnDateTimeUpdated)).
 		From(DAS_ORGANIZER_PROVISION).Where(squirrel.Eq{DAS_ORGANIZER_PROVISION_COL_ORGANIZER_ID: criteria.OrganizerID})
 
 	rows, err := stmt.RunWith(repo.Database).Query()

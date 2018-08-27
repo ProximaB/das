@@ -18,17 +18,17 @@ package partnership
 
 import (
 	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/config/authentication"
 	"github.com/DancesportSoftware/das/config/database"
+	"github.com/DancesportSoftware/das/config/routes/middleware"
 	"github.com/DancesportSoftware/das/controller/partnership/blacklist"
 	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
 )
 
-const apiPartnershipRequestBlacklistEndpoint = "/api/partnership/request/blacklist"
+const apiPartnershipRequestBlacklistEndpoint = "/api/v1.0/partnership/request/blacklist"
 
 var partnershipRequestBlacklistServer = blacklist.PartnershipRequestBlacklistServer{
-	authentication.AuthenticationStrategy,
+	middleware.AuthenticationStrategy,
 	database.AccountRepository,
 	database.PartnershipRequestBlacklistRepository,
 }

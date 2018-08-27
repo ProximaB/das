@@ -26,3 +26,7 @@ type OrganizerProvisionSummary struct {
 	Available   int `json:"available"`
 	Hosted      int `json:"hosted"`
 }
+type SubmitRoleApplication struct {
+	AppliedRoleID int    `json:"role"`
+	Description   string `json:"description"`
+}

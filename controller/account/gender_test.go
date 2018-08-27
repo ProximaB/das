@@ -19,7 +19,7 @@ package account
 import (
 	"encoding/json"
 	"github.com/DancesportSoftware/das/businesslogic/reference"
-	mock_reference "github.com/DancesportSoftware/das/mock/businesslogic/reference"
+	"github.com/DancesportSoftware/das/mock/businesslogic/reference"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -42,7 +42,7 @@ func TestAccountGenderHandler_GetAccountGenderHandler(t *testing.T) {
 	w := httptest.NewRecorder()
 
 	// test with zero param
-	mockedGenderRepo.EXPECT().GetAllGenders().Return([]referencebll.Gender{
+	mockedGenderRepo.EXPECT().GetAllGenders().Return([]reference.Gender{
 		{ID: 1, Name: "Female"},
 		{ID: 2, Name: "Male"},
 	}, nil)
@@ -57,7 +57,7 @@ func TestAccountGenderHandler_GetAccountGenderHandler(t *testing.T) {
 	query.Add("badparam", "indeed")
 	req.URL.RawQuery = query.Encode()
 	// log.Printf("GET %s\n", req.URL.String())
-	mockedGenderRepo.EXPECT().GetAllGenders().Return([]referencebll.Gender{
+	mockedGenderRepo.EXPECT().GetAllGenders().Return([]reference.Gender{
 		{ID: 1, Name: "Female"},
 		{ID: 2, Name: "Male"},
 	}, nil)

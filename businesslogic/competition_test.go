@@ -43,9 +43,9 @@ func TestCreateCompetition(t *testing.T) {
 		ContactName:   "James Bond",
 		ContactEmail:  "james.bond@email.com",
 		ContactPhone:  "2290092292",
-		City:          referencebll.City{ID: 26},
-		State:         referencebll.State{ID: 17},
-		Country:       referencebll.Country{ID: 19},
+		City:          reference.City{ID: 26},
+		State:         reference.State{ID: 17},
+		Country:       reference.Country{ID: 19},
 		CreateUserID:  1,
 		UpdateUserID:  1,
 	}

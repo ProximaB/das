@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package account
+package partnershipdal
 
 import (
 	"database/sql"
@@ -25,48 +25,44 @@ import (
 	"github.com/Masterminds/squirrel"
 )
 
-const DAS_ACCOUNT_STATUS_TABLE = "DAS.ACCOUNT_STATUS"
+const (
+	DAS_PARTNERSHIP_REQUEST_STATUS_TABLE                 = "DAS.PARTNERSHIP_REQUEST_STATUS"
+	DAS_PARTNERSHIP_REQUEST_STATUS_COL_REQUEST_STATUS_ID = "REQUEST_STATUS_ID"
+	DAS_PARTNERSHIP_REQUEST_STATUS_COL_CODE              = "CODE"
+)
 
-type PostgresAccountStatusRepository struct {
+type PostgresPartnershipRequestStatusRepository struct {
 	Database   *sql.DB
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresAccountStatusRepository) GetAccountStatus() ([]businesslogic.AccountStatus, error) {
+func (repo PostgresPartnershipRequestStatusRepository) GetPartnershipRequestStatus() ([]businesslogic.PartnershipRequestStatus, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresAccountStatusRepository is not specified")
+		return nil, errors.New("data source of PostgresPartnershipRequestStatusRepository is not specified")
 	}
-	stmt := repo.SqlBuilder.
-		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s",
-			common.PRIMARY_KEY,
-			common.COL_NAME,
-			common.COL_ABBREVIATION,
-			common.COL_DESCRIPTION,
-			common.COL_DATETIME_CREATED,
-			common.COL_DATETIME_UPDATED)).
-		From(DAS_ACCOUNT_STATUS_TABLE).
-		OrderBy(common.PRIMARY_KEY)
-
-	status := make([]businesslogic.AccountStatus, 0)
-	rows, err := stmt.RunWith(repo.Database).Query()
-
+	clause := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s",
+		common.ColumnPrimaryKey,
+		DAS_PARTNERSHIP_REQUEST_STATUS_COL_CODE,
+		common.COL_DESCRIPTION,
+		common.ColumnDateTimeCreated,
+		common.ColumnDateTimeUpdated)).From(DAS_PARTNERSHIP_REQUEST_STATUS_TABLE).OrderBy(common.ColumnPrimaryKey)
+	rows, err := clause.RunWith(repo.Database).Query()
+	output := make([]businesslogic.PartnershipRequestStatus, 0)
 	if err != nil {
-		return status, err
+		return output, err
 	}
-
 	for rows.Next() {
-		each := businesslogic.AccountStatus{}
+		each := businesslogic.PartnershipRequestStatus{}
 		rows.Scan(
 			&each.ID,
-			&each.Name,
-			&each.Abbreviation,
+			&each.Code,
 			&each.Description,
 			&each.DateTimeCreated,
 			&each.DateTimeUpdated,
 		)
-		status = append(status, each)
+		output = append(output, each)
 	}
 	rows.Close()
+	return output, err
 
-	return status, err
 }

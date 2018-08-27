@@ -30,12 +30,14 @@ const (
 	DAS_COUNTRY_TABLE = "DAS.COUNTRY"
 )
 
+// PostgresCountryRepository implements the ICountryRepository with a Postgres database
 type PostgresCountryRepository struct {
 	Database   *sql.DB
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresCountryRepository) CreateCountry(country *referencebll.Country) error {
+// CreateCountry inserts a Country object into a Postgres database
+func (repo PostgresCountryRepository) CreateCountry(country *reference.Country) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCountryRepository is not specified")
 	}
@@ -43,11 +45,11 @@ func (repo PostgresCountryRepository) CreateCountry(country *referencebll.Countr
 		Insert("").
 		Into(DAS_COUNTRY_TABLE).
 		Columns(common.COL_NAME,
-			common.COL_ABBREVIATION,
-			common.COL_CREATE_USER_ID,
-			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
-			common.COL_DATETIME_UPDATED).
+			common.ColumnAbbreviation,
+			common.ColumnCreateUserID,
+			common.ColumnDateTimeCreated,
+			common.ColumnUpdateUserID,
+			common.ColumnDateTimeUpdated).
 		Values(
 			country.Name,
 			country.Abbreviation,
@@ -69,12 +71,13 @@ func (repo PostgresCountryRepository) CreateCountry(country *referencebll.Countr
 	return err
 }
 
-func (repo PostgresCountryRepository) DeleteCountry(country referencebll.Country) error {
+// DeleteCountry deletes a Country object from a Postgres database
+func (repo PostgresCountryRepository) DeleteCountry(country reference.Country) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCountryRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.Delete("").From(DAS_COUNTRY_TABLE).
-		Where(squirrel.Eq{common.PRIMARY_KEY: country.ID})
+		Where(squirrel.Eq{common.ColumnPrimaryKey: country.ID})
 	var err error
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
 		return txErr
@@ -85,18 +88,19 @@ func (repo PostgresCountryRepository) DeleteCountry(country referencebll.Country
 	return err
 }
 
-func (repo PostgresCountryRepository) UpdateCountry(country referencebll.Country) error {
+// UpdateCountry updates a Country object in a Postgres database
+func (repo PostgresCountryRepository) UpdateCountry(country reference.Country) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCountryRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_COUNTRY_TABLE)
 	if country.ID > 0 {
 		stmt = stmt.Set(common.COL_NAME, country.Name).
-			Set(common.COL_ABBREVIATION, country.Abbreviation).
-			Set(common.COL_DATETIME_UPDATED, time.Now()).
-			Where(squirrel.Eq{common.PRIMARY_KEY: country.ID})
+			Set(common.ColumnAbbreviation, country.Abbreviation).
+			Set(common.ColumnDateTimeUpdated, time.Now()).
+			Where(squirrel.Eq{common.ColumnPrimaryKey: country.ID})
 		if country.UpdateUserID != nil {
-			stmt = stmt.Set(common.COL_UPDATE_USER_ID, country.UpdateUserID)
+			stmt = stmt.Set(common.ColumnUpdateUserID, country.UpdateUserID)
 		}
 
 		var err error
@@ -113,38 +117,39 @@ func (repo PostgresCountryRepository) UpdateCountry(country referencebll.Country
 	}
 }
 
-func (repo PostgresCountryRepository) SearchCountry(criteria referencebll.SearchCountryCriteria) ([]referencebll.Country, error) {
+// SearchCountry searches the Country object in a Postgres database with the provided criteria
+func (repo PostgresCountryRepository) SearchCountry(criteria reference.SearchCountryCriteria) ([]reference.Country, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresCountryRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s",
-			common.PRIMARY_KEY,
+			common.ColumnPrimaryKey,
 			common.COL_NAME,
-			common.COL_ABBREVIATION,
-			common.COL_CREATE_USER_ID,
-			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
-			common.COL_DATETIME_UPDATED)).
+			common.ColumnAbbreviation,
+			common.ColumnCreateUserID,
+			common.ColumnDateTimeCreated,
+			common.ColumnUpdateUserID,
+			common.ColumnDateTimeUpdated)).
 		From(DAS_COUNTRY_TABLE).
-		OrderBy(common.PRIMARY_KEY)
+		OrderBy(common.ColumnPrimaryKey)
 	if criteria.CountryID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.CountryID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.CountryID})
 	}
 	if len(criteria.Name) > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: criteria.Name})
 	}
 	if len(criteria.Abbreviation) > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.COL_ABBREVIATION: criteria.Abbreviation})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnAbbreviation: criteria.Abbreviation})
 	}
 
 	rows, err := stmt.RunWith(repo.Database).Query()
-	countries := make([]referencebll.Country, 0)
+	countries := make([]reference.Country, 0)
 	if err != nil {
 		return countries, err
 	}
 	for rows.Next() {
-		each := referencebll.Country{}
+		each := reference.Country{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,

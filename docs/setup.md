@@ -25,6 +25,12 @@ However, setting up the back-end services will help you develop front end with d
 * You are very comfortable with the command-line of the OS you choose
 
 # System Requirements
+DAS is primarily developed on the Linux platform (Mac works, too). A lot of scripts and
+commands can be easily setup in a Linux system than Windows. Windows 10 has the Linux subsystem,
+but it does not work completely like a traditional stand-alone Linux system, and a test scripts do not
+run well on Windows 10 Linux subsystem. If you are developing DAS, please consider using Linux or Mac 
+as the primary platform instead of Windows.
+
 * Windows (8.1 or later)
 * macOS
 * Linux

@@ -17,9 +17,161 @@
 package businesslogic
 
 import (
+	"errors"
 	"time"
 )
 
+const (
+	RoleApplicationStatusApproved = 1
+	RoleApplicationStatusDenied   = 2
+	RoleApplicationStatusPending  = 3
+)
+
+type SearchRoleApplicationCriteria struct {
+	AccountID      int
+	AppliedRoleID  int
+	StatusID       int
+	ApprovalUserID int
+}
+
+type RoleApplication struct {
+	ID               int
+	AccountID        int
+	AppliedRoleID    int
+	Description      string
+	StatusID         int
+	ApprovalUserID   *int
+	DateTimeApproved time.Time
+	CreateUserID     int
+	DateTimeCreated  time.Time
+	UpdateUserID     int
+	DateTimeUpdated  time.Time
+}
+
+type IRoleApplicationRepository interface {
+	CreateApplication(application *RoleApplication) error
+	SearchApplication(criteria SearchRoleApplicationCriteria) ([]RoleApplication, error)
+	UpdateApplication(application RoleApplication) error
+}
+
+type RoleProvisionService struct {
+	accountRepo         IAccountRepository
+	roleApplicationRepo IRoleApplicationRepository
+	roleRepo            IAccountRoleRepository
+}
+
+func NewRoleProvisionService(accountRepo IAccountRepository, roleApplicationRepo IRoleApplicationRepository, roleRepo IAccountRoleRepository) *RoleProvisionService {
+	service := RoleProvisionService{
+		accountRepo:         accountRepo,
+		roleApplicationRepo: roleApplicationRepo,
+		roleRepo:            roleRepo,
+	}
+	return &service
+}
+
+// CreateRoleApplication check the validity of the role application and create it if it's valid
+func (service RoleProvisionService) CreateRoleApplication(currentUser Account, application *RoleApplication) error {
+	// check if current user has the role
+	if currentUser.HasRole(application.AppliedRoleID) {
+		return errors.New("current user already has the applied role")
+	}
+
+	// check if has a pending application
+	searchResults, err := service.roleApplicationRepo.SearchApplication(SearchRoleApplicationCriteria{
+		AccountID:     currentUser.ID,
+		AppliedRoleID: application.AppliedRoleID,
+		StatusID:      RoleApplicationStatusPending,
+	})
+	if err != nil {
+		return err
+	}
+	if len(searchResults) != 0 {
+		return errors.New("previous application has not been responded")
+	}
+
+	// check what role that user is applying for
+	if application.AppliedRoleID == AccountTypeAthlete {
+		return errors.New("athlete role should be granted when the account was created")
+	}
+	if application.AppliedRoleID > AccountTypeEmcee {
+		return errors.New("invalid role")
+	}
+
+	return service.roleApplicationRepo.CreateApplication(application)
+}
+
+func (service RoleProvisionService) respondRoleApplication(currentUser Account, application *RoleApplication, action int) error {
+	application.StatusID = action
+	application.ApprovalUserID = &currentUser.ID
+	application.DateTimeApproved = time.Now()
+	if updateErr := service.roleApplicationRepo.UpdateApplication(*application); updateErr != nil {
+		return updateErr
+	}
+	if action == RoleApplicationStatusApproved {
+		role := AccountRole{
+			AccountID:       application.AccountID,
+			AccountTypeID:   application.AppliedRoleID,
+			CreateUserID:    currentUser.ID,
+			DateTimeCreated: time.Now(),
+			UpdateUserID:    currentUser.ID,
+			DateTimeUpdated: time.Now(),
+		}
+		return service.roleRepo.CreateAccountRole(&role)
+	}
+	return nil
+}
+
+// UpdateApplication attempts to approve the Role application based on the privilege of current user.
+// If current user is admin, any application can be approved
+// If current user is organizer, only emcee and deck-captain can be approved
+// If current user is other roles, current user will be prohibited from performing such action
+func (service RoleProvisionService) UpdateApplication(currentUser Account, application *RoleApplication, action int) error {
+	// check if action is valid
+	if !(action == RoleApplicationStatusApproved || action == RoleApplicationStatusDenied) {
+		return errors.New("invalid response to role application")
+	}
+	// check if application is pending
+	if application.StatusID != RoleApplicationStatusPending {
+		return errors.New("role application is already responded")
+	}
+	// Only an Admin or Organizer user ca update user's role application
+	if !(currentUser.HasRole(AccountTypeOrganizer) || currentUser.HasRole(AccountTypeAdministrator)) {
+		return errors.New("unauthorized")
+	}
+	// should not allow users to provision themselves other than Admin
+	if currentUser.ID == application.AccountID && !currentUser.HasRole(AccountTypeAdministrator) {
+		return errors.New("not authorized to provision your own role application")
+	}
+	switch application.AppliedRoleID {
+	case AccountTypeAthlete:
+		return nil // Athlete role does not need to be provisioned
+	case AccountTypeAdjudicator:
+		if !currentUser.HasRole(AccountTypeAdministrator) {
+			return errors.New("not authorized to approve user's role application")
+		}
+	case AccountTypeScrutineer:
+		if !currentUser.HasRole(AccountTypeAdministrator) {
+			return errors.New("not authorized to approve user's role application")
+		}
+	case AccountTypeOrganizer:
+		if !currentUser.HasRole(AccountTypeAdministrator) {
+			return errors.New("not authorized to approve user's role application")
+		}
+	case AccountTypeDeckCaptain:
+		if !(currentUser.HasRole(AccountTypeAdministrator) || currentUser.HasRole(AccountTypeOrganizer)) {
+			return errors.New("not authorized to approve user's role application")
+		}
+	case AccountTypeEmcee:
+		if !(currentUser.HasRole(AccountTypeAdministrator) || currentUser.HasRole(AccountTypeOrganizer)) {
+			return errors.New("not authorized to approve user's role application")
+		}
+	default:
+		return errors.New("invalid role application")
+	}
+	return service.respondRoleApplication(currentUser, application, action)
+}
+
+// OrganizerProvision
 type OrganizerProvision struct {
 	ID              int
 	OrganizerID     int
@@ -31,6 +183,7 @@ type OrganizerProvision struct {
 	DateTimeUpdated time.Time
 }
 
+// SearchOrganizerProvisionCriteria specifies the search criteria of Organizer's provision information
 type SearchOrganizerProvisionCriteria struct {
 	ID          int `schema:"organizer"`
 	OrganizerID int `schema:"organizer"`

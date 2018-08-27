@@ -47,10 +47,10 @@ func (repo PostgresPartnershipEventEntryRepository) CreatePartnershipEventEntry(
 		common.COL_EVENT_ID,
 		common.COL_PARTNERSHIP_ID,
 		leadTag,
-		common.COL_CREATE_USER_ID,
-		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
-		common.COL_DATETIME_UPDATED,
+		common.ColumnCreateUserID,
+		common.ColumnDateTimeCreated,
+		common.ColumnUpdateUserID,
+		common.ColumnDateTimeUpdated,
 	).Values(
 		entry.EventEntry.EventID,
 		entry.PartnershipID,
@@ -99,14 +99,14 @@ func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(
 	}
 	clause := repo.SQLBuilder.Select(
 		fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
-			common.PRIMARY_KEY,
+			common.ColumnPrimaryKey,
 			common.COL_EVENT_ID,
 			common.COL_PARTNERSHIP_ID,
 			dasCompetitionEntryColCompetitorTag,
-			common.COL_CREATE_USER_ID,
-			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
-			common.COL_DATETIME_UPDATED)).
+			common.ColumnCreateUserID,
+			common.ColumnDateTimeCreated,
+			common.ColumnUpdateUserID,
+			common.ColumnDateTimeUpdated)).
 		From(dasEventCompetitiveBallroomEntryTable)
 
 	if criteria.PartnershipID > 0 {

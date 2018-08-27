@@ -34,7 +34,7 @@ type PostgresProficiencyRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresProficiencyRepository) CreateProficiency(proficiency *referencebll.Proficiency) error {
+func (repo PostgresProficiencyRepository) CreateProficiency(proficiency *reference.Proficiency) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresProficiencyRepository is not specified")
 	}
@@ -42,10 +42,10 @@ func (repo PostgresProficiencyRepository) CreateProficiency(proficiency *referen
 		common.COL_NAME,
 		common.COL_DIVISION_ID,
 		common.COL_DESCRIPTION,
-		common.COL_CREATE_USER_ID,
-		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
-		common.COL_DATETIME_UPDATED,
+		common.ColumnCreateUserID,
+		common.ColumnDateTimeCreated,
+		common.ColumnUpdateUserID,
+		common.ColumnDateTimeUpdated,
 	).Values(
 		proficiency.Name,
 		proficiency.DivisionID,
@@ -69,7 +69,7 @@ func (repo PostgresProficiencyRepository) CreateProficiency(proficiency *referen
 	return err
 }
 
-func (repo PostgresProficiencyRepository) UpdateProficiency(proficiency referencebll.Proficiency) error {
+func (repo PostgresProficiencyRepository) UpdateProficiency(proficiency reference.Proficiency) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresProficiencyRepository is not specified")
 	}
@@ -78,8 +78,8 @@ func (repo PostgresProficiencyRepository) UpdateProficiency(proficiency referenc
 		stmt = stmt.Set(common.COL_NAME, proficiency.Name).
 			Set(common.COL_DIVISION_ID, proficiency.DivisionID).
 			Set(common.COL_DESCRIPTION, proficiency.Description).
-			Set(common.COL_UPDATE_USER_ID, proficiency.UpdateUserID).
-			Set(common.COL_DATETIME_UPDATED, proficiency.DateTImeUpdated)
+			Set(common.ColumnUpdateUserID, proficiency.UpdateUserID).
+			Set(common.ColumnDateTimeUpdated, proficiency.DateTImeUpdated)
 		var err error
 		if tx, txErr := repo.Database.Begin(); txErr != nil {
 			return txErr
@@ -96,14 +96,14 @@ func (repo PostgresProficiencyRepository) UpdateProficiency(proficiency referenc
 	}
 }
 
-func (repo PostgresProficiencyRepository) DeleteProficiency(proficiency referencebll.Proficiency) error {
+func (repo PostgresProficiencyRepository) DeleteProficiency(proficiency reference.Proficiency) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresProficiencyRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.
 		Delete("").
 		From(DAS_PROFICIENCY_TABLE).
-		Where(squirrel.Eq{common.PRIMARY_KEY: proficiency.ID})
+		Where(squirrel.Eq{common.ColumnPrimaryKey: proficiency.ID})
 	var err error
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
 		return txErr
@@ -116,34 +116,34 @@ func (repo PostgresProficiencyRepository) DeleteProficiency(proficiency referenc
 	}
 }
 
-func (repo PostgresProficiencyRepository) SearchProficiency(criteria referencebll.SearchProficiencyCriteria) ([]referencebll.Proficiency, error) {
+func (repo PostgresProficiencyRepository) SearchProficiency(criteria reference.SearchProficiencyCriteria) ([]reference.Proficiency, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresProficiencyRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
-		common.PRIMARY_KEY,
+		common.ColumnPrimaryKey,
 		common.COL_NAME,
 		common.COL_DIVISION_ID,
 		common.COL_DESCRIPTION,
-		common.COL_CREATE_USER_ID,
-		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
-		common.COL_DATETIME_UPDATED)).
+		common.ColumnCreateUserID,
+		common.ColumnDateTimeCreated,
+		common.ColumnUpdateUserID,
+		common.ColumnDateTimeUpdated)).
 		From(DAS_PROFICIENCY_TABLE)
 
 	if criteria.DivisionID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_DIVISION_ID: criteria.DivisionID})
 	}
 	if criteria.ProficiencyID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.ProficiencyID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ProficiencyID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	proficiencies := make([]referencebll.Proficiency, 0)
+	proficiencies := make([]reference.Proficiency, 0)
 	if err != nil {
 		return proficiencies, err
 	}
 	for rows.Next() {
-		each := referencebll.Proficiency{}
+		each := reference.Proficiency{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,

@@ -73,6 +73,27 @@ type IPartnershipRequestRepository interface {
 	UpdatePartnershipRequest(request PartnershipRequest) error
 }
 
+type PartnershipRequestService struct {
+	accountRepo     IAccountRepository
+	partnershipRepo IPartnershipRepository
+	blacklistRepo   IPartnershipRequestBlacklistRepository
+}
+
+func NewPartnershipRequestService(accountRepo IAccountRepository, partnershipRepo IPartnershipRepository, blacklistRepo IPartnershipRequestBlacklistRepository) *PartnershipRequestService {
+	service := new(PartnershipRequestService)
+	service.accountRepo = accountRepo
+	service.partnershipRepo = partnershipRepo
+	service.blacklistRepo = blacklistRepo
+	return service
+}
+
+func (service PartnershipRequestService) CreatePartnershipRequest(currentUser Account, request PartnershipRequest) error {
+	if currentUser.ID != request.SenderID {
+		return errors.New("not authorized to send this partnership request")
+	}
+	return errors.New("not implemented")
+}
+
 func (request PartnershipRequest) validateRoles() error {
 	if request.SenderRole != PartnershipRoleLead && request.SenderRole != PartnershipRoleFollow {
 		return errors.New("sender's role is not specified")
@@ -104,12 +125,16 @@ func (request *PartnershipRequest) hasValidSenderAndRecipient(accountRepo IAccou
 	if len(recipientAccounts) != 1 {
 		return errors.New("recipient account cannot be found")
 	}
-	if senderAccounts[0].AccountTypeID != AccountTypeAthlete {
+	sender := senderAccounts[0]
+	recipient := recipientAccounts[0]
+
+	if !sender.HasRole(AccountTypeAthlete) {
 		return errors.New("sender is not an athlete")
 	}
-	if recipientAccounts[0].AccountTypeID != AccountTypeAthlete {
+	if !recipient.HasRole(AccountTypeAthlete) {
 		return errors.New("recipient is not an athlete")
 	}
+
 	request.senderAccount = &senderAccounts[0]
 	request.recipientAccount = &recipientAccounts[0]
 	return nil

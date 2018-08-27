@@ -1,5 +1,4 @@
 #!/usr/bin/env bash
-
 # mockgen.sh batch updates all mock objects.
 # To run this script:
 # $ cd $GOPATH/src/github.com/DancesportSoftware/das
@@ -20,17 +19,17 @@
 #
 # You should have received a copy of the GNU General Public License
 # along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+#
 # directory to mock to
 MOCK_ROOT_DIR="./mock/"
-
+#
 # list of modules to mock
 declare -a modules=("./businesslogic/" "./businesslogic/reference/")
-
+#
 # remove existing mock and create a new one
 rm -rf $MOCK_ROOT_DIR
 mkdir $MOCK_ROOT_DIR
-
+#
 for m in "${modules[@]}";
 do
     mkdir -p $MOCK_ROOT_DIR$m # create sub modules

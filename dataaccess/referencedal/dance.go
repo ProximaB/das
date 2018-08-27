@@ -35,22 +35,22 @@ type PostgresDanceRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresDanceRepository) SearchDance(criteria referencebll.SearchDanceCriteria) ([]referencebll.Dance, error) {
+func (repo PostgresDanceRepository) SearchDance(criteria reference.SearchDanceCriteria) ([]reference.Dance, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresDanceRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s",
-			common.PRIMARY_KEY,
+			common.ColumnPrimaryKey,
 			common.COL_NAME,
-			common.COL_ABBREVIATION,
+			common.ColumnAbbreviation,
 			common.COL_DESCRIPTION,
 			common.COL_STYLE_ID,
-			common.COL_CREATE_USER_ID,
-			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
-			common.COL_DATETIME_UPDATED)).
-		From(DAS_DANCE_TABLE).OrderBy(common.PRIMARY_KEY)
+			common.ColumnCreateUserID,
+			common.ColumnDateTimeCreated,
+			common.ColumnUpdateUserID,
+			common.ColumnDateTimeUpdated)).
+		From(DAS_DANCE_TABLE).OrderBy(common.ColumnPrimaryKey)
 	if len(criteria.Name) > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: criteria.Name})
 	}
@@ -58,16 +58,16 @@ func (repo PostgresDanceRepository) SearchDance(criteria referencebll.SearchDanc
 		stmt = stmt.Where(squirrel.Eq{common.COL_STYLE_ID: criteria.StyleID})
 	}
 	if criteria.DanceID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.DanceID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.DanceID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	dances := make([]referencebll.Dance, 0)
+	dances := make([]reference.Dance, 0)
 	if err != nil {
 		return dances, err
 	}
 
 	for rows.Next() {
-		each := referencebll.Dance{}
+		each := reference.Dance{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -85,16 +85,16 @@ func (repo PostgresDanceRepository) SearchDance(criteria referencebll.SearchDanc
 	return dances, err
 }
 
-func (repo PostgresDanceRepository) CreateDance(dance *referencebll.Dance) error {
+func (repo PostgresDanceRepository) CreateDance(dance *reference.Dance) error {
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_DANCE_TABLE).Columns(
 		common.COL_NAME,
-		common.COL_ABBREVIATION,
+		common.ColumnAbbreviation,
 		common.COL_DESCRIPTION,
 		common.COL_STYLE_ID,
-		common.COL_CREATE_USER_ID,
-		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
-		common.COL_DATETIME_UPDATED,
+		common.ColumnCreateUserID,
+		common.ColumnDateTimeCreated,
+		common.ColumnUpdateUserID,
+		common.ColumnDateTimeUpdated,
 	).Values(
 		dance.Name,
 		dance.Abbreviation,
@@ -119,15 +119,15 @@ func (repo PostgresDanceRepository) CreateDance(dance *referencebll.Dance) error
 	return err
 }
 
-func (repo PostgresDanceRepository) UpdateDance(dance referencebll.Dance) error {
+func (repo PostgresDanceRepository) UpdateDance(dance reference.Dance) error {
 	stmt := repo.SqlBuilder.Update("").Table(DAS_DANCE_TABLE)
 	if dance.ID > 0 {
 		stmt = stmt.Set(common.COL_NAME, dance.Name).
-			Set(common.COL_ABBREVIATION, dance.Abbreviation).
+			Set(common.ColumnAbbreviation, dance.Abbreviation).
 			Set(common.COL_DESCRIPTION, dance.Description).
 			Set(common.COL_STYLE_ID, dance.StyleID).
-			Set(common.COL_UPDATE_USER_ID, dance.UpdateUserID).
-			Set(common.COL_DATETIME_UPDATED, dance.DateTimeUpdated)
+			Set(common.ColumnUpdateUserID, dance.UpdateUserID).
+			Set(common.ColumnDateTimeUpdated, dance.DateTimeUpdated)
 
 		var err error
 		if tx, txErr := repo.Database.Begin(); txErr != nil {
@@ -141,12 +141,12 @@ func (repo PostgresDanceRepository) UpdateDance(dance referencebll.Dance) error 
 	return errors.New("not implemented")
 }
 
-func (repo PostgresDanceRepository) DeleteDance(dance referencebll.Dance) error {
+func (repo PostgresDanceRepository) DeleteDance(dance reference.Dance) error {
 	if repo.Database == nil {
 		log.Println(common.ErrorMessageEmptyDatabase)
 	}
 	stmt := repo.SqlBuilder.Delete("").From(DAS_DANCE_TABLE).Where(
-		squirrel.Eq{common.PRIMARY_KEY: dance.ID},
+		squirrel.Eq{common.ColumnPrimaryKey: dance.ID},
 	)
 	var err error
 	if tx, txErr := repo.Database.Begin(); txErr != nil {

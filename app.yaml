@@ -5,12 +5,13 @@ env: flex
 
 # replace environment variable in production
 env_variables:
-  POSTGRES_CONNECTION: ""
+  POSTGRES_CONNECTION: "user=dasdev password=dAs!@#$1234 dbname=das host=/cloudsql/das-development-204605:us-central1:das-dev-02"
   HMAC_SIGNING_KEY: ""
+  API_VERSION: "1.0"
 
 # replace cloud sql connection in production
 beta_settings:
-  cloud_sql_instances: ""
+  cloud_sql_instances: "das-development-204605:us-central1:das-dev-02"
 
 manual_scaling:
   instances: 1

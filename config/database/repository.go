@@ -17,11 +17,11 @@
 package database
 
 import (
-	"github.com/DancesportSoftware/das/dataaccess/account"
+	"github.com/DancesportSoftware/das/dataaccess/accountdal"
 	"github.com/DancesportSoftware/das/dataaccess/competition"
 	"github.com/DancesportSoftware/das/dataaccess/entrydal"
 	"github.com/DancesportSoftware/das/dataaccess/eventdal"
-	"github.com/DancesportSoftware/das/dataaccess/partnership"
+	"github.com/DancesportSoftware/das/dataaccess/partnershipdal"
 	"github.com/DancesportSoftware/das/dataaccess/provision"
 	"github.com/DancesportSoftware/das/dataaccess/referencedal"
 	"github.com/Masterminds/squirrel"
@@ -71,31 +71,43 @@ var StudioRepository = referencedal.PostgresStudioRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var AccountRepository = account.PostgresAccountRepository{
+var AccountRepository = accountdal.PostgresAccountRepository{
 	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var AccountTypeRepository = account.PostgresAccountTypeRepository{
+var AccountRoleRepository = accountdal.PostgresAccountRoleRepository{
+	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
+var UserPreferenceRepository = accountdal.PostgresUserPreferenceRepository{
+	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
+var AccountTypeRepository = accountdal.PostgresAccountTypeRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var PartnershipRepository = partnership.PostgresPartnershipRepository{
+var PartnershipRepository = partnershipdal.PostgresPartnershipRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var PartnershipRequestRepository = partnership.PostgresPartnershipRequestRepository{
+var PartnershipRoleRepository = partnershipdal.PostgresPartnershipRoleRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var PartnershipRequestStatusRepository = partnership.PostgresPartnershipRequestStatusRepository{
+var PartnershipRequestRepository = partnershipdal.PostgresPartnershipRequestRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var PartnershipRequestBlacklistRepository = partnership.PostgresPartnershipRequestBlacklistRepository{
+var PartnershipRequestStatusRepository = partnershipdal.PostgresPartnershipRequestStatusRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var PartnershipRequestBlacklistReasonRepository = partnership.PostgresPartnershipRequestBlacklistReasonRepository{
+var PartnershipRequestBlacklistRepository = partnershipdal.PostgresPartnershipRequestBlacklistRepository{
+	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
+var PartnershipRequestBlacklistReasonRepository = partnershipdal.PostgresPartnershipRequestBlacklistReasonRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 

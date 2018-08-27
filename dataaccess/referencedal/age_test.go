@@ -33,7 +33,7 @@ var ageRepository = referencedal.PostgresAgeRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var age = referencebll.Age{
+var age = reference.Age{
 	Name:            "Adult",
 	AgeMaximum:      99,
 	AgeMinimum:      19,
@@ -62,14 +62,14 @@ func TestPostgresAgeRepository_SearchAge(t *testing.T) {
 	mock.ExpectQuery(`SELECT ID, 	NAME, DESCRIPTION, DIVISION_ID, ENFORCED, MINIMUM_AGE, MAXIMUM_AGE, 
 			CREATE_USER_ID,	DATETIME_CREATED, UPDATE_USER_ID, DATETIME_UPDATED FROM DAS.AGE`).WillReturnRows(rows)
 
-	result, err := ageRepository.SearchAge(referencebll.SearchAgeCriteria{})
+	result, err := ageRepository.SearchAge(reference.SearchAgeCriteria{})
 	if result != nil || err == nil {
 		t.Errorf("should halt when search criteria or data source is nil")
 	}
 
 	ageRepository.Database = db
 
-	ageRepository.SearchAge(referencebll.SearchAgeCriteria{
+	ageRepository.SearchAge(reference.SearchAgeCriteria{
 		DivisionID: 1,
 		AgeID:      3,
 	})
@@ -104,7 +104,7 @@ func TestPostgresAgeRepository_DeleteAge(t *testing.T) {
 	defer db.Close()
 
 	ageRepository.Database = db
-	args := referencebll.Age{ID: 1, Name: "Adult"}
+	args := reference.Age{ID: 1, Name: "Adult"}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`DELETE FROM DAS.AGE`).WillReturnResult(sqlmock.NewResult(1, 1))
@@ -122,7 +122,7 @@ func TestPostgresAgeRepository_UpdateAge(t *testing.T) {
 	defer db.Close()
 
 	ageRepository.Database = db
-	args := referencebll.Age{ID: 1, Name: "Adult"}
+	args := reference.Age{ID: 1, Name: "Adult"}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`UPDATE DAS.AGE`).WillReturnResult(sqlmock.NewResult(1, 1))

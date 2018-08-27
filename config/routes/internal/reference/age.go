@@ -24,7 +24,7 @@ import (
 	"net/http"
 )
 
-const apiReferenceAgeEndpoint = "/api/reference/age"
+const apiReferenceAgeEndpoint = "/api/v1.0/reference/age"
 
 var ageServer = reference.AgeServer{
 	database.AgeRepository,

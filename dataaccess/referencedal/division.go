@@ -34,35 +34,35 @@ type PostgresDivisionRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresDivisionRepository) SearchDivision(criteria referencebll.SearchDivisionCriteria) ([]referencebll.Division, error) {
+func (repo PostgresDivisionRepository) SearchDivision(criteria reference.SearchDivisionCriteria) ([]reference.Division, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresDivisionRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
-			common.PRIMARY_KEY,
+			common.ColumnPrimaryKey,
 			common.COL_NAME,
-			common.COL_ABBREVIATION,
+			common.ColumnAbbreviation,
 			common.COL_DESCRIPTION,
 			common.COL_NOTE,
 			common.COL_FEDERATION_ID,
-			common.COL_DATETIME_CREATED,
-			common.COL_DATETIME_UPDATED)).
+			common.ColumnDateTimeCreated,
+			common.ColumnDateTimeUpdated)).
 		From(DAS_DIVISION_TABLE).
-		OrderBy(common.PRIMARY_KEY)
+		OrderBy(common.ColumnPrimaryKey)
 	if criteria.FederationID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_FEDERATION_ID: criteria.FederationID})
 	}
 	if criteria.ID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.ID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	divisions := make([]referencebll.Division, 0)
+	divisions := make([]reference.Division, 0)
 	if err != nil {
 		return divisions, err
 	}
 	for rows.Next() {
-		each := referencebll.Division{}
+		each := reference.Division{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -79,20 +79,20 @@ func (repo PostgresDivisionRepository) SearchDivision(criteria referencebll.Sear
 	return divisions, err
 }
 
-func (repo PostgresDivisionRepository) CreateDivision(division *referencebll.Division) error {
+func (repo PostgresDivisionRepository) CreateDivision(division *reference.Division) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresDivisionRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_DIVISION_TABLE).Columns(
 		common.COL_NAME,
-		common.COL_ABBREVIATION,
+		common.ColumnAbbreviation,
 		common.COL_DESCRIPTION,
 		common.COL_NOTE,
 		common.COL_FEDERATION_ID,
-		common.COL_CREATE_USER_ID,
-		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
-		common.COL_DATETIME_UPDATED,
+		common.ColumnCreateUserID,
+		common.ColumnDateTimeCreated,
+		common.ColumnUpdateUserID,
+		common.ColumnDateTimeUpdated,
 	).Values(
 		division.Name,
 		division.Abbreviation,
@@ -118,19 +118,19 @@ func (repo PostgresDivisionRepository) CreateDivision(division *referencebll.Div
 	return err
 }
 
-func (repo PostgresDivisionRepository) UpdateDivision(division referencebll.Division) error {
+func (repo PostgresDivisionRepository) UpdateDivision(division reference.Division) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresDivisionRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_DIVISION_TABLE)
 	if division.ID > 0 {
 		stmt = stmt.Set(common.COL_NAME, division.Name).
-			Set(common.COL_ABBREVIATION, division.Abbreviation).
+			Set(common.ColumnAbbreviation, division.Abbreviation).
 			Set(common.COL_DESCRIPTION, division.Description).
 			Set(common.COL_NOTE, division.Note).
 			Set(common.COL_FEDERATION_ID, division.FederationID).
-			Set(common.COL_UPDATE_USER_ID, division.UpdateUserID).
-			Set(common.COL_DATETIME_UPDATED, division.DateTimeUpdated)
+			Set(common.ColumnUpdateUserID, division.UpdateUserID).
+			Set(common.ColumnDateTimeUpdated, division.DateTimeUpdated)
 
 		var err error
 		if tx, txErr := repo.Database.Begin(); txErr != nil {
@@ -145,14 +145,14 @@ func (repo PostgresDivisionRepository) UpdateDivision(division referencebll.Divi
 	}
 }
 
-func (repo PostgresDivisionRepository) DeleteDivision(division referencebll.Division) error {
+func (repo PostgresDivisionRepository) DeleteDivision(division reference.Division) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresDivisionRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.
 		Delete("").
 		From(DAS_DIVISION_TABLE).
-		Where(squirrel.Eq{common.PRIMARY_KEY: division.ID})
+		Where(squirrel.Eq{common.ColumnPrimaryKey: division.ID})
 	var err error
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
 		return txErr

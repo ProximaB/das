@@ -36,17 +36,17 @@ type PostgresStyleRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresStyleRepository) CreateStyle(style *referencebll.Style) error {
+func (repo PostgresStyleRepository) CreateStyle(style *reference.Style) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStyleRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_STYLE_TABLE).Columns(
 		common.COL_NAME,
 		common.COL_DESCRIPTION,
-		common.COL_CREATE_USER_ID,
-		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
-		common.COL_DATETIME_UPDATED,
+		common.ColumnCreateUserID,
+		common.ColumnDateTimeCreated,
+		common.ColumnUpdateUserID,
+		common.ColumnDateTimeUpdated,
 	).Values(
 		style.Name,
 		style.Description,
@@ -69,14 +69,14 @@ func (repo PostgresStyleRepository) CreateStyle(style *referencebll.Style) error
 	return err
 }
 
-func (repo PostgresStyleRepository) DeleteStyle(style referencebll.Style) error {
+func (repo PostgresStyleRepository) DeleteStyle(style reference.Style) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStyleRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.
 		Delete("").
 		From(DAS_STYLE_TABLE).
-		Where(squirrel.Eq{common.PRIMARY_KEY: style.ID})
+		Where(squirrel.Eq{common.ColumnPrimaryKey: style.ID})
 	var err error
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
 		return txErr
@@ -87,34 +87,34 @@ func (repo PostgresStyleRepository) DeleteStyle(style referencebll.Style) error 
 	return err
 }
 
-func (repo PostgresStyleRepository) SearchStyle(criteria referencebll.SearchStyleCriteria) ([]referencebll.Style, error) {
+func (repo PostgresStyleRepository) SearchStyle(criteria reference.SearchStyleCriteria) ([]reference.Style, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresStyleRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.Select(
 		fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s",
-			common.PRIMARY_KEY,
+			common.ColumnPrimaryKey,
 			common.COL_NAME,
 			common.COL_DESCRIPTION,
-			common.COL_CREATE_USER_ID,
-			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
-			common.COL_DATETIME_UPDATED)).
+			common.ColumnCreateUserID,
+			common.ColumnDateTimeCreated,
+			common.ColumnUpdateUserID,
+			common.ColumnDateTimeUpdated)).
 		From(DAS_STYLE_TABLE).
-		OrderBy(common.PRIMARY_KEY)
+		OrderBy(common.ColumnPrimaryKey)
 	if criteria.StyleID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.StyleID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.StyleID})
 	}
 	if len(criteria.Name) > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: criteria.Name})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	styles := make([]referencebll.Style, 0)
+	styles := make([]reference.Style, 0)
 	if err != nil {
 		return styles, err
 	}
 	for rows.Next() {
-		each := referencebll.Style{}
+		each := reference.Style{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -130,7 +130,7 @@ func (repo PostgresStyleRepository) SearchStyle(criteria referencebll.SearchStyl
 	return styles, err
 }
 
-func (repo PostgresStyleRepository) UpdateStyle(style referencebll.Style) error {
+func (repo PostgresStyleRepository) UpdateStyle(style reference.Style) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStyleRepository is not specified")
 	}
@@ -138,8 +138,8 @@ func (repo PostgresStyleRepository) UpdateStyle(style referencebll.Style) error 
 	if style.ID > 0 {
 		stmt = stmt.Set(common.COL_NAME, style.Name).
 			Set(common.COL_DESCRIPTION, style.Description).
-			Set(common.COL_UPDATE_USER_ID, style.UpdateUserID).
-			Set(common.COL_DATETIME_UPDATED, style.DateTimeUpdated)
+			Set(common.ColumnUpdateUserID, style.UpdateUserID).
+			Set(common.ColumnDateTimeUpdated, style.DateTimeUpdated)
 		var err error
 		if tx, txErr := repo.Database.Begin(); txErr != nil {
 			return txErr

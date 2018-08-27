@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package partnership
+package partnershipdal
 
 import (
 	"database/sql"
@@ -54,8 +54,8 @@ func (repo PostgresPartnershipRepository) CreatePartnership(partnership *busines
 			DasPartnershipColumnFollowID,
 			DasPartnershipColumnSameSexIndicator,
 			DasPartnershipColumnFavorite,
-			common.COL_DATETIME_CREATED,
-			common.COL_DATETIME_UPDATED).Values(partnership.LeadID, partnership.FollowID, partnership.SameSex, partnership.FavoriteLead, partnership.DateTimeCreated, time.Now())
+			common.ColumnDateTimeCreated,
+			common.ColumnDateTimeUpdated).Values(partnership.LeadID, partnership.FollowID, partnership.SameSex, partnership.FavoriteByLead, partnership.DateTimeCreated, time.Now())
 
 	_, err := clause.RunWith(repo.Database).Exec()
 	return err
@@ -66,15 +66,15 @@ func (repo PostgresPartnershipRepository) SearchPartnership(criteria businesslog
 		return nil, errors.New("data source of PostgresPartnershipRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.Select(fmt.Sprintf("%s,%s,%s,%s,%s,%s,%s",
-		common.PRIMARY_KEY,
+		common.ColumnPrimaryKey,
 		DasPartnershipColumnLeadID,
 		DasPartnershipColumnFollowID,
 		DasPartnershipColumnSameSexIndicator,
 		DasPartnershipColumnFavorite,
-		common.COL_DATETIME_CREATED,
-		common.COL_DATETIME_UPDATED)).From(DasPartnershipTable)
+		common.ColumnDateTimeCreated,
+		common.ColumnDateTimeUpdated)).From(DasPartnershipTable)
 	if criteria.PartnershipID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.PartnershipID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.PartnershipID})
 	}
 	if criteria.LeadID > 0 {
 		stmt = stmt.Where(squirrel.Eq{DasPartnershipColumnLeadID: criteria.LeadID})
@@ -96,7 +96,7 @@ func (repo PostgresPartnershipRepository) SearchPartnership(criteria businesslog
 			&each.LeadID,
 			&each.FollowID,
 			&each.SameSex,
-			&each.FavoriteLead,
+			&each.FavoriteByLead,
 			&each.DateTimeCreated,
 			&each.DateTimeUpdated,
 		)

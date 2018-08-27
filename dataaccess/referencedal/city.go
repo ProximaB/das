@@ -37,7 +37,7 @@ type PostgresCityRepository struct {
 }
 
 // CreateCity inserts a new City record in the database and updates the ID key of city
-func (repo PostgresCityRepository) CreateCity(city *referencebll.City) error {
+func (repo PostgresCityRepository) CreateCity(city *reference.City) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCityRepository is not specified")
 	}
@@ -46,10 +46,10 @@ func (repo PostgresCityRepository) CreateCity(city *referencebll.City) error {
 		Into(dasCityTable).
 		Columns(common.COL_NAME,
 			common.COL_STATE_ID,
-			common.COL_CREATE_USER_ID,
-			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
-			common.COL_DATETIME_UPDATED).
+			common.ColumnCreateUserID,
+			common.ColumnDateTimeCreated,
+			common.ColumnUpdateUserID,
+			common.ColumnDateTimeUpdated).
 		Values(
 			city.Name,
 			city.StateID,
@@ -70,13 +70,13 @@ func (repo PostgresCityRepository) CreateCity(city *referencebll.City) error {
 }
 
 // DeleteCity removes the City record from the database
-func (repo PostgresCityRepository) DeleteCity(city referencebll.City) error {
+func (repo PostgresCityRepository) DeleteCity(city reference.City) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCityRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.Delete("").From(dasCityTable)
 	if city.ID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: city.ID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: city.ID})
 	}
 	if len(city.Name) > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: city.Name})
@@ -94,16 +94,16 @@ func (repo PostgresCityRepository) DeleteCity(city referencebll.City) error {
 }
 
 // UpdateCity updates the value in a City record
-func (repo PostgresCityRepository) UpdateCity(city referencebll.City) error {
+func (repo PostgresCityRepository) UpdateCity(city reference.City) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCityRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.Update("").Table(dasCityTable).
 		SetMap(squirrel.Eq{common.COL_NAME: city.Name, common.COL_STATE_ID: city.StateID}).
-		SetMap(squirrel.Eq{common.COL_DATETIME_UPDATED: city.DateTimeUpdated}).Where(squirrel.Eq{common.PRIMARY_KEY: city.ID})
+		SetMap(squirrel.Eq{common.ColumnDateTimeUpdated: city.DateTimeUpdated}).Where(squirrel.Eq{common.ColumnPrimaryKey: city.ID})
 
 	if city.UpdateUserID != nil {
-		stmt = stmt.SetMap(squirrel.Eq{common.COL_UPDATE_USER_ID: city.UpdateUserID})
+		stmt = stmt.SetMap(squirrel.Eq{common.ColumnUpdateUserID: city.UpdateUserID})
 	}
 
 	var err error
@@ -118,20 +118,20 @@ func (repo PostgresCityRepository) UpdateCity(city referencebll.City) error {
 }
 
 // SearchCity selects cityes
-func (repo PostgresCityRepository) SearchCity(criteria referencebll.SearchCityCriteria) ([]referencebll.City, error) {
+func (repo PostgresCityRepository) SearchCity(criteria reference.SearchCityCriteria) ([]reference.City, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresCityRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s",
-			common.PRIMARY_KEY,
+			common.ColumnPrimaryKey,
 			common.COL_NAME,
 			common.COL_STATE_ID,
-			common.COL_CREATE_USER_ID,
-			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
-			common.COL_DATETIME_UPDATED)).
-		From(dasCityTable).OrderBy(common.PRIMARY_KEY)
+			common.ColumnCreateUserID,
+			common.ColumnDateTimeCreated,
+			common.ColumnUpdateUserID,
+			common.ColumnDateTimeUpdated)).
+		From(dasCityTable).OrderBy(common.ColumnPrimaryKey)
 	if len(criteria.Name) > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: criteria.Name})
 	}
@@ -139,16 +139,16 @@ func (repo PostgresCityRepository) SearchCity(criteria referencebll.SearchCityCr
 		stmt = stmt.Where(squirrel.Eq{common.COL_STATE_ID: criteria.StateID})
 	}
 	if criteria.CityID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.CityID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.CityID})
 	}
 
 	rows, err := stmt.RunWith(repo.Database).Query()
-	cities := make([]referencebll.City, 0)
+	cities := make([]reference.City, 0)
 	if err != nil {
 		return cities, err
 	}
 	for rows.Next() {
-		each := referencebll.City{}
+		each := reference.City{}
 		scanErr := rows.Scan(
 			&each.ID,
 			&each.Name,

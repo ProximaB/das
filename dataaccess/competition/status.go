@@ -39,13 +39,13 @@ func (repo PostgresCompetitionStatusRepository) GetCompetitionAllStatus() ([]bus
 		return nil, errors.New("data source of PostgresCompetitionStatusRepository is not specified")
 	}
 	clause := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s",
-		common.PRIMARY_KEY,
+		common.ColumnPrimaryKey,
 		common.COL_NAME,
-		common.COL_ABBREVIATION,
+		common.ColumnAbbreviation,
 		common.COL_DESCRIPTION,
-		common.COL_DATETIME_CREATED,
-		common.COL_DATETIME_UPDATED)).
-		From(DAS_COMPETITION_STATUS_TABLE).OrderBy(common.PRIMARY_KEY)
+		common.ColumnDateTimeCreated,
+		common.ColumnDateTimeUpdated)).
+		From(DAS_COMPETITION_STATUS_TABLE).OrderBy(common.ColumnPrimaryKey)
 	rows, err := clause.RunWith(repo.Database).Query()
 	status := make([]businesslogic.CompetitionStatus, 0)
 	if err != nil {

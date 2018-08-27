@@ -25,16 +25,18 @@ import (
 	"net/http"
 )
 
+// PartnershipServer serves requests that are related with partnership
 type PartnershipServer struct {
 	authentication.IAuthenticationStrategy
 	businesslogic.IAccountRepository
 	businesslogic.IPartnershipRepository
 }
 
-// GET /api/partnership
+// SearchPartnershipHandler handles the request
+//	GET /api/partnership
 func (server PartnershipServer) SearchPartnershipHandler(w http.ResponseWriter, r *http.Request) {
-	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
-	if account.ID == 0 || account.AccountTypeID != businesslogic.AccountTypeAthlete {
+	account, _ := server.GetCurrentUser(r)
+	if account.ID == 0 || account.HasRole(businesslogic.AccountTypeAthlete) {
 		util.RespondJsonResult(w, http.StatusUnauthorized, "not authorized", nil)
 		return
 	}
@@ -62,7 +64,7 @@ type updatePartnership struct {
 
 // PUT /api/partnership
 func (server PartnershipServer) UpdatePartnershipHandler(w http.ResponseWriter, r *http.Request) {
-	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
+	account, _ := server.GetCurrentUser(r)
 	if account.ID == 0 {
 		util.RespondJsonResult(w, http.StatusUnauthorized, "not authorized", nil)
 		return

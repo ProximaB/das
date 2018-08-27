@@ -33,17 +33,17 @@ const (
 	DAS_USER_GENDER_TABLE = "DAS.GENDER"
 )
 
-func (repo PostgresGenderRepository) GetAllGenders() ([]referencebll.Gender, error) {
-	genders := make([]referencebll.Gender, 0)
+func (repo PostgresGenderRepository) GetAllGenders() ([]reference.Gender, error) {
+	genders := make([]reference.Gender, 0)
 	stmt := repo.SqlBuilder.Select(
 		fmt.Sprintf(
 			"%s, %s, %s, %s, %s, %s",
-			common.PRIMARY_KEY,
+			common.ColumnPrimaryKey,
 			common.COL_NAME,
-			common.COL_ABBREVIATION,
+			common.ColumnAbbreviation,
 			common.COL_DESCRIPTION,
-			common.COL_DATETIME_CREATED,
-			common.COL_DATETIME_UPDATED,
+			common.ColumnDateTimeCreated,
+			common.ColumnDateTimeUpdated,
 		)).From(DAS_USER_GENDER_TABLE)
 
 	rows, err := stmt.RunWith(repo.Database).Query()
@@ -52,7 +52,7 @@ func (repo PostgresGenderRepository) GetAllGenders() ([]referencebll.Gender, err
 	}
 
 	for rows.Next() {
-		each := referencebll.Gender{}
+		each := reference.Gender{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,

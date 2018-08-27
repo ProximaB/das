@@ -34,20 +34,20 @@ type PostgresStateRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresStateRepository) SearchState(criteria referencebll.SearchStateCriteria) ([]referencebll.State, error) {
+func (repo PostgresStateRepository) SearchState(criteria reference.SearchStateCriteria) ([]reference.State, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresStateRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
-			common.PRIMARY_KEY,
+			common.ColumnPrimaryKey,
 			common.COL_NAME,
-			common.COL_ABBREVIATION,
+			common.ColumnAbbreviation,
 			common.COL_COUNTRY_ID,
-			common.COL_CREATE_USER_ID,
-			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
-			common.COL_DATETIME_UPDATED)).
+			common.ColumnCreateUserID,
+			common.ColumnDateTimeCreated,
+			common.ColumnUpdateUserID,
+			common.ColumnDateTimeUpdated)).
 		From(DAS_STATE_TABLE)
 	if criteria.CountryID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_COUNTRY_ID: criteria.CountryID})
@@ -56,19 +56,19 @@ func (repo PostgresStateRepository) SearchState(criteria referencebll.SearchStat
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: criteria.Name})
 	}
 	if criteria.StateID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.PRIMARY_KEY: criteria.StateID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.StateID})
 	}
-	stmt = stmt.OrderBy(common.PRIMARY_KEY,
+	stmt = stmt.OrderBy(common.ColumnPrimaryKey,
 		common.COL_NAME)
 
-	states := make([]referencebll.State, 0)
+	states := make([]reference.State, 0)
 	rows, err := stmt.RunWith(repo.Database).Query()
 	if err != nil {
 		return states, err
 	}
 
 	for rows.Next() {
-		each := referencebll.State{}
+		each := reference.State{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -87,18 +87,18 @@ func (repo PostgresStateRepository) SearchState(criteria referencebll.SearchStat
 	return states, nil
 }
 
-func (repo PostgresStateRepository) CreateState(state *referencebll.State) error {
+func (repo PostgresStateRepository) CreateState(state *reference.State) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStateRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_STATE_TABLE).Columns(
 		common.COL_NAME,
-		common.COL_ABBREVIATION,
+		common.ColumnAbbreviation,
 		common.COL_COUNTRY_ID,
-		common.COL_CREATE_USER_ID,
-		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
-		common.COL_DATETIME_UPDATED,
+		common.ColumnCreateUserID,
+		common.ColumnDateTimeCreated,
+		common.ColumnUpdateUserID,
+		common.ColumnDateTimeUpdated,
 	).Values(
 		state.Name,
 		state.Abbreviation,
@@ -122,17 +122,17 @@ func (repo PostgresStateRepository) CreateState(state *referencebll.State) error
 	return err
 }
 
-func (repo PostgresStateRepository) UpdateState(state referencebll.State) error {
+func (repo PostgresStateRepository) UpdateState(state reference.State) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStateRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_STATE_TABLE)
 	if state.ID > 0 {
 		stmt = stmt.Set(common.COL_NAME, state.Name).
-			Set(common.COL_ABBREVIATION, state.Abbreviation).
+			Set(common.ColumnAbbreviation, state.Abbreviation).
 			Set(common.COL_COUNTRY_ID, state.CountryID).
-			Set(common.COL_UPDATE_USER_ID, state.UpdateUserID).
-			Set(common.COL_DATETIME_UPDATED, state.DateTimeUpdated)
+			Set(common.ColumnUpdateUserID, state.UpdateUserID).
+			Set(common.ColumnDateTimeUpdated, state.DateTimeUpdated)
 
 		var err error
 		if tx, txErr := repo.Database.Begin(); txErr != nil {
@@ -149,11 +149,11 @@ func (repo PostgresStateRepository) UpdateState(state referencebll.State) error 
 	}
 }
 
-func (repo PostgresStateRepository) DeleteState(state referencebll.State) error {
+func (repo PostgresStateRepository) DeleteState(state reference.State) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresStateRepository is not specified")
 	}
-	stmt := repo.SqlBuilder.Delete("").From(DAS_STATE_TABLE).Where(squirrel.Eq{common.PRIMARY_KEY: state.ID})
+	stmt := repo.SqlBuilder.Delete("").From(DAS_STATE_TABLE).Where(squirrel.Eq{common.ColumnPrimaryKey: state.ID})
 	var err error
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
 		return txErr

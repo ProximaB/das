@@ -31,8 +31,8 @@ type CreateCity struct {
 	StateID int    `schema:"state"`
 }
 
-func (create CreateCity) ToCityDataModel() referencebll.City {
-	return referencebll.City{
+func (create CreateCity) ToCityDataModel() reference.City {
+	return reference.City{
 		Name:    create.Name,
 		StateID: create.StateID,
 	}

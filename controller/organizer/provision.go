@@ -35,8 +35,8 @@ type OrganizerProvisionServer struct {
 // GET /api/organizer/organizer/summary
 func (server OrganizerProvisionServer) GetOrganizerProvisionSummaryHandler(w http.ResponseWriter, r *http.Request) {
 
-	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
-	if account.AccountTypeID != businesslogic.AccountTypeOrganizer || account.ID == 0 {
+	account, _ := server.GetCurrentUser(r)
+	if !account.HasRole(businesslogic.AccountTypeOrganizer) || account.ID == 0 {
 		util.RespondJsonResult(w, http.StatusUnauthorized, "Access denied", nil)
 		return
 	}
@@ -67,8 +67,8 @@ type OrganizerProvisionHistoryServer struct {
 // GET /api/organizer/organizer/history
 func (server OrganizerProvisionHistoryServer) GetOrganizerProvisionHistoryHandler(w http.ResponseWriter, r *http.Request) {
 
-	account, _ := server.GetCurrentUser(r, server.IAccountRepository)
-	if account.AccountTypeID != businesslogic.AccountTypeOrganizer && account.AccountTypeID != businesslogic.AccountTypeAdministrator {
+	account, _ := server.GetCurrentUser(r)
+	if !account.HasRole(businesslogic.AccountTypeOrganizer) && !account.HasRole(businesslogic.AccountTypeAdministrator) {
 		util.RespondJsonResult(w, http.StatusUnauthorized, "Access denied", nil)
 		return
 	}

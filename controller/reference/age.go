@@ -25,7 +25,7 @@ import (
 )
 
 type AgeServer struct {
-	referencebll.IAgeRepository
+	reference.IAgeRepository
 }
 
 // SearchAgeHandler handles request
@@ -42,7 +42,7 @@ type AgeServer struct {
 //		{ "id": 4, "name": "Senior I", "division": 4, "enforced": true, "minimum": 36, "maximum": 45 },
 //	]
 func (server AgeServer) SearchAgeHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(referencebll.SearchAgeCriteria)
+	criteria := new(reference.SearchAgeCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
 		return

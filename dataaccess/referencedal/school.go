@@ -34,17 +34,17 @@ type PostgresSchoolRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresSchoolRepository) CreateSchool(school *referencebll.School) error {
+func (repo PostgresSchoolRepository) CreateSchool(school *reference.School) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresSchoolRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_SCHOOL_TABLE).Columns(
 		common.COL_NAME,
 		common.COL_CITY_ID,
-		common.COL_CREATE_USER_ID,
-		common.COL_DATETIME_CREATED,
-		common.COL_UPDATE_USER_ID,
-		common.COL_DATETIME_UPDATED,
+		common.ColumnCreateUserID,
+		common.ColumnDateTimeCreated,
+		common.ColumnUpdateUserID,
+		common.ColumnDateTimeUpdated,
 	).Values(
 		school.Name,
 		school.CityID,
@@ -67,7 +67,7 @@ func (repo PostgresSchoolRepository) CreateSchool(school *referencebll.School) e
 	return err
 }
 
-func (repo PostgresSchoolRepository) UpdateSchool(school referencebll.School) error {
+func (repo PostgresSchoolRepository) UpdateSchool(school reference.School) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresSchoolRepository is not specified")
 	}
@@ -75,8 +75,8 @@ func (repo PostgresSchoolRepository) UpdateSchool(school referencebll.School) er
 	if school.ID > 0 {
 		stmt = stmt.Set(common.COL_NAME, school.Name).
 			Set(common.COL_CITY_ID, school.CityID).
-			Set(common.COL_UPDATE_USER_ID, school.UpdateUserID).
-			Set(common.COL_DATETIME_UPDATED, school.DateTimeUpdated)
+			Set(common.ColumnUpdateUserID, school.UpdateUserID).
+			Set(common.ColumnDateTimeUpdated, school.DateTimeUpdated)
 		var err error
 		if tx, txErr := repo.Database.Begin(); txErr != nil {
 			return txErr
@@ -92,14 +92,14 @@ func (repo PostgresSchoolRepository) UpdateSchool(school referencebll.School) er
 	}
 }
 
-func (repo PostgresSchoolRepository) DeleteSchool(school referencebll.School) error {
+func (repo PostgresSchoolRepository) DeleteSchool(school reference.School) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresSchoolRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.
 		Delete("").
 		From(DAS_SCHOOL_TABLE).
-		Where(squirrel.Eq{common.PRIMARY_KEY: school.ID})
+		Where(squirrel.Eq{common.ColumnPrimaryKey: school.ID})
 	var err error
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
 		return txErr
@@ -112,20 +112,20 @@ func (repo PostgresSchoolRepository) DeleteSchool(school referencebll.School) er
 	return err
 }
 
-func (repo PostgresSchoolRepository) SearchSchool(criteria referencebll.SearchSchoolCriteria) ([]referencebll.School, error) {
+func (repo PostgresSchoolRepository) SearchSchool(criteria reference.SearchSchoolCriteria) ([]reference.School, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresSchoolRepository is not specified")
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf(
 			`%s,%s, %s,%s, %s, %s, %s`,
-			common.PRIMARY_KEY,
+			common.ColumnPrimaryKey,
 			common.COL_NAME,
 			common.COL_CITY_ID,
-			common.COL_CREATE_USER_ID,
-			common.COL_DATETIME_CREATED,
-			common.COL_UPDATE_USER_ID,
-			common.COL_DATETIME_UPDATED)).
+			common.ColumnCreateUserID,
+			common.ColumnDateTimeCreated,
+			common.ColumnUpdateUserID,
+			common.ColumnDateTimeUpdated)).
 		From(DAS_SCHOOL_TABLE).
 		OrderBy(`DAS.SCHOOL.ID`)
 	if criteria.ID > 0 {
@@ -142,12 +142,12 @@ func (repo PostgresSchoolRepository) SearchSchool(criteria referencebll.SearchSc
 			Where(squirrel.Eq{`C.STATE_ID`: criteria.StateID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	schools := make([]referencebll.School, 0)
+	schools := make([]reference.School, 0)
 	if err != nil {
 		return schools, err
 	}
 	for rows.Next() {
-		each := referencebll.School{}
+		each := reference.School{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,

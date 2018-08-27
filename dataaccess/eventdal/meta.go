@@ -29,7 +29,7 @@ type PostgresEventMetaRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresEventMetaRepository) GetEventUniqueFederations(competition businesslogic.Competition) ([]referencebll.Federation, error) {
+func (repo PostgresEventMetaRepository) GetEventUniqueFederations(competition businesslogic.Competition) ([]reference.Federation, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresEventRepository is not specified")
 	}
@@ -39,14 +39,14 @@ func (repo PostgresEventMetaRepository) GetEventUniqueFederations(competition bu
 				ON E.FEDERATION_ID = F.ID WHERE E.COMPETITION_ID = $1`
 
 	rows, err := repo.Database.Query(clause, competition.ID)
-	federations := make([]referencebll.Federation, 0)
+	federations := make([]reference.Federation, 0)
 	if err != nil {
 		rows.Close()
 		return federations, err
 	}
 
 	for rows.Next() {
-		each := referencebll.Federation{}
+		each := reference.Federation{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -65,7 +65,7 @@ func (repo PostgresEventMetaRepository) GetEventUniqueFederations(competition bu
 	return federations, err
 }
 
-func (repo PostgresEventMetaRepository) GetEventUniqueDivisions(competition businesslogic.Competition) ([]referencebll.Division, error) {
+func (repo PostgresEventMetaRepository) GetEventUniqueDivisions(competition businesslogic.Competition) ([]reference.Division, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresEventRepository is not specified")
 	}
@@ -74,14 +74,14 @@ func (repo PostgresEventMetaRepository) GetEventUniqueDivisions(competition busi
 				FROM DAS.EVENT E JOIN DAS.DIVISION D
 				ON E.DIVISION_ID = D.ID WHERE E.COMPETITION_ID = $1`
 	rows, err := repo.Database.Query(clause, competition.ID)
-	divisions := make([]referencebll.Division, 0)
+	divisions := make([]reference.Division, 0)
 	if err != nil {
 		rows.Close()
 		return divisions, err
 	}
 
 	for rows.Next() {
-		each := referencebll.Division{}
+		each := reference.Division{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -98,7 +98,7 @@ func (repo PostgresEventMetaRepository) GetEventUniqueDivisions(competition busi
 	return divisions, err
 }
 
-func (repo PostgresEventMetaRepository) GetEventUniqueAges(competition businesslogic.Competition) ([]referencebll.Age, error) {
+func (repo PostgresEventMetaRepository) GetEventUniqueAges(competition businesslogic.Competition) ([]reference.Age, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresEventRepository is not specified")
 	}
@@ -107,14 +107,14 @@ func (repo PostgresEventMetaRepository) GetEventUniqueAges(competition businessl
 			FROM DAS.EVENT E
 				JOIN DAS.AGE A ON E.AGE_ID = A.ID WHERE E.COMPETITION_ID = $1`
 	rows, err := repo.Database.Query(clause, competition.ID)
-	ages := make([]referencebll.Age, 0)
+	ages := make([]reference.Age, 0)
 	if err != nil {
 		rows.Close()
 		return ages, err
 	}
 
 	for rows.Next() {
-		each := referencebll.Age{}
+		each := reference.Age{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -134,7 +134,7 @@ func (repo PostgresEventMetaRepository) GetEventUniqueAges(competition businessl
 	return ages, err
 }
 
-func (repo PostgresEventMetaRepository) GetEventUniqueProficiencies(competition businesslogic.Competition) ([]referencebll.Proficiency, error) {
+func (repo PostgresEventMetaRepository) GetEventUniqueProficiencies(competition businesslogic.Competition) ([]reference.Proficiency, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresEventRepository is not specified")
 	}
@@ -142,14 +142,14 @@ func (repo PostgresEventMetaRepository) GetEventUniqueProficiencies(competition 
 			P.UPDATE_USER_ID, P.DATETIME_UPDATED FROM DAS.EVENT E JOIN DAS.PROFICIENCY P ON E.PROFICIENCY_ID = P.ID 
 			WHERE E.COMPETITION_ID = $1`
 	rows, err := repo.Database.Query(clause, competition.ID)
-	proficiencies := make([]referencebll.Proficiency, 0)
+	proficiencies := make([]reference.Proficiency, 0)
 	if err != nil {
 		rows.Close()
 		return proficiencies, err
 	}
 
 	for rows.Next() {
-		each := referencebll.Proficiency{}
+		each := reference.Proficiency{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -166,7 +166,7 @@ func (repo PostgresEventMetaRepository) GetEventUniqueProficiencies(competition 
 	return proficiencies, err
 }
 
-func (repo PostgresEventMetaRepository) GetEventUniqueStyles(competition businesslogic.Competition) ([]referencebll.Style, error) {
+func (repo PostgresEventMetaRepository) GetEventUniqueStyles(competition businesslogic.Competition) ([]reference.Style, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresEventRepository is not specified")
 	}
@@ -175,14 +175,14 @@ func (repo PostgresEventMetaRepository) GetEventUniqueStyles(competition busines
 				WHERE E.COMPETITION_ID = $1`
 
 	rows, err := repo.Database.Query(clause, competition)
-	styles := make([]referencebll.Style, 0)
+	styles := make([]reference.Style, 0)
 	if err != nil {
 		rows.Close()
 		return styles, err
 	}
 
 	for rows.Next() {
-		each := referencebll.Style{}
+		each := reference.Style{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,

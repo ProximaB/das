@@ -14,15 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package referencebll
+package reference
 
 import (
 	"time"
 )
 
 const (
-	GENDER_MALE   = 2
-	GENDER_FEMALE = 1
+	GENDER_MALE    = 2
+	GENDER_FEMALE  = 1
+	GENDER_UNKNOWN = 3 // registering a new account no longer requires specifying gender
 )
 
 type IGenderRepository interface {

@@ -41,7 +41,7 @@ type CreateEventViewModel struct {
 	Dances          []int `json:"dances"`
 }
 
-func (dto CreateEventViewModel) ToDomainModel(user businesslogic.Account, repo referencebll.IDanceRepository) *businesslogic.Event {
+func (dto CreateEventViewModel) ToDomainModel(user businesslogic.Account, repo reference.IDanceRepository) *businesslogic.Event {
 	event := businesslogic.NewEvent()
 	event.CompetitionID = dto.CompetitionID
 	event.CategoryID = businesslogic.EventCategoryCompetitiveBallroom
@@ -54,7 +54,7 @@ func (dto CreateEventViewModel) ToDomainModel(user businesslogic.Account, repo r
 
 	dances := make([]int, 0)
 	for _, each := range dto.Dances {
-		results, _ := repo.SearchDance(referencebll.SearchDanceCriteria{DanceID: each})
+		results, _ := repo.SearchDance(reference.SearchDanceCriteria{DanceID: each})
 		dances = append(dances, results[0].ID)
 	}
 	event.SetDances(dances)

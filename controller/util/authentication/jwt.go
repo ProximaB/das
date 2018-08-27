@@ -20,10 +20,10 @@ import (
 	"errors"
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/util"
 	"github.com/dgrijalva/jwt-go"
 	"log"
 	"net/http"
-	"strconv"
 	"strings"
 	"time"
 )
@@ -31,73 +31,139 @@ import (
 const (
 	JWT_AUTH_CLAIM_EMAIL      = "email"
 	JWT_AUTH_CLAIM_USERNAME   = "name"
-	JWT_AUTH_CLAIM_TYPE       = "type"
+	JWT_AUTH_CLAIM_TYPE       = "roles"
 	JWT_AUTH_CLAIM_UUID       = "uuid"
-	JWT_AUTH_CLAIM_ISSUEDON   = "issued"
-	JWT_AUTH_CLAIM_EXPIRATION = "exp" // default expiration is 48 hours
+	JWT_AUTH_CLAIM_ISSUEDON   = "issued" // issue time stamp (unix time)
+	JWT_AUTH_CLAIM_EXPIRATION = "exp"    // expiration time stamp (unix time)
 )
 
-type JwtAuthenticationStrategy struct {
+type JWTAuthenticationStrategy struct {
 	businesslogic.IAccountRepository
 }
-type Identity struct {
-	Username    string
-	Email       string
-	AccountType int
-	AccountID   string
+
+type AuthorizedIdentity struct {
+	Username   string
+	Email      string
+	Roles      map[string]bool
+	AccountID  string
+	ValidFrom  int64
+	ValidUntil int64
 }
 
-func (strategy JwtAuthenticationStrategy) GetCurrentUser(r *http.Request, repo businesslogic.IAccountRepository) (businesslogic.Account, error) {
+// GetCurrentUser parses the authorization token from JWT and check if valid user information exists in the token
+func (strategy JWTAuthenticationStrategy) GetCurrentUser(r *http.Request) (businesslogic.Account, error) {
 	token, tokenErr := getAuthenticatedRequestToken(r)
 	if tokenErr != nil {
 		return businesslogic.Account{}, tokenErr
 	}
 	identity := getAuthenticatedRequestIdentity(token)
-	searchResults, searchErr := repo.SearchAccount(businesslogic.SearchAccountCriteria{UUID: identity.AccountID})
+	searchResults, searchErr := strategy.SearchAccount(businesslogic.SearchAccountCriteria{UUID: identity.AccountID})
 	if searchErr != nil || len(searchResults) != 1 {
-		log.Println(searchErr)
 		return businesslogic.Account{}, errors.New("cannot be authorized")
 	}
 	account := searchResults[0]
 	if account.ID == 0 {
-		return businesslogic.Account{}, errors.New(fmt.Sprintf("account with identity %+v is not found", identity))
+		err := errors.New(fmt.Sprintf("account with identity %+v is not found", identity))
+		return businesslogic.Account{}, err
 	}
-	return businesslogic.Account{}, nil
+	return account, nil
 }
 
-func (strategy JwtAuthenticationStrategy) SetAuthorizationResponse(w http.ResponseWriter) {
+func (strategy JWTAuthenticationStrategy) SetAuthorizationResponse(w http.ResponseWriter) {
+}
+
+func accountRoleClaim(account businesslogic.Account) map[string]bool {
+	claim := make(map[string]bool)
+	if account.HasRole(businesslogic.AccountTypeAthlete) {
+		claim["isAthlete"] = true
+	} else {
+		claim["isAthlete"] = false
+	}
+	if account.HasRole(businesslogic.AccountTypeAdjudicator) {
+		claim["isAdjudicator"] = true
+	} else {
+		claim["isAdjudicator"] = false
+	}
+	if account.HasRole(businesslogic.AccountTypeScrutineer) {
+		claim["isScrutineer"] = true
+	} else {
+		claim["isScrutineer"] = false
+	}
+	if account.HasRole(businesslogic.AccountTypeOrganizer) {
+		claim["isOrganizer"] = true
+	} else {
+		claim["isOrganizer"] = false
+	}
+	if account.HasRole(businesslogic.AccountTypeDeckCaptain) {
+		claim["isDeckCaptain"] = true
+	} else {
+		claim["isDeckCaptain"] = false
+	}
+	if account.HasRole(businesslogic.AccountTypeEmcee) {
+		claim["isEmcee"] = true
+	} else {
+		claim["isEmcee"] = false
+	}
+	if account.HasRole(businesslogic.AccountTypeAdministrator) {
+		claim["isAdmin"] = true
+	} else {
+		claim["isAdmin"] = false
+	}
+	return claim
 }
 
 func GenerateAuthenticationToken(account businesslogic.Account) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		JWT_AUTH_CLAIM_EMAIL:      account.Email,
-		JWT_AUTH_CLAIM_TYPE:       strconv.Itoa(account.AccountTypeID),
-		JWT_AUTH_CLAIM_USERNAME:   account.FirstName + " " + account.LastName,
+		JWT_AUTH_CLAIM_USERNAME:   account.FullName(),
 		JWT_AUTH_CLAIM_UUID:       account.UUID,
+		JWT_AUTH_CLAIM_TYPE:       accountRoleClaim(account),
+		JWT_AUTH_CLAIM_ISSUEDON:   time.Now().Unix(),
 		JWT_AUTH_CLAIM_EXPIRATION: time.Now().Add(time.Hour * time.Duration(HMAC_VALID_HOURS)).Unix(),
 	})
 	authString, err := token.SignedString([]byte(HMAC_SIGNING_KEY))
 	if err != nil {
-		log.Panicf("failed to generate authentication token for legit user: %s\n", err)
+		log.Printf("failed to generate authentication token for legit user: %s\n", err)
 	}
 	return authString
 }
 
-func getAuthenticatedRequestIdentity(token *jwt.Token) Identity {
-	var identity Identity
+func ValidateToken(tokenString string) error {
+	_, err := jwt.Parse(tokenString, func(token *jwt.Token) (interface{}, error) {
+		if _, ok := token.Method.(*jwt.SigningMethodHMAC); !ok {
+			return nil, errors.New("invalid authentication token")
+		}
+		return []byte(HMAC_SIGNING_KEY), nil
+	})
+	return err
+}
+
+func hasClaim(token *jwt.Token, claim string) bool {
+	claims, ok := token.Claims.(jwt.MapClaims)
+	if ok && token.Valid {
+		return claims[claim] == nil
+	}
+	return ok
+}
+
+func getAuthenticatedRequestIdentity(token *jwt.Token) AuthorizedIdentity {
+	var identity AuthorizedIdentity
 	if claims, ok := token.Claims.(jwt.MapClaims); ok && token.Valid {
-		identity.Username = claims[JWT_AUTH_CLAIM_USERNAME].(string)
+		if hasClaim(token, JWT_AUTH_CLAIM_USERNAME) {
+			identity.Username = claims[JWT_AUTH_CLAIM_USERNAME].(string)
+		}
 		identity.Email = claims[JWT_AUTH_CLAIM_EMAIL].(string)
 		identity.AccountID = claims[JWT_AUTH_CLAIM_UUID].(string)
-		accountType, _ := claims[JWT_AUTH_CLAIM_TYPE].(string)
-		identity.AccountType, _ = strconv.Atoi(accountType)
+		identity.Roles = util.InterfaceMapToStringMap(claims[JWT_AUTH_CLAIM_TYPE].(map[string]interface{}))
+		identity.ValidUntil = int64(claims[JWT_AUTH_CLAIM_EXPIRATION].(float64))
+		identity.ValidFrom = int64(claims[JWT_AUTH_CLAIM_ISSUEDON].(float64))
 	}
 	return identity
 }
 
 // caution: this method assumes that request r has already been authenticated and no security check is performed here.
 func getAuthenticatedRequestToken(r *http.Request) (*jwt.Token, error) {
-	authHeader := r.Header.Get("authorization")
+	authHeader := r.Header.Get("Authorization")
 	if len(authHeader) < 1 {
 		return nil, errors.New("empty authentication token")
 	}
@@ -116,7 +182,7 @@ func getAuthenticatedRequestToken(r *http.Request) (*jwt.Token, error) {
 	return token, tokenParseErr
 }
 
-func (strategy JwtAuthenticationStrategy) Authenticate(r *http.Request) (*businesslogic.Account, error) {
+func (strategy JWTAuthenticationStrategy) Authenticate(r *http.Request) (*businesslogic.Account, error) {
 	// check if authentication token is valid
 	token, tokenErr := getAuthenticatedRequestToken(r)
 	if tokenErr != nil {

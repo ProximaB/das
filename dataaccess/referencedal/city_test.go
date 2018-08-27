@@ -31,7 +31,7 @@ var cityRepository = referencedal.PostgresCityRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var city = referencebll.City{
+var city = reference.City{
 	Name:            "Test City",
 	StateID:         1,
 	DateTimeCreated: time.Now(),
@@ -55,7 +55,7 @@ func TestPostgresCityRepository_SearchCity(t *testing.T) {
 	)
 
 	mock.ExpectQuery(`SELECT ID, NAME, STATE_ID, CREATE_USER_ID, DATETIME_CREATED, UPDATE_USER_ID, DATETIME_UPDATED FROM DAS.CITY`).WillReturnRows(rows)
-	cities, err := cityRepository.SearchCity(referencebll.SearchCityCriteria{})
+	cities, err := cityRepository.SearchCity(reference.SearchCityCriteria{})
 
 	assert.NotZero(t, len(cities), "should retrieve cities that were populated to Database")
 	assert.Nil(t, err, "schema for DAS.CITY should be up to date")
@@ -89,7 +89,7 @@ func TestPostgresCityRepository_DeleteCity(t *testing.T) {
 	mock.ExpectExec(`^DELETE FROM DAS.CITY`).WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
-	err = cityRepository.DeleteCity(referencebll.City{ID: 1, Name: "Shenzhen"})
+	err = cityRepository.DeleteCity(reference.City{ID: 1, Name: "Shenzhen"})
 
 	assert.Nil(t, err, "should delete city without error")
 }
@@ -106,7 +106,7 @@ func TestPostgresCityRepository_UpdateCity(t *testing.T) {
 	mock.ExpectExec("UPDATE DAS.CITY").WillReturnResult(sqlmock.NewResult(12, 1))
 	mock.ExpectCommit()
 
-	args := referencebll.City{ID: 12, Name: "New City", StateID: 77}
+	args := reference.City{ID: 12, Name: "New City", StateID: 77}
 
 	err = cityRepository.UpdateCity(args)
 

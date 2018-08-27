@@ -27,7 +27,7 @@ type Country struct {
 	Abbreviation string `json:"abbreviation"`
 }
 
-func CountriesToViewModel(countries []referencebll.Country) []Country {
+func CountriesToViewModel(countries []reference.Country) []Country {
 	results := make([]Country, 0)
 	for _, each := range countries {
 		results = append(results, countryToViewModel(each))
@@ -35,7 +35,7 @@ func CountriesToViewModel(countries []referencebll.Country) []Country {
 	return results
 }
 
-func countryToViewModel(country referencebll.Country) Country {
+func countryToViewModel(country reference.Country) Country {
 	return Country{
 		ID:           country.ID,
 		Name:         country.Name,
@@ -49,8 +49,8 @@ type CreateCountry struct {
 	Abbreviation string `schema:"abbreviation"`
 }
 
-func (cc *CreateCountry) ToDataModel() referencebll.Country {
-	return referencebll.Country{
+func (cc *CreateCountry) ToDataModel() reference.Country {
+	return reference.Country{
 		Name:            cc.Name,
 		Abbreviation:    cc.Abbreviation,
 		DateTimeCreated: time.Now(),

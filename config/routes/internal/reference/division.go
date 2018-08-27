@@ -24,7 +24,7 @@ import (
 	"net/http"
 )
 
-const apiReferenceDivisionEndpoint = "/api/reference/division"
+const apiReferenceDivisionEndpoint = "/api/v1.0/reference/division"
 
 var divisionServer = reference.DivisionServer{
 	database.DivisionRepository,

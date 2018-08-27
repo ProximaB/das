@@ -24,7 +24,7 @@ import (
 	"net/http"
 )
 
-const apiOrganizerCompetitionEndpoint = "/api/organizer/competition"
+const apiOrganizerCompetitionEndpoint = "/api/v1.0/organizer/competition"
 
 var organizerCompetitionServer = organizer.OrganizerCompetitionServer{
 	IAccountRepository:                   database.AccountRepository,

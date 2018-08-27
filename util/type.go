@@ -7,3 +7,11 @@ func InterfaceSliceToIntSlice(input []interface{}) []int {
 	}
 	return output
 }
+
+func InterfaceMapToStringMap(input map[string]interface{}) map[string]bool {
+	output := make(map[string]bool)
+	for k, v := range input {
+		output[k] = v.(bool)
+	}
+	return output
+}

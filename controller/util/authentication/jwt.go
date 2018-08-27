@@ -44,7 +44,7 @@ type JWTAuthenticationStrategy struct {
 type AuthorizedIdentity struct {
 	Username   string
 	Email      string
-	Roles      []int
+	Roles      map[string]bool
 	AccountID  string
 	ValidFrom  int64
 	ValidUntil int64
@@ -72,12 +72,52 @@ func (strategy JWTAuthenticationStrategy) GetCurrentUser(r *http.Request) (busin
 func (strategy JWTAuthenticationStrategy) SetAuthorizationResponse(w http.ResponseWriter) {
 }
 
+func accountRoleClaim(account businesslogic.Account) map[string]bool {
+	claim := make(map[string]bool)
+	if account.HasRole(businesslogic.AccountTypeAthlete) {
+		claim["isAthlete"] = true
+	} else {
+		claim["isAthlete"] = false
+	}
+	if account.HasRole(businesslogic.AccountTypeAdjudicator) {
+		claim["isAdjudicator"] = true
+	} else {
+		claim["isAdjudicator"] = false
+	}
+	if account.HasRole(businesslogic.AccountTypeScrutineer) {
+		claim["isScrutineer"] = true
+	} else {
+		claim["isScrutineer"] = false
+	}
+	if account.HasRole(businesslogic.AccountTypeOrganizer) {
+		claim["isOrganizer"] = true
+	} else {
+		claim["isOrganizer"] = false
+	}
+	if account.HasRole(businesslogic.AccountTypeDeckCaptain) {
+		claim["isDeckCaptain"] = true
+	} else {
+		claim["isDeckCaptain"] = false
+	}
+	if account.HasRole(businesslogic.AccountTypeEmcee) {
+		claim["isEmcee"] = true
+	} else {
+		claim["isEmcee"] = false
+	}
+	if account.HasRole(businesslogic.AccountTypeAdministrator) {
+		claim["isAdmin"] = true
+	} else {
+		claim["isAdmin"] = false
+	}
+	return claim
+}
+
 func GenerateAuthenticationToken(account businesslogic.Account) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		JWT_AUTH_CLAIM_EMAIL:      account.Email,
 		JWT_AUTH_CLAIM_USERNAME:   account.FullName(),
 		JWT_AUTH_CLAIM_UUID:       account.UUID,
-		JWT_AUTH_CLAIM_TYPE:       account.GetRoles(),
+		JWT_AUTH_CLAIM_TYPE:       accountRoleClaim(account),
 		JWT_AUTH_CLAIM_ISSUEDON:   time.Now().Unix(),
 		JWT_AUTH_CLAIM_EXPIRATION: time.Now().Add(time.Hour * time.Duration(HMAC_VALID_HOURS)).Unix(),
 	})
@@ -114,7 +154,7 @@ func getAuthenticatedRequestIdentity(token *jwt.Token) AuthorizedIdentity {
 		}
 		identity.Email = claims[JWT_AUTH_CLAIM_EMAIL].(string)
 		identity.AccountID = claims[JWT_AUTH_CLAIM_UUID].(string)
-		identity.Roles = util.InterfaceSliceToIntSlice(claims[JWT_AUTH_CLAIM_TYPE].([]interface{}))
+		identity.Roles = util.InterfaceMapToStringMap(claims[JWT_AUTH_CLAIM_TYPE].(map[string]interface{}))
 		identity.ValidUntil = int64(claims[JWT_AUTH_CLAIM_EXPIRATION].(float64))
 		identity.ValidFrom = int64(claims[JWT_AUTH_CLAIM_ISSUEDON].(float64))
 	}

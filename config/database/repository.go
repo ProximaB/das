@@ -27,6 +27,8 @@ import (
 	"github.com/Masterminds/squirrel"
 )
 
+//======= Reference data repositories
+
 var CountryRepository = referencedal.PostgresCountryRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
@@ -71,6 +73,9 @@ var StudioRepository = referencedal.PostgresStudioRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
+//======== end of reference data repositories
+
+//======== begin of account repositories
 var AccountRepository = accountdal.PostgresAccountRepository{
 	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
@@ -86,6 +91,12 @@ var UserPreferenceRepository = accountdal.PostgresUserPreferenceRepository{
 var AccountTypeRepository = accountdal.PostgresAccountTypeRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
+
+var RoleApplicationRepository = accountdal.PostgresRoleApplicationRepository{
+	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
+//========= end of account repositories
 
 var PartnershipRepository = partnershipdal.PostgresPartnershipRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),

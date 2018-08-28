@@ -72,6 +72,7 @@ func init() {
 	AccountRoleRepository.Database = PostgresDatabase
 	GenderRepository.Database = PostgresDatabase
 	UserPreferenceRepository.Database = PostgresDatabase
+	RoleApplicationRepository.Database = PostgresDatabase
 
 	// Partnership request blacklist
 	PartnershipRequestBlacklistRepository.Database = PostgresDatabase

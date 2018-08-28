@@ -102,6 +102,7 @@ func NewDasRouter() *mux.Router {
 	addDasController(router, account.AccountTypeController)
 	addDasController(router, account.GenderController)
 	addDasControllerGroup(router, account.UserPreferenceControllerGroup)
+	addDasControllerGroup(router, account.RoleApplicationControllerGroup)
 
 	// partnership request blacklist
 	addDasController(router, partnership.GetPartnershipBlacklistReasonController)

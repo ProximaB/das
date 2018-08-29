@@ -111,6 +111,8 @@ func (server RoleApplicationServer) SearchRoleApplicationHandler(w http.Response
 	w.Write(output)
 }
 
+// ProvisionRoleApplicationHandler handles the request:
+//	PUT /api/v1.o/account/role/provision
 func (server RoleApplicationServer) ProvisionRoleApplicationHandler(w http.ResponseWriter, r *http.Request) {
 	currentUser, userErr := server.auth.GetCurrentUser(r)
 	if userErr != nil {
@@ -144,7 +146,7 @@ func (server RoleApplicationServer) ProvisionRoleApplicationHandler(w http.Respo
 
 	updateErr := server.service.UpdateApplication(currentUser, &applications[0], responseDTO.Response)
 	if updateErr != nil {
-		util.RespondJsonResult(w, http.StatusInternalServerError, "cannot process this action", nil)
+		util.RespondJsonResult(w, http.StatusInternalServerError, updateErr.Error(), nil)
 		return
 	}
 

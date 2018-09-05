@@ -21,6 +21,9 @@ import "time"
 const (
 	// NotificationCategoryNewPartnershipRequestReceived is the value for New Partnership Request Received notification
 	NotificationCategoryNewPartnershipRequestReceived = 1
+	NotificationCategoryPartnershipRequestResponded   = 2
+	NotificationCategoryRoleApplicationResponded      = 3
+	NotificationCategoryRegistrationOpened            = 4
 )
 
 // NotificationCategory defines different categories of notifications

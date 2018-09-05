@@ -37,8 +37,8 @@ type PartnershipRequest struct {
 	RecipientID          int
 	senderAccount        *Account
 	recipientAccount     *Account
-	SenderRole           string
-	RecipientRole        string
+	SenderRole           int
+	RecipientRole        int
 	Message              string
 	Status               int
 	CreateUserID         int

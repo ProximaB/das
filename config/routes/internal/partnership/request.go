@@ -25,7 +25,7 @@ import (
 	"net/http"
 )
 
-const apiPartnershipRequestEndpoint = "/api/partnership/request"
+const apiPartnershipRequestEndpoint = "/api/v1.0/partnership/request"
 
 var partnershipRequestServer = request.PartnershipRequestServer{
 	middleware.AuthenticationStrategy,

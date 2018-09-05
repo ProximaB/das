@@ -29,9 +29,9 @@ const (
 
 const (
 	// PartnershipRoleLead is the reference value for the Lead role
-	PartnershipRoleLead = "LEAD"
+	PartnershipRoleLead = 2
 	// PartnershipRoleFollow is the reference value for the Follow role
-	PartnershipRoleFollow = "FOLLOW"
+	PartnershipRoleFollow = 1
 )
 
 // PartnershipRole defines roles within a Partnership: lead and follow
@@ -42,6 +42,7 @@ type PartnershipRole struct {
 	DateTimeUpdated time.Time
 }
 
+// IPartnershipRoleRepository specifies the interface that a PartnershipRoleRepository should implement
 type IPartnershipRoleRepository interface {
 	GetAllPartnershipRoles() ([]PartnershipRole, error)
 }

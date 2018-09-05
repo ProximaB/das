@@ -112,15 +112,20 @@ func (server PartnershipRequestServer) SearchPartnershipRequestHandler(w http.Re
 
 	data := make([]viewmodel.PartnershipRequest, 0)
 	for _, each := range requests {
-		data = append(data, viewmodel.PartnershipRequest{
+		eachReq := viewmodel.PartnershipRequest{
 			ID:              each.PartnershipRequestID,
 			Sender:          businesslogic.GetAccountByID(each.SenderID, server.IAccountRepository).FullName(),
 			Recipient:       businesslogic.GetAccountByID(each.RecipientID, server.IAccountRepository).FullName(),
 			Message:         each.Message,
 			Status:          each.Status,
 			DateTimeCreated: each.DateTimeCreated,
-			Role:            each.RecipientRole,
-		})
+		}
+		if each.SenderRole == businesslogic.PartnershipRoleLead {
+			eachReq.Role = "Lead"
+		} else {
+			eachReq.Role = "Follow"
+		}
+		data = append(data, eachReq)
 	}
 
 	output, _ := json.Marshal(data)

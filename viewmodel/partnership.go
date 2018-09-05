@@ -57,7 +57,7 @@ type PartnershipRequestResponse struct {
 type CreatePartnershipRequest struct {
 	SenderID       int    `json:"sender"`
 	RecipientEmail string `json:"recipient"`
-	RecipientRole  string `json:"role"`
+	RecipientRole  int    `json:"role"`
 	Message        string `json:"message"`
 }
 

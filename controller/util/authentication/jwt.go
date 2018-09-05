@@ -58,8 +58,13 @@ func (strategy JWTAuthenticationStrategy) GetCurrentUser(r *http.Request) (busin
 	}
 	identity := getAuthenticatedRequestIdentity(token)
 	searchResults, searchErr := strategy.SearchAccount(businesslogic.SearchAccountCriteria{UUID: identity.AccountID})
-	if searchErr != nil || len(searchResults) != 1 {
-		return businesslogic.Account{}, errors.New("cannot be authorized")
+	if searchErr != nil {
+		log.Printf("[error] cannot find user: %s\n", searchErr.Error())
+		return businesslogic.Account{}, errors.New("cannot find account information for you")
+	}
+	if len(searchResults) != 1 {
+		log.Printf("[error] looking for user with token: %s, but find %d account(s)", token.Raw, len(searchResults))
+		return businesslogic.Account{}, errors.New("user's identity cannot be determined")
 	}
 	account := searchResults[0]
 	if account.ID == 0 {

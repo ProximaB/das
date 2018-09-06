@@ -58,11 +58,11 @@ func TestCompetitionRegistrationService_ValidateEventRegistration_LegitimateData
 	athleteEntryRepo := mock_businesslogic.NewMockIAthleteCompetitionEntryRepository(mockCtrl)
 	athleteEntryRepo.EXPECT().SearchAthleteCompetitionEntry(gomock.Any()).Return([]businesslogic.AthleteCompetitionEntry{
 		{ID: 3, AthleteID: 12,
-			CompetitionEntry: businesslogic.CompetitionEntry{CompetitionID: 44}},
+			CompetitionEntry: businesslogic.BaseCompetitionEntry{CompetitionID: 44}},
 	}, nil)
 	athleteEntryRepo.EXPECT().SearchAthleteCompetitionEntry(gomock.Any()).Return([]businesslogic.AthleteCompetitionEntry{
 		{ID: 3, AthleteID: 12,
-			CompetitionEntry: businesslogic.CompetitionEntry{CompetitionID: 44}},
+			CompetitionEntry: businesslogic.BaseCompetitionEntry{CompetitionID: 44}},
 	}, nil)
 	partnershipCompEntryRepo := mock_businesslogic.NewMockIPartnershipCompetitionEntryRepository(mockCtrl)
 	partnershipEventEntryRepo := mock_businesslogic.NewMockIPartnershipEventEntryRepository(mockCtrl)

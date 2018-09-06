@@ -15,3 +15,59 @@
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
 package organizer
+
+import (
+	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/controller/organizer"
+	"github.com/DancesportSoftware/das/controller/util"
+	"net/http"
+)
+
+const apiOrganizerEventEndpointV1_0 = "/api/v1.0/organizer/event"
+
+var organizerEventServer = organizer.OrganizerEventServer{}
+
+var createEventController = util.DasController{
+	Name:         "CreateEventController",
+	Description:  "Organizer creates a event in DAS",
+	Method:       http.MethodPost,
+	Endpoint:     apiOrganizerEventEndpointV1_0,
+	Handler:      organizerEventServer.CreateEventHandler,
+	AllowedRoles: []int{businesslogic.AccountTypeOrganizer},
+}
+
+var deleteEventController = util.DasController{
+	Name:         "DeleteEventController",
+	Description:  "Organizer deletes a event in DAS",
+	Method:       http.MethodDelete,
+	Endpoint:     apiOrganizerEventEndpointV1_0,
+	Handler:      organizerEventServer.DeleteEventHandler,
+	AllowedRoles: []int{businesslogic.AccountTypeOrganizer},
+}
+
+var searchEventController = util.DasController{
+	Name:         "SearchEventController",
+	Description:  "Organizer searches a event in DAS",
+	Method:       http.MethodGet,
+	Endpoint:     apiOrganizerEventEndpointV1_0,
+	Handler:      organizerEventServer.SearchEventHandler,
+	AllowedRoles: []int{businesslogic.AccountTypeOrganizer},
+}
+
+var updateEventController = util.DasController{
+	Name:         "UpdateEventController",
+	Description:  "Organizer updates a event in DAS",
+	Method:       http.MethodPut,
+	Endpoint:     apiOrganizerEventEndpointV1_0,
+	Handler:      organizerEventServer.UpdateEventHandler,
+	AllowedRoles: []int{businesslogic.AccountTypeOrganizer},
+}
+
+var OrganizerEventManagementControllerGroup = util.DasControllerGroup{
+	Controllers: []util.DasController{
+		createEventController,
+		deleteEventController,
+		searchEventController,
+		updateEventController,
+	},
+}

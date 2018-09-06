@@ -17,6 +17,7 @@
 package routes
 
 import (
+	"encoding/json"
 	"github.com/DancesportSoftware/das/config/routes/internal/account"
 	"github.com/DancesportSoftware/das/config/routes/internal/competition"
 	"github.com/DancesportSoftware/das/config/routes/internal/organizer"
@@ -28,6 +29,7 @@ import (
 	"github.com/gorilla/mux"
 	"log"
 	"net/http"
+	"os"
 )
 
 /*
@@ -79,10 +81,25 @@ func addDasControllerGroup(router *mux.Router, group util.DasControllerGroup) {
 	}
 }
 
+func rootController(w http.ResponseWriter, r *http.Request) {
+	apiVersion := os.Getenv("API_VERSION")
+	buildDate := os.Getenv("BUILD_DATE")
+
+	data := struct {
+		APIVersion string `json:"api_version"`
+		BuildDate  string `json:"build_date"`
+	}{apiVersion, buildDate}
+
+	output, _ := json.Marshal(data)
+	w.Write(output)
+}
+
 // NewDasRouter creates a new router that handle requests in DAS
 func NewDasRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	router.Schemes("https")
+
+	router.HandleFunc("/", rootController)
 
 	// reference data
 	addDasControllerGroup(router, reference.CountryControllerGroup)
@@ -123,6 +140,8 @@ func NewDasRouter() *mux.Router {
 
 	// organizer (only)
 	addDasControllerGroup(router, organizer.OrganizerCompetitionManagementControllerGroup)
+	addDasControllerGroup(router, organizer.OrganizerEventManagementControllerGroup)
+	addDasControllerGroup(router, organizer.OrganizerEntryManagementControllerGroup)
 
 	// competition
 	addDasController(router, competition.GetCompetitionStatusController)

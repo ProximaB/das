@@ -115,7 +115,7 @@ func (repo PostgresAthleteCompetitionEntryRepository) SearchAthleteCompetitionEn
 
 	for rows.Next() {
 		each := businesslogic.AthleteCompetitionEntry{
-			CompetitionEntry: businesslogic.CompetitionEntry{},
+			CompetitionEntry: businesslogic.BaseCompetitionEntry{},
 		}
 		rows.Scan(
 			&each.ID,

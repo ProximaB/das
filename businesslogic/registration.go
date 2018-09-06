@@ -124,7 +124,7 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 	})
 	if len(entries) != 1 || hasEntryErr != nil {
 		service.AthleteCompetitionEntryRepo.CreateAthleteCompetitionEntry(&AthleteCompetitionEntry{
-			CompetitionEntry: CompetitionEntry{
+			CompetitionEntry: BaseCompetitionEntry{
 				CompetitionID: registration.CompetitionID,
 			},
 			//AthleteID:     partnership.LeadID,
@@ -138,7 +138,7 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 	})
 	if len(entries) != 1 || hasEntryErr != nil {
 		service.AthleteCompetitionEntryRepo.CreateAthleteCompetitionEntry(&AthleteCompetitionEntry{
-			CompetitionEntry: CompetitionEntry{
+			CompetitionEntry: BaseCompetitionEntry{
 				CompetitionID: registration.CompetitionID,
 			},
 			//AthleteID:     partnership.FollowID,
@@ -198,7 +198,7 @@ func (service CompetitionRegistrationService) CreateAthleteCompetitionEntry(curr
 		return findPartnershipErr
 	}
 	leadCompEntry := AthleteCompetitionEntry{
-		CompetitionEntry: CompetitionEntry{
+		CompetitionEntry: BaseCompetitionEntry{
 			CompetitionID:    registration.CompetitionID,
 			CheckInIndicator: false,
 			CreateUserID:     currentUser.ID,
@@ -210,7 +210,7 @@ func (service CompetitionRegistrationService) CreateAthleteCompetitionEntry(curr
 		PaymentReceivedIndicator: false,
 	}
 	followCompEntry := AthleteCompetitionEntry{
-		CompetitionEntry: CompetitionEntry{
+		CompetitionEntry: BaseCompetitionEntry{
 			CompetitionID:    registration.CompetitionID,
 			CheckInIndicator: false,
 			CreateUserID:     currentUser.ID,
@@ -237,7 +237,7 @@ func (service CompetitionRegistrationService) CreatePartnershipCompetitionEntry(
 
 	partnershipEntry := PartnershipCompetitionEntry{
 		PartnershipID: partnership.ID,
-		CompetitionEntry: CompetitionEntry{
+		CompetitionEntry: BaseCompetitionEntry{
 			CompetitionID:    registration.CompetitionID,
 			CheckInIndicator: false,
 			CreateUserID:     currentUser.ID,

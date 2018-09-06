@@ -38,7 +38,7 @@ func TestPostgresAthleteCompetitionEntryRepository_CreateAthleteCompetitionEntry
 
 	entry := businesslogic.AthleteCompetitionEntry{
 		AthleteID: 12,
-		CompetitionEntry: businesslogic.CompetitionEntry{
+		CompetitionEntry: businesslogic.BaseCompetitionEntry{
 			CompetitionID:    12,
 			CheckInIndicator: true,
 			DateTimeCheckIn:  time.Now(),
@@ -70,7 +70,7 @@ func TestPostgresPartnershipCompetitionEntryRepository_CreatePartnershipCompetit
 	defer db.Close()
 
 	entry := businesslogic.PartnershipCompetitionEntry{
-		CompetitionEntry: businesslogic.CompetitionEntry{
+		CompetitionEntry: businesslogic.BaseCompetitionEntry{
 			CompetitionID:    4,
 			CheckInIndicator: false,
 			DateTimeCheckIn:  time.Now(),

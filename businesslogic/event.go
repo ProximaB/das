@@ -156,6 +156,68 @@ func GetEventByID(id int, repo IEventRepository) (Event, error) {
 	return results[0], err
 }
 
+type OrganizerEventService struct {
+	accountRepo     IAccountRepository
+	roleRepo        IAccountRoleRepository
+	competitionRepo ICompetitionRepository
+	eventRepo       IEventRepository
+	eventDanceRepo  IEventDanceRepository
+}
+
+func NewOrganizerEventService() OrganizerEventService {
+	return OrganizerEventService{}
+}
+
+func (service OrganizerEventService) CreateEvent(event *Event) error {
+	competition, _ := GetCompetitionByID(event.CompetitionID, compRepo)
+
+	// check if competition is still at the right status
+	if competition.GetStatus() != CompetitionStatusPreRegistration {
+		return errors.New("events can only be added when competition is in pre-registration")
+	} else if competition.CreateUserID != event.CreateUserID {
+		return errors.New("not authorized to create event for this competition")
+	}
+
+	// check if specified events were created
+	similarEvents, _ := service.eventRepo.SearchEvent(SearchEventCriteria{
+		CompetitionID: event.CompetitionID,
+		CategoryID:    event.CategoryID,
+		FederationID:  event.FederationID,
+		DivisionID:    event.DivisionID,
+		AgeID:         event.AgeID,
+		ProficiencyID: event.ProficiencyID,
+		StyleID:       event.StyleID,
+	})
+
+	// for each similar event, check if they share dances
+	for _, eachEvent := range similarEvents {
+		for _, eachDance := range event.GetDances() {
+			if eachEvent.HasDance(eachDance) {
+				return errors.New("specified dance is already in this event")
+			}
+		}
+	}
+
+	// if no errors, create the event
+	// step 1: create an event
+	createEventErr := service.eventRepo.CreateEvent(event)
+	if createEventErr != nil {
+		return createEventErr
+	}
+	if event.ID == 0 {
+		return errors.New("event could not be created")
+	}
+
+	// step 2: create all the eventDances. requires primary key returned from the previous step
+	for _, each := range event.GetDances() {
+		eventDance := NewEventDance(*event, each)
+		if createDancesErr := service.eventDanceRepo.CreateEventDance(eventDance); createDancesErr != nil {
+			return createDancesErr
+		}
+	}
+	return nil
+}
+
 // CreateEvent will check if event is valid, and create the in the provided IEventRepository. If competition
 func CreateEvent(event Event, compRepo ICompetitionRepository, eventRepo IEventRepository, eventDanceRepo IEventDanceRepository) error {
 

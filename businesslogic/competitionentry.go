@@ -22,10 +22,10 @@ import (
 	"time"
 )
 
-// CompetitionEntry is the entry for a competition (not including events) and is a
+// BaseCompetitionEntry is the entry for a competition (not including events) and is a
 // base entry for more specific entry such as AthleteCompetitionEntry, PartnershipCompetitionEntry,
 // and AdjudicatorCompetitionEntry
-type CompetitionEntry struct {
+type BaseCompetitionEntry struct {
 	CompetitionID    int
 	CheckInIndicator bool
 	DateTimeCheckIn  time.Time
@@ -35,11 +35,11 @@ type CompetitionEntry struct {
 	DateTimeUpdated  time.Time
 }
 
-// AthleteCompetitionEntry wraps CompetitionEntry and adds additional data to manage payment status for Athletes. It
+// AthleteCompetitionEntry wraps BaseCompetitionEntry and adds additional data to manage payment status for Athletes. It
 // also allows quick indexing of competition attendance
 type AthleteCompetitionEntry struct {
 	ID                       int
-	CompetitionEntry         CompetitionEntry
+	CompetitionEntry         BaseCompetitionEntry
 	AthleteID                int
 	PaymentReceivedIndicator bool
 	DateTimeOfPayment        time.Time
@@ -65,7 +65,7 @@ type IAthleteCompetitionEntryRepository interface {
 // PartnershipCompetitionEntry defines a partnership's participation of a competition
 type PartnershipCompetitionEntry struct {
 	ID               int
-	CompetitionEntry CompetitionEntry
+	CompetitionEntry BaseCompetitionEntry
 	PartnershipID    int
 }
 
@@ -88,7 +88,7 @@ type IPartnershipCompetitionEntryRepository interface {
 // AdjudicatorCompetitionEntry defines the presence of an Adjudicator at a Competition
 type AdjudicatorCompetitionEntry struct {
 	ID               int
-	CompetitionEntry CompetitionEntry
+	CompetitionEntry BaseCompetitionEntry
 	AdjudicatorID    int
 }
 
@@ -170,4 +170,7 @@ func (entry *PartnershipCompetitionEntry) createPartnershipCompetitionEntry(comp
 	}
 
 	return nil
+}
+
+type IScrutineerCompetitionEntryRepository interface {
 }

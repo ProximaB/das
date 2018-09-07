@@ -118,12 +118,12 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 	}
 
 	// create competition entry for the lead, if the entry has not been created yet
-	entries, hasEntryErr := service.AthleteCompetitionEntryRepo.SearchAthleteCompetitionEntry(SearchAthleteCompetitionEntryCriteria{
+	entries, hasEntryErr := service.AthleteCompetitionEntryRepo.SearchEntry(SearchAthleteCompetitionEntryCriteria{
 		CompetitionID: registration.CompetitionID,
 		AthleteID:     partnership.LeadID,
 	})
 	if len(entries) != 1 || hasEntryErr != nil {
-		service.AthleteCompetitionEntryRepo.CreateAthleteCompetitionEntry(&AthleteCompetitionEntry{
+		service.AthleteCompetitionEntryRepo.CreateEntry(&AthleteCompetitionEntry{
 			CompetitionEntry: BaseCompetitionEntry{
 				CompetitionID: registration.CompetitionID,
 			},
@@ -132,12 +132,12 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 	}
 
 	// create competition entry for the follow, if the entry has not been created yet
-	entries, hasEntryErr = service.AthleteCompetitionEntryRepo.SearchAthleteCompetitionEntry(SearchAthleteCompetitionEntryCriteria{
+	entries, hasEntryErr = service.AthleteCompetitionEntryRepo.SearchEntry(SearchAthleteCompetitionEntryCriteria{
 		CompetitionID: registration.CompetitionID,
 		AthleteID:     partnership.FollowID,
 	})
 	if len(entries) != 1 || hasEntryErr != nil {
-		service.AthleteCompetitionEntryRepo.CreateAthleteCompetitionEntry(&AthleteCompetitionEntry{
+		service.AthleteCompetitionEntryRepo.CreateEntry(&AthleteCompetitionEntry{
 			CompetitionEntry: BaseCompetitionEntry{
 				CompetitionID: registration.CompetitionID,
 			},
@@ -190,7 +190,7 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 	return nil
 }
 
-// CreateAthleteCompetitionEntry takes the current user and the registration data and create new Competition Entry for
+// CreateEntry takes the current user and the registration data and create new Competition Entry for
 // each of the athlete
 func (service CompetitionRegistrationService) CreateAthleteCompetitionEntry(currentUser Account, registration EventRegistration) error {
 	partnership, findPartnershipErr := GetPartnershipByID(registration.PartnershipID, service.PartnershipRepository)
@@ -227,7 +227,7 @@ func (service CompetitionRegistrationService) CreateAthleteCompetitionEntry(curr
 	return nil
 }
 
-// CreatePartnershipCompetitionEntry takes the current user and registration data and create a Competition Entry for
+// CreateEntry takes the current user and registration data and create a Competition Entry for
 // this Partnership
 func (service CompetitionRegistrationService) CreatePartnershipCompetitionEntry(currentUser Account, registration EventRegistration) error {
 	partnership, findPartnershipErr := GetPartnershipByID(registration.PartnershipID, service.PartnershipRepository)

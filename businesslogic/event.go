@@ -156,6 +156,7 @@ func GetEventByID(id int, repo IEventRepository) (Event, error) {
 	return results[0], err
 }
 
+// OrganizerEventService provides a layer of abstraction of services used by organizers to manage events of competitions
 type OrganizerEventService struct {
 	accountRepo     IAccountRepository
 	roleRepo        IAccountRoleRepository
@@ -164,12 +165,12 @@ type OrganizerEventService struct {
 	eventDanceRepo  IEventDanceRepository
 }
 
-func NewOrganizerEventService() OrganizerEventService {
+func NewOrganizerEventService(accountRepo IAccountRepository, roleRepo IAccountRoleRepository, compRepo ICompetitionRepository) OrganizerEventService {
 	return OrganizerEventService{}
 }
 
 func (service OrganizerEventService) CreateEvent(event *Event) error {
-	competition, _ := GetCompetitionByID(event.CompetitionID, compRepo)
+	competition, _ := GetCompetitionByID(event.CompetitionID, service.competitionRepo)
 
 	// check if competition is still at the right status
 	if competition.GetStatus() != CompetitionStatusPreRegistration {

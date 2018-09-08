@@ -24,13 +24,13 @@ import (
 
 type Competition struct {
 	ID           int       `json:"id"`
-	Federation   int       `json:"federation"`
+	Federation   int       `json:"federationId"`
 	Name         string    `json:"name"`
 	Website      string    `json:"website"`
-	Status       int       `json:"status"`
-	CountryID    int       `json:"country"`
-	StateID      int       `json:"state"`
-	CityID       int       `json:"city"`
+	Status       int       `json:"statusId"`
+	CountryID    int       `json:"countryId"`
+	StateID      int       `json:"stateId"`
+	CityID       int       `json:"cityId"`
 	Address      string    `json:"address"`
 	StartDate    time.Time `json:"start"`
 	EndDate      time.Time `json:"end"`
@@ -64,16 +64,16 @@ func CompetitionDataModelToViewModel(competition businesslogic.Competition, acco
 }
 
 type CreateCompetition struct {
-	FederationID   int       `json:"federation"`
+	FederationID   int       `json:"federationId"`
 	Name           string    `json:"name"`
 	Start          time.Time `json:"start"`
 	End            time.Time `json:"end"`
-	Status         int       `json:"status"`
+	Status         int       `json:"statusId"`
 	WebsiteUrl     string    `json:"website"`
 	VenueStreet    string    `json:"address"`
-	VenueCityID    int       `json:"city"`
-	VenueStateID   int       `json:"state"`
-	VenueCountryID int       `json:"country"`
+	VenueCityID    int       `json:"cityId"`
+	VenueStateID   int       `json:"stateId"`
+	VenueCountryID int       `json:"countryId"`
 	ContactName    string    `json:"contact"`
 	ContactPhone   string    `json:"phone"`
 	ContactEmail   string    `json:"email"`

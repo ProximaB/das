@@ -58,10 +58,10 @@ type PartnershipRequestResponse struct {
 // SearchPartnershipRequestCriteria defines the parameters that can be used to search particular partnership requests
 type SearchPartnershipRequestCriteria struct {
 	RequestID       int `schema:"id"`
-	Type            int `schema:"type"`
+	Type            int `schema:"typeId"`
 	Sender          int `schema:"sender"`
 	Recipient       int `schema:"recipient"`
-	RequestStatusID int `schema:"status"`
+	RequestStatusID int `schema:"statusId"`
 }
 
 // IPartnershipRequestRepository specifies the functions that need to be implemented to allow CRUD operations on

@@ -19,6 +19,7 @@ package organizer
 import (
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/config/database"
+	"github.com/DancesportSoftware/das/config/routes/middleware"
 	"github.com/DancesportSoftware/das/controller/organizer"
 	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
@@ -27,6 +28,7 @@ import (
 const apiOrganizerCompetitionEndpoint = "/api/v1.0/organizer/competition"
 
 var organizerCompetitionServer = organizer.OrganizerCompetitionServer{
+	IAuthenticationStrategy:              middleware.AuthenticationStrategy,
 	IAccountRepository:                   database.AccountRepository,
 	ICompetitionRepository:               database.CompetitionRepository,
 	IOrganizerProvisionRepository:        database.OrganizerProvisionRepository,

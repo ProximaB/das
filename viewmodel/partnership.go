@@ -67,7 +67,7 @@ type PartnershipRequest struct {
 	Recipient       string    `json:"recipient"`
 	Message         string    `json:"message"`
 	Status          int       `json:"statusId"`
-	Role            string    `json:"roleId"`
+	Role            string    `json:"role"`
 	DateTimeCreated time.Time `json:"sent"`
 }
 

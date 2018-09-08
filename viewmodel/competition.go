@@ -17,8 +17,10 @@
 package viewmodel
 
 import (
+	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"strings"
 	"time"
 )
 
@@ -63,21 +65,42 @@ func CompetitionDataModelToViewModel(competition businesslogic.Competition, acco
 	return view
 }
 
+type CompetitionDate struct {
+	time.Time
+}
+
+func (cd *CompetitionDate) UnmarshalJSON(input []byte) error {
+	strInput := string(input)
+	strInput = strings.Trim(strInput, "\"")
+	newTime, err := time.Parse("2006-01-02", strInput)
+	if err != nil {
+		return err
+	}
+	cd.Time = newTime
+	return nil
+}
+func (cd *CompetitionDate) MarshalJSON() ([]byte, error) {
+	if cd.Time.UnixNano() == (time.Time{}).UnixNano() {
+		return []byte("null"), nil
+	}
+	return []byte(fmt.Sprintf("\"%s\"", cd.Time.Format("2006-01-02"))), nil
+}
+
 type CreateCompetition struct {
-	FederationID   int       `json:"federationId"`
-	Name           string    `json:"name"`
-	Start          time.Time `json:"start"`
-	End            time.Time `json:"end"`
-	Status         int       `json:"statusId"`
-	WebsiteUrl     string    `json:"website"`
-	VenueStreet    string    `json:"address"`
-	VenueCityID    int       `json:"cityId"`
-	VenueStateID   int       `json:"stateId"`
-	VenueCountryID int       `json:"countryId"`
-	ContactName    string    `json:"contact"`
-	ContactPhone   string    `json:"phone"`
-	ContactEmail   string    `json:"email"`
-	CreateUserID   string    `json:"createdby,omitempty"`
+	FederationID   int             `json:"federationId"`
+	Name           string          `json:"name"`
+	Start          CompetitionDate `json:"start"`
+	End            CompetitionDate `json:"end"`
+	Status         int             `json:"statusId"`
+	WebsiteUrl     string          `json:"website"`
+	VenueStreet    string          `json:"address"`
+	VenueCityID    int             `json:"cityId"`
+	VenueStateID   int             `json:"stateId"`
+	VenueCountryID int             `json:"countryId"`
+	ContactName    string          `json:"contact"`
+	ContactPhone   string          `json:"phone"`
+	ContactEmail   string          `json:"email"`
+	CreateUserID   string          `json:"createdby,omitempty"`
 }
 
 func (createDTO CreateCompetition) ToCompetitionDataModel(user businesslogic.Account) businesslogic.Competition {
@@ -96,8 +119,8 @@ func (createDTO CreateCompetition) ToCompetitionDataModel(user businesslogic.Acc
 		ContactPhone: createDTO.ContactPhone,
 		ContactEmail: createDTO.ContactEmail,
 
-		StartDateTime: createDTO.Start,
-		EndDateTime:   createDTO.End,
+		StartDateTime: createDTO.Start.Time,
+		EndDateTime:   createDTO.End.Time,
 
 		CreateUserID:    user.ID,
 		DateTimeCreated: time.Now(),

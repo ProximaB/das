@@ -41,9 +41,7 @@ type OrganizerCompetitionServer struct {
 
 // POST /api/organizer/competition
 func (server OrganizerCompetitionServer) OrganizerCreateCompetitionHandler(w http.ResponseWriter, r *http.Request) {
-
 	createDTO := new(viewmodel.CreateCompetition)
-
 	if err := util.ParseRequestBodyData(r, createDTO); err != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, err.Error())
 		return

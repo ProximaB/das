@@ -165,8 +165,9 @@ type OrganizerEventService struct {
 	eventDanceRepo  IEventDanceRepository
 }
 
-func NewOrganizerEventService(accountRepo IAccountRepository, roleRepo IAccountRoleRepository, compRepo ICompetitionRepository) OrganizerEventService {
-	return OrganizerEventService{}
+func NewOrganizerEventService(accountRepo IAccountRepository, roleRepo IAccountRoleRepository,
+	compRepo ICompetitionRepository, eventRepo IEventRepository, eventDanceRepo IEventDanceRepository) OrganizerEventService {
+	return OrganizerEventService{accountRepo, roleRepo, compRepo, eventRepo, eventDanceRepo}
 }
 
 func (service OrganizerEventService) CreateEvent(event *Event) error {

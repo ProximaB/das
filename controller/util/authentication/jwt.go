@@ -74,9 +74,6 @@ func (strategy JWTAuthenticationStrategy) GetCurrentUser(r *http.Request) (busin
 	return account, nil
 }
 
-func (strategy JWTAuthenticationStrategy) SetAuthorizationResponse(w http.ResponseWriter) {
-}
-
 func accountRoleClaim(account businesslogic.Account) map[string]bool {
 	claim := make(map[string]bool)
 	if account.HasRole(businesslogic.AccountTypeAthlete) {
@@ -117,6 +114,7 @@ func accountRoleClaim(account businesslogic.Account) map[string]bool {
 	return claim
 }
 
+// GenerateAuthenticationToken takes the account information and generate a new JWT for the authenticated user.
 func GenerateAuthenticationToken(account businesslogic.Account) string {
 	token := jwt.NewWithClaims(jwt.SigningMethodHS256, jwt.MapClaims{
 		JWT_AUTH_CLAIM_EMAIL:      account.Email,
@@ -166,6 +164,7 @@ func getAuthenticatedRequestIdentity(token *jwt.Token) AuthorizedIdentity {
 	return identity
 }
 
+// TODO: this might be a security hole
 // caution: this method assumes that request r has already been authenticated and no security check is performed here.
 func getAuthenticatedRequestToken(r *http.Request) (*jwt.Token, error) {
 	authHeader := r.Header.Get("Authorization")

@@ -18,6 +18,8 @@ package organizer
 
 import (
 	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/config/database"
+	"github.com/DancesportSoftware/das/config/routes/middleware"
 	"github.com/DancesportSoftware/das/controller/organizer"
 	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
@@ -25,7 +27,12 @@ import (
 
 const apiOrganizerEventEndpointV1_0 = "/api/v1.0/organizer/event"
 
-var organizerEventServer = organizer.OrganizerEventServer{}
+var organizerEventService = businesslogic.NewOrganizerEventService(database.AccountRepository, database.AccountRoleRepository,
+	database.CompetitionRepository, database.EventRepository, database.EventDanceRepository)
+var organizerEventServer = organizer.OrganizerEventServer{
+	middleware.AuthenticationStrategy,
+	organizerEventService,
+}
 
 var createEventController = util.DasController{
 	Name:         "CreateEventController",

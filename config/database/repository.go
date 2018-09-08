@@ -158,6 +158,10 @@ var EventMetaRepository = eventdal.PostgresEventMetaRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
+var EventDanceRepository = eventdal.PostgresEventDanceRepository{
+	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
 var PartnershipEventEntryRepository = entrydal.PostgresPartnershipEventEntryRepository{
 	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }

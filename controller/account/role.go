@@ -24,7 +24,7 @@ func NewRoleApplicationServer(authStrat authentication.IAuthenticationStrategy, 
 }
 
 // CreateRoleApplicationHandler handles the request:
-//	POST /api/v1.0/account/role/apply
+//	POST /api/v1.0/account/role/application
 // Accepted JSON payload:
 //	{
 //		"role": 2,
@@ -77,6 +77,8 @@ func (server RoleApplicationServer) CreateRoleApplicationHandler(w http.Response
 	}
 }
 
+// SearchRoleApplicationHandler handles the request:
+//	GET /api/v1.0/account/role/application
 func (server RoleApplicationServer) SearchRoleApplicationHandler(w http.ResponseWriter, r *http.Request) {
 	currentUser, userErr := server.auth.GetCurrentUser(r)
 	if userErr != nil {

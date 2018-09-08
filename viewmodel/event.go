@@ -18,7 +18,6 @@ package viewmodel
 
 import (
 	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
 	"time"
 )
 
@@ -41,7 +40,7 @@ type CreateEventViewModel struct {
 	Dances          []int `json:"dances"`
 }
 
-func (dto CreateEventViewModel) ToDomainModel(user businesslogic.Account, repo reference.IDanceRepository) *businesslogic.Event {
+func (dto CreateEventViewModel) ToDomainModel(user businesslogic.Account) *businesslogic.Event {
 	event := businesslogic.NewEvent()
 	event.CompetitionID = dto.CompetitionID
 	event.CategoryID = businesslogic.EventCategoryCompetitiveBallroom
@@ -54,8 +53,7 @@ func (dto CreateEventViewModel) ToDomainModel(user businesslogic.Account, repo r
 
 	dances := make([]int, 0)
 	for _, each := range dto.Dances {
-		results, _ := repo.SearchDance(reference.SearchDanceCriteria{DanceID: each})
-		dances = append(dances, results[0].ID)
+		dances = append(dances, each)
 	}
 	event.SetDances(dances)
 	event.CreateUserID = user.ID

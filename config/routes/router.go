@@ -19,6 +19,7 @@ package routes
 import (
 	"encoding/json"
 	"github.com/DancesportSoftware/das/config/routes/internal/account"
+	"github.com/DancesportSoftware/das/config/routes/internal/admin"
 	"github.com/DancesportSoftware/das/config/routes/internal/competition"
 	"github.com/DancesportSoftware/das/config/routes/internal/organizer"
 	"github.com/DancesportSoftware/das/config/routes/internal/partnership"
@@ -134,8 +135,6 @@ func NewDasRouter() *mux.Router {
 	addDasControllerGroup(router, partnership.PartnershipControllerGroup)
 
 	// organizer (multi-user)
-	addDasControllerGroup(router, organizer.ManageOrganizerProvisionControllerGroup)
-	addDasControllerGroup(router, organizer.ProvisionControllerGroup)
 	addDasControllerGroup(router, organizer.OrganizerProvisionControllerGroup)
 
 	// organizer (only)
@@ -158,6 +157,7 @@ func NewDasRouter() *mux.Router {
 	// adjudicator
 
 	// administrator
+	addDasControllerGroup(router, admin.ManageOrganizerProvisionControllerGroup)
 
 	// public only
 	addDasControllerGroup(router, competition.PublicCompetitionViewControllerGroup)

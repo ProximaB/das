@@ -11,13 +11,16 @@ import (
 	"net/http"
 )
 
+// OrganizerEventServer serves requests regarding to event management
 type OrganizerEventServer struct {
-	auth    authentication.IAuthenticationStrategy
-	service businesslogic.OrganizerEventService
+	Authentication authentication.IAuthenticationStrategy
+	Service        businesslogic.OrganizerEventService
 }
 
+// CreateEventHandler handles the request:
+//	POST /api/v1.0/organizer/event
 func (server OrganizerEventServer) CreateEventHandler(w http.ResponseWriter, r *http.Request) {
-	currentUser, _ := server.auth.GetCurrentUser(r)
+	currentUser, _ := server.Authentication.GetCurrentUser(r)
 	createDTO := new(viewmodel.CreateEventViewModel)
 
 	if parseErr := util.ParseRequestBodyData(r, createDTO); parseErr != nil {
@@ -25,8 +28,8 @@ func (server OrganizerEventServer) CreateEventHandler(w http.ResponseWriter, r *
 		return
 	}
 
-	event := createDTO.ToDomainModel(currentUser, danceRepository)
-	if err := server.service.CreateEvent(event); err != nil {
+	event := createDTO.ToDomainModel(currentUser)
+	if err := server.Service.CreateEvent(event); err != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, err.Error(), nil)
 		return
 	}

@@ -33,53 +33,53 @@ func (m *MockIAthleteCompetitionEntryRepository) EXPECT() *MockIAthleteCompetiti
 	return m.recorder
 }
 
-// CreateAthleteCompetitionEntry mocks base method
-func (m *MockIAthleteCompetitionEntryRepository) CreateAthleteCompetitionEntry(entry *businesslogic.AthleteCompetitionEntry) error {
-	ret := m.ctrl.Call(m, "CreateAthleteCompetitionEntry", entry)
+// CreateEntry mocks base method
+func (m *MockIAthleteCompetitionEntryRepository) CreateEntry(entry *businesslogic.AthleteCompetitionEntry) error {
+	ret := m.ctrl.Call(m, "CreateEntry", entry)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// CreateAthleteCompetitionEntry indicates an expected call of CreateAthleteCompetitionEntry
-func (mr *MockIAthleteCompetitionEntryRepositoryMockRecorder) CreateAthleteCompetitionEntry(entry interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateAthleteCompetitionEntry", reflect.TypeOf((*MockIAthleteCompetitionEntryRepository)(nil).CreateAthleteCompetitionEntry), entry)
+// CreateEntry indicates an expected call of CreateEntry
+func (mr *MockIAthleteCompetitionEntryRepositoryMockRecorder) CreateEntry(entry interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateEntry", reflect.TypeOf((*MockIAthleteCompetitionEntryRepository)(nil).CreateEntry), entry)
 }
 
-// DeleteAthleteCompetitionEntry mocks base method
-func (m *MockIAthleteCompetitionEntryRepository) DeleteAthleteCompetitionEntry(entry businesslogic.AthleteCompetitionEntry) error {
-	ret := m.ctrl.Call(m, "DeleteAthleteCompetitionEntry", entry)
+// DeleteEntry mocks base method
+func (m *MockIAthleteCompetitionEntryRepository) DeleteEntry(entry businesslogic.AthleteCompetitionEntry) error {
+	ret := m.ctrl.Call(m, "DeleteEntry", entry)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// DeleteAthleteCompetitionEntry indicates an expected call of DeleteAthleteCompetitionEntry
-func (mr *MockIAthleteCompetitionEntryRepositoryMockRecorder) DeleteAthleteCompetitionEntry(entry interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAthleteCompetitionEntry", reflect.TypeOf((*MockIAthleteCompetitionEntryRepository)(nil).DeleteAthleteCompetitionEntry), entry)
+// DeleteEntry indicates an expected call of DeleteEntry
+func (mr *MockIAthleteCompetitionEntryRepositoryMockRecorder) DeleteEntry(entry interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteEntry", reflect.TypeOf((*MockIAthleteCompetitionEntryRepository)(nil).DeleteEntry), entry)
 }
 
-// SearchAthleteCompetitionEntry mocks base method
-func (m *MockIAthleteCompetitionEntryRepository) SearchAthleteCompetitionEntry(criteria businesslogic.SearchAthleteCompetitionEntryCriteria) ([]businesslogic.AthleteCompetitionEntry, error) {
-	ret := m.ctrl.Call(m, "SearchAthleteCompetitionEntry", criteria)
+// SearchEntry mocks base method
+func (m *MockIAthleteCompetitionEntryRepository) SearchEntry(criteria businesslogic.SearchAthleteCompetitionEntryCriteria) ([]businesslogic.AthleteCompetitionEntry, error) {
+	ret := m.ctrl.Call(m, "SearchEntry", criteria)
 	ret0, _ := ret[0].([]businesslogic.AthleteCompetitionEntry)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// SearchAthleteCompetitionEntry indicates an expected call of SearchAthleteCompetitionEntry
-func (mr *MockIAthleteCompetitionEntryRepositoryMockRecorder) SearchAthleteCompetitionEntry(criteria interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchAthleteCompetitionEntry", reflect.TypeOf((*MockIAthleteCompetitionEntryRepository)(nil).SearchAthleteCompetitionEntry), criteria)
+// SearchEntry indicates an expected call of SearchEntry
+func (mr *MockIAthleteCompetitionEntryRepositoryMockRecorder) SearchEntry(criteria interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchEntry", reflect.TypeOf((*MockIAthleteCompetitionEntryRepository)(nil).SearchEntry), criteria)
 }
 
-// UpdateAthleteCompetitionEntry mocks base method
-func (m *MockIAthleteCompetitionEntryRepository) UpdateAthleteCompetitionEntry(entry businesslogic.AthleteCompetitionEntry) error {
-	ret := m.ctrl.Call(m, "UpdateAthleteCompetitionEntry", entry)
+// UpdateEntry mocks base method
+func (m *MockIAthleteCompetitionEntryRepository) UpdateEntry(entry businesslogic.AthleteCompetitionEntry) error {
+	ret := m.ctrl.Call(m, "UpdateEntry", entry)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// UpdateAthleteCompetitionEntry indicates an expected call of UpdateAthleteCompetitionEntry
-func (mr *MockIAthleteCompetitionEntryRepositoryMockRecorder) UpdateAthleteCompetitionEntry(entry interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateAthleteCompetitionEntry", reflect.TypeOf((*MockIAthleteCompetitionEntryRepository)(nil).UpdateAthleteCompetitionEntry), entry)
+// UpdateEntry indicates an expected call of UpdateEntry
+func (mr *MockIAthleteCompetitionEntryRepositoryMockRecorder) UpdateEntry(entry interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateEntry", reflect.TypeOf((*MockIAthleteCompetitionEntryRepository)(nil).UpdateEntry), entry)
 }
 
 // MockIPartnershipCompetitionEntryRepository is a mock of IPartnershipCompetitionEntryRepository interface
@@ -105,53 +105,53 @@ func (m *MockIPartnershipCompetitionEntryRepository) EXPECT() *MockIPartnershipC
 	return m.recorder
 }
 
-// CreatePartnershipCompetitionEntry mocks base method
-func (m *MockIPartnershipCompetitionEntryRepository) CreatePartnershipCompetitionEntry(entry *businesslogic.PartnershipCompetitionEntry) error {
-	ret := m.ctrl.Call(m, "CreatePartnershipCompetitionEntry", entry)
+// CreateEntry mocks base method
+func (m *MockIPartnershipCompetitionEntryRepository) CreateEntry(entry *businesslogic.PartnershipCompetitionEntry) error {
+	ret := m.ctrl.Call(m, "CreateEntry", entry)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// CreatePartnershipCompetitionEntry indicates an expected call of CreatePartnershipCompetitionEntry
-func (mr *MockIPartnershipCompetitionEntryRepositoryMockRecorder) CreatePartnershipCompetitionEntry(entry interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreatePartnershipCompetitionEntry", reflect.TypeOf((*MockIPartnershipCompetitionEntryRepository)(nil).CreatePartnershipCompetitionEntry), entry)
+// CreateEntry indicates an expected call of CreateEntry
+func (mr *MockIPartnershipCompetitionEntryRepositoryMockRecorder) CreateEntry(entry interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateEntry", reflect.TypeOf((*MockIPartnershipCompetitionEntryRepository)(nil).CreateEntry), entry)
 }
 
-// DeletePartnershipCompetitionEntry mocks base method
-func (m *MockIPartnershipCompetitionEntryRepository) DeletePartnershipCompetitionEntry(entry businesslogic.PartnershipCompetitionEntry) error {
-	ret := m.ctrl.Call(m, "DeletePartnershipCompetitionEntry", entry)
+// DeleteEntry mocks base method
+func (m *MockIPartnershipCompetitionEntryRepository) DeleteEntry(entry businesslogic.PartnershipCompetitionEntry) error {
+	ret := m.ctrl.Call(m, "DeleteEntry", entry)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// DeletePartnershipCompetitionEntry indicates an expected call of DeletePartnershipCompetitionEntry
-func (mr *MockIPartnershipCompetitionEntryRepositoryMockRecorder) DeletePartnershipCompetitionEntry(entry interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeletePartnershipCompetitionEntry", reflect.TypeOf((*MockIPartnershipCompetitionEntryRepository)(nil).DeletePartnershipCompetitionEntry), entry)
+// DeleteEntry indicates an expected call of DeleteEntry
+func (mr *MockIPartnershipCompetitionEntryRepositoryMockRecorder) DeleteEntry(entry interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteEntry", reflect.TypeOf((*MockIPartnershipCompetitionEntryRepository)(nil).DeleteEntry), entry)
 }
 
-// SearchPartnershipCompetitionEntry mocks base method
-func (m *MockIPartnershipCompetitionEntryRepository) SearchPartnershipCompetitionEntry(criteria businesslogic.SearchPartnershipCompetitionEntryCriteria) ([]businesslogic.PartnershipCompetitionEntry, error) {
-	ret := m.ctrl.Call(m, "SearchPartnershipCompetitionEntry", criteria)
+// SearchEntry mocks base method
+func (m *MockIPartnershipCompetitionEntryRepository) SearchEntry(criteria businesslogic.SearchPartnershipCompetitionEntryCriteria) ([]businesslogic.PartnershipCompetitionEntry, error) {
+	ret := m.ctrl.Call(m, "SearchEntry", criteria)
 	ret0, _ := ret[0].([]businesslogic.PartnershipCompetitionEntry)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// SearchPartnershipCompetitionEntry indicates an expected call of SearchPartnershipCompetitionEntry
-func (mr *MockIPartnershipCompetitionEntryRepositoryMockRecorder) SearchPartnershipCompetitionEntry(criteria interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchPartnershipCompetitionEntry", reflect.TypeOf((*MockIPartnershipCompetitionEntryRepository)(nil).SearchPartnershipCompetitionEntry), criteria)
+// SearchEntry indicates an expected call of SearchEntry
+func (mr *MockIPartnershipCompetitionEntryRepositoryMockRecorder) SearchEntry(criteria interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchEntry", reflect.TypeOf((*MockIPartnershipCompetitionEntryRepository)(nil).SearchEntry), criteria)
 }
 
-// UpdatePartnershipCompetitionEntry mocks base method
-func (m *MockIPartnershipCompetitionEntryRepository) UpdatePartnershipCompetitionEntry(entry businesslogic.PartnershipCompetitionEntry) error {
-	ret := m.ctrl.Call(m, "UpdatePartnershipCompetitionEntry", entry)
+// UpdateEntry mocks base method
+func (m *MockIPartnershipCompetitionEntryRepository) UpdateEntry(entry businesslogic.PartnershipCompetitionEntry) error {
+	ret := m.ctrl.Call(m, "UpdateEntry", entry)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// UpdatePartnershipCompetitionEntry indicates an expected call of UpdatePartnershipCompetitionEntry
-func (mr *MockIPartnershipCompetitionEntryRepositoryMockRecorder) UpdatePartnershipCompetitionEntry(entry interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePartnershipCompetitionEntry", reflect.TypeOf((*MockIPartnershipCompetitionEntryRepository)(nil).UpdatePartnershipCompetitionEntry), entry)
+// UpdateEntry indicates an expected call of UpdateEntry
+func (mr *MockIPartnershipCompetitionEntryRepositoryMockRecorder) UpdateEntry(entry interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateEntry", reflect.TypeOf((*MockIPartnershipCompetitionEntryRepository)(nil).UpdateEntry), entry)
 }
 
 // MockIAdjudicatorCompetitionEntryRepository is a mock of IAdjudicatorCompetitionEntryRepository interface
@@ -177,51 +177,84 @@ func (m *MockIAdjudicatorCompetitionEntryRepository) EXPECT() *MockIAdjudicatorC
 	return m.recorder
 }
 
-// CreateAdjudicatorCompetitionEntry mocks base method
-func (m *MockIAdjudicatorCompetitionEntryRepository) CreateAdjudicatorCompetitionEntry(entry *businesslogic.AdjudicatorCompetitionEntry) error {
-	ret := m.ctrl.Call(m, "CreateAdjudicatorCompetitionEntry", entry)
+// CreateEntry mocks base method
+func (m *MockIAdjudicatorCompetitionEntryRepository) CreateEntry(entry *businesslogic.AdjudicatorCompetitionEntry) error {
+	ret := m.ctrl.Call(m, "CreateEntry", entry)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// CreateAdjudicatorCompetitionEntry indicates an expected call of CreateAdjudicatorCompetitionEntry
-func (mr *MockIAdjudicatorCompetitionEntryRepositoryMockRecorder) CreateAdjudicatorCompetitionEntry(entry interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateAdjudicatorCompetitionEntry", reflect.TypeOf((*MockIAdjudicatorCompetitionEntryRepository)(nil).CreateAdjudicatorCompetitionEntry), entry)
+// CreateEntry indicates an expected call of CreateEntry
+func (mr *MockIAdjudicatorCompetitionEntryRepositoryMockRecorder) CreateEntry(entry interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateEntry", reflect.TypeOf((*MockIAdjudicatorCompetitionEntryRepository)(nil).CreateEntry), entry)
 }
 
-// DeleteAdjudicatorCompetitionEntry mocks base method
-func (m *MockIAdjudicatorCompetitionEntryRepository) DeleteAdjudicatorCompetitionEntry(entry businesslogic.AdjudicatorCompetitionEntry) error {
-	ret := m.ctrl.Call(m, "DeleteAdjudicatorCompetitionEntry", entry)
+// DeleteEntry mocks base method
+func (m *MockIAdjudicatorCompetitionEntryRepository) DeleteEntry(entry businesslogic.AdjudicatorCompetitionEntry) error {
+	ret := m.ctrl.Call(m, "DeleteEntry", entry)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// DeleteAdjudicatorCompetitionEntry indicates an expected call of DeleteAdjudicatorCompetitionEntry
-func (mr *MockIAdjudicatorCompetitionEntryRepositoryMockRecorder) DeleteAdjudicatorCompetitionEntry(entry interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteAdjudicatorCompetitionEntry", reflect.TypeOf((*MockIAdjudicatorCompetitionEntryRepository)(nil).DeleteAdjudicatorCompetitionEntry), entry)
+// DeleteEntry indicates an expected call of DeleteEntry
+func (mr *MockIAdjudicatorCompetitionEntryRepositoryMockRecorder) DeleteEntry(entry interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteEntry", reflect.TypeOf((*MockIAdjudicatorCompetitionEntryRepository)(nil).DeleteEntry), entry)
 }
 
-// SearchAdjudicatorCompetitionEntry mocks base method
-func (m *MockIAdjudicatorCompetitionEntryRepository) SearchAdjudicatorCompetitionEntry(criteria businesslogic.SearchAdjudicatorCompetitionEntryCriteria) ([]businesslogic.AdjudicatorCompetitionEntry, error) {
-	ret := m.ctrl.Call(m, "SearchAdjudicatorCompetitionEntry", criteria)
+// SearchEntry mocks base method
+func (m *MockIAdjudicatorCompetitionEntryRepository) SearchEntry(criteria businesslogic.SearchAdjudicatorCompetitionEntryCriteria) ([]businesslogic.AdjudicatorCompetitionEntry, error) {
+	ret := m.ctrl.Call(m, "SearchEntry", criteria)
 	ret0, _ := ret[0].([]businesslogic.AdjudicatorCompetitionEntry)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
 
-// SearchAdjudicatorCompetitionEntry indicates an expected call of SearchAdjudicatorCompetitionEntry
-func (mr *MockIAdjudicatorCompetitionEntryRepositoryMockRecorder) SearchAdjudicatorCompetitionEntry(criteria interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchAdjudicatorCompetitionEntry", reflect.TypeOf((*MockIAdjudicatorCompetitionEntryRepository)(nil).SearchAdjudicatorCompetitionEntry), criteria)
+// SearchEntry indicates an expected call of SearchEntry
+func (mr *MockIAdjudicatorCompetitionEntryRepositoryMockRecorder) SearchEntry(criteria interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchEntry", reflect.TypeOf((*MockIAdjudicatorCompetitionEntryRepository)(nil).SearchEntry), criteria)
 }
 
-// UpdateAdjudicatorCompetitionEntry mocks base method
-func (m *MockIAdjudicatorCompetitionEntryRepository) UpdateAdjudicatorCompetitionEntry(entry businesslogic.AdjudicatorCompetitionEntry) error {
-	ret := m.ctrl.Call(m, "UpdateAdjudicatorCompetitionEntry", entry)
+// UpdateEntry mocks base method
+func (m *MockIAdjudicatorCompetitionEntryRepository) UpdateEntry(entry businesslogic.AdjudicatorCompetitionEntry) error {
+	ret := m.ctrl.Call(m, "UpdateEntry", entry)
 	ret0, _ := ret[0].(error)
 	return ret0
 }
 
-// UpdateAdjudicatorCompetitionEntry indicates an expected call of UpdateAdjudicatorCompetitionEntry
-func (mr *MockIAdjudicatorCompetitionEntryRepositoryMockRecorder) UpdateAdjudicatorCompetitionEntry(entry interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateAdjudicatorCompetitionEntry", reflect.TypeOf((*MockIAdjudicatorCompetitionEntryRepository)(nil).UpdateAdjudicatorCompetitionEntry), entry)
+// UpdateEntry indicates an expected call of UpdateEntry
+func (mr *MockIAdjudicatorCompetitionEntryRepositoryMockRecorder) UpdateEntry(entry interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateEntry", reflect.TypeOf((*MockIAdjudicatorCompetitionEntryRepository)(nil).UpdateEntry), entry)
+}
+
+// MockIScrutineerCompetitionEntryRepository is a mock of IScrutineerCompetitionEntryRepository interface
+type MockIScrutineerCompetitionEntryRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockIScrutineerCompetitionEntryRepositoryMockRecorder
+}
+
+// MockIScrutineerCompetitionEntryRepositoryMockRecorder is the mock recorder for MockIScrutineerCompetitionEntryRepository
+type MockIScrutineerCompetitionEntryRepositoryMockRecorder struct {
+	mock *MockIScrutineerCompetitionEntryRepository
+}
+
+// NewMockIScrutineerCompetitionEntryRepository creates a new mock instance
+func NewMockIScrutineerCompetitionEntryRepository(ctrl *gomock.Controller) *MockIScrutineerCompetitionEntryRepository {
+	mock := &MockIScrutineerCompetitionEntryRepository{ctrl: ctrl}
+	mock.recorder = &MockIScrutineerCompetitionEntryRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockIScrutineerCompetitionEntryRepository) EXPECT() *MockIScrutineerCompetitionEntryRepositoryMockRecorder {
+	return m.recorder
+}
+
+// CreateEntry mocks base method
+func (m *MockIScrutineerCompetitionEntryRepository) CreateEntry() {
+	m.ctrl.Call(m, "CreateEntry")
+}
+
+// CreateEntry indicates an expected call of CreateEntry
+func (mr *MockIScrutineerCompetitionEntryRepositoryMockRecorder) CreateEntry() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateEntry", reflect.TypeOf((*MockIScrutineerCompetitionEntryRepository)(nil).CreateEntry))
 }

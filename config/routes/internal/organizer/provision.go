@@ -20,39 +20,13 @@ import (
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/config/database"
 	"github.com/DancesportSoftware/das/config/routes/middleware"
-	"github.com/DancesportSoftware/das/controller/admin"
 	"github.com/DancesportSoftware/das/controller/organizer"
 	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
 )
 
-const apiAdminManageOrganizerProvision = "/api/admin/organizer/provision"
-
-var manageOrganizerProvisionServer = admin.OrganizerProvisionServer{
-	database.AccountRepository,
-	database.OrganizerProvisionRepository,
-}
-
-var updateOrganizerProvisionController = util.DasController{
-	Name:         "UpdateOrganizerProvisionController",
-	Description:  "Update an organizer's provision in DAS",
-	Method:       http.MethodPut,
-	Endpoint:     apiAdminManageOrganizerProvision,
-	Handler:      manageOrganizerProvisionServer.UpdateOrganizerProvisionHandler,
-	AllowedRoles: []int{businesslogic.AccountTypeAdministrator},
-}
-
-var ManageOrganizerProvisionControllerGroup = util.DasControllerGroup{
-	Controllers: []util.DasController{
-		updateOrganizerProvisionController,
-	},
-}
-var ProvisionControllerGroup = util.DasControllerGroup{
-	Controllers: []util.DasController{},
-}
-
-const apiOrganizerProvisionSummaryEndpoint = "/api/organizer/provision/summary"
-const apiOrganizerProvisionHistoryEndpoint = "/api/organizer/provision/history"
+const apiOrganizerProvisionSummaryEndpoint = "/api/v1.0/organizer/provision/summary"
+const apiOrganizerProvisionHistoryEndpoint = "/api/v1.0/organizer/provision/history"
 
 var organizerProvisionServer = organizer.OrganizerProvisionServer{
 	middleware.AuthenticationStrategy,

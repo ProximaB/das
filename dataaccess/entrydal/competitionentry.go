@@ -44,7 +44,7 @@ type PostgresAthleteCompetitionEntryRepository struct {
 }
 
 // CreateEntry creates an AthleteCompetitionEntry in a Postgres database
-func (repo PostgresAthleteCompetitionEntryRepository) CreateAthleteCompetitionEntry(entry *businesslogic.AthleteCompetitionEntry) error {
+func (repo PostgresAthleteCompetitionEntryRepository) CreateEntry(entry *businesslogic.AthleteCompetitionEntry) error {
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
@@ -82,7 +82,7 @@ func (repo PostgresAthleteCompetitionEntryRepository) CreateAthleteCompetitionEn
 }
 
 // SearchEntry searches AthleteCompetitionEntry in a Postgres database
-func (repo PostgresAthleteCompetitionEntryRepository) SearchAthleteCompetitionEntry(criteria businesslogic.SearchAthleteCompetitionEntryCriteria) ([]businesslogic.AthleteCompetitionEntry, error) {
+func (repo PostgresAthleteCompetitionEntryRepository) SearchEntry(criteria businesslogic.SearchAthleteCompetitionEntryCriteria) ([]businesslogic.AthleteCompetitionEntry, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresCompetitionEntryRepository is not specified")
 	}
@@ -134,7 +134,7 @@ func (repo PostgresAthleteCompetitionEntryRepository) SearchAthleteCompetitionEn
 }
 
 // DeleteEntry deletes an AthleteCompetitionEntry from a Postgres database
-func (repo PostgresAthleteCompetitionEntryRepository) DeleteAthleteCompetitionEntry(entry businesslogic.AthleteCompetitionEntry) error {
+func (repo PostgresAthleteCompetitionEntryRepository) DeleteEntry(entry businesslogic.AthleteCompetitionEntry) error {
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
@@ -142,7 +142,7 @@ func (repo PostgresAthleteCompetitionEntryRepository) DeleteAthleteCompetitionEn
 }
 
 // UpdateEntry updates an AthleteCompetitionEntry from a Postgres database
-func (repo PostgresAthleteCompetitionEntryRepository) UpdateAthleteCompetitionEntry(entry businesslogic.AthleteCompetitionEntry) error {
+func (repo PostgresAthleteCompetitionEntryRepository) UpdateEntry(entry businesslogic.AthleteCompetitionEntry) error {
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
@@ -156,7 +156,7 @@ type PostgresPartnershipCompetitionEntryRepository struct {
 }
 
 // CreateEntry creates a PartnershipCompetitionEntry in a Postgres database
-func (repo PostgresPartnershipCompetitionEntryRepository) CreatePartnershipCompetitionEntry(entry *businesslogic.PartnershipCompetitionEntry) error {
+func (repo PostgresPartnershipCompetitionEntryRepository) CreateEntry(entry *businesslogic.PartnershipCompetitionEntry) error {
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
@@ -195,7 +195,7 @@ func (repo PostgresPartnershipCompetitionEntryRepository) CreatePartnershipCompe
 }
 
 // DeleteEntry deletes a PartnershipCompetitionEntry from a Postgres database
-func (repo PostgresPartnershipCompetitionEntryRepository) DeletePartnershipCompetitionEntry(entry businesslogic.PartnershipCompetitionEntry) error {
+func (repo PostgresPartnershipCompetitionEntryRepository) DeleteEntry(entry businesslogic.PartnershipCompetitionEntry) error {
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
@@ -203,7 +203,7 @@ func (repo PostgresPartnershipCompetitionEntryRepository) DeletePartnershipCompe
 }
 
 // SearchEntry searches PartnershipCompetitionEntry in a Postgres database
-func (repo PostgresPartnershipCompetitionEntryRepository) SearchPartnershipCompetitionEntry(criteria businesslogic.SearchPartnershipCompetitionEntryCriteria) ([]businesslogic.PartnershipCompetitionEntry, error) {
+func (repo PostgresPartnershipCompetitionEntryRepository) SearchEntry(criteria businesslogic.SearchPartnershipCompetitionEntryCriteria) ([]businesslogic.PartnershipCompetitionEntry, error) {
 	if repo.Database == nil {
 		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
@@ -211,7 +211,7 @@ func (repo PostgresPartnershipCompetitionEntryRepository) SearchPartnershipCompe
 }
 
 // UpdateEntry updates a PartnershipCompetitionEntry in a Postgres database
-func (repo PostgresPartnershipCompetitionEntryRepository) UpdatePartnershipCompetitionEntry(entry businesslogic.PartnershipCompetitionEntry) error {
+func (repo PostgresPartnershipCompetitionEntryRepository) UpdateEntry(entry businesslogic.PartnershipCompetitionEntry) error {
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
@@ -225,7 +225,7 @@ type PostgresAdjudicatorCompetitionEntryRepository struct {
 }
 
 // CreateEntry creates an AdjudicatorCompetitionEntry in a Postgres database
-func (repo PostgresAdjudicatorCompetitionEntryRepository) CreateAdjudicatorCompetitionEntry(entry *businesslogic.AdjudicatorCompetitionEntry) error {
+func (repo PostgresAdjudicatorCompetitionEntryRepository) CreateEntry(entry *businesslogic.AdjudicatorCompetitionEntry) error {
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
@@ -233,7 +233,7 @@ func (repo PostgresAdjudicatorCompetitionEntryRepository) CreateAdjudicatorCompe
 }
 
 // DeleteEntry deletes an AdjudicatorCompetitionEntry from a Postgres database
-func (repo PostgresAdjudicatorCompetitionEntryRepository) DeleteAdjudicatorCompetitionEntry(entry businesslogic.AdjudicatorCompetitionEntry) error {
+func (repo PostgresAdjudicatorCompetitionEntryRepository) DeleteEntry(entry businesslogic.AdjudicatorCompetitionEntry) error {
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
@@ -241,7 +241,7 @@ func (repo PostgresAdjudicatorCompetitionEntryRepository) DeleteAdjudicatorCompe
 }
 
 // SearchEntry searches AdjudicatorCompetitionEntry in a Postgres database
-func (repo PostgresAdjudicatorCompetitionEntryRepository) SearchAdjudicatorCompetitionEntry(criteria businesslogic.SearchAdjudicatorCompetitionEntryCriteria) ([]businesslogic.AdjudicatorCompetitionEntry, error) {
+func (repo PostgresAdjudicatorCompetitionEntryRepository) SearchEntry(criteria businesslogic.SearchAdjudicatorCompetitionEntryCriteria) ([]businesslogic.AdjudicatorCompetitionEntry, error) {
 	if repo.Database == nil {
 		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
@@ -249,7 +249,7 @@ func (repo PostgresAdjudicatorCompetitionEntryRepository) SearchAdjudicatorCompe
 }
 
 // UpdateEntry updates an AdjudicatorCompetitionEntry in a Postgres database
-func (repo PostgresAdjudicatorCompetitionEntryRepository) UpdateAdjudicatorCompetitionEntry(entry businesslogic.AdjudicatorCompetitionEntry) error {
+func (repo PostgresAdjudicatorCompetitionEntryRepository) UpdateEntry(entry businesslogic.AdjudicatorCompetitionEntry) error {
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}

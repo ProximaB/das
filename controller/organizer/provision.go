@@ -43,7 +43,7 @@ func (server OrganizerProvisionServer) GetOrganizerProvisionSummaryHandler(w htt
 
 	summaries, _ := server.SearchOrganizerProvision(businesslogic.SearchOrganizerProvisionCriteria{OrganizerID: account.ID})
 	view := viewmodel.OrganizerProvisionSummary{
-		OrganizerID: summaries[0].OrganizerID,
+		OrganizerID: summaries[0].Organizer.UUID,
 		Available:   summaries[0].Available,
 		Hosted:      summaries[0].Hosted,
 	}

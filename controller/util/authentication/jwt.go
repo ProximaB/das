@@ -62,8 +62,12 @@ func (strategy JWTAuthenticationStrategy) GetCurrentUser(r *http.Request) (busin
 		log.Printf("[error] cannot find user: %s\n", searchErr.Error())
 		return businesslogic.Account{}, errors.New("cannot find account information for you")
 	}
-	if len(searchResults) != 1 {
-		log.Printf("[error] looking for user with token: %s, but find %d account(s)", token.Raw, len(searchResults))
+	if len(searchResults) == 0 {
+		log.Printf("[error] looking for user with token, but find %d account(s)", len(searchResults))
+		return businesslogic.Account{}, errors.New("user with this credential does not exist")
+	}
+	if len(searchResults) > 1 {
+		log.Printf("[error] looking for user with token, but find %d account(s)", len(searchResults))
 		return businesslogic.Account{}, errors.New("user's identity cannot be determined")
 	}
 	account := searchResults[0]

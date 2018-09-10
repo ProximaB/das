@@ -31,9 +31,17 @@ type UpdateProvision struct {
 
 // OrganizerProvisionSummary specifies payload for Organizer Provision
 type OrganizerProvisionSummary struct {
-	OrganizerID int `json:"organizer"`
-	Available   int `json:"available"`
-	Hosted      int `json:"hosted"`
+	OrganizerID string `json:"uuid"`
+	Name        string `json:"name"`
+	Available   int    `json:"available"`
+	Hosted      int    `json:"hosted"`
+}
+
+func (summary *OrganizerProvisionSummary) Summarize(provision businesslogic.OrganizerProvision) {
+	summary.OrganizerID = provision.Organizer.UUID
+	summary.Available = provision.Available
+	summary.Name = provision.Organizer.FullName()
+	summary.Hosted = provision.Hosted
 }
 
 // SubmitRoleApplication is the payload for role application submission

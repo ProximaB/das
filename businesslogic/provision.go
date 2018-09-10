@@ -195,6 +195,7 @@ func (service RoleProvisionService) SearchRoleApplication(currentUser Account, c
 type OrganizerProvision struct {
 	ID              int
 	OrganizerID     int
+	Organizer       Account
 	Available       int
 	Hosted          int
 	CreateUserID    int

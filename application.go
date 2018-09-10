@@ -17,12 +17,10 @@
 package main
 
 import (
-	"log"
-	"net/http"
-
 	"github.com/DancesportSoftware/das/config/database"
 	"github.com/DancesportSoftware/das/config/routes"
-	"google.golang.org/appengine"
+	"log"
+	"net/http"
 )
 
 func main() {
@@ -38,6 +36,5 @@ func main() {
 	}
 
 	http.Handle("/", router)
-	log.Println("[info] service is ready")
-	appengine.Main() // to run this on app engine, do not make router listen to any particular port
+	http.ListenAndServe(":5000", nil)
 }

@@ -21,9 +21,19 @@ import (
 	"github.com/DancesportSoftware/das/config/routes"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
+	port := os.Getenv("PORT")
+	if port == "" {
+		port = "5000"
+	}
+
+	// set loggg
+	f, _ := os.Create("/var/og/golang/golang-server.log")
+	defer f.Close()
+	log.SetOutput(f)
 
 	defer database.PostgresDatabase.Close() // database connection will not close until server is shutdown
 	router := routes.NewDasRouter()
@@ -36,5 +46,6 @@ func main() {
 	}
 
 	http.Handle("/", router)
-	http.ListenAndServe(":5000", nil)
+	log.Printf("Listeniing on port %s\n\n", port)
+	http.ListenAndServe(":"+port, nil)
 }

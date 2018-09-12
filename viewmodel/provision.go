@@ -60,6 +60,16 @@ type RoleApplication struct {
 	DateTimeResponded time.Time `json:"responded"`
 }
 
+// SearchRoleApplicationCriteria specifies the search criteria for role application
+type SearchRoleApplicationCriteriaViewModel struct {
+	ID             int  `schema:"id"`
+	AccountID      int  `schema:"applicant"`
+	AppliedRoleID  int  `schema:"appliedRole"`
+	StatusID       int  `schema:"statusId"`
+	ApprovalUserID int  `schema:"approvedBy"`
+	Responded      bool `schema:"responded"`
+}
+
 // Validate validates SubmitRoleApplication and check if data sanitized
 func (dto SubmitRoleApplication) Validate() error {
 	if dto.AppliedRoleID < businesslogic.AccountTypeAdjudicator || dto.AppliedRoleID > businesslogic.AccountTypeEmcee {
@@ -73,8 +83,8 @@ func (dto SubmitRoleApplication) Validate() error {
 
 // RespondRoleApplication specifies the payload for responding a role application
 type RespondRoleApplication struct {
-	ApplicationID int `json:"application"`
-	Response      int `json:"response"`
+	ApplicationID int `json:"applicationId"`
+	Response      int `json:"responseId"`
 }
 
 // Validate validates RespondRoleApplication and check if data sanitized

@@ -88,6 +88,7 @@ func (repo PostgresRoleApplicationRepository) SearchApplication(criteria busines
 	if repo.Database == nil {
 		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
+	accountRepo := PostgresAccountRepository{repo.Database, repo.SQLBuilder}
 	stmt := repo.SQLBuilder.
 		Select(
 			fmt.Sprintf(
@@ -104,6 +105,9 @@ func (repo PostgresRoleApplicationRepository) SearchApplication(criteria busines
 				common.ColumnUpdateUserID,
 				common.ColumnDateTimeUpdated)).
 		From(DasAccountRoleApplicationTable)
+	if criteria.ID > 0 {
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ID})
+	}
 	if criteria.AccountID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.ColumnAccountID: criteria.AccountID})
 	}
@@ -115,6 +119,9 @@ func (repo PostgresRoleApplicationRepository) SearchApplication(criteria busines
 	}
 	if criteria.ApprovalUserID > 9 {
 		stmt = stmt.Where(squirrel.Eq{DasAccountRoleApplicationColumnApprovalUserID: criteria.ApprovalUserID})
+	}
+	if criteria.Responded && criteria.StatusID == 0 {
+		stmt = stmt.Where(squirrel.NotEq{common.ColumnStatusID: businesslogic.RoleApplicationStatusPending})
 	}
 
 	applications := make([]businesslogic.RoleApplication, 0)
@@ -138,6 +145,8 @@ func (repo PostgresRoleApplicationRepository) SearchApplication(criteria busines
 			&each.UpdateUserID,
 			&each.DateTimeUpdated,
 		)
+		accountSearchResults, _ := accountRepo.SearchAccount(businesslogic.SearchAccountCriteria{ID: each.AccountID})
+		each.Account = accountSearchResults[0]
 		applications = append(applications, each)
 	}
 	rows.Close()
@@ -155,6 +164,7 @@ func (repo PostgresRoleApplicationRepository) UpdateApplication(application busi
 		if application.StatusID > 0 && *application.ApprovalUserID > 0 {
 			stmt = stmt.Set(common.ColumnStatusID, application.StatusID)
 			stmt = stmt.Set(DasAccountRoleApplicationColumnApprovalUserID, *application.ApprovalUserID)
+			stmt = stmt.Set(DasAccountRoleApplicationColumnDateTimeApproved, application.DateTimeApproved)
 			stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: application.ID})
 		}
 		tx, txErr := repo.Database.Begin()

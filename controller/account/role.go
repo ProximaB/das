@@ -101,6 +101,7 @@ func (server RoleApplicationServer) SearchRoleApplicationHandler(w http.Response
 	for _, each := range applications {
 		dtos = append(dtos, viewmodel.RoleApplication{
 			ID:                each.ID,
+			ApplicantName:     each.Account.FullName(),
 			RoleApplied:       each.AppliedRoleID,
 			Description:       each.Description,
 			Status:            each.StatusID,
@@ -141,7 +142,7 @@ func (server RoleApplicationServer) ProvisionRoleApplicationHandler(w http.Respo
 		util.RespondJsonResult(w, http.StatusInternalServerError, "cannot search this application", nil)
 		return
 	}
-	if len(applications) != 1 {
+	if len(applications) == 0 {
 		util.RespondJsonResult(w, http.StatusInternalServerError, "cannot find this application", nil)
 		return
 	}

@@ -30,11 +30,6 @@ func main() {
 		port = "5000"
 	}
 
-	// set loggg
-	f, _ := os.Create("/var/og/golang/golang-server.log")
-	defer f.Close()
-	log.SetOutput(f)
-
 	defer database.PostgresDatabase.Close() // database connection will not close until server is shutdown
 	router := routes.NewDasRouter()
 
@@ -46,6 +41,6 @@ func main() {
 	}
 
 	http.Handle("/", router)
-	log.Printf("Listeniing on port %s\n\n", port)
+	log.Printf("Listeniing on port %s", port)
 	http.ListenAndServe(":"+port, nil)
 }

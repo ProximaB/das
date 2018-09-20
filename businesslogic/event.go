@@ -19,6 +19,7 @@ package businesslogic
 import (
 	"errors"
 	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"log"
 	"sort"
 	"time"
 )
@@ -45,6 +46,7 @@ type SearchEventCriteria struct {
 	ProficiencyID int `schema:"proficiency"`
 	StyleID       int `schema:"style"`
 	StatusID      int `schema:"status"`
+	OrganizerID   int `schema:"organizerID"`
 }
 
 // Event contains data that are used for a generic competitive ballroom event, though it can be used for
@@ -207,6 +209,7 @@ func (service OrganizerEventService) CreateEvent(event *Event) error {
 		return createEventErr
 	}
 	if event.ID == 0 {
+		log.Printf("[error] creating event %v returned with ID of 0", *event)
 		return errors.New("event could not be created")
 	}
 
@@ -218,6 +221,10 @@ func (service OrganizerEventService) CreateEvent(event *Event) error {
 		}
 	}
 	return nil
+}
+
+func (service OrganizerEventService) SearchEvents(criteria SearchEventCriteria) ([]Event, error) {
+	return service.eventRepo.SearchEvent(criteria)
 }
 
 // CreateEvent will check if event is valid, and create the in the provided IEventRepository. If competition

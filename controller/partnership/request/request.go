@@ -36,7 +36,7 @@ type PartnershipRequestServer struct {
 }
 
 // CreatePartnershipRequestHandler handles the request:
-//	POST /api/partnership/request
+//	POST /athlete/partnership/request
 // which allows user to submit a new partnership request
 func (server PartnershipRequestServer) CreatePartnershipRequestHandler(w http.ResponseWriter, r *http.Request) {
 	dto := new(viewmodel.CreatePartnershipRequest)

@@ -35,6 +35,7 @@ type CompetitionRegistrationServer struct {
 	businesslogic.IEventRepository
 	businesslogic.IPartnershipEventEntryRepository
 	authentication.IAuthenticationStrategy
+	Service businesslogic.CompetitionRegistrationService
 }
 
 // CreateAthleteRegistrationHandler handles the request

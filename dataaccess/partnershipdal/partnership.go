@@ -31,7 +31,8 @@ const (
 	DasPartnershipColumnLeadID           = "LEAD_ID"
 	DasPartnershipColumnFollowID         = "FOLLOW_ID"
 	DasPartnershipColumnSameSexIndicator = "SAMESEX_IND"
-	DasPartnershipColumnFavorite         = "FAVORITE"
+	columnFavoriteByLead                 = "FAVORITE_BY_LEAD"
+	columnFavoriteByFollow               = "FAVORITE_BY_FOLLOW"
 )
 
 const (
@@ -53,9 +54,18 @@ func (repo PostgresPartnershipRepository) CreatePartnership(partnership *busines
 			DasPartnershipColumnLeadID,
 			DasPartnershipColumnFollowID,
 			DasPartnershipColumnSameSexIndicator,
-			DasPartnershipColumnFavorite,
+			columnFavoriteByLead,
+			columnFavoriteByFollow,
 			common.ColumnDateTimeCreated,
-			common.ColumnDateTimeUpdated).Values(partnership.LeadID, partnership.FollowID, partnership.SameSex, partnership.FavoriteByLead, partnership.DateTimeCreated, time.Now())
+			common.ColumnDateTimeUpdated).
+		Values(
+			partnership.LeadID,
+			partnership.FollowID,
+			partnership.SameSex,
+			partnership.FavoriteByLead,
+			partnership.FavoriteByFollow,
+			partnership.DateTimeCreated,
+			time.Now())
 
 	_, err := clause.RunWith(repo.Database).Exec()
 	return err
@@ -65,12 +75,13 @@ func (repo PostgresPartnershipRepository) SearchPartnership(criteria businesslog
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresPartnershipRepository is not specified")
 	}
-	stmt := repo.SqlBuilder.Select(fmt.Sprintf("%s,%s,%s,%s,%s,%s,%s",
+	stmt := repo.SqlBuilder.Select(fmt.Sprintf("%s,%s,%s,%s,%s,%s,%s,%s",
 		common.ColumnPrimaryKey,
 		DasPartnershipColumnLeadID,
 		DasPartnershipColumnFollowID,
 		DasPartnershipColumnSameSexIndicator,
-		DasPartnershipColumnFavorite,
+		columnFavoriteByLead,
+		columnFavoriteByFollow,
 		common.ColumnDateTimeCreated,
 		common.ColumnDateTimeUpdated)).From(DasPartnershipTable)
 	if criteria.PartnershipID > 0 {
@@ -97,6 +108,7 @@ func (repo PostgresPartnershipRepository) SearchPartnership(criteria businesslog
 			&each.FollowID,
 			&each.SameSex,
 			&each.FavoriteByLead,
+			&each.FavoriteByFollow,
 			&each.DateTimeCreated,
 			&each.DateTimeUpdated,
 		)

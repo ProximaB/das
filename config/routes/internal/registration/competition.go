@@ -25,22 +25,24 @@ import (
 	"net/http"
 )
 
-const apiAthleteCompetitionRegistrationEndpoint = "/api/athlete/competition/registration"
+const apiAthleteCompetitionRegistrationEndpoint = "/api/v1.0/athlete/competition/registration"
 
 var athleteCompetitionRegistrationServer = controller.CompetitionRegistrationServer{
-	database.AccountRepository,
-	database.CompetitionRepository,
-	database.AthleteCompetitionEntryRepository,
-	database.PartnershipCompetitionEntryRepository,
-	database.PartnershipRepository,
-	database.EventRepository,
-	database.PartnershipEventEntryRepository,
-	middleware.AuthenticationStrategy,
+	IAuthenticationStrategy: middleware.AuthenticationStrategy,
+	Service: businesslogic.CompetitionRegistrationService{
+		AccountRepository:               database.AccountRepository,
+		PartnershipRepository:           database.PartnershipRepository,
+		CompetitionRepository:           database.CompetitionRepository,
+		EventRepository:                 database.EventRepository,
+		AthleteCompetitionEntryRepo:     database.AthleteCompetitionEntryRepository,
+		PartnershipCompetitionEntryRepo: database.PartnershipCompetitionEntryRepository,
+		PartnershipEventEntryRepo:       database.PartnershipEventEntryRepository,
+	},
 }
 
 var createCompetitionRegistrationController = util.DasController{
 	Name:         "CreateCompetitionRegistrationController",
-	Description:  "Create competition and event registration in DAS",
+	Description:  "Athlete creates competition and event registration",
 	Method:       http.MethodPost,
 	Endpoint:     apiAthleteCompetitionRegistrationEndpoint,
 	Handler:      athleteCompetitionRegistrationServer.CreateAthleteRegistrationHandler,

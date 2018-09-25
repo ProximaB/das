@@ -24,15 +24,17 @@ import (
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
+	"log"
 )
 
 const (
-	DasAccountRoleApplicationTable                  = "DAS.ACCOUNT_ROLE_APPLICATION"
-	DasAccountRoleApplicationColumnAppliedRoleID    = "APPLIED_ROLE_ID"
-	DasAccountRoleApplicationColumnApprovalUserID   = "APPROVAL_USER_ID"
-	DasAccountRoleApplicationColumnDateTimeApproved = "DATETIME_APPROVED"
+	dasAccountRoleApplicationTable                  = "DAS.ACCOUNT_ROLE_APPLICATION"
+	dasAccountRoleApplicationColumnAppliedRoleID    = "APPLIED_ROLE_ID"
+	dasAccountRoleApplicationColumnApprovalUserID   = "APPROVAL_USER_ID"
+	dasAccountRoleApplicationColumnDateTimeApproved = "DATETIME_APPROVED"
 )
 
+// PostgresRoleApplicationRepository implements IRoleApplicationRepository
 type PostgresRoleApplicationRepository struct {
 	Database   *sql.DB
 	SQLBuilder squirrel.StatementBuilderType
@@ -45,14 +47,14 @@ func (repo PostgresRoleApplicationRepository) CreateApplication(application *bus
 	}
 	stmt := repo.SQLBuilder.
 		Insert("").
-		Into(DasAccountRoleApplicationTable).
+		Into(dasAccountRoleApplicationTable).
 		Columns(
 			common.ColumnAccountID,
-			DasAccountRoleApplicationColumnAppliedRoleID,
+			dasAccountRoleApplicationColumnAppliedRoleID,
 			common.COL_DESCRIPTION,
 			common.ColumnStatusID,
-			DasAccountRoleApplicationColumnApprovalUserID,
-			DasAccountRoleApplicationColumnDateTimeApproved,
+			dasAccountRoleApplicationColumnApprovalUserID,
+			dasAccountRoleApplicationColumnDateTimeApproved,
 			common.ColumnCreateUserID,
 			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
@@ -88,6 +90,7 @@ func (repo PostgresRoleApplicationRepository) SearchApplication(criteria busines
 	if repo.Database == nil {
 		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
+	// create an account repository here as it will be needed to query accounts later.
 	accountRepo := PostgresAccountRepository{repo.Database, repo.SQLBuilder}
 	stmt := repo.SQLBuilder.
 		Select(
@@ -95,16 +98,16 @@ func (repo PostgresRoleApplicationRepository) SearchApplication(criteria busines
 				"%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
 				common.ColumnPrimaryKey,
 				common.ColumnAccountID,
-				DasAccountRoleApplicationColumnAppliedRoleID,
+				dasAccountRoleApplicationColumnAppliedRoleID,
 				common.COL_DESCRIPTION,
 				common.ColumnStatusID,
-				DasAccountRoleApplicationColumnApprovalUserID,
-				DasAccountRoleApplicationColumnDateTimeApproved,
+				dasAccountRoleApplicationColumnApprovalUserID,
+				dasAccountRoleApplicationColumnDateTimeApproved,
 				common.ColumnCreateUserID,
 				common.ColumnDateTimeCreated,
 				common.ColumnUpdateUserID,
 				common.ColumnDateTimeUpdated)).
-		From(DasAccountRoleApplicationTable)
+		From(dasAccountRoleApplicationTable)
 	if criteria.ID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ID})
 	}
@@ -112,13 +115,13 @@ func (repo PostgresRoleApplicationRepository) SearchApplication(criteria busines
 		stmt = stmt.Where(squirrel.Eq{common.ColumnAccountID: criteria.AccountID})
 	}
 	if criteria.AppliedRoleID > 0 {
-		stmt = stmt.Where(squirrel.Eq{DasAccountRoleApplicationColumnAppliedRoleID: criteria.AppliedRoleID})
+		stmt = stmt.Where(squirrel.Eq{dasAccountRoleApplicationColumnAppliedRoleID: criteria.AppliedRoleID})
 	}
 	if criteria.StatusID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.ColumnStatusID: criteria.StatusID})
 	}
 	if criteria.ApprovalUserID > 9 {
-		stmt = stmt.Where(squirrel.Eq{DasAccountRoleApplicationColumnApprovalUserID: criteria.ApprovalUserID})
+		stmt = stmt.Where(squirrel.Eq{dasAccountRoleApplicationColumnApprovalUserID: criteria.ApprovalUserID})
 	}
 	if criteria.Responded && criteria.StatusID == 0 {
 		stmt = stmt.Where(squirrel.NotEq{common.ColumnStatusID: businesslogic.RoleApplicationStatusPending})
@@ -145,7 +148,15 @@ func (repo PostgresRoleApplicationRepository) SearchApplication(criteria busines
 			&each.UpdateUserID,
 			&each.DateTimeUpdated,
 		)
-		accountSearchResults, _ := accountRepo.SearchAccount(businesslogic.SearchAccountCriteria{ID: each.AccountID})
+		accountSearchResults, searchErr := accountRepo.SearchAccount(businesslogic.SearchAccountCriteria{ID: each.AccountID})
+		if searchErr != nil {
+			log.Printf("[error] searching account in role application throw and error: %v", searchErr)
+			return nil, errors.New("error in searching for accounts")
+		}
+		if len(accountSearchResults) < 1 {
+			log.Printf("[error] cannot find account when it should be in database: AccountID = %v", criteria.AccountID)
+			return nil, errors.New("cannot find the specified account")
+		}
 		each.Account = accountSearchResults[0]
 		applications = append(applications, each)
 	}
@@ -159,12 +170,12 @@ func (repo PostgresRoleApplicationRepository) UpdateApplication(application busi
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	stmt := repo.SQLBuilder.Update(DasAccountRoleApplicationTable)
+	stmt := repo.SQLBuilder.Update(dasAccountRoleApplicationTable)
 	if application.ID > 0 {
 		if application.StatusID > 0 && *application.ApprovalUserID > 0 {
 			stmt = stmt.Set(common.ColumnStatusID, application.StatusID)
-			stmt = stmt.Set(DasAccountRoleApplicationColumnApprovalUserID, *application.ApprovalUserID)
-			stmt = stmt.Set(DasAccountRoleApplicationColumnDateTimeApproved, application.DateTimeApproved)
+			stmt = stmt.Set(dasAccountRoleApplicationColumnApprovalUserID, *application.ApprovalUserID)
+			stmt = stmt.Set(dasAccountRoleApplicationColumnDateTimeApproved, application.DateTimeApproved)
 			stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: application.ID})
 		}
 		tx, txErr := repo.Database.Begin()

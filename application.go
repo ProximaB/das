@@ -24,6 +24,10 @@ import (
 	"os"
 )
 
+const envPORT = "PORT"
+const envSSLCertFile = "./cert.pem" // default path for SSL certificate ile
+const envSSLKeyFile = "./privkey.pem"
+
 func main() {
 	port := os.Getenv("PORT")
 	if port == "" {
@@ -42,5 +46,16 @@ func main() {
 
 	http.Handle("/", router)
 	log.Printf("Listeniing on port %s", port)
-	http.ListenAndServe(":"+port, nil)
+
+	var serverErr error
+
+	if _, certErr := os.Stat("./cert.pem"); os.IsNotExist(certErr) {
+		serverErr = http.ListenAndServe(":"+port, nil)
+	} else {
+		serverErr = http.ListenAndServeTLS(":"+port, "./cert.pem", "./privkey.pem", nil)
+	}
+
+	if serverErr != nil {
+		log.Fatalf("[fatal] %v", serverErr)
+	}
 }

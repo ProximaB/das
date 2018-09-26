@@ -18,6 +18,7 @@ package businesslogic
 
 import (
 	"errors"
+	"log"
 	"time"
 )
 
@@ -271,6 +272,20 @@ func (service CompetitionRegistrationService) CreatePartnershipEventEntries(curr
 		}
 	}
 	return nil
+}
+
+func (service CompetitionRegistrationService) DropPartnershipCompetitionEntry(partnershipID, competitionID int) error {
+	if results, err := service.PartnershipCompetitionEntryRepo.SearchEntry(SearchPartnershipCompetitionEntryCriteria{
+		Partnership: partnershipID,
+		Competition: competitionID,
+	}); err != nil {
+		log.Printf("[error] cannot find competition entry for partnership ID = %d and competition ID = %d: %v", partnershipID, competitionID, err)
+		return errors.New("an error occurred while searching for partnership competition entry")
+	} else if len(results) != 1 {
+		return errors.New("cannot find competition entry for this partnership")
+	} else {
+		return service.PartnershipCompetitionEntryRepo.DeleteEntry(results[0])
+	}
 }
 
 // DropPartnershipEventEntries takes the current user and registration data and removes specified entries from the event

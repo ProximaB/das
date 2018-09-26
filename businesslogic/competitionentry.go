@@ -73,6 +73,7 @@ type PartnershipCompetitionEntry struct {
 	ID               int
 	CompetitionEntry BaseCompetitionEntry
 	PartnershipID    int
+	Partnership      Partnership
 }
 
 // SearchPartnershipCompetitionEntryCriteria specifies parameters that can be used to search the Competition Entry

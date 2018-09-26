@@ -20,6 +20,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
@@ -138,7 +139,22 @@ func (repo PostgresAthleteCompetitionEntryRepository) DeleteEntry(entry business
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	return errors.New("not implemented")
+	stmt := repo.SQLBuilder.Delete("").From(dasAthleteCompetitionEntryTable)
+	var err error
+	if entry.ID > 0 {
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: entry.ID})
+		if tx, txErr := repo.Database.Begin(); txErr != nil {
+			return txErr
+		} else {
+			_, err = stmt.RunWith(repo.Database).Exec()
+			if err != nil {
+				log.Printf("[error] got error while deleting competition entry with ID")
+				return err
+			}
+			return tx.Commit()
+		}
+	}
+	return err
 }
 
 // UpdateEntry updates an AthleteCompetitionEntry from a Postgres database
@@ -146,7 +162,15 @@ func (repo PostgresAthleteCompetitionEntryRepository) UpdateEntry(entry business
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	return errors.New("not implemented")
+	stmt := repo.SQLBuilder.Update(dasAthleteCompetitionEntryTable)
+	var err error
+	if tx, txErr := repo.Database.Begin(); txErr != nil {
+		return txErr
+	} else {
+		_, err = stmt.RunWith(repo.Database).Exec()
+		err = tx.Commit()
+	}
+	return err
 }
 
 // PostgresPartnershipCompetitionEntryRepository implements a IPartnershipCompetitionEntryRepository with Postgres database
@@ -199,7 +223,21 @@ func (repo PostgresPartnershipCompetitionEntryRepository) DeleteEntry(entry busi
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	return errors.New("not implemented")
+	stmt := repo.SQLBuilder.Delete("").From(dasPartnershipCompetitionEntryTable)
+	if entry.ID > 0 {
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: entry.ID})
+	} else {
+		return errors.New("cannot find this partnership competition entry")
+	}
+
+	var err error
+	if tx, txErr := repo.Database.Begin(); txErr != nil {
+		return err
+	} else {
+		_, err = stmt.RunWith(repo.Database).Exec()
+		err = tx.Commit()
+	}
+	return err
 }
 
 // SearchEntry searches PartnershipCompetitionEntry in a Postgres database

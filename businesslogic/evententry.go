@@ -79,9 +79,11 @@ type SearchAdjudicatorEventEntryCriteria struct {
 	Style         int `schema:"style"`
 }
 
-// EventEntryService abstracts the process of event entry management and  provides services functions that
-// can be used by other packages to manage competition entries
-type EventEntryService struct {
+type IAdjudicatorEventEntryRepository interface {
+	CreateEventEntry(entry *AdjudicatorEventEntry) error
+	DeleteEventEntry(entry AdjudicatorEventEntry) error
+	SearchEventEntry(criteria SearchAdjudicatorEventEntryCriteria) ([]AdjudicatorEventEntry, error)
+	UpdateEventEntry(entry AdjudicatorEventEntry) error
 }
 
 // PartnershipEventEntryList contains the ID of an event and the Partnerships that are competing in this event

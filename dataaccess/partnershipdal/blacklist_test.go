@@ -31,7 +31,7 @@ var blacklistRepository = PostgresPartnershipRequestBlacklistRepository{
 }
 
 var blacklist = businesslogic.PartnershipRequestBlacklistEntry{
-	BlockedUserID: 1,
+	BlockedUser: businesslogic.Account{ID: 1},
 }
 
 func TestPostgresPartnershipRequestBlacklistRepository_CreatePartnershipRequestBlacklist(t *testing.T) {

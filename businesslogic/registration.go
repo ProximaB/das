@@ -69,6 +69,7 @@ type CompetitionRegistrationService struct {
 	AthleteCompetitionEntryRepo     IAthleteCompetitionEntryRepository
 	PartnershipCompetitionEntryRepo IPartnershipCompetitionEntryRepository
 	PartnershipEventEntryRepo       IPartnershipEventEntryRepository
+	AdjudicatorEventEntryRepo       IAdjudicatorEventEntryRepository
 }
 
 // ValidateEventRegistration validates if the registration data is valid. This does not create the registration
@@ -274,6 +275,8 @@ func (service CompetitionRegistrationService) CreatePartnershipEventEntries(curr
 	return nil
 }
 
+// DropPartnershipCompetitionEntry removes the competition entry of the specified partnership from the provided competition
+// if that partnership, competition, or entry does not exist, and error will be thrown
 func (service CompetitionRegistrationService) DropPartnershipCompetitionEntry(partnershipID, competitionID int) error {
 	if results, err := service.PartnershipCompetitionEntryRepo.SearchEntry(SearchPartnershipCompetitionEntryCriteria{
 		Partnership: partnershipID,

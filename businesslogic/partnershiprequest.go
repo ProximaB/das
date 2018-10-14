@@ -143,7 +143,7 @@ func (request *PartnershipRequest) hasValidSenderAndRecipient(accountRepo IAccou
 func (request PartnershipRequest) senderBlockedByRecipient(blacklistRepo IPartnershipRequestBlacklistRepository) bool {
 	recipientBlacklist, _ := blacklistRepo.SearchPartnershipRequestBlacklist(SearchPartnershipRequestBlacklistCriteria{ReporterID: request.RecipientID})
 	for _, each := range recipientBlacklist {
-		if each.BlockedUserID == request.SenderID {
+		if each.BlockedUser.ID == request.SenderID {
 			return true
 		}
 	}

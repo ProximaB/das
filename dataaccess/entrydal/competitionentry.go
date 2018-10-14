@@ -53,9 +53,10 @@ func (repo PostgresAthleteCompetitionEntryRepository) CreateEntry(entry *busines
 		Into(dasAthleteCompetitionEntryTable).
 		Columns(
 			common.COL_COMPETITION_ID,
-			common.ColumnAccountID,
+			"ATHLETE_ID",
 			dasCompetitionEntryColCheckinInd,
 			dasCompetitionEntryColCheckinDateTime,
+			"PAYMENT_IND",
 			common.ColumnCreateUserID,
 			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
@@ -65,6 +66,7 @@ func (repo PostgresAthleteCompetitionEntryRepository) CreateEntry(entry *busines
 			entry.AthleteID,
 			entry.CompetitionEntry.CheckInIndicator,
 			entry.CompetitionEntry.DateTimeCheckIn,
+			entry.PaymentReceivedIndicator,
 			entry.CompetitionEntry.CreateUserID,
 			entry.CompetitionEntry.DateTimeCreated,
 			entry.CompetitionEntry.UpdateUserID,

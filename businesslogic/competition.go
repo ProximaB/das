@@ -25,25 +25,27 @@ import (
 // Competition provides the base data structure for a competitive ballroom dance. All competitions in
 // DAS must have some affiliation with a dancesport federation (Not Affiliated/Independent is also a Federation,)
 type Competition struct {
-	ID              int
-	FederationID    int
-	Name            string
-	Street          string
-	City            reference.City
-	State           reference.State
-	Country         reference.Country
-	StartDateTime   time.Time
-	EndDateTime     time.Time
-	CreateUserID    int
-	DateTimeCreated time.Time
-	UpdateUserID    int
-	DateTimeUpdated time.Time
-	ContactName     string
-	ContactEmail    string
-	ContactPhone    string
-	statusID        int
-	Website         string
-	Attendance      int
+	ID                        int
+	FederationID              int
+	Name                      string
+	Street                    string
+	City                      reference.City
+	State                     reference.State
+	Country                   reference.Country
+	StartDateTime             time.Time
+	EndDateTime               time.Time
+	CreateUserID              int
+	DateTimeCreated           time.Time
+	UpdateUserID              int
+	DateTimeUpdated           time.Time
+	ContactName               string
+	ContactEmail              string
+	ContactPhone              string
+	statusID                  int
+	Website                   string
+	Attendance                int
+	RegistrationOpenDateTime  time.Time
+	RegistrationCloseDateTime time.Time
 }
 
 // UpdateStatus will attempt to change the status of the caller competition to statusID, if the change is in logical order

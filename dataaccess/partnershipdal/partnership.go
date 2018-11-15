@@ -25,24 +25,21 @@ import (
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 	"log"
-	"time"
 )
 
 const (
-	DasPartnershipTable               = "DAS.PARTNERSHIP"
-	partnershipColumnLeadID           = "LEAD_ID"
-	partnershipColumnFollowID         = "FOLLOW_ID"
-	partnershipColumnSameSexIndicator = "SAMESEX_IND"
-	columnFavoriteByLead              = "FAVORITE_BY_LEAD"
-	columnFavoriteByFollow            = "FAVORITE_BY_FOLLOW"
-	columnCompetitionsAttended        = "COMPETITIONS_ATTENDED"
-	columnEventsAttended              = "EVENTS_ATTENDED"
-)
-
-const (
+	DasPartnershipTable                            = "DAS.PARTNERSHIP"
+	partnershipColumnLeadID                        = "LEAD_ID"
+	partnershipColumnFollowID                      = "FOLLOW_ID"
+	partnershipColumnSameSexIndicator              = "SAMESEX_IND"
+	columnFavoriteByLead                           = "FAVORITE_BY_LEAD"
+	columnFavoriteByFollow                         = "FAVORITE_BY_FOLLOW"
+	columnCompetitionsAttended                     = "COMPETITIONS_ATTENDED"
+	columnEventsAttended                           = "EVENTS_ATTENDED"
 	DAS_PARTNERSHIP_REQUEST_BLACKLIST_REASON_TABLE = "DAS.PARTNERSHIP_REQUEST_BLACKLIST_REASON"
 )
 
+// PostgresPartnershipRepository implements IPartnershipRepository
 type PostgresPartnershipRepository struct {
 	Database   *sql.DB
 	SqlBuilder squirrel.StatementBuilderType
@@ -61,16 +58,20 @@ func (repo PostgresPartnershipRepository) CreatePartnership(partnership *busines
 			partnershipColumnSameSexIndicator,
 			columnFavoriteByLead,
 			columnFavoriteByFollow,
+			columnCompetitionsAttended,
+			columnEventsAttended,
 			common.ColumnDateTimeCreated,
 			common.ColumnDateTimeUpdated).
 		Values(
-			partnership.LeadID,
-			partnership.FollowID,
+			partnership.Lead.ID,
+			partnership.Follow.ID,
 			partnership.SameSex,
 			partnership.FavoriteByLead,
 			partnership.FavoriteByFollow,
+			partnership.CompetitionsAttended,
+			partnership.EventsAttended,
 			partnership.DateTimeCreated,
-			time.Now())
+			partnership.DateTimeUpdated)
 
 	_, err := clause.RunWith(repo.Database).Exec()
 	return err
@@ -81,13 +82,15 @@ func (repo PostgresPartnershipRepository) SearchPartnership(criteria businesslog
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresPartnershipRepository is not specified")
 	}
-	stmt := repo.SqlBuilder.Select(fmt.Sprintf("%s,%s,%s,%s,%s,%s,%s,%s",
+	stmt := repo.SqlBuilder.Select(fmt.Sprintf("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
 		common.ColumnPrimaryKey,
 		partnershipColumnLeadID,
 		partnershipColumnFollowID,
 		partnershipColumnSameSexIndicator,
 		columnFavoriteByLead,
 		columnFavoriteByFollow,
+		columnCompetitionsAttended,
+		columnEventsAttended,
 		common.ColumnDateTimeCreated,
 		common.ColumnDateTimeUpdated)).From(DasPartnershipTable)
 	if criteria.PartnershipID > 0 {
@@ -116,28 +119,30 @@ func (repo PostgresPartnershipRepository) SearchPartnership(criteria businesslog
 		each := businesslogic.Partnership{}
 		rows.Scan(
 			&each.ID,
-			&each.LeadID,
-			&each.FollowID,
+			&each.Lead.ID,
+			&each.Follow.ID,
 			&each.SameSex,
 			&each.FavoriteByLead,
 			&each.FavoriteByFollow,
+			&each.CompetitionsAttended,
+			&each.EventsAttended,
 			&each.DateTimeCreated,
 			&each.DateTimeUpdated,
 		)
-		leads, searchLeadErr := accountRepo.SearchAccount(businesslogic.SearchAccountCriteria{ID: each.LeadID})
-		follows, searchFollowErr := accountRepo.SearchAccount(businesslogic.SearchAccountCriteria{ID: each.FollowID})
+		leads, searchLeadErr := accountRepo.SearchAccount(businesslogic.SearchAccountCriteria{ID: each.Lead.ID})
+		follows, searchFollowErr := accountRepo.SearchAccount(businesslogic.SearchAccountCriteria{ID: each.Follow.ID})
 
 		if searchLeadErr != nil {
 			log.Printf("[error] %v", searchLeadErr)
 		} else if len(leads) != 1 {
-			log.Printf("[warning] cannot find the lead with account ID: %d", each.LeadID)
+			log.Printf("[warning] cannot find the lead with account ID: %d", each.Lead.ID)
 		} else {
 			each.Lead = leads[0]
 		}
 		if searchFollowErr != nil {
 			log.Printf("[error] %v", searchFollowErr)
 		} else if len(follows) != 1 {
-			log.Printf("[warning] cannot find the follow with account ID: %d", each.FollowID)
+			log.Printf("[warning] cannot find the follow with account ID: %d", each.Follow.ID)
 		} else {
 			each.Follow = follows[0]
 		}

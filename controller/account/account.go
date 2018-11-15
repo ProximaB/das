@@ -73,7 +73,7 @@ func (server AccountServer) RegisterAccountHandler(w http.ResponseWriter, r *htt
 }
 
 // AccountAuthenticationHandler handles the request:
-// 	POST /api/account/authenticate
+// 	POST /api/v1.0account/authenticate
 // Accepted JSON parameters:
 // 	{
 //		"username": "user@email.com",
@@ -90,6 +90,14 @@ func (server AccountServer) RegisterAccountHandler(w http.ResponseWriter, r *htt
 func (server AccountServer) AccountAuthenticationHandler(w http.ResponseWriter, r *http.Request) {
 	loginDTO := new(viewmodel.Login)
 	err := util.ParseRequestBodyData(r, loginDTO)
+	if loginDTO.Email == "" {
+		util.RespondJsonResult(w, http.StatusBadRequest, "Email is required", nil)
+		return
+	}
+	if loginDTO.Password == "" {
+		util.RespondJsonResult(w, http.StatusBadRequest, "Password is required", nil)
+		return
+	}
 	if err != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, "invalid credential", nil)
 		return

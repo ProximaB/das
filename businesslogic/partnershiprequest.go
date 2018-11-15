@@ -35,8 +35,8 @@ type PartnershipRequest struct {
 	PartnershipRequestID int
 	SenderID             int
 	RecipientID          int
-	senderAccount        *Account
-	recipientAccount     *Account
+	SenderAccount        *Account
+	RecipientAccount     *Account
 	SenderRole           int
 	RecipientRole        int
 	Message              string
@@ -135,8 +135,8 @@ func (request *PartnershipRequest) hasValidSenderAndRecipient(accountRepo IAccou
 		return errors.New("recipient is not an athlete")
 	}
 
-	request.senderAccount = &senderAccounts[0]
-	request.recipientAccount = &recipientAccounts[0]
+	request.SenderAccount = &senderAccounts[0]
+	request.RecipientAccount = &recipientAccounts[0]
 	return nil
 }
 
@@ -154,12 +154,12 @@ func (request PartnershipRequest) senderBlockedByRecipient(blacklistRepo IPartne
 func (request PartnershipRequest) hasExistingPartnership(accountRepo IAccountRepository, partnershipRepo IPartnershipRepository) bool {
 	// configure search partnershipCriteria
 
-	var senderAccount = *request.senderAccount
-	var recipientAccount = *request.recipientAccount
-	if request.senderAccount == nil {
+	var senderAccount = *request.SenderAccount
+	var recipientAccount = *request.RecipientAccount
+	if request.SenderAccount == nil {
 		senderAccount = GetAccountByID(request.SenderID, accountRepo)
 	}
-	if request.recipientAccount == nil {
+	if request.RecipientAccount == nil {
 		recipientAccount = GetAccountByID(request.RecipientID, accountRepo)
 	}
 
@@ -289,15 +289,15 @@ func RespondPartnershipRequest(response PartnershipRequestResponse,
 			request := requests[0]
 
 			if request.RecipientRole == PartnershipRoleLead {
-				partnership.LeadID = request.RecipientID
-				partnership.FollowID = request.SenderID
+				partnership.Lead.ID = request.RecipientID
+				partnership.Follow.ID = request.SenderID
 			} else {
-				partnership.LeadID = request.SenderID
-				partnership.FollowID = request.RecipientID
+				partnership.Lead.ID = request.SenderID
+				partnership.Follow.ID = request.RecipientID
 			}
 
-			leadAccount := GetAccountByID(partnership.LeadID, accountRepo)
-			followAccount := GetAccountByID(partnership.FollowID, accountRepo)
+			leadAccount := GetAccountByID(partnership.Lead.ID, accountRepo)
+			followAccount := GetAccountByID(partnership.Follow.ID, accountRepo)
 			if leadAccount.UserGenderID == followAccount.UserGenderID {
 				partnership.SameSex = true
 			} else {

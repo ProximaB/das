@@ -122,7 +122,7 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 	// create competition entry for the lead, if the entry has not been created yet
 	entries, hasEntryErr := service.AthleteCompetitionEntryRepo.SearchEntry(SearchAthleteCompetitionEntryCriteria{
 		CompetitionID: registration.CompetitionID,
-		AthleteID:     partnership.LeadID,
+		AthleteID:     partnership.Lead.ID,
 	})
 	if len(entries) != 1 || hasEntryErr != nil {
 		service.AthleteCompetitionEntryRepo.CreateEntry(&AthleteCompetitionEntry{
@@ -136,7 +136,7 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 	// create competition entry for the follow, if the entry has not been created yet
 	entries, hasEntryErr = service.AthleteCompetitionEntryRepo.SearchEntry(SearchAthleteCompetitionEntryCriteria{
 		CompetitionID: registration.CompetitionID,
-		AthleteID:     partnership.FollowID,
+		AthleteID:     partnership.Follow.ID,
 	})
 	if len(entries) != 1 || hasEntryErr != nil {
 		service.AthleteCompetitionEntryRepo.CreateEntry(&AthleteCompetitionEntry{
@@ -208,7 +208,7 @@ func (service CompetitionRegistrationService) CreateAthleteCompetitionEntry(curr
 			UpdateUserID:     currentUser.ID,
 			DateTimeUpdated:  time.Now(),
 		},
-		AthleteID:                partnership.LeadID,
+		AthleteID:                partnership.Lead.ID,
 		PaymentReceivedIndicator: false,
 	}
 	followCompEntry := AthleteCompetitionEntry{
@@ -220,7 +220,7 @@ func (service CompetitionRegistrationService) CreateAthleteCompetitionEntry(curr
 			UpdateUserID:     currentUser.ID,
 			DateTimeUpdated:  time.Now(),
 		},
-		AthleteID:                partnership.FollowID,
+		AthleteID:                partnership.Follow.ID,
 		PaymentReceivedIndicator: false,
 	}
 
@@ -325,7 +325,7 @@ func GetEventRegistration(competitionID int, partnershipID int, user *Account, p
 		return EventRegistration{}, errors.New("cannot find partnership for registration")
 	}
 	partnership := results[0]
-	if user.ID == 0 || user.HasRole(AccountTypeAthlete) || (user.ID != partnership.LeadID && user.ID != partnership.FollowID) {
+	if user.ID == 0 || user.HasRole(AccountTypeAthlete) || (user.ID != partnership.Lead.ID && user.ID != partnership.Follow.ID) {
 		return EventRegistration{}, errors.New("not authorized to request this information")
 	}
 

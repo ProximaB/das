@@ -19,21 +19,12 @@ package main
 import (
 	"github.com/DancesportSoftware/das/config/database"
 	"github.com/DancesportSoftware/das/config/routes"
+	"google.golang.org/appengine"
 	"log"
 	"net/http"
-	"os"
 )
 
-const envPORT = "PORT"
-const envSSLCertFile = "./cert.pem" // default path for SSL certificate ile
-const envSSLKeyFile = "./privkey.pem"
-
 func main() {
-	port := os.Getenv("PORT")
-	if port == "" {
-		port = "5000"
-	}
-
 	defer database.PostgresDatabase.Close() // database connection will not close until server is shutdown
 	router := routes.NewDasRouter()
 
@@ -45,17 +36,6 @@ func main() {
 	}
 
 	http.Handle("/", router)
-	log.Printf("Listeniing on port %s", port)
-
-	var serverErr error
-
-	if _, certErr := os.Stat("./cert.pem"); os.IsNotExist(certErr) {
-		serverErr = http.ListenAndServe(":"+port, nil)
-	} else {
-		serverErr = http.ListenAndServeTLS(":"+port, "./cert.pem", "./privkey.pem", nil)
-	}
-
-	if serverErr != nil {
-		log.Fatalf("[fatal] %v", serverErr)
-	}
+	log.Println("[info] service is ready")
+	appengine.Main() // to run this on app engine, do not make router listen to any particular port
 }

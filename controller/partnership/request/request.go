@@ -22,6 +22,7 @@ import (
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/controller/util/authentication"
 	"github.com/DancesportSoftware/das/viewmodel"
+	"log"
 	"net/http"
 	"time"
 )
@@ -36,7 +37,7 @@ type PartnershipRequestServer struct {
 }
 
 // CreatePartnershipRequestHandler handles the request:
-//	POST /api/partnership/request
+//	POST /athlete/partnership/request
 // which allows user to submit a new partnership request
 func (server PartnershipRequestServer) CreatePartnershipRequestHandler(w http.ResponseWriter, r *http.Request) {
 	dto := new(viewmodel.CreatePartnershipRequest)
@@ -50,7 +51,7 @@ func (server PartnershipRequestServer) CreatePartnershipRequestHandler(w http.Re
 	recipient := businesslogic.GetAccountByEmail(dto.RecipientEmail, server.IAccountRepository)
 
 	if recipient.ID == 0 {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, "recipient does not exist")
+		util.RespondJsonResult(w, http.StatusBadRequest, "recipient does not exist", nil)
 		return
 	}
 
@@ -63,6 +64,7 @@ func (server PartnershipRequestServer) CreatePartnershipRequestHandler(w http.Re
 		CreateUserID:    sender.ID,
 		DateTimeCreated: time.Now(),
 		UpdateUserID:    sender.ID,
+		DateTimeUpdated: time.Now(),
 	}
 
 	if request.RecipientRole == businesslogic.PartnershipRoleLead {
@@ -157,11 +159,12 @@ func (server PartnershipRequestServer) UpdatePartnershipRequestHandler(w http.Re
 
 	err := businesslogic.RespondPartnershipRequest(response, server.IPartnershipRequestRepository, server.IAccountRepository, server.IPartnershipRepository)
 	if err != nil {
+		log.Printf("[error] responding to partnership request failed: %v", err)
 		util.RespondJsonResult(w, http.StatusInternalServerError, "error in responding partnership request", err.Error())
 		return
 	}
 
-	util.RespondJsonResult(w, http.StatusOK, "partnership request responded", nil)
+	util.RespondJsonResult(w, http.StatusOK, "response is sent", nil)
 }
 
 // DeletePartnershipRequestHandler handles the request

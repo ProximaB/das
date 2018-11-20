@@ -36,7 +36,7 @@ type PartnershipServer struct {
 //	GET /api/partnership
 func (server PartnershipServer) SearchPartnershipHandler(w http.ResponseWriter, r *http.Request) {
 	account, _ := server.GetCurrentUser(r)
-	if account.ID == 0 || account.HasRole(businesslogic.AccountTypeAthlete) {
+	if account.ID == 0 || !account.HasRole(businesslogic.AccountTypeAthlete) {
 		util.RespondJsonResult(w, http.StatusUnauthorized, "not authorized", nil)
 		return
 	}

@@ -32,11 +32,12 @@ const (
 
 // SearchRoleApplicationCriteria specifies the search criteria for role application
 type SearchRoleApplicationCriteria struct {
-	ID             int `json:"id"`
-	AccountID      int `json:"applicant"`
-	AppliedRoleID  int `json:"appliedRole"`
-	StatusID       int `json:"status"`
-	ApprovalUserID int `json:"approvedBy"`
+	ID             int
+	AccountID      int
+	AppliedRoleID  int
+	StatusID       int
+	ApprovalUserID int
+	Responded      bool
 }
 
 // RoleApplication is an application for restricted roles, including adjudicator, scrutineer, and organizer.
@@ -44,6 +45,7 @@ type SearchRoleApplicationCriteria struct {
 type RoleApplication struct {
 	ID               int
 	AccountID        int
+	Account          Account
 	AppliedRoleID    int
 	Description      string
 	StatusID         int
@@ -141,7 +143,7 @@ func (service RoleProvisionService) UpdateApplication(currentUser Account, appli
 		return errors.New("invalid response to role application")
 	}
 	// check if application is pending
-	if application.StatusID != RoleApplicationStatusPending {
+	if application.StatusID == RoleApplicationStatusApproved || application.StatusID == RoleApplicationStatusDenied {
 		return errors.New("role application is already responded")
 	}
 	// Only an Admin or Organizer user ca update user's role application
@@ -181,14 +183,10 @@ func (service RoleProvisionService) UpdateApplication(currentUser Account, appli
 	return service.respondRoleApplication(currentUser, application, action)
 }
 
+// SearchRoleApplication searches the available role application based on current user's privilege
+// TODO: this is not working correctly!
 func (service RoleProvisionService) SearchRoleApplication(currentUser Account, criteria SearchRoleApplicationCriteria) ([]RoleApplication, error) {
-	if currentUser.HasRole(AccountTypeAdministrator) {
-		return service.roleApplicationRepo.SearchApplication(criteria)
-	} else {
-		return service.roleApplicationRepo.SearchApplication(SearchRoleApplicationCriteria{
-			AccountID: currentUser.ID,
-		})
-	}
+	return service.roleApplicationRepo.SearchApplication(criteria)
 }
 
 // OrganizerProvision provision organizer competition slots for creating and hosting competitions

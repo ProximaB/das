@@ -28,16 +28,16 @@ type SearchPartnershipRequestBlacklistCriteria struct {
 }
 
 type PartnershipRequestBlacklistEntry struct {
-	ID                int
-	ReporterID        int
-	BlockedUserID     int
-	BlackListReasonID int
-	Detail            string
-	Whitelisted       bool
-	CreateUserID      int
-	DateTimeCreated   time.Time
-	UpdateUserID      int
-	DateTimeUpdated   time.Time
+	ID              int
+	Reporter        Account
+	BlockedUser     Account
+	BlockedReason   PartnershipRequestBlacklistReason
+	Detail          string
+	Whitelisted     bool
+	CreateUserID    int
+	DateTimeCreated time.Time
+	UpdateUserID    int
+	DateTimeUpdated time.Time
 }
 
 // IPartnershipRequestBlacklistRepository defines the interface that a partnership request blacklist repository should implement
@@ -57,7 +57,7 @@ func (self Account) GetBlacklistedAccounts(accountRepo IAccountRepository, black
 		return blacklist, err
 	}
 	for _, each := range entries {
-		blacklist = append(blacklist, GetAccountByID(each.BlockedUserID, accountRepo))
+		blacklist = append(blacklist, GetAccountByID(each.BlockedUser.ID, accountRepo))
 	}
 	return blacklist, err
 }

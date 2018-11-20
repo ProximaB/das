@@ -78,9 +78,9 @@ func (repo PostgresPartnershipRequestBlacklistRepository) SearchPartnershipReque
 		entry := businesslogic.PartnershipRequestBlacklistEntry{}
 		rows.Scan(
 			&entry.ID,
-			&entry.ReporterID,
-			&entry.BlockedUserID,
-			&entry.BlackListReasonID,
+			&entry.Reporter.ID,
+			&entry.BlockedUser.ID,
+			&entry.BlockedReason.ID,
 			&entry.Detail,
 			&entry.Whitelisted,
 			&entry.CreateUserID,
@@ -108,9 +108,9 @@ func (repo PostgresPartnershipRequestBlacklistRepository) CreatePartnershipReque
 		common.ColumnUpdateUserID,
 		common.ColumnDateTimeUpdated,
 	).Values(
-		blacklist.ReporterID,
-		blacklist.BlockedUserID,
-		blacklist.BlackListReasonID,
+		blacklist.Reporter.ID,
+		blacklist.BlockedUser.ID,
+		blacklist.BlockedReason.ID,
 		blacklist.Detail,
 		blacklist.Whitelisted,
 		blacklist.CreateUserID,

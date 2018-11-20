@@ -86,6 +86,7 @@ func (cd *CompetitionDate) MarshalJSON() ([]byte, error) {
 	return []byte(fmt.Sprintf("\"%s\"", cd.Time.Format("2006-01-02"))), nil
 }
 
+// CreateCompetition defines the JSON payload for creating a competition
 type CreateCompetition struct {
 	FederationID   int             `json:"federationId"`
 	Name           string          `json:"name"`

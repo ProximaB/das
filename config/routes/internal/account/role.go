@@ -59,10 +59,28 @@ var provisionRoleApplicationController = util.DasController{
 	},
 }
 
+const apiAccountRole = "/api/v1.0/account/role"
+
+var roleServer = account.RoleServer{
+	middleware.AuthenticationStrategy,
+	database.AccountRepository,
+}
+
 var RoleApplicationControllerGroup = util.DasControllerGroup{
 	Controllers: []util.DasController{
 		createRoleApplicationController,
 		searchRoleApplicationController,
 		provisionRoleApplicationController,
+	},
+}
+
+var RoleController = util.DasController{
+	Name:        "RoleController",
+	Description: "Provide the roles of a user",
+	Method:      http.MethodGet,
+	Endpoint:    apiAccountRole,
+	Handler:     roleServer.GetAccountRolesHandler,
+	AllowedRoles: []int{
+		businesslogic.AccountTypeAthlete,
 	},
 }

@@ -4,10 +4,12 @@
 package organizer
 
 import (
+	"encoding/json"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/controller/util/authentication"
 	"github.com/DancesportSoftware/das/viewmodel"
+	"log"
 	"net/http"
 )
 
@@ -51,5 +53,30 @@ func (server OrganizerEventServer) DeleteEventHandler(w http.ResponseWriter, r *
 // SearchEventHandler handles the request:
 //	GET /api/v1.0/organizer/event
 func (server OrganizerEventServer) SearchEventHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
+	currentUser, _ := server.Authentication.GetCurrentUser(r)
+	searchCriteriaDTO := new(viewmodel.OrganizerSearchEventCriteria)
+
+	if parseErr := util.ParseRequestData(r, searchCriteriaDTO); parseErr != nil {
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, nil)
+		return
+	}
+
+	searchCriteriaDTO.OrganizerID = currentUser.ID
+	criteria := searchCriteriaDTO.ToBusinessModel()
+
+	events, searchErr := server.Service.SearchEvents(criteria)
+	if searchErr != nil {
+		log.Printf("[error] searching event by organizer %v caught error: %v", currentUser.FullName(), searchErr)
+		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP500ErrorRetrievingData, nil)
+		return
+	}
+
+	viewbag := make([]viewmodel.EventViewModel, 0)
+	for _, each := range events {
+		view := viewmodel.EventViewModel{}
+		view.Populate(each)
+		viewbag = append(viewbag, view)
+	}
+	output, _ := json.Marshal(viewbag)
+	w.Write(output)
 }

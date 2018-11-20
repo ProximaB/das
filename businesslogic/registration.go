@@ -18,6 +18,7 @@ package businesslogic
 
 import (
 	"errors"
+	"log"
 	"time"
 )
 
@@ -68,6 +69,7 @@ type CompetitionRegistrationService struct {
 	AthleteCompetitionEntryRepo     IAthleteCompetitionEntryRepository
 	PartnershipCompetitionEntryRepo IPartnershipCompetitionEntryRepository
 	PartnershipEventEntryRepo       IPartnershipEventEntryRepository
+	AdjudicatorEventEntryRepo       IAdjudicatorEventEntryRepository
 }
 
 // ValidateEventRegistration validates if the registration data is valid. This does not create the registration
@@ -120,7 +122,7 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 	// create competition entry for the lead, if the entry has not been created yet
 	entries, hasEntryErr := service.AthleteCompetitionEntryRepo.SearchEntry(SearchAthleteCompetitionEntryCriteria{
 		CompetitionID: registration.CompetitionID,
-		AthleteID:     partnership.LeadID,
+		AthleteID:     partnership.Lead.ID,
 	})
 	if len(entries) != 1 || hasEntryErr != nil {
 		service.AthleteCompetitionEntryRepo.CreateEntry(&AthleteCompetitionEntry{
@@ -134,7 +136,7 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 	// create competition entry for the follow, if the entry has not been created yet
 	entries, hasEntryErr = service.AthleteCompetitionEntryRepo.SearchEntry(SearchAthleteCompetitionEntryCriteria{
 		CompetitionID: registration.CompetitionID,
-		AthleteID:     partnership.FollowID,
+		AthleteID:     partnership.Follow.ID,
 	})
 	if len(entries) != 1 || hasEntryErr != nil {
 		service.AthleteCompetitionEntryRepo.CreateEntry(&AthleteCompetitionEntry{
@@ -206,7 +208,7 @@ func (service CompetitionRegistrationService) CreateAthleteCompetitionEntry(curr
 			UpdateUserID:     currentUser.ID,
 			DateTimeUpdated:  time.Now(),
 		},
-		AthleteID:                partnership.LeadID,
+		AthleteID:                partnership.Lead.ID,
 		PaymentReceivedIndicator: false,
 	}
 	followCompEntry := AthleteCompetitionEntry{
@@ -218,7 +220,7 @@ func (service CompetitionRegistrationService) CreateAthleteCompetitionEntry(curr
 			UpdateUserID:     currentUser.ID,
 			DateTimeUpdated:  time.Now(),
 		},
-		AthleteID:                partnership.FollowID,
+		AthleteID:                partnership.Follow.ID,
 		PaymentReceivedIndicator: false,
 	}
 
@@ -273,6 +275,22 @@ func (service CompetitionRegistrationService) CreatePartnershipEventEntries(curr
 	return nil
 }
 
+// DropPartnershipCompetitionEntry removes the competition entry of the specified partnership from the provided competition
+// if that partnership, competition, or entry does not exist, and error will be thrown
+func (service CompetitionRegistrationService) DropPartnershipCompetitionEntry(partnershipID, competitionID int) error {
+	if results, err := service.PartnershipCompetitionEntryRepo.SearchEntry(SearchPartnershipCompetitionEntryCriteria{
+		Partnership: partnershipID,
+		Competition: competitionID,
+	}); err != nil {
+		log.Printf("[error] cannot find competition entry for partnership ID = %d and competition ID = %d: %v", partnershipID, competitionID, err)
+		return errors.New("an error occurred while searching for partnership competition entry")
+	} else if len(results) != 1 {
+		return errors.New("cannot find competition entry for this partnership")
+	} else {
+		return service.PartnershipCompetitionEntryRepo.DeleteEntry(results[0])
+	}
+}
+
 // DropPartnershipEventEntries takes the current user and registration data and removes specified entries from the event
 func (service CompetitionRegistrationService) DropPartnershipEventEntries(currentUser Account, registration EventRegistration) error {
 	for _, each := range registration.EventsDropped {
@@ -307,7 +325,7 @@ func GetEventRegistration(competitionID int, partnershipID int, user *Account, p
 		return EventRegistration{}, errors.New("cannot find partnership for registration")
 	}
 	partnership := results[0]
-	if user.ID == 0 || user.HasRole(AccountTypeAthlete) || (user.ID != partnership.LeadID && user.ID != partnership.FollowID) {
+	if user.ID == 0 || user.HasRole(AccountTypeAthlete) || (user.ID != partnership.Lead.ID && user.ID != partnership.Follow.ID) {
 		return EventRegistration{}, errors.New("not authorized to request this information")
 	}
 

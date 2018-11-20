@@ -1,3 +1,19 @@
+// Dancesport Application System (DAS)
+// Copyright (C) 2018 Yubing Hou
+//
+// This program is free software: you can redistribute it and/or modify
+// it under the terms of the GNU General Public License as published by
+// the Free Software Foundation, either version 3 of the License, or
+// (at your option) any later version.
+//
+// This program is distributed in the hope that it will be useful,
+// but WITHOUT ANY WARRANTY; without even the implied warranty of
+// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+// GNU General Public License for more details.
+//
+// You should have received a copy of the GNU General Public License
+// along with this program.  If not, see <http://www.gnu.org/licenses/>.
+
 package account
 
 import (
@@ -101,6 +117,7 @@ func (server RoleApplicationServer) SearchRoleApplicationHandler(w http.Response
 	for _, each := range applications {
 		dtos = append(dtos, viewmodel.RoleApplication{
 			ID:                each.ID,
+			ApplicantName:     each.Account.FullName(),
 			RoleApplied:       each.AppliedRoleID,
 			Description:       each.Description,
 			Status:            each.StatusID,
@@ -141,7 +158,7 @@ func (server RoleApplicationServer) ProvisionRoleApplicationHandler(w http.Respo
 		util.RespondJsonResult(w, http.StatusInternalServerError, "cannot search this application", nil)
 		return
 	}
-	if len(applications) != 1 {
+	if len(applications) == 0 {
 		util.RespondJsonResult(w, http.StatusInternalServerError, "cannot find this application", nil)
 		return
 	}
@@ -153,4 +170,28 @@ func (server RoleApplicationServer) ProvisionRoleApplicationHandler(w http.Respo
 	}
 
 	util.RespondJsonResult(w, http.StatusOK, "done", nil)
+}
+
+// RoleServer handles the role information of user
+type RoleServer struct {
+	Auth        authentication.IAuthenticationStrategy
+	AccountRepo businesslogic.IAccountRepository
+}
+
+// GetAccountRoles get the roles of current user
+func (server RoleServer) GetAccountRolesHandler(w http.ResponseWriter, r *http.Request) {
+	currentUser, userErr := server.Auth.GetCurrentUser(r)
+	if userErr != nil {
+		w.WriteHeader(http.StatusUnauthorized)
+		util.RespondJsonResult(w, http.StatusUnauthorized, "Invalid token", nil)
+		return
+	}
+
+	roles := currentUser.GetAccountRoles()
+	data := make([]viewmodel.AccountRoleDTO, 0)
+	for _, each := range roles {
+		data = append(data, viewmodel.AccountRoleToAccountRoleDTO(each))
+	}
+	output, _ := json.Marshal(data)
+	w.Write(output)
 }

@@ -61,16 +61,16 @@ type IPartnershipStatusRepository interface {
 // Partnership defines the combination of a lead and a follow. A partnership is uniquely identified
 // if the lead and follow are confirmed.
 type Partnership struct {
-	ID               int
-	LeadID           int
-	FollowID         int
-	Lead             Account
-	Follow           Account
-	SameSex          bool
-	FavoriteByLead   bool
-	FavoriteByFollow bool
-	DateTimeCreated  time.Time
-	DateTimeUpdated  time.Time
+	ID                   int
+	Lead                 Account
+	Follow               Account
+	SameSex              bool
+	FavoriteByLead       bool
+	FavoriteByFollow     bool
+	CompetitionsAttended int
+	EventsAttended       int
+	DateTimeCreated      time.Time
+	DateTimeUpdated      time.Time
 }
 
 // IPartnershipRepository defines the interface that a partnership repository should implement
@@ -138,5 +138,5 @@ func MustGetPartnershipByID(id int, repo IPartnershipRepository) Partnership {
 
 // HasAthlete checks if the provided Athlete ID is in this partnership
 func (partnership Partnership) HasAthlete(athleteID int) bool {
-	return partnership.LeadID == athleteID || partnership.FollowID == athleteID
+	return partnership.Lead.ID == athleteID || partnership.Follow.ID == athleteID
 }

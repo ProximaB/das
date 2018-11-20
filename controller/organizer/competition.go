@@ -53,7 +53,7 @@ func (server OrganizerCompetitionServer) OrganizerCreateCompetitionHandler(w htt
 	err := businesslogic.CreateCompetition(competition, server.ICompetitionRepository, server.IOrganizerProvisionRepository, server.IOrganizerProvisionHistoryRepository)
 	if err != nil {
 		log.Printf("cannot create competition %v", err)
-		util.RespondJsonResult(w, http.StatusInternalServerError, "cannot create competition", nil)
+		util.RespondJsonResult(w, http.StatusInternalServerError, err.Error(), nil)
 		return
 	}
 	util.RespondJsonResult(w, http.StatusOK, "success", nil)

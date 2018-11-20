@@ -47,5 +47,5 @@ app.yaml
 coverage.txt
 profile.out
 
-# sonar
-.scannerwork/
+# Secret
+secret/

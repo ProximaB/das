@@ -17,9 +17,17 @@
 package authentication
 
 import (
+	"context"
+	"firebase.google.com/go"
+	"google.golang.org/api/option"
 	"log"
 	"os"
 	"strconv"
+)
+
+const (
+	firebaseServiceAccountKeyEnv = "FIREBASE_SERVICE_ACCOUNT_KEY"
+	firebaseProjectIdEnv         = "FIREBASE_PROJECT_ID"
 )
 
 var HMAC_SIGNING_KEY string
@@ -43,4 +51,17 @@ func init() {
 	} else {
 		log.Println("[info] HMAC_SIGNING_KEY is defined in this environment")
 	}
+}
+
+func initializeFirebaseAppWithServiceAccount() *firebase.App {
+	privateKeyFile, ok := os.LookupEnv(firebaseServiceAccountKeyEnv)
+	if !ok {
+		log.Printf("[auth-init] environment variable %v is not defined or empty", firebaseServiceAccountKeyEnv)
+	}
+	opt := option.WithCredentialsFile(privateKeyFile)
+	app, err := firebase.NewApp(context.Background(), nil, opt)
+	if err != nil {
+		log.Printf("[auth-init] error initializing Firebase App: %v", err)
+	}
+	return app
 }

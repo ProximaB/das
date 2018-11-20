@@ -31,8 +31,8 @@ const (
 	JWT_AUTH_CLAIM_EMAIL      = "email"
 	JWT_AUTH_CLAIM_USERNAME   = "name"
 	JWT_AUTH_CLAIM_UUID       = "uuid"
-	JWT_AUTH_CLAIM_ISSUEDON   = "issued" // issue time stamp (unix time)
-	JWT_AUTH_CLAIM_EXPIRATION = "exp"    // expiration time stamp (unix time)
+	JWT_AUTH_CLAIM_ISSUEDON   = "iss" // issue time stamp (unix time)
+	JWT_AUTH_CLAIM_EXPIRATION = "exp" // expiration time stamp (unix time)
 )
 
 type JWTAuthenticationStrategy struct {
@@ -40,9 +40,9 @@ type JWTAuthenticationStrategy struct {
 }
 
 type AuthorizedIdentity struct {
-	Username  string
-	Email     string
-	AccountID string
+	Username  string `json:"name"`
+	Email     string `json:"email"`
+	AccountID string `json:"uuid"`
 	jwt.StandardClaims
 }
 
@@ -125,7 +125,7 @@ func getAuthenticatedRequestIdentity(token *jwt.Token) AuthorizedIdentity {
 		identity.Email = claims[JWT_AUTH_CLAIM_EMAIL].(string)
 		identity.AccountID = claims[JWT_AUTH_CLAIM_UUID].(string)
 		identity.StandardClaims.ExpiresAt = int64(claims[JWT_AUTH_CLAIM_EXPIRATION].(float64))
-		identity.StandardClaims.IssuedAt = int64(claims[JWT_AUTH_CLAIM_ISSUEDON].(float64))
+		identity.StandardClaims.Issuer = claims[JWT_AUTH_CLAIM_ISSUEDON].(string)
 	}
 	return identity
 }

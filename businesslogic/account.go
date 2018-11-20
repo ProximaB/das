@@ -76,6 +76,15 @@ func (account *Account) GetRoles() []int {
 	return roles
 }
 
+// GetAccountRoles returns slice of AccountRole objects to caller
+func (account Account) GetAccountRoles() []AccountRole {
+	roles := make([]AccountRole, 0)
+	for _, v := range account.accountRoles {
+		roles = append(roles, v)
+	}
+	return roles
+}
+
 // IAccountRepository specifies the interface that an account repository needs to implement.
 type IAccountRepository interface {
 	SearchAccount(criteria SearchAccountCriteria) ([]Account, error)

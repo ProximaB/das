@@ -14,27 +14,16 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package main
+package viewmodel
 
-import (
-	"github.com/DancesportSoftware/das/config/database"
-	"github.com/DancesportSoftware/das/config/routes"
-	"log"
-	"net/http"
-)
+import "github.com/DancesportSoftware/das/businesslogic"
 
-func main() {
-	defer database.PostgresDatabase.Close() // database connection will not close until server is shutdown
-	router := routes.NewDasRouter()
+type AccountRoleDTO struct {
+	ID int `json:"roleId"`
+}
 
-	if database.PostgresDatabase == nil {
-		log.Println("[error] database connection is closed")
+func AccountRoleToAccountRoleDTO(role businesslogic.AccountRole) AccountRoleDTO {
+	return AccountRoleDTO{
+		ID: role.AccountTypeID,
 	}
-	if database.PostgresDatabase.Ping() != nil {
-		log.Println("[error] database is not responding to ping")
-	}
-
-	http.Handle("/", router)
-	log.Println("[info] service is ready")
-	log.Fatalf("[fatal] %v", http.ListenAndServe(":8080", nil))
 }

@@ -119,6 +119,7 @@ func NewDasRouter() *mux.Router {
 	addDasControllerGroup(router, account.AccountControllerGroup)
 	addDasController(router, account.AccountTypeController)
 	addDasController(router, account.GenderController)
+	addDasController(router, account.RoleController)
 	addDasControllerGroup(router, account.UserPreferenceControllerGroup)
 	addDasControllerGroup(router, account.RoleApplicationControllerGroup)
 

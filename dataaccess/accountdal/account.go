@@ -20,6 +20,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 	"time"
 
 	"github.com/DancesportSoftware/das/businesslogic"
@@ -38,11 +39,6 @@ const (
 	DAS_USER_ACCOUNT_COL_DATE_OF_BIRTH      = "DATE_OF_BIRTH"
 	DAS_USER_ACCOUNT_COL_EMAIL              = "EMAIL"
 	DAS_USER_ACCOUNT_COL_PHONE              = "PHONE"
-	DAS_USER_ACCOUNT_COL_EMAIL_VERIFIED     = "EMAIL_VERIFIED"
-	DAS_USER_ACCOUNT_COL_PHONE_VERIFIED     = "PHONE_VERIFIED"
-	DAS_USER_ACCOUNT_HASH_ALGORITHM         = "HASH_ALGORITHM"
-	DAS_USER_ACCOUNT_COL_PASSWORD_SALT      = "PASSWORD_SALT"
-	DAS_USER_ACCOUNT_COL_PASSWORD_HASH      = "PASSWORD_HASH"
 	DAS_USER_ACCOUNT_COL_DATETIME_CREATED   = "DATETIME_CREATED"
 	DAS_USER_ACCOUNT_COL_DATETIME_UPDATED   = "DATETIME_UPDATED"
 	DAS_USER_ACCOUNT_COL_TOS_ACCEPTED       = "TOS_ACCEPTED"
@@ -64,7 +60,7 @@ func (repo PostgresAccountRepository) CreateAccount(account *businesslogic.Accou
 		Insert("").
 		Into(DasUserAccountTable).
 		Columns(
-			common.ColumnUUID,
+			common.ColumnUID,
 			DAS_USER_ACCOUNT_COL_USER_STATUS_ID,
 			DAS_USER_ACCOUNT_COL_USER_GENDER_ID,
 			DAS_USER_ACCOUNT_COL_LAST_NAME,
@@ -73,11 +69,6 @@ func (repo PostgresAccountRepository) CreateAccount(account *businesslogic.Accou
 			DAS_USER_ACCOUNT_COL_DATE_OF_BIRTH,
 			DAS_USER_ACCOUNT_COL_EMAIL,
 			DAS_USER_ACCOUNT_COL_PHONE,
-			DAS_USER_ACCOUNT_COL_EMAIL_VERIFIED,
-			DAS_USER_ACCOUNT_COL_PHONE_VERIFIED,
-			DAS_USER_ACCOUNT_HASH_ALGORITHM,
-			DAS_USER_ACCOUNT_COL_PASSWORD_SALT,
-			DAS_USER_ACCOUNT_COL_PASSWORD_HASH,
 			common.ColumnDateTimeCreated,
 			common.ColumnDateTimeUpdated,
 			DAS_USER_ACCOUNT_COL_TOS_ACCEPTED,
@@ -85,7 +76,7 @@ func (repo PostgresAccountRepository) CreateAccount(account *businesslogic.Accou
 			DAS_USER_ACCOUNT_COL_BY_GUARDIAN,
 			DAS_USER_ACCOUNT_COL_GUARDIAN_SIGNATURE).
 		Values(
-			account.UUID,
+			account.UID,
 			account.AccountStatusID,
 			account.UserGenderID,
 			account.LastName,
@@ -94,11 +85,6 @@ func (repo PostgresAccountRepository) CreateAccount(account *businesslogic.Accou
 			account.DateOfBirth,
 			account.Email,
 			account.Phone,
-			account.EmailVerified,
-			account.PhoneVerified,
-			account.HashAlgorithm,
-			account.PasswordSalt,
-			account.PasswordHash,
 			time.Now(),
 			time.Now(),
 			account.ToSAccepted,
@@ -109,16 +95,35 @@ func (repo PostgresAccountRepository) CreateAccount(account *businesslogic.Accou
 
 	// parsing arguments to ... parameters: https://golang.org/ref/spec#Passing_arguments_to_..._parameters
 	// PostgreSQL does not return LastInsertID automatically: https://github.com/lib/pq/issues/24
+	hasError := false
 	clause, args, err := stmt.ToSql()
+	if err != nil {
+		log.Printf("[error] generating SQL clause: %v", err)
+		hasError = true
+	}
 	tx, txErr := repo.Database.Begin()
 	if txErr != nil {
-		return txErr
+		log.Printf("[error] beginning a transaction: %v", txErr)
+		hasError = true
 	}
 
 	row := repo.Database.QueryRow(clause, args...)
-	row.Scan(&account.ID)
-	tx.Commit()
-	return err
+	scanErr := row.Scan(&account.ID)
+	if scanErr != nil {
+		log.Printf("[error] failed to return ID of new record: %v", scanErr)
+		hasError = true
+	}
+
+	commitErr := tx.Commit()
+	if commitErr != nil {
+		log.Printf("[error] failed to commit transaction: %v", commitErr)
+		hasError = true
+	}
+
+	if hasError {
+		return errors.New("An error occurred while creating user record")
+	}
+	return nil
 }
 
 func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.SearchAccountCriteria) ([]businesslogic.Account, error) {
@@ -128,9 +133,9 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 	stmt := repo.SQLBuilder.
 		Select(
 			fmt.Sprintf(
-				"%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
+				"%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
 				common.ColumnPrimaryKey,
-				common.ColumnUUID,
+				common.ColumnUID,
 				DAS_USER_ACCOUNT_COL_USER_STATUS_ID,
 				DAS_USER_ACCOUNT_COL_USER_GENDER_ID,
 				DAS_USER_ACCOUNT_COL_LAST_NAME,
@@ -139,11 +144,6 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 				DAS_USER_ACCOUNT_COL_DATE_OF_BIRTH,
 				DAS_USER_ACCOUNT_COL_EMAIL,
 				DAS_USER_ACCOUNT_COL_PHONE,
-				DAS_USER_ACCOUNT_COL_EMAIL_VERIFIED,
-				DAS_USER_ACCOUNT_COL_PHONE_VERIFIED,
-				DAS_USER_ACCOUNT_HASH_ALGORITHM,
-				DAS_USER_ACCOUNT_COL_PASSWORD_SALT,
-				DAS_USER_ACCOUNT_COL_PASSWORD_HASH,
 				DAS_USER_ACCOUNT_COL_DATETIME_CREATED,
 				DAS_USER_ACCOUNT_COL_DATETIME_UPDATED,
 				DAS_USER_ACCOUNT_COL_TOS_ACCEPTED,
@@ -153,7 +153,7 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 			)).From(DasUserAccountTable)
 
 	if len(criteria.UUID) != 0 {
-		stmt = stmt.Where(squirrel.Eq{common.ColumnUUID: criteria.UUID})
+		stmt = stmt.Where(squirrel.Eq{common.ColumnUID: criteria.UUID})
 	}
 	if criteria.ID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ID})
@@ -186,7 +186,7 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 		each := businesslogic.Account{}
 		rows.Scan(
 			&each.ID,
-			&each.UUID,
+			&each.UID,
 			&each.AccountStatusID,
 			&each.UserGenderID,
 			&each.LastName,
@@ -195,11 +195,6 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 			&each.DateOfBirth,
 			&each.Email,
 			&each.Phone,
-			&each.EmailVerified,
-			&each.PhoneVerified,
-			&each.HashAlgorithm,
-			&each.PasswordSalt,
-			&each.PasswordHash,
 			&each.DateTimeCreated,
 			&each.DateTimeModified,
 			&each.ToSAccepted,
@@ -265,9 +260,6 @@ func (repo PostgresAccountRepository) UpdateAccount(account businesslogic.Accoun
 	}
 	stmt := repo.SQLBuilder.Update(DasUserAccountTable)
 	if account.ID > 0 {
-		if len(account.PasswordSalt) > 0 {
-			stmt = stmt.Set(DAS_USER_ACCOUNT_COL_PASSWORD_SALT, account.PasswordSalt)
-		}
 	}
 	var err error
 	if tx, txErr := repo.Database.Begin(); txErr != nil {

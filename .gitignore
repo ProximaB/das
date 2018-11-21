@@ -40,10 +40,6 @@ node_modules/
 app.yaml
 *.yaml
 
-# Docker Build Files
-Dockerfile
-*.dockerignore
-
 # vscode
 .vscode/
 
@@ -51,5 +47,5 @@ Dockerfile
 coverage.txt
 profile.out
 
-# sonar
-.scannerwork/
+# Secret
+secret/

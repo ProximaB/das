@@ -18,16 +18,16 @@ package partnership
 
 import (
 	"encoding/json"
+	"github.com/DancesportSoftware/das/auth"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
-	"github.com/DancesportSoftware/das/controller/util/authentication"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 )
 
 // PartnershipServer serves requests that are related with partnership
 type PartnershipServer struct {
-	authentication.IAuthenticationStrategy
+	auth.IAuthenticationStrategy
 	businesslogic.IAccountRepository
 	businesslogic.IPartnershipRepository
 }

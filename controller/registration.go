@@ -18,12 +18,12 @@ package controller
 
 import (
 	"encoding/json"
+	"github.com/DancesportSoftware/das/auth"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
-	"github.com/DancesportSoftware/das/controller/util/authentication"
 )
 
 // CompetitionRegistrationServer handles requests that create or update competition registrations
@@ -35,7 +35,7 @@ type CompetitionRegistrationServer struct {
 	businesslogic.IPartnershipRepository
 	businesslogic.IEventRepository
 	businesslogic.IPartnershipEventEntryRepository
-	authentication.IAuthenticationStrategy
+	auth.IAuthenticationStrategy
 	Service businesslogic.CompetitionRegistrationService
 }
 

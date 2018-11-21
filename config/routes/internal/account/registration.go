@@ -19,6 +19,7 @@ package account
 import (
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/config/database"
+	"github.com/DancesportSoftware/das/config/routes/middleware"
 	"github.com/DancesportSoftware/das/controller/account"
 	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
@@ -28,6 +29,7 @@ const apiAccountRegistrationEndpoint = "/api/v1.0/account/register"
 const apiAccountAuthenticationEndpoint = "/api/v1.0/account/authenticate"
 
 var accountServer = account.AccountServer{
+	middleware.AuthenticationStrategy,
 	database.AccountRepository,
 	database.AccountRoleRepository,
 	database.OrganizerProvisionRepository,

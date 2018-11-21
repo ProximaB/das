@@ -121,10 +121,10 @@ func (repo PostgresOrganizerProvisionRepository) SearchOrganizerProvision(
 		)
 		selectAccount := repo.SqlBuilder.Select(
 			fmt.Sprintf("%s, %s, %s",
-				common.ColumnUUID,
+				common.ColumnUID,
 				"FIRST_NAME",
 				"LAST_NAME")).From("DAS.ACCOUNT").Where(squirrel.Eq{common.ColumnPrimaryKey: each.ID})
-		selectAccount.RunWith(repo.Database).QueryRow().Scan(&each.Organizer.UUID, &each.Organizer.FirstName, &each.Organizer.LastName)
+		selectAccount.RunWith(repo.Database).QueryRow().Scan(&each.Organizer.UID, &each.Organizer.FirstName, &each.Organizer.LastName)
 		provisions = append(provisions, each)
 	}
 	return provisions, err

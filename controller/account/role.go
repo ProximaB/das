@@ -18,9 +18,9 @@ package account
 
 import (
 	"encoding/json"
+	"github.com/DancesportSoftware/das/auth"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
-	"github.com/DancesportSoftware/das/controller/util/authentication"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"log"
 	"net/http"
@@ -28,11 +28,11 @@ import (
 )
 
 type RoleApplicationServer struct {
-	auth    authentication.IAuthenticationStrategy
+	auth    auth.IAuthenticationStrategy
 	service businesslogic.RoleProvisionService
 }
 
-func NewRoleApplicationServer(authStrat authentication.IAuthenticationStrategy, service businesslogic.RoleProvisionService) RoleApplicationServer {
+func NewRoleApplicationServer(authStrat auth.IAuthenticationStrategy, service businesslogic.RoleProvisionService) RoleApplicationServer {
 	return RoleApplicationServer{
 		auth:    authStrat,
 		service: service,
@@ -174,7 +174,7 @@ func (server RoleApplicationServer) ProvisionRoleApplicationHandler(w http.Respo
 
 // RoleServer handles the role information of user
 type RoleServer struct {
-	Auth        authentication.IAuthenticationStrategy
+	Auth        auth.IAuthenticationStrategy
 	AccountRepo businesslogic.IAccountRepository
 }
 

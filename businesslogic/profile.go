@@ -18,6 +18,7 @@ package businesslogic
 
 import "time"
 
+// AthleteProfile specifies the data that is contained in an AthleteProfile
 type AthleteProfile struct {
 	ID              int
 	AccountID       int

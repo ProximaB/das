@@ -31,11 +31,14 @@ var blacklistRepository = PostgresPartnershipRequestBlacklistRepository{
 }
 
 var blacklist = businesslogic.PartnershipRequestBlacklistEntry{
-	BlockedUserID: 1,
+	BlockedUser: businesslogic.Account{ID: 1},
 }
 
 func TestPostgresPartnershipRequestBlacklistRepository_CreatePartnershipRequestBlacklist(t *testing.T) {
-	db, mock, _ := sqlmock.New()
+	db, mock, err := sqlmock.New()
+	if err != nil {
+		t.Fatalf("an error '%s' was not expected when opening a stub database connection", err)
+	}
 	defer db.Close()
 	blacklistRepository.Database = db
 

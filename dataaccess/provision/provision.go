@@ -67,6 +67,8 @@ func (repo PostgresOrganizerProvisionRepository) CreateOrganizerProvision(provis
 	return err
 }
 
+// UpdateOrganizerProvision update the provision summary of an organizer. It does not update the provision history
+// record of the organizer.
 func (repo PostgresOrganizerProvisionRepository) UpdateOrganizerProvision(provision businesslogic.OrganizerProvision) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresOrganizerProvisionRepository is not specified")
@@ -81,6 +83,7 @@ func (repo PostgresOrganizerProvisionRepository) UpdateOrganizerProvision(provis
 	return err
 }
 
+// SearchOrganizerProvision get the provision information of an organizer user
 func (repo PostgresOrganizerProvisionRepository) SearchOrganizerProvision(
 	criteria businesslogic.SearchOrganizerProvisionCriteria) ([]businesslogic.OrganizerProvision, error) {
 	if repo.Database == nil {
@@ -96,7 +99,10 @@ func (repo PostgresOrganizerProvisionRepository) SearchOrganizerProvision(
 		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
 		common.ColumnDateTimeUpdated)).
-		From(DAS_ORGANIZER_PROVISION).Where(squirrel.Eq{DAS_ORGANIZER_PROVISION_COL_ORGANIZER_ID: criteria.OrganizerID})
+		From(DAS_ORGANIZER_PROVISION)
+	if criteria.OrganizerID > 0. {
+		stmt = stmt.Where(squirrel.Eq{DAS_ORGANIZER_PROVISION_COL_ORGANIZER_ID: criteria.OrganizerID})
+	}
 
 	rows, err := stmt.RunWith(repo.Database).Query()
 
@@ -113,9 +119,14 @@ func (repo PostgresOrganizerProvisionRepository) SearchOrganizerProvision(
 			&each.UpdateUserID,
 			&each.DateTimeUpdated,
 		)
+		selectAccount := repo.SqlBuilder.Select(
+			fmt.Sprintf("%s, %s, %s",
+				common.ColumnUID,
+				"FIRST_NAME",
+				"LAST_NAME")).From("DAS.ACCOUNT").Where(squirrel.Eq{common.ColumnPrimaryKey: each.ID})
+		selectAccount.RunWith(repo.Database).QueryRow().Scan(&each.Organizer.UID, &each.Organizer.FirstName, &each.Organizer.LastName)
 		provisions = append(provisions, each)
 	}
-
 	return provisions, err
 }
 

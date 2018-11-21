@@ -17,20 +17,22 @@
 package viewmodel
 
 import (
+	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"strings"
 	"time"
 )
 
 type Competition struct {
 	ID           int       `json:"id"`
-	Federation   int       `json:"federation"`
+	Federation   int       `json:"federationId"`
 	Name         string    `json:"name"`
 	Website      string    `json:"website"`
-	Status       int       `json:"status"`
-	CountryID    int       `json:"country"`
-	StateID      int       `json:"state"`
-	CityID       int       `json:"city"`
+	Status       int       `json:"statusId"`
+	CountryID    int       `json:"countryId"`
+	StateID      int       `json:"stateId"`
+	CityID       int       `json:"cityId"`
 	Address      string    `json:"address"`
 	StartDate    time.Time `json:"start"`
 	EndDate      time.Time `json:"end"`
@@ -63,21 +65,43 @@ func CompetitionDataModelToViewModel(competition businesslogic.Competition, acco
 	return view
 }
 
+type CompetitionDate struct {
+	time.Time
+}
+
+func (cd *CompetitionDate) UnmarshalJSON(input []byte) error {
+	strInput := string(input)
+	strInput = strings.Trim(strInput, "\"")
+	newTime, err := time.Parse("2006-01-02", strInput)
+	if err != nil {
+		return err
+	}
+	cd.Time = newTime
+	return nil
+}
+func (cd *CompetitionDate) MarshalJSON() ([]byte, error) {
+	if cd.Time.UnixNano() == (time.Time{}).UnixNano() {
+		return []byte("null"), nil
+	}
+	return []byte(fmt.Sprintf("\"%s\"", cd.Time.Format("2006-01-02"))), nil
+}
+
+// CreateCompetition defines the JSON payload for creating a competition
 type CreateCompetition struct {
-	FederationID   int       `json:"federation"`
-	Name           string    `json:"name"`
-	Start          time.Time `json:"start"`
-	End            time.Time `json:"end"`
-	Status         int       `json:"status"`
-	WebsiteUrl     string    `json:"website"`
-	VenueStreet    string    `json:"address"`
-	VenueCityID    int       `json:"city"`
-	VenueStateID   int       `json:"state"`
-	VenueCountryID int       `json:"country"`
-	ContactName    string    `json:"contact"`
-	ContactPhone   string    `json:"phone"`
-	ContactEmail   string    `json:"email"`
-	CreateUserID   string    `json:"createdby,omitempty"`
+	FederationID   int             `json:"federationId"`
+	Name           string          `json:"name"`
+	Start          CompetitionDate `json:"start"`
+	End            CompetitionDate `json:"end"`
+	Status         int             `json:"statusId"`
+	WebsiteUrl     string          `json:"website"`
+	VenueStreet    string          `json:"address"`
+	VenueCityID    int             `json:"cityId"`
+	VenueStateID   int             `json:"stateId"`
+	VenueCountryID int             `json:"countryId"`
+	ContactName    string          `json:"contact"`
+	ContactPhone   string          `json:"phone"`
+	ContactEmail   string          `json:"email"`
+	CreateUserID   string          `json:"createdby,omitempty"`
 }
 
 func (createDTO CreateCompetition) ToCompetitionDataModel(user businesslogic.Account) businesslogic.Competition {
@@ -96,8 +120,8 @@ func (createDTO CreateCompetition) ToCompetitionDataModel(user businesslogic.Acc
 		ContactPhone: createDTO.ContactPhone,
 		ContactEmail: createDTO.ContactEmail,
 
-		StartDateTime: createDTO.Start,
-		EndDateTime:   createDTO.End,
+		StartDateTime: createDTO.Start.Time,
+		EndDateTime:   createDTO.End.Time,
 
 		CreateUserID:    user.ID,
 		DateTimeCreated: time.Now(),

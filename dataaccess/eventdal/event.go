@@ -28,7 +28,7 @@ import (
 
 const (
 	dasEventTable                 = "DAS.EVENT"
-	dasEventColumnEventCategoryID = "EVENT_CATEGORY_ID"
+	dasEventColumnEventCategoryID = "CATEGORY_ID"
 	dasEventColumnEventStatusID   = "EVENT_STATUS_ID"
 )
 
@@ -158,9 +158,8 @@ func (repo PostgresEventRepository) CreateEvent(event *businesslogic.Event) erro
 	if txErr != nil {
 		return txErr
 	}
-	tx.QueryRow(clause, args...).Scan(&event.ID)
-	tx.Commit()
-	return nil
+	err = tx.QueryRow(clause, args...).Scan(&event.ID)
+	return tx.Commit()
 }
 
 // UpdateEvent updates an Event in a Postgres database

@@ -3,6 +3,7 @@
 # To run this script:
 # $ cd $GOPATH/src/github.com/DancesportSoftware/das
 # $ bash update_mock.sh
+# On Windows, run this script in a Linux subsystem, or embedded Bash
 #
 # Dancesport Application System (DAS)
 # Copyright (C) 2018 Yubing Hou

@@ -18,23 +18,19 @@ package database
 
 import (
 	"database/sql"
+	"github.com/DancesportSoftware/das/env"
 	_ "github.com/lib/pq"
 	"log"
-	"os"
 )
-
-const envarDBConnectionString = "POSTGRES_CONNECTION"
-
-var dbConnectionString = os.Getenv(envarDBConnectionString)
 
 func openDatabaseConnection() {
 	// for testing, use default connection
-	if len(dbConnectionString) == 0 {
+	if len(env.DatabaseConnectionString) == 0 {
 		log.Println("[error] cannot find database connection string")
 	}
 
 	var err error
-	PostgresDatabase, err = sql.Open("postgres", dbConnectionString)
+	PostgresDatabase, err = sql.Open("postgres", env.DatabaseConnectionString)
 	if err != nil {
 		log.Printf("[error] cannot establish connection to database: %s\n", err)
 	}
@@ -72,6 +68,7 @@ func init() {
 	AccountRoleRepository.Database = PostgresDatabase
 	GenderRepository.Database = PostgresDatabase
 	UserPreferenceRepository.Database = PostgresDatabase
+	RoleApplicationRepository.Database = PostgresDatabase
 
 	// Partnership request blacklist
 	PartnershipRequestBlacklistRepository.Database = PostgresDatabase
@@ -96,6 +93,7 @@ func init() {
 	// event
 	EventRepository.Database = PostgresDatabase
 	EventMetaRepository.Database = PostgresDatabase
+	EventDanceRepository.Database = PostgresDatabase
 
 	// competition entry
 	AthleteCompetitionEntryRepository.Database = PostgresDatabase

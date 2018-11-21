@@ -19,6 +19,7 @@ package businesslogic
 import (
 	"errors"
 	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"log"
 	"sort"
 	"time"
 )
@@ -45,6 +46,7 @@ type SearchEventCriteria struct {
 	ProficiencyID int `schema:"proficiency"`
 	StyleID       int `schema:"style"`
 	StatusID      int `schema:"status"`
+	OrganizerID   int `schema:"organizerID"`
 }
 
 // Event contains data that are used for a generic competitive ballroom event, though it can be used for
@@ -154,6 +156,75 @@ func (event Event) EquivalentTo(other Event) bool {
 func GetEventByID(id int, repo IEventRepository) (Event, error) {
 	results, err := repo.SearchEvent(SearchEventCriteria{EventID: id})
 	return results[0], err
+}
+
+// OrganizerEventService provides a layer of abstraction of services used by organizers to manage events of competitions
+type OrganizerEventService struct {
+	accountRepo     IAccountRepository
+	roleRepo        IAccountRoleRepository
+	competitionRepo ICompetitionRepository
+	eventRepo       IEventRepository
+	eventDanceRepo  IEventDanceRepository
+}
+
+func NewOrganizerEventService(accountRepo IAccountRepository, roleRepo IAccountRoleRepository,
+	compRepo ICompetitionRepository, eventRepo IEventRepository, eventDanceRepo IEventDanceRepository) OrganizerEventService {
+	return OrganizerEventService{accountRepo, roleRepo, compRepo, eventRepo, eventDanceRepo}
+}
+
+func (service OrganizerEventService) CreateEvent(event *Event) error {
+	competition, _ := GetCompetitionByID(event.CompetitionID, service.competitionRepo)
+
+	// check if competition is still at the right status
+	if competition.GetStatus() != CompetitionStatusPreRegistration {
+		return errors.New("events can only be added when competition is in pre-registration")
+	} else if competition.CreateUserID != event.CreateUserID {
+		return errors.New("not authorized to create event for this competition")
+	}
+
+	// check if specified events were created
+	similarEvents, _ := service.eventRepo.SearchEvent(SearchEventCriteria{
+		CompetitionID: event.CompetitionID,
+		CategoryID:    event.CategoryID,
+		FederationID:  event.FederationID,
+		DivisionID:    event.DivisionID,
+		AgeID:         event.AgeID,
+		ProficiencyID: event.ProficiencyID,
+		StyleID:       event.StyleID,
+	})
+
+	// for each similar event, check if they share dances
+	for _, eachEvent := range similarEvents {
+		for _, eachDance := range event.GetDances() {
+			if eachEvent.HasDance(eachDance) {
+				return errors.New("specified dance is already in this event")
+			}
+		}
+	}
+
+	// if no errors, create the event
+	// step 1: create an event
+	createEventErr := service.eventRepo.CreateEvent(event)
+	if createEventErr != nil {
+		return createEventErr
+	}
+	if event.ID == 0 {
+		log.Printf("[error] creating event %v returned with ID of 0", *event)
+		return errors.New("event could not be created")
+	}
+
+	// step 2: create all the eventDances. requires primary key returned from the previous step
+	for _, each := range event.GetDances() {
+		eventDance := NewEventDance(*event, each)
+		if createDancesErr := service.eventDanceRepo.CreateEventDance(eventDance); createDancesErr != nil {
+			return createDancesErr
+		}
+	}
+	return nil
+}
+
+func (service OrganizerEventService) SearchEvents(criteria SearchEventCriteria) ([]Event, error) {
+	return service.eventRepo.SearchEvent(criteria)
 }
 
 // CreateEvent will check if event is valid, and create the in the provided IEventRepository. If competition

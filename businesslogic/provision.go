@@ -22,21 +22,30 @@ import (
 )
 
 const (
+	// RoleApplicationStatusApproved marks the role application as "approved"
 	RoleApplicationStatusApproved = 1
-	RoleApplicationStatusDenied   = 2
-	RoleApplicationStatusPending  = 3
+	// RoleApplicationStatusDenied marks the role application as "denied"
+	RoleApplicationStatusDenied = 2
+	// RoleApplicationStatusPending marks the role application as "pending"
+	RoleApplicationStatusPending = 3
 )
 
+// SearchRoleApplicationCriteria specifies the search criteria for role application
 type SearchRoleApplicationCriteria struct {
+	ID             int
 	AccountID      int
 	AppliedRoleID  int
 	StatusID       int
 	ApprovalUserID int
+	Responded      bool
 }
 
+// RoleApplication is an application for restricted roles, including adjudicator, scrutineer, and organizer.
+// Non-restrictive roles such as emcee and deck captain can be approved by competition organizers
 type RoleApplication struct {
 	ID               int
 	AccountID        int
+	Account          Account
 	AppliedRoleID    int
 	Description      string
 	StatusID         int
@@ -48,18 +57,21 @@ type RoleApplication struct {
 	DateTimeUpdated  time.Time
 }
 
+// IRoleApplicationRepository specifies the interface that a Role Application Repository should implement
 type IRoleApplicationRepository interface {
 	CreateApplication(application *RoleApplication) error
 	SearchApplication(criteria SearchRoleApplicationCriteria) ([]RoleApplication, error)
 	UpdateApplication(application RoleApplication) error
 }
 
+// RoleProvisionService is a service that handles Role Application and provision
 type RoleProvisionService struct {
 	accountRepo         IAccountRepository
 	roleApplicationRepo IRoleApplicationRepository
 	roleRepo            IAccountRoleRepository
 }
 
+// NewRoleProvisionService create a service that serves Role Provision
 func NewRoleProvisionService(accountRepo IAccountRepository, roleApplicationRepo IRoleApplicationRepository, roleRepo IAccountRoleRepository) *RoleProvisionService {
 	service := RoleProvisionService{
 		accountRepo:         accountRepo,
@@ -131,7 +143,7 @@ func (service RoleProvisionService) UpdateApplication(currentUser Account, appli
 		return errors.New("invalid response to role application")
 	}
 	// check if application is pending
-	if application.StatusID != RoleApplicationStatusPending {
+	if application.StatusID == RoleApplicationStatusApproved || application.StatusID == RoleApplicationStatusDenied {
 		return errors.New("role application is already responded")
 	}
 	// Only an Admin or Organizer user ca update user's role application
@@ -171,10 +183,17 @@ func (service RoleProvisionService) UpdateApplication(currentUser Account, appli
 	return service.respondRoleApplication(currentUser, application, action)
 }
 
-// OrganizerProvision
+// SearchRoleApplication searches the available role application based on current user's privilege
+// TODO: this is not working correctly!
+func (service RoleProvisionService) SearchRoleApplication(currentUser Account, criteria SearchRoleApplicationCriteria) ([]RoleApplication, error) {
+	return service.roleApplicationRepo.SearchApplication(criteria)
+}
+
+// OrganizerProvision provision organizer competition slots for creating and hosting competitions
 type OrganizerProvision struct {
 	ID              int
 	OrganizerID     int
+	Organizer       Account
 	Available       int
 	Hosted          int
 	CreateUserID    int
@@ -189,6 +208,7 @@ type SearchOrganizerProvisionCriteria struct {
 	OrganizerID int `schema:"organizer"`
 }
 
+// IOrganizerProvisionRepository specifies the interface that a repository should implement for Organizer Provision
 type IOrganizerProvisionRepository interface {
 	CreateOrganizerProvision(provision *OrganizerProvision) error
 	UpdateOrganizerProvision(provision OrganizerProvision) error

@@ -1,12 +1,10 @@
 # This program provides specification for Travis CI and may is not part of DAS
 language: go
 sudo: required
-services:
-  - docker
 go:
   - master
 before_install:
-  - go get -t -v ./...
+  - go get -d -u ./...
 script:
   - go vet
   - sh go.test.sh

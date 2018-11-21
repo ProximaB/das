@@ -57,7 +57,7 @@ type PartnershipRequestResponse struct {
 type CreatePartnershipRequest struct {
 	SenderID       int    `json:"sender"`
 	RecipientEmail string `json:"recipient"`
-	RecipientRole  string `json:"role"`
+	RecipientRole  int    `json:"roleId"`
 	Message        string `json:"message"`
 }
 
@@ -66,7 +66,7 @@ type PartnershipRequest struct {
 	Sender          string    `json:"sender"`
 	Recipient       string    `json:"recipient"`
 	Message         string    `json:"message"`
-	Status          int       `json:"status"`
+	Status          int       `json:"statusId"`
 	Role            string    `json:"role"`
 	DateTimeCreated time.Time `json:"sent"`
 }

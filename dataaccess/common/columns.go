@@ -21,7 +21,7 @@ const (
 	COL_NAME              = "NAME"
 	ColumnAccountID       = "ACCOUNT_ID"
 	ColumnAccountTypeID   = "ACCOUNT_TYPE_ID"
-	ColumnUUID            = "UUID"
+	ColumnUID             = "UID"
 	ColumnAbbreviation    = "ABBREVIATION"
 	COL_DESCRIPTION       = "DESCRIPTION"
 	COL_NOTE              = "NOTE"
@@ -46,7 +46,11 @@ const (
 	COL_STYLE_ID       = "STYLE_ID"
 	COL_DANCE_ID       = "DANCE_ID"
 
+	COL_ATHLETE_ID     = "ATHLETE_ID"
 	COL_PARTNERSHIP_ID = "PARTNERSHIP_ID"
+	COL_ADJUDICATOR_ID = "ADJUDICATOR_ID"
+	COL_SCRUTINEER_ID  = "SCRUTINEER_ID"
+	COL_ORGANIZER_ID   = "ORGANIZER_ID"
 
 	COL_DATETIME_STARTED = "DATETIME_STARTED"
 	COL_DATETIME_ENDED   = "DATETIME_ENDED"

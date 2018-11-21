@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"errors"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
 	"log"
@@ -9,9 +8,6 @@ import (
 )
 
 func getRequestUserRole(r *http.Request) ([]int, error) {
-	if &AuthenticationStrategy.IAccountRepository == nil {
-		return nil, errors.New("authentication strategy is not specified")
-	}
 	account, err := AuthenticationStrategy.GetCurrentUser(r)
 	if err != nil {
 		return nil, err
@@ -30,12 +26,15 @@ func allowUnauthorizedRequest(roles []int) bool {
 	return allowNoAuth
 }
 
+// AuthorizeMultipleRoles checks if the user's token contains the role that the handler requires. If not, the handler
+// function will not be executed
 func AuthorizeMultipleRoles(h http.HandlerFunc, roles []int) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		allowNoAuth := allowUnauthorizedRequest(roles)
 
 		userRoles, authErr := getRequestUserRole(r)
 		if authErr != nil && !allowNoAuth {
+			log.Printf("[error] authentication error occurred when the %s requires a role: %v", r.RequestURI, roles)
 			util.RespondJsonResult(w, http.StatusUnauthorized, authErr.Error(), nil)
 			return
 		}

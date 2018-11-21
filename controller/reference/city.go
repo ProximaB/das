@@ -21,8 +21,6 @@ import (
 	"github.com/DancesportSoftware/das/businesslogic/reference"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/viewmodel"
-	"google.golang.org/appengine"
-	"google.golang.org/appengine/log"
 	"net/http"
 )
 
@@ -48,7 +46,6 @@ func (server CityServer) CreateCityHandler(w http.ResponseWriter, r *http.Reques
 
 // DELETE /api/reference/city
 func (server CityServer) DeleteCityHandler(w http.ResponseWriter, r *http.Request) {
-	ctx := appengine.NewContext(r)
 	deleteDTO := new(viewmodel.DeleteCity)
 	err := util.ParseRequestBodyData(r, deleteDTO)
 	if err != nil {
@@ -64,7 +61,6 @@ func (server CityServer) DeleteCityHandler(w http.ResponseWriter, r *http.Reques
 		return
 	} else {
 		if deleteErr := server.ICityRepository.DeleteCity(cities[0]); deleteErr != nil {
-			log.Errorf(ctx, "error in deleting city {ID: %d Name: %s}: %v", cities[0].ID, cities[0].Name, deleteErr.Error())
 			util.RespondJsonResult(w, http.StatusInternalServerError, "cannot delete specified city", nil)
 			return
 		}

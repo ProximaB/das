@@ -34,7 +34,7 @@ func TestAccount_GetBlacklistedAccounts(t *testing.T) {
 	blacklistRepo := mock_businesslogic.NewMockIPartnershipRequestBlacklistRepository(mockCtrl)
 
 	blacklistRepo.EXPECT().SearchPartnershipRequestBlacklist(businesslogic.SearchPartnershipRequestBlacklistCriteria{ReporterID: 17, Whitelisted: false}).Return([]businesslogic.PartnershipRequestBlacklistEntry{
-		{ID: 21, BlockedUserID: 33, ReporterID: 17},
+		{ID: 21, BlockedUser: businesslogic.Account{ID: 33}, Reporter: businesslogic.Account{ID: 17}},
 	}, nil)
 	accountRepo.EXPECT().SearchAccount(businesslogic.SearchAccountCriteria{ID: 33}).Return([]businesslogic.Account{
 		{ID: 33, FirstName: "Sharp", LastName: "Shark"},

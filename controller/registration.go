@@ -18,11 +18,12 @@ package controller
 
 import (
 	"encoding/json"
+	"github.com/DancesportSoftware/das/auth"
+	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
-	"github.com/DancesportSoftware/das/controller/util/authentication"
 )
 
 // CompetitionRegistrationServer handles requests that create or update competition registrations
@@ -34,32 +35,26 @@ type CompetitionRegistrationServer struct {
 	businesslogic.IPartnershipRepository
 	businesslogic.IEventRepository
 	businesslogic.IPartnershipEventEntryRepository
-	authentication.IAuthenticationStrategy
+	auth.IAuthenticationStrategy
+	Service businesslogic.CompetitionRegistrationService
 }
 
 // CreateAthleteRegistrationHandler handles the request
-//	POST /api/competition/registration
+//	POST /api/v1.0/competition/registration
 // This DasController is for athlete use only. Organizer will have to use a different DasController
 func (server CompetitionRegistrationServer) CreateAthleteRegistrationHandler(w http.ResponseWriter, r *http.Request) {
 	// validate identity first
 	account, _ := server.GetCurrentUser(r)
 
-	registrationDTO := new(businesslogic.EventRegistration)
+	registrationDTO := new(viewmodel.SubmitCompetitionRegistrationForm)
 	if parseErr := util.ParseRequestBodyData(r, registrationDTO); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
 		return
 	}
 
-	registrationService := businesslogic.CompetitionRegistrationService{
-		server.IAccountRepository,
-		server.IPartnershipRepository,
-		server.ICompetitionRepository,
-		server.IEventRepository,
-		server.IAthleteCompetitionEntryRepository,
-		server.IPartnershipCompetitionEntryRepository,
-		server.IPartnershipEventEntryRepository,
-	}
-	validationErr := registrationService.ValidateEventRegistration(account, *registrationDTO)
+	form := registrationDTO.EventRegistration()
+
+	validationErr := server.Service.ValidateEventRegistration(account, form)
 
 	// if registration is not valid, return error
 	if validationErr != nil {
@@ -67,10 +62,10 @@ func (server CompetitionRegistrationServer) CreateAthleteRegistrationHandler(w h
 		return
 	}
 
-	registrationService.CreateAthleteCompetitionEntry(account, *registrationDTO)
+	server.Service.CreateAthleteCompetitionEntry(account, form)
 
-	createEntryErr := registrationService.CreatePartnershipEventEntries(account, *registrationDTO)
-	dropEventErr := registrationService.DropPartnershipEventEntries(account, *registrationDTO)
+	createEntryErr := server.Service.CreatePartnershipEventEntries(account, form)
+	dropEventErr := server.Service.DropPartnershipEventEntries(account, form)
 
 	if createEntryErr != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, "error in creating event entry", createEntryErr.Error())

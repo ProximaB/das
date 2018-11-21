@@ -18,16 +18,16 @@ package organizer
 
 import (
 	"encoding/json"
+	"github.com/DancesportSoftware/das/auth"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
-	"github.com/DancesportSoftware/das/controller/util/authentication"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 	"time"
 )
 
 type OrganizerProvisionServer struct {
-	authentication.IAuthenticationStrategy
+	auth.IAuthenticationStrategy
 	businesslogic.IAccountRepository
 	businesslogic.IOrganizerProvisionRepository
 }
@@ -43,7 +43,7 @@ func (server OrganizerProvisionServer) GetOrganizerProvisionSummaryHandler(w htt
 
 	summaries, _ := server.SearchOrganizerProvision(businesslogic.SearchOrganizerProvisionCriteria{OrganizerID: account.ID})
 	view := viewmodel.OrganizerProvisionSummary{
-		OrganizerID: summaries[0].OrganizerID,
+		OrganizerID: summaries[0].Organizer.UID,
 		Available:   summaries[0].Available,
 		Hosted:      summaries[0].Hosted,
 	}
@@ -59,7 +59,7 @@ type OrganizerProvisionHistoryEntryViewModel struct {
 }
 
 type OrganizerProvisionHistoryServer struct {
-	authentication.IAuthenticationStrategy
+	auth.IAuthenticationStrategy
 	businesslogic.IAccountRepository
 	businesslogic.IOrganizerProvisionHistoryRepository
 }

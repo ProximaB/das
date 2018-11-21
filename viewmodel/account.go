@@ -17,7 +17,6 @@
 package viewmodel
 
 import (
-	"errors"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/businesslogic/reference"
 )
@@ -34,33 +33,17 @@ func AccountTypeDataModelToViewModel(dm businesslogic.AccountType) AccountType {
 	}
 }
 
-type CreateAccount struct {
+// CreateAccountDTO is the JSON payload for request POST /api/v1.0/account/register
+type CreateAccountDTO struct {
 	Email       string `json:"email"`
 	Phone       string `json:"phone"`
 	FirstName   string `json:"firstname"`
 	LastName    string `json:"lastname"`
-	Password    string `json:"password"`
 	ToSAccepted bool   `json:"tosaccepted"`
 	PPAccepted  bool   `json:"ppaccepted"`
 }
 
-func (dto CreateAccount) Validate() error {
-	if len(dto.FirstName) < 2 || len(dto.LastName) < 2 {
-		return errors.New("name is too short")
-	}
-	if len(dto.FirstName) > 18 || len(dto.LastName) > 18 {
-		return errors.New("name is too long")
-	}
-	if len(dto.Email) < 5 {
-		return errors.New("invalid email address")
-	}
-	if len(dto.Phone) < 3 {
-		return errors.New("invalid phone number")
-	}
-	return nil
-}
-
-func (dto CreateAccount) ToAccountModel() businesslogic.Account {
+func (dto CreateAccountDTO) ToAccountModel() businesslogic.Account {
 	account := businesslogic.Account{
 		FirstName:             dto.FirstName,
 		LastName:              dto.LastName,
@@ -71,9 +54,4 @@ func (dto CreateAccount) ToAccountModel() businesslogic.Account {
 		PrivacyPolicyAccepted: true,
 	}
 	return account
-}
-
-type Login struct {
-	Email    string `json:"username"`
-	Password string `json:"password"`
 }

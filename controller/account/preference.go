@@ -18,16 +18,16 @@ package account
 
 import (
 	"encoding/json"
+	"github.com/DancesportSoftware/das/auth"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
-	"github.com/DancesportSoftware/das/controller/util/authentication"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 )
 
 // UserPreferenceServer provides a virtual server that handles requests that are related to User Preference
 type UserPreferenceServer struct {
-	authentication.IAuthenticationStrategy
+	auth.IAuthenticationStrategy
 	businesslogic.IAccountRepository
 	businesslogic.IUserPreferenceRepository
 }

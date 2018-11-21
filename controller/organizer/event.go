@@ -5,9 +5,9 @@ package organizer
 
 import (
 	"encoding/json"
+	"github.com/DancesportSoftware/das/auth"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
-	"github.com/DancesportSoftware/das/controller/util/authentication"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"log"
 	"net/http"
@@ -15,7 +15,7 @@ import (
 
 // OrganizerEventServer serves requests regarding to event management
 type OrganizerEventServer struct {
-	Authentication authentication.IAuthenticationStrategy
+	Authentication auth.IAuthenticationStrategy
 	Service        businesslogic.OrganizerEventService
 }
 

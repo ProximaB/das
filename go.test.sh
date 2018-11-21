@@ -11,6 +11,11 @@
 # Then copy the content from go.test2.sh to go.test.sh, and remove go.test2.sh
 # This solution was from Stackoverflow:
 # https://stackoverflow.com/questions/5491634/shell-script-error-expecting-do
+
+# setup environment variable
+export POSTGRES_CONNECTION="host\=127.0.0.1 user\=dasdev password\=dAs\!@#\$1234 dbname\=das sslmode\=disable"
+export FIREBASE_SERVICE_ACCOUNT_KEY="$GOPATH/src/github.com/DancesportSoftware/das/secret/firebase-auth-dev-02.json"
+
 set -e
 echo "" > coverage.txt
 #

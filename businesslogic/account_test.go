@@ -128,49 +128,6 @@ func TestGetAccountByUUID(t *testing.T) {
 	assert.Equal(t, "newuser@email.com", result.Email)
 }
 
-func TestCreateAccountStrategy_CreateAccount(t *testing.T) {
-	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
-
-	mockedAccountRepo := mock_businesslogic.NewMockIAccountRepository(mockCtrl)
-	mockedAccountRepo.EXPECT().SearchAccount(businesslogic.SearchAccountCriteria{
-		Email: "test@test.com",
-	}).Return([]businesslogic.Account{}, errors.New("account does not exist"))
-	mockedAccountRepo.EXPECT().CreateAccount(gomock.Any()).Return(nil)
-
-	strategy := businesslogic.CreateAccountStrategy{
-		AccountRepo: mockedAccountRepo,
-	}
-
-	err := strategy.CreateAccount(testAthleteAccount, "testpassword")
-	assert.Nil(t, err, "should not throw an error when creating account of non-organizer")
-}
-
-func TestCreateOrganizerAccountStrategy_CreateAccount(t *testing.T) {
-	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
-
-	mockedAccountRepo := mock_businesslogic.NewMockIAccountRepository(mockCtrl)
-	mockedProvisionRepo := mock_businesslogic.NewMockIOrganizerProvisionRepository(mockCtrl)
-	mockedHistoryRepo := mock_businesslogic.NewMockIOrganizerProvisionHistoryRepository(mockCtrl)
-
-	mockedAccountRepo.EXPECT().SearchAccount(businesslogic.SearchAccountCriteria{
-		Email: "mighty.meerkat@email.com",
-	}).Return([]businesslogic.Account{}, errors.New("account does not exist"))
-	mockedAccountRepo.EXPECT().CreateAccount(gomock.Any()).Return(nil)
-	mockedProvisionRepo.EXPECT().CreateOrganizerProvision(gomock.Any()).Return(nil)
-	mockedHistoryRepo.EXPECT().CreateOrganizerProvisionHistory(gomock.Any()).Return(nil)
-
-	strategy := businesslogic.CreateOrganizerAccountStrategy{
-		AccountRepo:   mockedAccountRepo,
-		ProvisionRepo: mockedProvisionRepo,
-		HistoryRepo:   mockedHistoryRepo,
-	}
-
-	err := strategy.CreateAccount(testOrganizerAccount, "testpassword")
-	assert.Nil(t, err, "should create organizer account with CreateOrganizerAccountStrategy")
-}
-
 func TestAccount_GetRoles(t *testing.T) {
 	rolesOfUserAccount := []businesslogic.AccountRole{
 		{ID: 1, AccountID: 1, AccountTypeID: businesslogic.AccountTypeOrganizer},

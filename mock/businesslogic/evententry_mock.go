@@ -81,3 +81,75 @@ func (m *MockIPartnershipEventEntryRepository) UpdatePartnershipEventEntry(entry
 func (mr *MockIPartnershipEventEntryRepositoryMockRecorder) UpdatePartnershipEventEntry(entry interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePartnershipEventEntry", reflect.TypeOf((*MockIPartnershipEventEntryRepository)(nil).UpdatePartnershipEventEntry), entry)
 }
+
+// MockIAdjudicatorEventEntryRepository is a mock of IAdjudicatorEventEntryRepository interface
+type MockIAdjudicatorEventEntryRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockIAdjudicatorEventEntryRepositoryMockRecorder
+}
+
+// MockIAdjudicatorEventEntryRepositoryMockRecorder is the mock recorder for MockIAdjudicatorEventEntryRepository
+type MockIAdjudicatorEventEntryRepositoryMockRecorder struct {
+	mock *MockIAdjudicatorEventEntryRepository
+}
+
+// NewMockIAdjudicatorEventEntryRepository creates a new mock instance
+func NewMockIAdjudicatorEventEntryRepository(ctrl *gomock.Controller) *MockIAdjudicatorEventEntryRepository {
+	mock := &MockIAdjudicatorEventEntryRepository{ctrl: ctrl}
+	mock.recorder = &MockIAdjudicatorEventEntryRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockIAdjudicatorEventEntryRepository) EXPECT() *MockIAdjudicatorEventEntryRepositoryMockRecorder {
+	return m.recorder
+}
+
+// CreateEventEntry mocks base method
+func (m *MockIAdjudicatorEventEntryRepository) CreateEventEntry(entry *businesslogic.AdjudicatorEventEntry) error {
+	ret := m.ctrl.Call(m, "CreateEventEntry", entry)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateEventEntry indicates an expected call of CreateEventEntry
+func (mr *MockIAdjudicatorEventEntryRepositoryMockRecorder) CreateEventEntry(entry interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateEventEntry", reflect.TypeOf((*MockIAdjudicatorEventEntryRepository)(nil).CreateEventEntry), entry)
+}
+
+// DeleteEventEntry mocks base method
+func (m *MockIAdjudicatorEventEntryRepository) DeleteEventEntry(entry businesslogic.AdjudicatorEventEntry) error {
+	ret := m.ctrl.Call(m, "DeleteEventEntry", entry)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteEventEntry indicates an expected call of DeleteEventEntry
+func (mr *MockIAdjudicatorEventEntryRepositoryMockRecorder) DeleteEventEntry(entry interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteEventEntry", reflect.TypeOf((*MockIAdjudicatorEventEntryRepository)(nil).DeleteEventEntry), entry)
+}
+
+// SearchEventEntry mocks base method
+func (m *MockIAdjudicatorEventEntryRepository) SearchEventEntry(criteria businesslogic.SearchAdjudicatorEventEntryCriteria) ([]businesslogic.AdjudicatorEventEntry, error) {
+	ret := m.ctrl.Call(m, "SearchEventEntry", criteria)
+	ret0, _ := ret[0].([]businesslogic.AdjudicatorEventEntry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SearchEventEntry indicates an expected call of SearchEventEntry
+func (mr *MockIAdjudicatorEventEntryRepositoryMockRecorder) SearchEventEntry(criteria interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchEventEntry", reflect.TypeOf((*MockIAdjudicatorEventEntryRepository)(nil).SearchEventEntry), criteria)
+}
+
+// UpdateEventEntry mocks base method
+func (m *MockIAdjudicatorEventEntryRepository) UpdateEventEntry(entry businesslogic.AdjudicatorEventEntry) error {
+	ret := m.ctrl.Call(m, "UpdateEventEntry", entry)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateEventEntry indicates an expected call of UpdateEventEntry
+func (mr *MockIAdjudicatorEventEntryRepositoryMockRecorder) UpdateEventEntry(entry interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateEventEntry", reflect.TypeOf((*MockIAdjudicatorEventEntryRepository)(nil).UpdateEventEntry), entry)
+}

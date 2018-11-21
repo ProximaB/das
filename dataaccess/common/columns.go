@@ -21,7 +21,7 @@ const (
 	COL_NAME              = "NAME"
 	ColumnAccountID       = "ACCOUNT_ID"
 	ColumnAccountTypeID   = "ACCOUNT_TYPE_ID"
-	ColumnUUID            = "UUID"
+	ColumnUID             = "UID"
 	ColumnAbbreviation    = "ABBREVIATION"
 	COL_DESCRIPTION       = "DESCRIPTION"
 	COL_NOTE              = "NOTE"

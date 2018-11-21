@@ -38,7 +38,7 @@ type OrganizerProvisionSummary struct {
 }
 
 func (summary *OrganizerProvisionSummary) Summarize(provision businesslogic.OrganizerProvision) {
-	summary.OrganizerID = provision.Organizer.UUID
+	summary.OrganizerID = provision.Organizer.UID
 	summary.Available = provision.Available
 	summary.Name = provision.Organizer.FullName()
 	summary.Hosted = provision.Hosted

@@ -69,7 +69,6 @@ type CompetitionRegistrationService struct {
 	AthleteCompetitionEntryRepo     IAthleteCompetitionEntryRepository
 	PartnershipCompetitionEntryRepo IPartnershipCompetitionEntryRepository
 	PartnershipEventEntryRepo       IPartnershipEventEntryRepository
-	AdjudicatorEventEntryRepo       IAdjudicatorEventEntryRepository
 }
 
 // ValidateEventRegistration validates if the registration data is valid. This does not create the registration

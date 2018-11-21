@@ -1,7 +1,6 @@
 package middleware
 
 import (
-	"errors"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
 	"log"
@@ -9,9 +8,6 @@ import (
 )
 
 func getRequestUserRole(r *http.Request) ([]int, error) {
-	if &AuthenticationStrategy.IAccountRepository == nil {
-		return nil, errors.New("authentication strategy is not specified")
-	}
 	account, err := AuthenticationStrategy.GetCurrentUser(r)
 	if err != nil {
 		return nil, err

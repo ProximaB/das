@@ -51,8 +51,17 @@ func (server AccountServer) RegisterAccountHandler(w http.ResponseWriter, r *htt
 		return
 	}
 
-	if err := server.IAuthenticationStrategy.CreateUser(currentUser); err != nil {
-		util.RespondJsonResult(w, http.StatusInternalServerError, err.Error(), nil)
+	if err := server.IAuthenticationStrategy.CreateUser(&currentUser); err != nil {
+		log.Printf("[error] creating user in DAS: %v", err)
+		util.RespondJsonResult(w, http.StatusInternalServerError, "Error in creating user profile", nil)
+		return
+	}
+	// provision user with default role here
+	defaultRole := businesslogic.NewAccountRole(currentUser, businesslogic.AccountTypeAthlete)
+	createRoleErr := server.IAccountRoleRepository.CreateAccountRole(&defaultRole)
+	if createRoleErr != nil {
+		log.Printf("[error] creating user default role: %v", createRoleErr)
+		util.RespondJsonResult(w, http.StatusInternalServerError, "Error in creating user's role", nil)
 		return
 	}
 	util.RespondJsonResult(w, http.StatusOK, "User is registered in DAS successfully", nil)

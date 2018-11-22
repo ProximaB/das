@@ -138,11 +138,12 @@ func (strategy FirebaseAuthenticationStrategy) GetCurrentUser(r *http.Request) (
 
 // Createuser assume that UID is provided, which will be used to retrieve account from Firebase. This will create a user
 // in DAS instead of Firebase
-func (strategy FirebaseAuthenticationStrategy) CreateUser(account businesslogic.Account) error {
-	user, err := strategy.GetUserByUID(account.UID)
+func (strategy FirebaseAuthenticationStrategy) CreateUser(account *businesslogic.Account) error {
+	var err error
+	*account, err = strategy.GetUserByUID(account.UID)
 	if err != nil {
 		log.Printf("[error] cannot get user with UID %v: %v", account.UID, err)
 		return errors.New("Failed to create user in DAS")
 	}
-	return strategy.accountRepository.CreateAccount(&user)
+	return strategy.accountRepository.CreateAccount(account)
 }

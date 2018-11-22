@@ -32,6 +32,17 @@ type AccountRole struct {
 	DateTimeUpdated time.Time
 }
 
+func NewAccountRole(user Account, accountType int) AccountRole {
+	return AccountRole{
+		AccountID:       user.ID,
+		AccountTypeID:   accountType,
+		CreateUserID:    user.ID,
+		DateTimeCreated: time.Now(),
+		UpdateUserID:    user.ID,
+		DateTimeUpdated: time.Now(),
+	}
+}
+
 // SearchAccountRoleCriteria specifies the parameters that can be used to search Account Roles in a repository
 type SearchAccountRoleCriteria struct {
 	AccountID     int

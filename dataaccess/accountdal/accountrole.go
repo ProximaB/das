@@ -24,6 +24,7 @@ import (
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
+	"log"
 )
 
 const dasAccountRoleTable = "DAS.ACCOUNT_ROLE"
@@ -55,15 +56,32 @@ func (repo PostgresAccountRoleRepository) CreateAccountRole(role *businesslogic.
 		role.DateTimeUpdated,
 	).Suffix(dalutil.SQLSuffixReturningID)
 
+	hasErr := false
 	clause, args, err := stmt.ToSql()
+	if err != nil {
+		hasErr = true
+		log.Printf("[error] creating account role: %v", err)
+	}
 	tx, txErr := repo.Database.Begin()
 	if txErr != nil {
 		return txErr
 	}
 	row := repo.Database.QueryRow(clause, args...)
-	row.Scan(&role.ID)
-	tx.Commit()
-	return err
+
+	if commitErr := tx.Commit(); commitErr != nil {
+		log.Printf("[error] failed to commit transaction: %v", commitErr)
+		hasErr = true
+	}
+
+	scanErr := row.Scan(&role.ID)
+	if scanErr != nil {
+		log.Printf("[error] failed to return ID of new record: %v", scanErr)
+		hasErr = true
+	}
+	if hasErr {
+		return errors.New("An error occurred while creating account role")
+	}
+	return nil
 }
 
 func (repo PostgresAccountRoleRepository) SearchAccountRole(criteria businesslogic.SearchAccountRoleCriteria) ([]businesslogic.AccountRole, error) {

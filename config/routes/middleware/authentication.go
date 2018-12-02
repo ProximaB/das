@@ -22,6 +22,4 @@ import (
 	"github.com/DancesportSoftware/das/env"
 )
 
-var AuthenticationStrategy = firebase.NewFirebaseAuthenticationStrategy(
-	env.FirebaseServiceAccountKey,
-	database.AccountRepository)
+var AuthenticationStrategy = firebase.NewFirebaseAuthenticationStrategy(env.FirebaseAuthCredential, database.AccountRepository)

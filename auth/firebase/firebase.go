@@ -68,8 +68,8 @@ func (strategy FirebaseAuthenticationStrategy) convertFirebaseUserToDasUser(user
 
 // NewFirebaseAuthenticationStrategy takes the credential (service account key) file and a handler to DAS account repository
 // and instantiate an IAuthenticationStrategy that serves as the identity provider of DAS
-func NewFirebaseAuthenticationStrategy(firebaseKeyFile string, accountRepo businesslogic.IAccountRepository) FirebaseAuthenticationStrategy {
-	opt := option.WithCredentialsFile(firebaseKeyFile)
+func NewFirebaseAuthenticationStrategy(credential string, accountRepo businesslogic.IAccountRepository) FirebaseAuthenticationStrategy {
+	opt := option.WithCredentialsJSON([]byte(credential))
 	ctx := context.Background()
 	app, err := firebase.NewApp(ctx, nil, opt)
 	if err != nil {

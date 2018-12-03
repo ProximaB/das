@@ -120,9 +120,15 @@ func (repo PostgresAccountRepository) CreateAccount(account *businesslogic.Accou
 		hasError = true
 	}
 
+	if account.ID == 0 {
+		log.Printf("[error] failed to update account ID after creating account")
+		hasError = true
+	}
+
 	if hasError {
 		return errors.New("An error occurred while creating user record")
 	}
+
 	return nil
 }
 

@@ -7,5 +7,5 @@ import (
 
 type IAuthenticationStrategy interface {
 	GetCurrentUser(r *http.Request) (businesslogic.Account, error)
-	CreateUser(account businesslogic.Account) error
+	CreateUser(account *businesslogic.Account) error
 }

@@ -1,11 +1,11 @@
 package env
 
 const (
-	VarDatabaseConnectionString  = "POSTGRES_CONNECTION"
-	VarFirebaseServiceAccountKey = "FIREBASE_SERVICE_ACCOUNT_KEY"
-	VarFirebaseProjectId         = "FIREBASE_PROJECT_ID"
-	VarHMACSigningKey            = "HMAC_SIGNING_KEY"
-	VarHMACValidHours            = "HMAC_VALID_HOURS"
+	VarDatabaseConnectionString = "POSTGRES_CONNECTION"
+	VarFirebaseAuthCredential   = "FIREBASE_AUTH_CREDENTIAL"
+	VarFirebaseProjectId        = "FIREBASE_PROJECT_ID"
+	VarHMACSigningKey           = "HMAC_SIGNING_KEY"
+	VarHMACValidHours           = "HMAC_VALID_HOURS"
 )
 
 const (
@@ -15,8 +15,8 @@ const (
 )
 
 var (
-	DatabaseConnectionString  string
-	FirebaseServiceAccountKey string
-	HmacSigningKey            string
-	HmacValidHours            int
+	DatabaseConnectionString string
+	FirebaseAuthCredential   string
+	HmacSigningKey           string
+	HmacValidHours           int
 )

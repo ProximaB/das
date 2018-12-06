@@ -51,7 +51,6 @@ func AuthorizeMultipleRoles(h http.HandlerFunc, roles []int) http.HandlerFunc {
 
 		// authorization token is invalid, and request does not allow unauthorized request
 		if authErr != nil && !allowNoAuth {
-			log.Println(authErr)
 			util.RespondJsonResult(w, http.StatusUnauthorized, "unauthorized", nil)
 			return
 		}

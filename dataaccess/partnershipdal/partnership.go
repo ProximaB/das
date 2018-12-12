@@ -96,11 +96,20 @@ func (repo PostgresPartnershipRepository) SearchPartnership(criteria businesslog
 	if criteria.PartnershipID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.PartnershipID})
 	}
-	if criteria.LeadID > 0 {
-		stmt = stmt.Where(squirrel.Eq{partnershipColumnLeadID: criteria.LeadID})
-	}
-	if criteria.FollowID > 0 {
-		stmt = stmt.Where(squirrel.Eq{partnershipColumnFollowID: criteria.FollowID})
+
+	if criteria.AccountID > 0 {
+		// this will overrides the search by lead ID or by follow ID
+		stmt = stmt.Where(squirrel.Or{
+			squirrel.Eq{partnershipColumnLeadID: criteria.AccountID},
+			squirrel.Eq{partnershipColumnFollowID: criteria.AccountID},
+		})
+	} else {
+		if criteria.LeadID > 0 {
+			stmt = stmt.Where(squirrel.Eq{partnershipColumnLeadID: criteria.LeadID})
+		}
+		if criteria.FollowID > 0 {
+			stmt = stmt.Where(squirrel.Eq{partnershipColumnFollowID: criteria.FollowID})
+		}
 	}
 
 	// get account

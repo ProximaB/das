@@ -30,15 +30,23 @@ type Partnership struct {
 	Favorite   bool      `json:"favorite"`
 }
 
-func PartnershipDataModelToViewModel(partnership businesslogic.Partnership) Partnership {
-	return Partnership{
+func PartnershipDataModelToViewModel(currentUser businesslogic.Account, partnership businesslogic.Partnership) Partnership {
+	dto := Partnership{
 		ID:         partnership.ID,
 		LeadName:   partnership.Lead.FullName(),
 		FollowName: partnership.Follow.FullName(),
 		Since:      partnership.DateTimeCreated,
 		SameSexIND: partnership.SameSex,
-		Favorite:   partnership.FavoriteByLead,
 	}
+
+	if currentUser.ID == partnership.Lead.ID {
+		dto.Favorite = partnership.FavoriteByLead
+	}
+	if currentUser.ID == partnership.Follow.ID {
+		dto.Favorite = partnership.FavoriteByFollow
+	}
+
+	return dto
 }
 
 type SearchPartnershipRequestViewModel struct {

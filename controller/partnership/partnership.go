@@ -35,14 +35,14 @@ type PartnershipServer struct {
 // SearchPartnershipHandler handles the request
 //	GET /api/partnership
 func (server PartnershipServer) SearchPartnershipHandler(w http.ResponseWriter, r *http.Request) {
-	account, _ := server.GetCurrentUser(r)
-	if account.ID == 0 || !account.HasRole(businesslogic.AccountTypeAthlete) {
+	currentUser, _ := server.GetCurrentUser(r)
+	if currentUser.ID == 0 || !currentUser.HasRole(businesslogic.AccountTypeAthlete) {
 		util.RespondJsonResult(w, http.StatusUnauthorized, "not authorized", nil)
 		return
 	}
 
 	partnerships, err := server.SearchPartnership(
-		businesslogic.SearchPartnershipCriteria{LeadID: account.ID, FollowID: account.ID})
+		businesslogic.SearchPartnershipCriteria{AccountID: currentUser.ID})
 	if err != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP500ErrorRetrievingData, err.Error())
 		return
@@ -50,7 +50,7 @@ func (server PartnershipServer) SearchPartnershipHandler(w http.ResponseWriter, 
 
 	data := make([]viewmodel.Partnership, 0)
 	for _, each := range partnerships {
-		data = append(data, viewmodel.PartnershipDataModelToViewModel(each))
+		data = append(data, viewmodel.PartnershipDataModelToViewModel(currentUser, each))
 	}
 	output, _ := json.Marshal(data)
 	w.Write(output)

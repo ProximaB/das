@@ -86,6 +86,7 @@ type SearchPartnershipCriteria struct {
 	PartnershipID int `schema:"id"`
 	LeadID        int `schema:"lead"`
 	FollowID      int `schema:"follow"`
+	AccountID     int
 }
 
 // GetAllPartnerships returns all the partnerships that caller account is in, including as a lead and as a follow

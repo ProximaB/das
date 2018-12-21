@@ -12,7 +12,12 @@ import (
 const apiAccountRoleCreateApplication = "/api/v1.0/account/role/application"
 const apiAccountRoleRespondApplication = "/api/v1.0/account/role/provision" // Admin use only
 
-var roleProvisionService = businesslogic.NewRoleProvisionService(database.AccountRepository, database.RoleApplicationRepository, database.AccountRoleRepository)
+var roleProvisionService = businesslogic.NewRoleProvisionService(
+	database.AccountRepository,
+	database.RoleApplicationRepository,
+	database.AccountRoleRepository,
+	database.OrganizerProvisionRepository,
+	database.OrganizerProvisionHistoryRepository)
 var roleApplicationServer = account.NewRoleApplicationServer(middleware.AuthenticationStrategy, *roleProvisionService)
 
 var createRoleApplicationController = util.DasController{
@@ -22,12 +27,7 @@ var createRoleApplicationController = util.DasController{
 	Endpoint:    apiAccountRoleCreateApplication,
 	Handler:     roleApplicationServer.CreateRoleApplicationHandler,
 	AllowedRoles: []int{
-		businesslogic.AccountTypeAthlete,
-		businesslogic.AccountTypeAdjudicator,
-		businesslogic.AccountTypeScrutineer,
-		businesslogic.AccountTypeOrganizer,
-		businesslogic.AccountTypeDeckCaptain,
-		businesslogic.AccountTypeEmcee,
+		businesslogic.AccountTypeAthlete, // 2018-12-12: all users have athlete role and are granted to apply for other roles
 	},
 }
 

@@ -66,17 +66,26 @@ type IRoleApplicationRepository interface {
 
 // RoleProvisionService is a service that handles Role Application and provision
 type RoleProvisionService struct {
-	accountRepo         IAccountRepository
-	roleApplicationRepo IRoleApplicationRepository
-	roleRepo            IAccountRoleRepository
+	accountRepo                   IAccountRepository
+	roleApplicationRepo           IRoleApplicationRepository
+	roleRepo                      IAccountRoleRepository
+	organizerProvisionRepo        IOrganizerProvisionRepository
+	organizerProvisionHistoryRepo IOrganizerProvisionHistoryRepository
 }
 
 // NewRoleProvisionService create a service that serves Role Provision
-func NewRoleProvisionService(accountRepo IAccountRepository, roleApplicationRepo IRoleApplicationRepository, roleRepo IAccountRoleRepository) *RoleProvisionService {
+func NewRoleProvisionService(
+	accountRepo IAccountRepository,
+	roleApplicationRepo IRoleApplicationRepository,
+	roleRepo IAccountRoleRepository,
+	organizerProvisionRepo IOrganizerProvisionRepository,
+	organizerProvisionHistoryRepo IOrganizerProvisionHistoryRepository) *RoleProvisionService {
 	service := RoleProvisionService{
-		accountRepo:         accountRepo,
-		roleApplicationRepo: roleApplicationRepo,
-		roleRepo:            roleRepo,
+		accountRepo:                   accountRepo,
+		roleApplicationRepo:           roleApplicationRepo,
+		roleRepo:                      roleRepo,
+		organizerProvisionRepo:        organizerProvisionRepo,
+		organizerProvisionHistoryRepo: organizerProvisionHistoryRepo,
 	}
 	return &service
 }
@@ -180,12 +189,29 @@ func (service RoleProvisionService) UpdateApplication(currentUser Account, appli
 	default:
 		return errors.New("invalid role application")
 	}
-	return service.respondRoleApplication(currentUser, application, action)
+	roleProvisionErr := service.respondRoleApplication(currentUser, application, action)
+	if roleProvisionErr != nil {
+		return roleProvisionErr
+	}
+
+	if application.AppliedRoleID == AccountTypeOrganizer {
+		// create organizer provision
+		orgProvision, orgProvisionHist := initializeOrganizerProvision(application.AccountID)
+		if orgProvErr := service.organizerProvisionRepo.CreateOrganizerProvision(&orgProvision); orgProvErr != nil {
+			return orgProvErr
+		}
+		if orgProvHistErr := service.organizerProvisionHistoryRepo.CreateOrganizerProvisionHistory(&orgProvisionHist); orgProvHistErr != nil {
+			return orgProvHistErr
+		}
+	}
+	return nil
 }
 
 // SearchRoleApplication searches the available role application based on current user's privilege
-// TODO: this is not working correctly!
 func (service RoleProvisionService) SearchRoleApplication(currentUser Account, criteria SearchRoleApplicationCriteria) ([]RoleApplication, error) {
+	if !currentUser.HasRole(AccountTypeAdministrator) {
+		criteria.AccountID = currentUser.ID
+	}
 	return service.roleApplicationRepo.SearchApplication(criteria)
 }
 

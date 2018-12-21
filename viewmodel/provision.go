@@ -54,7 +54,7 @@ type RoleApplication struct {
 	ID                int       `json:"id"`
 	ApplicantName     string    `json:"applicant"`
 	RoleApplied       int       `json:"role"`
-	Description       string    `json:"description "`
+	Description       string    `json:"description"`
 	Status            int       `json:"status"`
 	DateTimeSubmitted time.Time `json:"created"`
 	DateTimeResponded time.Time `json:"responded"`

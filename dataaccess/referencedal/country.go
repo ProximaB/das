@@ -162,5 +162,18 @@ func (repo PostgresCountryRepository) SearchCountry(criteria reference.SearchCou
 		countries = append(countries, each)
 	}
 	rows.Close()
+	/*row := repo.Database.QueryRow(fmt.Sprintf("SELECT * FROM GET_COUNTRY_BY_ID (%d)", criteria.CountryID))
+	countries := make([]reference.Country, 0)
+	each := reference.Country{}
+	err := row.Scan(
+		&each.ID,
+		&each.Name,
+		&each.Abbreviation,
+		&each.CreateUserID,
+		&each.DateTimeCreated,
+		&each.UpdateUserID,
+		&each.DateTimeUpdated,
+	)
+	countries = append(countries, each)*/
 	return countries, err
 }

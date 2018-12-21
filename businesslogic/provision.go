@@ -228,6 +228,68 @@ type OrganizerProvision struct {
 	DateTimeUpdated time.Time
 }
 
+type UpdateOrganizerProvision struct {
+	OrganizerID   int
+	Amount        int
+	Note          string
+	CurrentUserID int
+}
+
+// OrganizerProvisionServices provides functions that allows provisioning Organizer's Competition, including updating
+// and querying Organizer's Competition Provision.
+type OrganizerProvisionService struct {
+	accountRepo                   IAccountRepository
+	organizerProvisionRepo        IOrganizerProvisionRepository
+	organizerProvisionHistoryRepo IOrganizerProvisionHistoryRepository
+}
+
+func NewOrganizerProvisionService(accountRepo IAccountRepository, organizerProvisionRepo IOrganizerProvisionRepository, organizerProvisionHistoryRepo IOrganizerProvisionHistoryRepository) OrganizerProvisionService {
+	return OrganizerProvisionService{
+		accountRepo:                   accountRepo,
+		organizerProvisionRepo:        organizerProvisionRepo,
+		organizerProvisionHistoryRepo: organizerProvisionHistoryRepo,
+	}
+}
+
+func (service OrganizerProvisionService) SearchOrganizerProvision(criteria SearchOrganizerProvisionCriteria) ([]OrganizerProvision, error) {
+	return service.organizerProvisionRepo.SearchOrganizerProvision(criteria)
+}
+
+func (service OrganizerProvisionService) UpdateOrganizerCompetitionProvision(update UpdateOrganizerProvision) error {
+	provisions, searchErr := service.organizerProvisionRepo.SearchOrganizerProvision(SearchOrganizerProvisionCriteria{OrganizerID: update.OrganizerID})
+	if searchErr != nil {
+		return searchErr
+	}
+	if len(provisions) != 1 {
+		return errors.New("cannot find organizer's competition provision information")
+	}
+
+	provision := provisions[0]
+	provision.Available = provision.Available + update.Amount
+	provision.UpdateUserID = update.CurrentUserID
+	provision.DateTimeUpdated = time.Now()
+
+	history := OrganizerProvisionHistoryEntry{
+		OrganizerID:     update.OrganizerID,
+		Amount:          update.Amount,
+		Note:            update.Note,
+		CreateUserID:    update.CurrentUserID,
+		DateTimeCreated: time.Now(),
+		UpdateUserID:    update.CurrentUserID,
+		DateTimeUpdated: time.Now(),
+	}
+
+	updateErr := service.organizerProvisionRepo.UpdateOrganizerProvision(provision)
+	if updateErr != nil {
+		return updateErr
+	}
+	createErr := service.organizerProvisionHistoryRepo.CreateOrganizerProvisionHistory(&history)
+	if createErr != nil {
+		return createErr
+	}
+	return nil
+}
+
 // SearchOrganizerProvisionCriteria specifies the search criteria of Organizer's provision information
 type SearchOrganizerProvisionCriteria struct {
 	ID          int `schema:"organizer"`

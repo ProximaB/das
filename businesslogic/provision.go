@@ -18,6 +18,7 @@ package businesslogic
 
 import (
 	"errors"
+	"log"
 	"time"
 )
 
@@ -195,8 +196,20 @@ func (service RoleProvisionService) UpdateApplication(currentUser Account, appli
 	}
 
 	if application.AppliedRoleID == AccountTypeOrganizer {
+		roleSearch, roleSearchErr := service.roleRepo.SearchAccountRole(SearchAccountRoleCriteria{
+			AccountID:     application.AccountID,
+			AccountTypeID: AccountTypeOrganizer,
+		})
+		if roleSearchErr != nil || len(roleSearch) != 1 {
+			if roleSearchErr != nil {
+				log.Println(roleSearchErr)
+			}
+			return errors.New("cannot find Organizer role of this account")
+		}
+		role := roleSearch[0]
+
 		// create organizer provision
-		orgProvision, orgProvisionHist := initializeOrganizerProvision(application.AccountID)
+		orgProvision, orgProvisionHist := initializeOrganizerProvision(role.ID)
 		if orgProvErr := service.organizerProvisionRepo.CreateOrganizerProvision(&orgProvision); orgProvErr != nil {
 			return orgProvErr
 		}

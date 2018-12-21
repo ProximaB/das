@@ -209,9 +209,6 @@ func (service RoleProvisionService) UpdateApplication(currentUser Account, appli
 
 // SearchRoleApplication searches the available role application based on current user's privilege
 func (service RoleProvisionService) SearchRoleApplication(currentUser Account, criteria SearchRoleApplicationCriteria) ([]RoleApplication, error) {
-	if !currentUser.HasRole(AccountTypeAdministrator) {
-		criteria.AccountID = currentUser.ID
-	}
 	return service.roleApplicationRepo.SearchApplication(criteria)
 }
 

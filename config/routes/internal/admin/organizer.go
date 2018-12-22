@@ -11,11 +11,8 @@ import (
 
 const apiAdminManageOrganizerProvision = "/api/v1.0/admin/organizer/provision"
 
-var manageOrganizerProvisionServer = admin.OrganizerProvisionServer{
-	middleware.AuthenticationStrategy,
-	database.AccountRepository,
-	database.OrganizerProvisionRepository,
-}
+var organizerProvisionService = businesslogic.NewOrganizerProvisionService(database.AccountRepository, database.OrganizerProvisionRepository, database.OrganizerProvisionHistoryRepository)
+var manageOrganizerProvisionServer = admin.NewOrganizerProvisionServer(middleware.AuthenticationStrategy, database.AccountRepository, organizerProvisionService)
 
 var updateOrganizerProvisionController = util.DasController{
 	Name:         "UpdateOrganizerProvisionController",

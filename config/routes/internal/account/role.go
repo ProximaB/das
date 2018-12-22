@@ -47,6 +47,16 @@ var searchRoleApplicationController = util.DasController{
 	},
 }
 
+var adminSearchRoleApplicationController = util.DasController{
+	Name:        "Admin Search Role Application Controller",
+	Description: "Search role application without moderation on criteria",
+	Method:      http.MethodGet,
+	Handler:     roleApplicationServer.AdminGetRoleApplicationHandler,
+	AllowedRoles: []int{
+		businesslogic.AccountTypeAdministrator,
+	},
+}
+
 var provisionRoleApplicationController = util.DasController{
 	Name:        "ProvisionRoleApplicationController",
 	Description: "Admin provision applications to restricted roles",
@@ -70,6 +80,7 @@ var RoleApplicationControllerGroup = util.DasControllerGroup{
 	Controllers: []util.DasController{
 		createRoleApplicationController,
 		searchRoleApplicationController,
+		adminSearchRoleApplicationController,
 		provisionRoleApplicationController,
 	},
 }

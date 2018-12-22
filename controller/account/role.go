@@ -99,6 +99,7 @@ func (server RoleApplicationServer) SearchRoleApplicationHandler(w http.Response
 	currentUser, userErr := server.auth.GetCurrentUser(r)
 	if userErr != nil {
 		util.RespondJsonResult(w, http.StatusUnauthorized, "unauthorized", nil)
+		return
 	}
 
 	criteria := new(businesslogic.SearchRoleApplicationCriteria)
@@ -107,10 +108,59 @@ func (server RoleApplicationServer) SearchRoleApplicationHandler(w http.Response
 		return
 	}
 
+	criteria.AccountID = currentUser.ID // only searches applications made by current user
+
 	applications, searchErr := server.service.SearchRoleApplication(currentUser, *criteria)
 	if searchErr != nil {
 		log.Println(searchErr.Error())
 		util.RespondJsonResult(w, http.StatusInternalServerError, "cannot search role application", nil)
+		return
+	}
+
+	dtos := make([]viewmodel.RoleApplication, 0)
+	for _, each := range applications {
+		dtos = append(dtos, viewmodel.RoleApplication{
+			ID:                each.ID,
+			ApplicantName:     each.Account.FullName(),
+			RoleApplied:       each.AppliedRoleID,
+			Description:       each.Description,
+			Status:            each.StatusID,
+			DateTimeSubmitted: each.DateTimeCreated,
+			DateTimeResponded: each.DateTimeApproved,
+		})
+	}
+
+	output, _ := json.Marshal(dtos)
+	w.Write(output)
+}
+
+// AdminGetRoleApplicationHandler handles the request:
+//	GET /api/v1/admin/role/application
+// This will return all role applications to the admin user. This handler is for admin uses only and should enforce role check
+func (server RoleApplicationServer) AdminGetRoleApplicationHandler(w http.ResponseWriter, r *http.Request) {
+	currentUser, userErr := server.auth.GetCurrentUser(r)
+	if userErr != nil {
+		util.RespondJsonResult(w, http.StatusUnauthorized, "unauthorized", nil)
+		return
+	}
+
+	if !currentUser.HasRole(businesslogic.AccountTypeAdministrator) {
+		util.RespondJsonResult(w, http.StatusUnauthorized, "admin priviledge is required", nil)
+		return
+	}
+
+	criteria := new(businesslogic.SearchRoleApplicationCriteria)
+	if parseErr := util.ParseRequestBodyData(r, criteria); parseErr != nil {
+		util.RespondJsonResult(w, http.StatusBadRequest, "bad search criteria, please double check", nil)
+		return
+	}
+	// admin user can search requests without additional moderation of search criteria
+
+	applications, searchErr := server.service.SearchRoleApplication(currentUser, *criteria)
+	if searchErr != nil {
+		log.Println(searchErr.Error())
+		util.RespondJsonResult(w, http.StatusInternalServerError, "cannot search role application", nil)
+		return
 	}
 
 	dtos := make([]viewmodel.RoleApplication, 0)

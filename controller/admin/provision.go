@@ -28,8 +28,16 @@ import (
 
 type OrganizerProvisionServer struct {
 	auth.IAuthenticationStrategy
-	businesslogic.IAccountRepository
-	businesslogic.IOrganizerProvisionRepository
+	accountRepo businesslogic.IAccountRepository
+	service     businesslogic.OrganizerProvisionService
+}
+
+func NewOrganizerProvisionServer(strategy auth.IAuthenticationStrategy, accountRepo businesslogic.IAccountRepository, service businesslogic.OrganizerProvisionService) OrganizerProvisionServer {
+	return OrganizerProvisionServer{
+		strategy,
+		accountRepo,
+		service,
+	}
 }
 
 // UpdateOrganizerProvisionHandler handles the request
@@ -45,14 +53,15 @@ func (server OrganizerProvisionServer) UpdateOrganizerProvisionHandler(w http.Re
 		return
 	}
 
-	organizer := businesslogic.GetAccountByUUID(updateDTO.OrganizerID, server.IAccountRepository)
-	provisions, _ := server.SearchOrganizerProvision(businesslogic.SearchOrganizerProvisionCriteria{OrganizerID: organizer.ID})
+	organizer := businesslogic.GetAccountByUUID(updateDTO.OrganizerID, server.accountRepo)
+	update := businesslogic.UpdateOrganizerProvision{
+		OrganizerID:   organizer.ID,
+		Amount:        updateDTO.AmountAllocated,
+		Note:          updateDTO.Note,
+		CurrentUserID: currentUser.ID,
+	}
 
-	record := provisions[0]
-	record.UpdateUserID = currentUser.ID
-	// TODO: finish implementing the data update
-
-	err := server.UpdateOrganizerProvision(record)
+	err := server.service.UpdateOrganizerCompetitionProvision(update)
 	if err != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, err.Error(), nil)
 		return
@@ -62,8 +71,7 @@ func (server OrganizerProvisionServer) UpdateOrganizerProvisionHandler(w http.Re
 
 // GetOrganizerProvisionSummaryHandler get the summary of organizer competition provision
 func (server OrganizerProvisionServer) GetOrganizerProvisionSummaryHandler(w http.ResponseWriter, r *http.Request) {
-
-	provisions, err := server.SearchOrganizerProvision(businesslogic.SearchOrganizerProvisionCriteria{})
+	provisions, err := server.service.SearchOrganizerProvision(businesslogic.SearchOrganizerProvisionCriteria{})
 	if err != nil {
 		log.Println(err)
 		util.RespondJsonResult(w, http.StatusInternalServerError, "an error occurred while trying to retrieve organizer provision information", nil)

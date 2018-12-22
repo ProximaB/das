@@ -69,7 +69,9 @@ func TestNewRowProvisionService(t *testing.T) {
 	mockAccountRepo := mock_businesslogic.NewMockIAccountRepository(mockCtrl)
 	mockRoleAppRepo := mock_businesslogic.NewMockIRoleApplicationRepository(mockCtrl)
 	mockRoleRepo := mock_businesslogic.NewMockIAccountRoleRepository(mockCtrl)
-	service := businesslogic.NewRoleProvisionService(mockAccountRepo, mockRoleAppRepo, mockRoleRepo)
+	mockOrgProvRepo := mock_businesslogic.NewMockIOrganizerProvisionRepository(mockCtrl)
+	mockOrgProvHistRepo := mock_businesslogic.NewMockIOrganizerProvisionHistoryRepository(mockCtrl)
+	service := businesslogic.NewRoleProvisionService(mockAccountRepo, mockRoleAppRepo, mockRoleRepo, mockOrgProvRepo, mockOrgProvHistRepo)
 
 	assert.NotNil(t, service)
 }
@@ -81,7 +83,9 @@ func TestRoleProvisionService_ApproveApplication(t *testing.T) {
 	mockAccountRepo := mock_businesslogic.NewMockIAccountRepository(mockCtrl)
 	mockRoleAppRepo := mock_businesslogic.NewMockIRoleApplicationRepository(mockCtrl)
 	mockRoleRepo := mock_businesslogic.NewMockIAccountRoleRepository(mockCtrl)
-	service := businesslogic.NewRoleProvisionService(mockAccountRepo, mockRoleAppRepo, mockRoleRepo)
+	mockOrgProvRepo := mock_businesslogic.NewMockIOrganizerProvisionRepository(mockCtrl)
+	mockOrgProvHistRepo := mock_businesslogic.NewMockIOrganizerProvisionHistoryRepository(mockCtrl)
+	service := businesslogic.NewRoleProvisionService(mockAccountRepo, mockRoleAppRepo, mockRoleRepo, mockOrgProvRepo, mockOrgProvHistRepo)
 
 	application := businesslogic.RoleApplication{
 		AccountID:       33,
@@ -111,7 +115,9 @@ func TestRoleProvisionService_ApproveApplication_ApplyToBeAdmin(t *testing.T) {
 	mockAccountRepo := mock_businesslogic.NewMockIAccountRepository(mockCtrl)
 	mockRoleAppRepo := mock_businesslogic.NewMockIRoleApplicationRepository(mockCtrl)
 	mockRoleRepo := mock_businesslogic.NewMockIAccountRoleRepository(mockCtrl)
-	service := businesslogic.NewRoleProvisionService(mockAccountRepo, mockRoleAppRepo, mockRoleRepo)
+	mockOrgProvRepo := mock_businesslogic.NewMockIOrganizerProvisionRepository(mockCtrl)
+	mockOrgProvHistRepo := mock_businesslogic.NewMockIOrganizerProvisionHistoryRepository(mockCtrl)
+	service := businesslogic.NewRoleProvisionService(mockAccountRepo, mockRoleAppRepo, mockRoleRepo, mockOrgProvRepo, mockOrgProvHistRepo)
 
 	application := businesslogic.RoleApplication{
 		AccountID:       33,
@@ -145,7 +151,9 @@ func TestRoleProvisionService_ApproveApplication_LowPrivilegeAttemptsToProvision
 	mockAccountRepo := mock_businesslogic.NewMockIAccountRepository(mockCtrl)
 	mockRoleAppRepo := mock_businesslogic.NewMockIRoleApplicationRepository(mockCtrl)
 	mockRoleRepo := mock_businesslogic.NewMockIAccountRoleRepository(mockCtrl)
-	service := businesslogic.NewRoleProvisionService(mockAccountRepo, mockRoleAppRepo, mockRoleRepo)
+	mockOrgProvRepo := mock_businesslogic.NewMockIOrganizerProvisionRepository(mockCtrl)
+	mockOrgProvHistRepo := mock_businesslogic.NewMockIOrganizerProvisionHistoryRepository(mockCtrl)
+	service := businesslogic.NewRoleProvisionService(mockAccountRepo, mockRoleAppRepo, mockRoleRepo, mockOrgProvRepo, mockOrgProvHistRepo)
 
 	application := businesslogic.RoleApplication{
 		AccountID:       33,
@@ -177,7 +185,9 @@ func TestRoleProvisionService_ApproveApplication_SelfApproval_OrganizerApproveSc
 	mockAccountRepo := mock_businesslogic.NewMockIAccountRepository(mockCtrl)
 	mockRoleAppRepo := mock_businesslogic.NewMockIRoleApplicationRepository(mockCtrl)
 	mockRoleRepo := mock_businesslogic.NewMockIAccountRoleRepository(mockCtrl)
-	service := businesslogic.NewRoleProvisionService(mockAccountRepo, mockRoleAppRepo, mockRoleRepo)
+	mockOrgProvRepo := mock_businesslogic.NewMockIOrganizerProvisionRepository(mockCtrl)
+	mockOrgProvHistRepo := mock_businesslogic.NewMockIOrganizerProvisionHistoryRepository(mockCtrl)
+	service := businesslogic.NewRoleProvisionService(mockAccountRepo, mockRoleAppRepo, mockRoleRepo, mockOrgProvRepo, mockOrgProvHistRepo)
 
 	application := businesslogic.RoleApplication{
 		AccountID:       33,
@@ -205,7 +215,9 @@ func TestRoleProvisionService_UpdateApplication_ValidApplication(t *testing.T) {
 	mockAccountRepo := mock_businesslogic.NewMockIAccountRepository(mockCtrl)
 	mockRoleAppRepo := mock_businesslogic.NewMockIRoleApplicationRepository(mockCtrl)
 	mockRoleRepo := mock_businesslogic.NewMockIAccountRoleRepository(mockCtrl)
-	service := businesslogic.NewRoleProvisionService(mockAccountRepo, mockRoleAppRepo, mockRoleRepo)
+	mockOrgProvRepo := mock_businesslogic.NewMockIOrganizerProvisionRepository(mockCtrl)
+	mockOrgProvHistRepo := mock_businesslogic.NewMockIOrganizerProvisionHistoryRepository(mockCtrl)
+	service := businesslogic.NewRoleProvisionService(mockAccountRepo, mockRoleAppRepo, mockRoleRepo, mockOrgProvRepo, mockOrgProvHistRepo)
 
 	currentUser := businesslogic.Account{
 		ID: 31,
@@ -223,8 +235,14 @@ func TestRoleProvisionService_UpdateApplication_ValidApplication(t *testing.T) {
 		StatusID:      businesslogic.RoleApplicationStatusPending,
 	}
 
+	mockRoleRepo.EXPECT().SearchAccountRole(gomock.Any()).Return([]businesslogic.AccountRole{
+		{ID: 22, AccountID: 7, AccountTypeID: businesslogic.AccountTypeAthlete},
+	}, nil)
 	mockRoleAppRepo.EXPECT().UpdateApplication(gomock.Any()).Return(nil)
 	mockRoleRepo.EXPECT().CreateAccountRole(gomock.Any()).Return(nil)
+	mockOrgProvRepo.EXPECT().CreateOrganizerProvision(gomock.Any()).Return(nil)
+	mockOrgProvHistRepo.EXPECT().CreateOrganizerProvisionHistory(gomock.Any()).Return(nil)
+
 	err := service.UpdateApplication(currentUser, &application, businesslogic.RoleApplicationStatusApproved)
 	assert.Nil(t, err, "should not throw an error if the application is legit and current user has access")
 }

@@ -27,7 +27,7 @@ import (
 	"log"
 )
 
-const dasAccountRoleTable = "DAS.ACCOUNT_ROLE"
+const DAS_ACCOUNT_ROLE_TABLE = "DAS.ACCOUNT_ROLE"
 
 type PostgresAccountRoleRepository struct {
 	Database   *sql.DB
@@ -39,7 +39,7 @@ func (repo PostgresAccountRoleRepository) CreateAccountRole(role *businesslogic.
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SQLBuilder.Insert("").
-		Into(dasAccountRoleTable).
+		Into(DAS_ACCOUNT_ROLE_TABLE).
 		Columns(
 			common.ColumnAccountID,
 			common.ColumnAccountTypeID,
@@ -96,7 +96,7 @@ func (repo PostgresAccountRoleRepository) SearchAccountRole(criteria businesslog
 		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
 		common.ColumnDateTimeUpdated,
-	)).From(dasAccountRoleTable)
+	)).From(DAS_ACCOUNT_ROLE_TABLE)
 
 	if criteria.AccountID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.ColumnAccountID: criteria.AccountID})

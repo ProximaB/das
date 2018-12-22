@@ -21,6 +21,7 @@ import (
 	"errors"
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/dataaccess/accountdal"
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 	"log"
@@ -89,28 +90,43 @@ func (repo PostgresOrganizerProvisionRepository) SearchOrganizerProvision(
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresOrganizerProvisionRepository is not specified")
 	}
+	accountRepo := accountdal.PostgresAccountRepository{
+		repo.Database,
+		repo.SqlBuilder,
+	}
 
-	stmt := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
-		common.ColumnPrimaryKey,
-		DAS_ORGANIZER_PROVISION_COL_ORGANIZER_ID,
-		DAS_ORGANIZER_PROVISION_COL_HOSTED,
-		DAS_ORGANIZER_PROVISION_COL_AVAILABLE,
-		common.ColumnCreateUserID,
-		common.ColumnDateTimeCreated,
-		common.ColumnUpdateUserID,
-		common.ColumnDateTimeUpdated)).
-		From(DAS_ORGANIZER_PROVISION)
+	stmt := repo.SqlBuilder.Select(fmt.Sprintf("%s.%s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s",
+		DAS_ORGANIZER_PROVISION, common.ColumnPrimaryKey,
+		accountdal.DasUserAccountTable, common.ColumnPrimaryKey,
+		DAS_ORGANIZER_PROVISION, DAS_ORGANIZER_PROVISION_COL_ORGANIZER_ID,
+		DAS_ORGANIZER_PROVISION, DAS_ORGANIZER_PROVISION_COL_HOSTED,
+		DAS_ORGANIZER_PROVISION, DAS_ORGANIZER_PROVISION_COL_AVAILABLE,
+		DAS_ORGANIZER_PROVISION, common.ColumnCreateUserID,
+		DAS_ORGANIZER_PROVISION, common.ColumnDateTimeCreated,
+		DAS_ORGANIZER_PROVISION, common.ColumnUpdateUserID,
+		DAS_ORGANIZER_PROVISION, common.ColumnDateTimeUpdated)).
+		From(DAS_ORGANIZER_PROVISION).
+		Join("DAS.ACCOUNT_ROLE ON DAS.ORGANIZER_PROVISION.ORGANIZER_ID = DAS.ACCOUNT_ROLE.ID").
+		Join("DAS.ACCOUNT ON DAS.ACCOUNT_ROLE.ACCOUNT_ID = DAS.ACCOUNT.ID")
+	if criteria.ID > 0 {
+		stmt = stmt.Where(squirrel.Eq{"DAS.ORGANIZER_PROVISION": criteria.ID})
+	}
 	if criteria.OrganizerID > 0. {
-		stmt = stmt.Where(squirrel.Eq{DAS_ORGANIZER_PROVISION_COL_ORGANIZER_ID: criteria.OrganizerID})
+		stmt = stmt.Where(squirrel.Eq{"DAS.ACCOUNT.ID": criteria.OrganizerID})
 	}
 
 	rows, err := stmt.RunWith(repo.Database).Query()
+	if err != nil {
+		clause, args, _ := stmt.ToSql()
+		log.Printf("%v in query `%v` with args `%v`", err, clause, args)
+	}
 
 	provisions := make([]businesslogic.OrganizerProvision, 0)
 	for rows.Next() {
 		each := businesslogic.OrganizerProvision{}
 		rows.Scan(
 			&each.ID,
+			&each.AccountID,
 			&each.OrganizerID,
 			&each.Hosted,
 			&each.Available,
@@ -119,12 +135,8 @@ func (repo PostgresOrganizerProvisionRepository) SearchOrganizerProvision(
 			&each.UpdateUserID,
 			&each.DateTimeUpdated,
 		)
-		selectAccount := repo.SqlBuilder.Select(
-			fmt.Sprintf("%s, %s, %s",
-				common.ColumnUID,
-				"FIRST_NAME",
-				"LAST_NAME")).From("DAS.ACCOUNT").Where(squirrel.Eq{common.ColumnPrimaryKey: each.ID})
-		selectAccount.RunWith(repo.Database).QueryRow().Scan(&each.Organizer.UID, &each.Organizer.FirstName, &each.Organizer.LastName)
+		selectAccount, _ := accountRepo.SearchAccount(businesslogic.SearchAccountCriteria{ID: each.AccountID})
+		each.Organizer = selectAccount[0]
 		provisions = append(provisions, each)
 	}
 	return provisions, err

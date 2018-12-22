@@ -222,7 +222,7 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 			common.ColumnCreateUserID,
 			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
-			common.ColumnDateTimeUpdated)).From(dasAccountRoleTable).
+			common.ColumnDateTimeUpdated)).From(DAS_ACCOUNT_ROLE_TABLE).
 			Where(squirrel.Eq{common.ColumnAccountID: accounts[i].ID})
 		roleRows, roleErr := queryRoleStmt.RunWith(repo.Database).Query()
 		if roleErr != nil {

@@ -51,6 +51,7 @@ var adminSearchRoleApplicationController = util.DasController{
 	Name:        "Admin Search Role Application Controller",
 	Description: "Search role application without moderation on criteria",
 	Method:      http.MethodGet,
+	Endpoint:    "/api/v1.0/admin/role/applications",
 	Handler:     roleApplicationServer.AdminGetRoleApplicationHandler,
 	AllowedRoles: []int{
 		businesslogic.AccountTypeAdministrator,

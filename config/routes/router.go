@@ -61,7 +61,7 @@ func addDasController(router *mux.Router, handler util.DasController) {
 		log.Fatalf("Method of %s is required\n", handler.Name)
 	}
 	if len(handler.Endpoint) < 1 {
-		log.Fatalf("Endpoint of %s is required\n", handler.Endpoint)
+		log.Fatalf("Endpoint of %s is required\n", handler.Name)
 	}
 	if handler.Handler == nil {
 		log.Fatalf("HandlerFunc of %s is required\n", handler.Name)

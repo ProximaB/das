@@ -150,7 +150,7 @@ func (server RoleApplicationServer) AdminGetRoleApplicationHandler(w http.Respon
 	}
 
 	criteria := new(businesslogic.SearchRoleApplicationCriteria)
-	if parseErr := util.ParseRequestBodyData(r, criteria); parseErr != nil {
+	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, "bad search criteria, please double check", nil)
 		return
 	}

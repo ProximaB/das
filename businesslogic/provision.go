@@ -209,7 +209,7 @@ func (service RoleProvisionService) UpdateApplication(currentUser Account, appli
 		role := roleSearch[0]
 
 		// create organizer provision
-		orgProvision, orgProvisionHist := initializeOrganizerProvision(role.ID)
+		orgProvision, orgProvisionHist := initializeOrganizerProvision(role.ID, currentUser.ID)
 		if orgProvErr := service.organizerProvisionRepo.CreateOrganizerProvision(&orgProvision); orgProvErr != nil {
 			return orgProvErr
 		}
@@ -228,6 +228,7 @@ func (service RoleProvisionService) SearchRoleApplication(currentUser Account, c
 // OrganizerProvision provision organizer competition slots for creating and hosting competitions
 type OrganizerProvision struct {
 	ID              int
+	AccountID       int
 	OrganizerID     int
 	Organizer       Account
 	Available       int
@@ -302,8 +303,9 @@ func (service OrganizerProvisionService) UpdateOrganizerCompetitionProvision(upd
 
 // SearchOrganizerProvisionCriteria specifies the search criteria of Organizer's provision information
 type SearchOrganizerProvisionCriteria struct {
-	ID          int `schema:"organizer"`
-	OrganizerID int `schema:"organizer"`
+	ID           int    `schema:"id"`
+	OrganizerID  int    `schema:"organizerID"`  // organizer's account ID, not type-account id
+	OrganizerUID string `schema:"organizerUID"` // Organizer's UID,
 }
 
 // IOrganizerProvisionRepository specifies the interface that a repository should implement for Organizer Provision
@@ -323,22 +325,22 @@ func (provision OrganizerProvision) updateForCreateCompetition(competition Compe
 	return newProvision
 }
 
-func initializeOrganizerProvision(accountID int) (OrganizerProvision, OrganizerProvisionHistoryEntry) {
+func initializeOrganizerProvision(accountRoleID, currentUserID int) (OrganizerProvision, OrganizerProvisionHistoryEntry) {
 	provision := OrganizerProvision{
-		OrganizerID:     accountID,
+		OrganizerID:     accountRoleID,
 		Available:       0,
-		CreateUserID:    accountID,
+		CreateUserID:    currentUserID,
 		DateTimeCreated: time.Now(),
-		UpdateUserID:    accountID,
+		UpdateUserID:    currentUserID,
 		DateTimeUpdated: time.Now(),
 	}
 	history := OrganizerProvisionHistoryEntry{
-		OrganizerID:     accountID,
+		OrganizerID:     accountRoleID,
 		Amount:          0,
 		Note:            "initialize organizer organizer",
-		CreateUserID:    accountID,
+		CreateUserID:    currentUserID,
 		DateTimeCreated: time.Now(),
-		UpdateUserID:    accountID,
+		UpdateUserID:    currentUserID,
 		DateTimeUpdated: time.Now(),
 	}
 	return provision, history

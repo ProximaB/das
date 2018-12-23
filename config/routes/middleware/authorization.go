@@ -16,14 +16,12 @@ func getRequestUserRole(r *http.Request) ([]int, error) {
 }
 
 func allowUnauthorizedRequest(roles []int) bool {
-	allowNoAuth := false
 	for _, each := range roles {
 		if each == businesslogic.AccountTypeNoAuth {
-			allowNoAuth = true
-			break
+			return true
 		}
 	}
-	return allowNoAuth
+	return false
 }
 
 // AuthorizeMultipleRoles checks if the user's token contains the role that the handler requires. If not, the handler
@@ -31,6 +29,12 @@ func allowUnauthorizedRequest(roles []int) bool {
 func AuthorizeMultipleRoles(h http.HandlerFunc, roles []int) http.HandlerFunc {
 	return func(w http.ResponseWriter, r *http.Request) {
 		allowNoAuth := allowUnauthorizedRequest(roles)
+
+		// all no auth will be passed from interception
+		if allowNoAuth {
+			h.ServeHTTP(w, r)
+			return
+		}
 
 		userRoles, authErr := getRequestUserRole(r)
 		if authErr != nil && !allowNoAuth {

@@ -18,6 +18,7 @@ package routes
 
 import (
 	"encoding/json"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/config/routes/internal/account"
 	"github.com/DancesportSoftware/das/config/routes/internal/admin"
 	"github.com/DancesportSoftware/das/config/routes/internal/competition"
@@ -82,9 +83,14 @@ func addDasControllerGroup(router *mux.Router, group util.DasControllerGroup) {
 	}
 }
 
+const (
+	EnvApiVersion = "API_VERSION"
+	EnvBuildDate  = "BUILD_DATE"
+)
+
 func rootController(w http.ResponseWriter, r *http.Request) {
-	apiVersion := os.Getenv("API_VERSION")
-	buildDate := os.Getenv("BUILD_DATE")
+	apiVersion := os.Getenv(EnvApiVersion)
+	buildDate := os.Getenv(EnvBuildDate)
 
 	data := struct {
 		APIVersion string `json:"api_version"`
@@ -100,7 +106,14 @@ func NewDasRouter() *mux.Router {
 	router := mux.NewRouter().StrictSlash(true)
 	router.Schemes("https")
 
-	router.HandleFunc("/", rootController)
+	addDasController(router, util.DasController{
+		Name:         "RootController",
+		Description:  "Handle Server Base Information",
+		Endpoint:     "/",
+		Handler:      rootController,
+		Method:       http.MethodGet,
+		AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
+	})
 
 	// reference data
 	addDasControllerGroup(router, reference.CountryControllerGroup)

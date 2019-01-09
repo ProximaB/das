@@ -18,13 +18,14 @@ package businesslogic_test
 
 import (
 	"errors"
+	"testing"
+	"time"
+
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/businesslogic/reference"
 	"github.com/DancesportSoftware/das/mock/businesslogic"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	"testing"
-	"time"
 )
 
 var testAthleteAccount = businesslogic.Account{
@@ -172,4 +173,61 @@ func TestAccount_SetRoles(t *testing.T) {
 	for _, each := range accounts {
 		assert.True(t, each.HasRole(businesslogic.AccountTypeAthlete))
 	}
+}
+
+func TestAccount_MeetMinimalRequirement(t *testing.T) {
+	accounts := []businesslogic.Account{
+		{FirstName: "K", LastName: "E", Email: "rimuru@slime.com", Phone: "8100100830"},
+		{FirstName: "KevinKevinKevinKevin", LastName: "EnarioEnarioEnarioEnario",
+			Email: "rimuru@slime.com", Phone: "8100100830"},
+		{FirstName: "Kevin", LastName: "Enario", Email: ".com", Phone: "8100100830"},
+		{FirstName: "Kevin", LastName: "Enario", Email: "rimuru@slime.com", Phone: "01"},
+		{FirstName: "Kevin", LastName: "Enario", Email: "rimuru@slime.com", Phone: "8284235657"},
+	}
+
+	for x := 0; x < len(accounts); x++ {
+		if x == (len(accounts) - 1) {
+			assert.Nil(t, accounts[x].MeetMinimalRequirement())
+		} else {
+			assert.Error(t, accounts[x].MeetMinimalRequirement())
+		}
+	}
+}
+
+func TestAccount_MeetMinimalRequirement_NameTooShort(t *testing.T) {
+	account := businesslogic.Account{
+		FirstName: "K", LastName: "E", Email: "rimuru@slime.com", Phone: "8100100830",
+	}
+	assert.Error(t, account.MeetMinimalRequirement())
+}
+
+func TestAccount_MeetMinimalRequirement_NameTooLong(t *testing.T) {
+	account := businesslogic.Account{
+		FirstName: "KevinKevinKevinKevin",
+		LastName:  "EnarioEnarioEnarioEnarioEnario",
+		Email:     "rimuru@slime.com",
+		Phone:     "810010830",
+	}
+	assert.Error(t, account.MeetMinimalRequirement())
+}
+
+func TestAccount_MeetMinimalRequirement_InvalidEmail(t *testing.T) {
+	account := businesslogic.Account{
+		FirstName: "Kevin", LastName: "Enario", Email: ".com", Phone: "8100100830",
+	}
+	assert.Error(t, account.MeetMinimalRequirement())
+}
+
+func TestAccount_MeetMinimalRequirement_InvalidPhone(t *testing.T) {
+	account := businesslogic.Account{
+		FirstName: "Kevin", LastName: "Enario", Email: "rimuru@slime.com", Phone: "01",
+	}
+	assert.Error(t, account.MeetMinimalRequirement())
+}
+
+func TestAccount_MeetMinimalRequirement_Success(t *testing.T) {
+	account := businesslogic.Account{
+		FirstName: "Kevin", LastName: "Enario", Email: "rimuru@slime.com", Phone: "8100100830",
+	}
+	assert.Nil(t, account.MeetMinimalRequirement())
 }

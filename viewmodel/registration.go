@@ -13,8 +13,8 @@ type SubmitCompetitionRegistrationForm struct {
 	StudioRepresented int   `json:"repStudioId"`
 }
 
-func (form SubmitCompetitionRegistrationForm) EventRegistration() businesslogic.EventRegistration {
-	return businesslogic.EventRegistration{
+func (form SubmitCompetitionRegistrationForm) EventRegistration() businesslogic.EventRegistrationForm {
+	return businesslogic.EventRegistrationForm{
 		CompetitionID: form.CompetitionID,
 		PartnershipID: form.PartnershipID,
 	}

@@ -46,6 +46,7 @@ type Competition struct {
 	Attendance                int
 	RegistrationOpenDateTime  time.Time
 	RegistrationCloseDateTime time.Time
+	officials                 map[int][]Account
 }
 
 // UpdateStatus will attempt to change the status of the caller competition to statusID, if the change is in logical order
@@ -58,6 +59,37 @@ func (comp *Competition) UpdateStatus(statusID int) error {
 	}
 	comp.statusID = statusID
 	return nil
+}
+
+func (comp *Competition) AddOfficial(role int, official Account) error {
+	if comp.officials == nil {
+		comp.officials = make(map[int][]Account)
+	}
+
+	if !official.HasRole(role) {
+		return errors.New("This user does not have the appointed role provisioned.")
+	}
+
+	if comp.officials[role] == nil {
+		comp.officials[role] = make([]Account, 0)
+	}
+
+	// check if this official is already added
+	for _, each := range comp.officials[role] {
+		if each.ID == official.ID {
+			return errors.New("This user is already added to the list of officials")
+		}
+	}
+	comp.officials[role] = append(comp.officials[role], official)
+
+	return nil
+}
+
+func (comp Competition) GetOfficials(role int) ([]Account, error) {
+	if comp.officials == nil {
+		return nil, errors.New("No official has been assigned to this competition")
+	}
+	return comp.officials, nil
 }
 
 func (comp Competition) GetStatus() int {

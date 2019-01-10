@@ -34,10 +34,10 @@ var testAthleteAccount = businesslogic.Account{
 	DateOfBirth:           time.Date(2017, time.January, 1, 1, 1, 1, 1, time.UTC),
 	ToSAccepted:           true,
 	PrivacyPolicyAccepted: true,
-	Email:      "test@test.com",
-	Phone:      "1232234442",
-	Signature:  "I am a parent",
-	ByGuardian: true,
+	Email:                 "test@test.com",
+	Phone:                 "1232234442",
+	Signature:             "I am a parent",
+	ByGuardian:            true,
 }
 
 var testOrganizerAccount = businesslogic.Account{
@@ -47,8 +47,8 @@ var testOrganizerAccount = businesslogic.Account{
 	DateOfBirth:           time.Date(1997, time.May, 22, 1, 1, 1, 1, time.UTC),
 	ToSAccepted:           true,
 	PrivacyPolicyAccepted: true,
-	Email: "mighty.meerkat@email.com",
-	Phone: "3321231232",
+	Email:                 "mighty.meerkat@email.com",
+	Phone:                 "3321231232",
 }
 
 func TestGetAccountByEmail(t *testing.T) {

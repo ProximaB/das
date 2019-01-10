@@ -25,7 +25,7 @@ import (
 )
 
 func TestEventRegistration_Validate(t *testing.T) {
-	registration := businesslogic.EventRegistration{}
+	registration := businesslogic.EventRegistrationForm{}
 	assert.NotNil(t, registration.Validate(), "should throw an error if Competition is not specified")
 
 	registration.CompetitionID = 12
@@ -77,7 +77,7 @@ func TestCompetitionRegistrationService_ValidateEventRegistration_LegitimateData
 		partnershipEventEntryRepo,
 	}
 
-	registration := businesslogic.EventRegistration{
+	registration := businesslogic.EventRegistrationForm{
 		PartnershipID: 33,
 		CompetitionID: 127,
 	}

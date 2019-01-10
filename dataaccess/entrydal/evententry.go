@@ -27,6 +27,50 @@ import (
 	"github.com/Masterminds/squirrel"
 )
 
+type PostgresAthleteEventEntryRepository struct {
+	Database   *sql.DB
+	SQLBuilder squirrel.StatementBuilderType
+}
+
+func (repo PostgresAthleteEventEntryRepository) CreateAthleteEventEntry(entry *businesslogic.AthleteEventEntry) error {
+	if repo.Database == nil {
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
+	stmt := repo.SQLBuilder.Insert("").
+		Columns(
+			common.ColumnPrimaryKey,
+
+			"").
+		Values(
+			entry.AthleteID,
+			entry.CompetitionID,
+			entry.EventID,
+			entry.CheckedIn,
+			entry.Placement,
+			entry.CreateUserID,
+			entry.DateTimeCreated,
+			entry.UpdateUserID,
+			entry.DateTimeUpdated)
+}
+
+func (repo PostgresAthleteEventEntryRepository) DeleteAthleteEventEntry(entry businesslogic.AthleteEventEntry) error {
+	if repo.Database == nil {
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
+}
+
+func (repo PostgresAthleteEventEntryRepository) SearchAthleteEventEntry(criteria businesslogic.SearchAthleteEventEntryCriteria) ([]businesslogic.AthleteEventEntry, error) {
+	if repo.Database == nil {
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
+}
+
+func (repo PostgresAthleteEventEntryRepository) UpdateAthleteEventEntry(entry businesslogic.AthleteEventEntry) error {
+	if repo.Database == nil {
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
+}
+
 // PostgresPartnershipEventEntryRepository is a Postgres-based implementation of IPartnershipEventEntryRepository
 type PostgresPartnershipEventEntryRepository struct {
 	Database   *sql.DB

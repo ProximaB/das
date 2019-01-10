@@ -19,19 +19,19 @@ package reference
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 )
 
 type FederationServer struct {
-	reference.IFederationRepository
+	businesslogic.IFederationRepository
 }
 
 // GET /api/reference/federation
 func (server FederationServer) SearchFederationHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(reference.SearchFederationCriteria)
+	criteria := new(businesslogic.SearchFederationCriteria)
 	if err := util.ParseRequestData(r, criteria); err != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, err.Error())
 		return

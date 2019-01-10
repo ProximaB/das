@@ -16,7 +16,9 @@
 
 package viewmodel
 
-import "github.com/DancesportSoftware/das/businesslogic/reference"
+import (
+	"github.com/DancesportSoftware/das/businesslogic"
+)
 
 type State struct {
 	ID           int    `json:"id"`
@@ -25,7 +27,7 @@ type State struct {
 	CountryID    int    `json:"country"`
 }
 
-func StateDataModelToViewModel(dm reference.State) State {
+func StateDataModelToViewModel(dm businesslogic.State) State {
 	return State{
 		ID:           dm.ID,
 		Name:         dm.Name,

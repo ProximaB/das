@@ -16,7 +16,9 @@
 
 package viewmodel
 
-import "github.com/DancesportSoftware/das/businesslogic/reference"
+import (
+	"github.com/DancesportSoftware/das/businesslogic"
+)
 
 type Studio struct {
 	ID      int    `json:"id"`
@@ -26,7 +28,7 @@ type Studio struct {
 	Website string `json:"website"`
 }
 
-func StudioDataModelToViewModel(dm reference.Studio) Studio {
+func StudioDataModelToViewModel(dm businesslogic.Studio) Studio {
 	return Studio{
 		ID:      dm.ID,
 		Name:    dm.Name,

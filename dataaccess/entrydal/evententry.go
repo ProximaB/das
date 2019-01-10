@@ -51,24 +51,31 @@ func (repo PostgresAthleteEventEntryRepository) CreateAthleteEventEntry(entry *b
 			entry.DateTimeCreated,
 			entry.UpdateUserID,
 			entry.DateTimeUpdated)
+	stmt.Exec()
+	return errors.New("Not implemented")
+
 }
 
 func (repo PostgresAthleteEventEntryRepository) DeleteAthleteEventEntry(entry businesslogic.AthleteEventEntry) error {
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
+	return errors.New("Not implemented")
 }
 
 func (repo PostgresAthleteEventEntryRepository) SearchAthleteEventEntry(criteria businesslogic.SearchAthleteEventEntryCriteria) ([]businesslogic.AthleteEventEntry, error) {
 	if repo.Database == nil {
 		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
+	return nil, errors.New("Not implemented")
+
 }
 
 func (repo PostgresAthleteEventEntryRepository) UpdateAthleteEventEntry(entry businesslogic.AthleteEventEntry) error {
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
+	return errors.New("Nt implemented")
 }
 
 // PostgresPartnershipEventEntryRepository is a Postgres-based implementation of IPartnershipEventEntryRepository

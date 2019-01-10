@@ -14,4 +14,30 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package reference_test
+package businesslogic
+
+import (
+	"time"
+)
+
+type Style struct {
+	ID              int
+	Name            string
+	Description     string
+	CreateUserID    *int
+	DateTimeCreated time.Time
+	UpdateUserID    *int
+	DateTimeUpdated time.Time
+}
+
+type SearchStyleCriteria struct {
+	StyleID int    `schema:"id"`
+	Name    string `schema:"name"`
+}
+
+type IStyleRepository interface {
+	CreateStyle(style *Style) error
+	SearchStyle(criteria SearchStyleCriteria) ([]Style, error)
+	UpdateStyle(style Style) error
+	DeleteStyle(style Style) error
+}

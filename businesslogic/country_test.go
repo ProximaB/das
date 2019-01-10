@@ -14,12 +14,12 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package reference_test
+package businesslogic_test
 
 import (
+	"github.com/DancesportSoftware/das/businesslogic"
 	"testing"
 
-	"github.com/DancesportSoftware/das/businesslogic/reference"
 	"github.com/DancesportSoftware/das/mock/businesslogic/reference"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -30,12 +30,12 @@ func TestCountry_GetStates(t *testing.T) {
 	defer mockCtrl.Finish()
 
 	mockRepo := mock_reference.NewMockIStateRepository(mockCtrl)
-	mockRepo.EXPECT().SearchState(reference.SearchStateCriteria{}).Return([]reference.State{
+	mockRepo.EXPECT().SearchState(businesslogic.SearchStateCriteria{}).Return([]businesslogic.State{
 		{ID: 1, Name: "Alaska", Abbreviation: "AK"},
 		{ID: 2, Name: "Michigan", Abbreviation: "MI"},
 	}, nil)
 
-	country := reference.Country{}
+	country := businesslogic.Country{}
 
 	states, err := country.GetStates(mockRepo)
 	assert.Nil(t, err, "search states of a Country should not return errors")
@@ -47,14 +47,14 @@ func TestCountry_GetFederations(t *testing.T) {
 	defer ctrl.Finish()
 
 	mockFederationRepo := mock_reference.NewMockIFederationRepository(ctrl)
-	mockFederationRepo.EXPECT().SearchFederation(reference.SearchFederationCriteria{}).Return(
-		[]reference.Federation{
+	mockFederationRepo.EXPECT().SearchFederation(businesslogic.SearchFederationCriteria{}).Return(
+		[]businesslogic.Federation{
 			{ID: 1, Name: "WDSF"},
 			{ID: 2, Name: "WDC"},
 		}, nil,
 	)
 
-	country := reference.Country{}
+	country := businesslogic.Country{}
 	federations, err := country.GetFederations(mockFederationRepo)
 
 	assert.Nil(t, err)

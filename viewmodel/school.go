@@ -4,7 +4,9 @@
 
 package viewmodel
 
-import "github.com/DancesportSoftware/das/businesslogic/reference"
+import (
+	"github.com/DancesportSoftware/das/businesslogic"
+)
 
 type School struct {
 	SchoolID int    `json:"id"`
@@ -12,7 +14,7 @@ type School struct {
 	CityID   int    `json:"city"`
 }
 
-func SchoolDataModelToViewModel(school reference.School) School {
+func SchoolDataModelToViewModel(school businesslogic.School) School {
 	return School{
 		SchoolID: school.ID,
 		Name:     school.Name,

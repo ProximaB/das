@@ -20,7 +20,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 	"time"
@@ -37,7 +37,7 @@ type PostgresCountryRepository struct {
 }
 
 // CreateCountry inserts a Country object into a Postgres database
-func (repo PostgresCountryRepository) CreateCountry(country *reference.Country) error {
+func (repo PostgresCountryRepository) CreateCountry(country *businesslogic.Country) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCountryRepository is not specified")
 	}
@@ -72,7 +72,7 @@ func (repo PostgresCountryRepository) CreateCountry(country *reference.Country) 
 }
 
 // DeleteCountry deletes a Country object from a Postgres database
-func (repo PostgresCountryRepository) DeleteCountry(country reference.Country) error {
+func (repo PostgresCountryRepository) DeleteCountry(country businesslogic.Country) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCountryRepository is not specified")
 	}
@@ -89,7 +89,7 @@ func (repo PostgresCountryRepository) DeleteCountry(country reference.Country) e
 }
 
 // UpdateCountry updates a Country object in a Postgres database
-func (repo PostgresCountryRepository) UpdateCountry(country reference.Country) error {
+func (repo PostgresCountryRepository) UpdateCountry(country businesslogic.Country) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresCountryRepository is not specified")
 	}
@@ -118,7 +118,7 @@ func (repo PostgresCountryRepository) UpdateCountry(country reference.Country) e
 }
 
 // SearchCountry searches the Country object in a Postgres database with the provided criteria
-func (repo PostgresCountryRepository) SearchCountry(criteria reference.SearchCountryCriteria) ([]reference.Country, error) {
+func (repo PostgresCountryRepository) SearchCountry(criteria businesslogic.SearchCountryCriteria) ([]businesslogic.Country, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresCountryRepository is not specified")
 	}
@@ -144,12 +144,12 @@ func (repo PostgresCountryRepository) SearchCountry(criteria reference.SearchCou
 	}
 
 	rows, err := stmt.RunWith(repo.Database).Query()
-	countries := make([]reference.Country, 0)
+	countries := make([]businesslogic.Country, 0)
 	if err != nil {
 		return countries, err
 	}
 	for rows.Next() {
-		each := reference.Country{}
+		each := businesslogic.Country{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,

@@ -20,7 +20,7 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 )
@@ -34,7 +34,7 @@ type PostgresSchoolRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresSchoolRepository) CreateSchool(school *reference.School) error {
+func (repo PostgresSchoolRepository) CreateSchool(school *businesslogic.School) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresSchoolRepository is not specified")
 	}
@@ -67,7 +67,7 @@ func (repo PostgresSchoolRepository) CreateSchool(school *reference.School) erro
 	return err
 }
 
-func (repo PostgresSchoolRepository) UpdateSchool(school reference.School) error {
+func (repo PostgresSchoolRepository) UpdateSchool(school businesslogic.School) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresSchoolRepository is not specified")
 	}
@@ -92,7 +92,7 @@ func (repo PostgresSchoolRepository) UpdateSchool(school reference.School) error
 	}
 }
 
-func (repo PostgresSchoolRepository) DeleteSchool(school reference.School) error {
+func (repo PostgresSchoolRepository) DeleteSchool(school businesslogic.School) error {
 	if repo.Database == nil {
 		return errors.New("data source of PostgresSchoolRepository is not specified")
 	}
@@ -112,7 +112,7 @@ func (repo PostgresSchoolRepository) DeleteSchool(school reference.School) error
 	return err
 }
 
-func (repo PostgresSchoolRepository) SearchSchool(criteria reference.SearchSchoolCriteria) ([]reference.School, error) {
+func (repo PostgresSchoolRepository) SearchSchool(criteria businesslogic.SearchSchoolCriteria) ([]businesslogic.School, error) {
 	if repo.Database == nil {
 		return nil, errors.New("data source of PostgresSchoolRepository is not specified")
 	}
@@ -142,12 +142,12 @@ func (repo PostgresSchoolRepository) SearchSchool(criteria reference.SearchSchoo
 			Where(squirrel.Eq{`C.STATE_ID`: criteria.StateID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	schools := make([]reference.School, 0)
+	schools := make([]businesslogic.School, 0)
 	if err != nil {
 		return schools, err
 	}
 	for rows.Next() {
-		each := reference.School{}
+		each := businesslogic.School{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,

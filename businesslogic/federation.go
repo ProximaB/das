@@ -14,31 +14,42 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package reference
+package businesslogic
 
 import (
+	"errors"
 	"time"
 )
 
-type Proficiency struct {
+type Federation struct {
 	ID              int
 	Name            string
+	Abbreviation    string
 	Description     string
-	DivisionID      int
+	YearFounded     int
+	CountryID       int
 	CreateUserID    *int
 	DateTimeCreated time.Time
 	UpdateUserID    *int
-	DateTImeUpdated time.Time
+	DateTimeUpdated time.Time
 }
 
-type SearchProficiencyCriteria struct {
-	ProficiencyID int `schema:"id"`
-	DivisionID    int `schema:"division"`
+type SearchFederationCriteria struct {
+	ID        int    `schema:"id"`
+	Name      string `schema:"name"`
+	CountryID int    `schema:"country"`
 }
 
-type IProficiencyRepository interface {
-	SearchProficiency(criteria SearchProficiencyCriteria) ([]Proficiency, error)
-	CreateProficiency(proficiency *Proficiency) error
-	UpdateProficiency(proficiency Proficiency) error
-	DeleteProficiency(proficiency Proficiency) error
+type IFederationRepository interface {
+	CreateFederation(federation *Federation) error
+	SearchFederation(criteria SearchFederationCriteria) ([]Federation, error)
+	UpdateFederation(federation Federation) error
+	DeleteFederation(federation Federation) error
+}
+
+func (federation Federation) GetDivisions(repo IDivisionRepository) ([]Division, error) {
+	if repo == nil {
+		return nil, errors.New("null IDivisionRepository")
+	}
+	return repo.SearchDivision(SearchDivisionCriteria{FederationID: federation.ID})
 }

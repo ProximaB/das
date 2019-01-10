@@ -14,32 +14,38 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package reference
+package businesslogic
 
 import (
 	"time"
 )
 
-type School struct {
+// Age contains data for the age category requirement for events
+// Age is associated with Division, which is associated with Federation
+type Age struct {
 	ID              int
 	Name            string
-	CityID          int
+	Description     string
+	DivisionID      int
+	Enforced        bool // if required, AgeMinimum and AgeMaximum must have non-zero value
+	AgeMinimum      int
+	AgeMaximum      int
 	CreateUserID    *int
 	DateTimeCreated time.Time
 	UpdateUserID    *int
 	DateTimeUpdated time.Time
 }
 
-type SearchSchoolCriteria struct {
-	ID      int    `schema:"id"`
-	Name    string `schema:"name"`
-	CityID  int    `schema:"city"`
-	StateID int    `schema:"state"`
+// SearchAgeCriteria provides parameters when searching Age in IAgeRepository
+type SearchAgeCriteria struct {
+	DivisionID int `schema:"division"`
+	AgeID      int `schema:"id"`
 }
 
-type ISchoolRepository interface {
-	CreateSchool(school *School) error
-	SearchSchool(criteria SearchSchoolCriteria) ([]School, error)
-	UpdateSchool(school School) error
-	DeleteSchool(school School) error
+// IAgeRepository provides an interface for other businesslogic code to access Age data
+type IAgeRepository interface {
+	CreateAge(age *Age) error
+	SearchAge(criteria SearchAgeCriteria) ([]Age, error)
+	UpdateAge(age Age) error
+	DeleteAge(age Age) error
 }

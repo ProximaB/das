@@ -19,7 +19,7 @@ package reference
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"log"
@@ -28,7 +28,7 @@ import (
 
 // CountryServer serves requests that perform
 type CountryServer struct {
-	reference.ICountryRepository
+	businesslogic.ICountryRepository
 }
 
 // CreateCountryHandler handles request
@@ -75,7 +75,7 @@ func (server CountryServer) DeleteCountryHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	country := reference.Country{
+	country := businesslogic.Country{
 		ID: deleteDTO.CountryID,
 	}
 
@@ -99,7 +99,7 @@ func (server CountryServer) UpdateCountryHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	country := reference.Country{
+	country := businesslogic.Country{
 		ID:           updateDTO.CountryID,
 		Name:         updateDTO.Name,
 		Abbreviation: updateDTO.Abbreviation,
@@ -135,7 +135,7 @@ func (server CountryServer) SearchCountryHandler(w http.ResponseWriter, r *http.
 		return
 	}
 
-	searchDTO := new(reference.SearchCountryCriteria)
+	searchDTO := new(businesslogic.SearchCountryCriteria)
 	if err := util.ParseRequestData(r, searchDTO); err != nil {
 		w.WriteHeader(http.StatusBadRequest)
 		return

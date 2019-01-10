@@ -19,7 +19,7 @@ package referencedal
 import (
 	"database/sql"
 	"fmt"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/Masterminds/squirrel"
 )
@@ -33,8 +33,8 @@ const (
 	DAS_USER_GENDER_TABLE = "DAS.GENDER"
 )
 
-func (repo PostgresGenderRepository) GetAllGenders() ([]reference.Gender, error) {
-	genders := make([]reference.Gender, 0)
+func (repo PostgresGenderRepository) GetAllGenders() ([]businesslogic.Gender, error) {
+	genders := make([]businesslogic.Gender, 0)
 	stmt := repo.SqlBuilder.Select(
 		fmt.Sprintf(
 			"%s, %s, %s, %s, %s, %s",
@@ -52,7 +52,7 @@ func (repo PostgresGenderRepository) GetAllGenders() ([]reference.Gender, error)
 	}
 
 	for rows.Next() {
-		each := reference.Gender{}
+		each := businesslogic.Gender{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,

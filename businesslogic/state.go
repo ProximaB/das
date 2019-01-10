@@ -14,30 +14,40 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package reference
+package businesslogic
 
 import (
+	"errors"
 	"time"
 )
 
-type Style struct {
+type State struct {
 	ID              int
 	Name            string
-	Description     string
+	Abbreviation    string
+	CountryID       int
 	CreateUserID    *int
 	DateTimeCreated time.Time
 	UpdateUserID    *int
 	DateTimeUpdated time.Time
 }
 
-type SearchStyleCriteria struct {
-	StyleID int    `schema:"id"`
-	Name    string `schema:"name"`
+type SearchStateCriteria struct {
+	StateID   int    `schema:"id"`
+	Name      string `schema:"name"`
+	CountryID int    `schema:"country"`
 }
 
-type IStyleRepository interface {
-	CreateStyle(style *Style) error
-	SearchStyle(criteria SearchStyleCriteria) ([]Style, error)
-	UpdateStyle(style Style) error
-	DeleteStyle(style Style) error
+type IStateRepository interface {
+	CreateState(state *State) error
+	SearchState(criteria SearchStateCriteria) ([]State, error)
+	UpdateState(state State) error
+	DeleteState(state State) error
+}
+
+func (state State) GetCities(repo ICityRepository) ([]City, error) {
+	if repo == nil {
+		return nil, errors.New("null ICityRepository")
+	}
+	return repo.SearchCity(SearchCityCriteria{StateID: state.ID})
 }

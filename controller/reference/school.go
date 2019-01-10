@@ -18,19 +18,19 @@ package reference
 
 import (
 	"encoding/json"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 )
 
 type SchoolServer struct {
-	reference.ISchoolRepository
+	businesslogic.ISchoolRepository
 }
 
 // GET /api/reference/school
 func (server SchoolServer) SearchSchoolHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(reference.SearchSchoolCriteria)
+	criteria := new(businesslogic.SearchSchoolCriteria)
 
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())

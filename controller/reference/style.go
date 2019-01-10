@@ -18,19 +18,19 @@ package reference
 
 import (
 	"encoding/json"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 )
 
 type StyleServer struct {
-	reference.IStyleRepository
+	businesslogic.IStyleRepository
 }
 
 // GET /api/reference/style
 func (server StyleServer) SearchStyleHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(reference.SearchStyleCriteria)
+	criteria := new(businesslogic.SearchStyleCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, "invalid request data", parseErr.Error())
 		return

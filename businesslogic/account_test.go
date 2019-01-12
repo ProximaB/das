@@ -175,25 +175,6 @@ func TestAccount_SetRoles(t *testing.T) {
 	}
 }
 
-func TestAccount_MeetMinimalRequirement(t *testing.T) {
-	accounts := []businesslogic.Account{
-		{FirstName: "K", LastName: "E", Email: "rimuru@slime.com", Phone: "8100100830"},
-		{FirstName: "KevinKevinKevinKevin", LastName: "EnarioEnarioEnarioEnario",
-			Email: "rimuru@slime.com", Phone: "8100100830"},
-		{FirstName: "Kevin", LastName: "Enario", Email: ".com", Phone: "8100100830"},
-		{FirstName: "Kevin", LastName: "Enario", Email: "rimuru@slime.com", Phone: "01"},
-		{FirstName: "Kevin", LastName: "Enario", Email: "rimuru@slime.com", Phone: "8284235657"},
-	}
-
-	for x := 0; x < len(accounts); x++ {
-		if x == (len(accounts) - 1) {
-			assert.Nil(t, accounts[x].MeetMinimalRequirement())
-		} else {
-			assert.Error(t, accounts[x].MeetMinimalRequirement())
-		}
-	}
-}
-
 func TestAccount_MeetMinimalRequirement_NameTooShort(t *testing.T) {
 	account := businesslogic.Account{
 		FirstName: "K", LastName: "E", Email: "rimuru@slime.com", Phone: "8100100830",

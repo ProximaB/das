@@ -54,7 +54,7 @@ func TestCreateCompetition(t *testing.T) {
 	provisionRepo.EXPECT().SearchOrganizerProvision(businesslogic.SearchOrganizerProvisionCriteria{
 		OrganizerID: 1,
 	}).Return([]businesslogic.OrganizerProvision{
-		{ID: 3, OrganizerID: 1, Available: 3, Hosted: 7},
+		{ID: 3, OrganizerRoleID: 1, Available: 3, Hosted: 7},
 	}, nil)
 	provisionRepo.EXPECT().UpdateOrganizerProvision(gomock.Any()).Return(nil)
 	provisionHistoryRepo.EXPECT().CreateOrganizerProvisionHistory(gomock.Any()).Return(nil)

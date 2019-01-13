@@ -82,7 +82,7 @@ func (server OrganizerProvisionHistoryServer) GetOrganizerProvisionHistoryHandle
 	data := make([]OrganizerProvisionHistoryEntryViewModel, 0)
 	for _, each := range history {
 		entry := OrganizerProvisionHistoryEntryViewModel{
-			OrganizerID:       each.OrganizerID,
+			OrganizerID:       each.OrganizerRoleID,
 			Allocated:         each.Amount,
 			DateTimeAllocated: each.DateTimeCreated,
 		}

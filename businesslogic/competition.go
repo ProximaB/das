@@ -162,7 +162,7 @@ func CreateCompetition(competition Competition, competitionRepo ICompetitionRepo
 	}
 
 	newProvision := provision.updateForCreateCompetition(competition)
-	historyEntry := newProvisionHistory(newProvision, competition)
+	historyEntry := newProvisionHistoryEntry(newProvision, competition)
 	updateOrganizerProvision(newProvision, historyEntry, provisionRepo, historyRepo)
 
 	err := competitionRepo.CreateCompetition(&competition)

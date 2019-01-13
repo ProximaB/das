@@ -98,6 +98,9 @@ func (repo PostgresAccountRoleRepository) SearchAccountRole(criteria businesslog
 		common.ColumnDateTimeUpdated,
 	)).From(DAS_ACCOUNT_ROLE_TABLE)
 
+	if criteria.ID > 0 {
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ID})
+	}
 	if criteria.AccountID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.ColumnAccountID: criteria.AccountID})
 	}
@@ -111,7 +114,7 @@ func (repo PostgresAccountRoleRepository) SearchAccountRole(criteria businesslog
 	}
 	for rows.Next() {
 		each := businesslogic.AccountRole{}
-		rows.Scan(
+		scanErr := rows.Scan(
 			&each.ID,
 			&each.AccountID,
 			&each.AccountTypeID,
@@ -120,8 +123,13 @@ func (repo PostgresAccountRoleRepository) SearchAccountRole(criteria businesslog
 			&each.UpdateUserID,
 			&each.DateTimeUpdated,
 		)
+		if scanErr != nil {
+			return roles, scanErr
+		}
 		roles = append(roles, each)
 	}
-	rows.Close()
+	if closeErr := rows.Close(); closeErr != nil {
+		return roles, closeErr
+	}
 	return roles, err
 }

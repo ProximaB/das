@@ -34,7 +34,7 @@ func TestGetOrganizerProvision(t *testing.T) {
 	mockRepo.EXPECT().SearchOrganizerProvision(businesslogic.SearchOrganizerProvisionCriteria{
 		OrganizerID: 1,
 	}).Return([]businesslogic.OrganizerProvision{
-		{ID: 1, OrganizerID: 1, Available: 1, Hosted: 2},
+		{ID: 1, OrganizerRoleID: 1, Available: 1, Hosted: 2},
 	}, nil)
 
 	res_1, err_1 := mockRepo.SearchOrganizerProvision(businesslogic.SearchOrganizerProvisionCriteria{

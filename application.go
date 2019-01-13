@@ -36,5 +36,5 @@ func main() {
 
 	http.Handle("/", router)
 	log.Println("[info] service is ready")
-	log.Fatalf("[fatal] %v", http.ListenAndServe(":8080", nil))
+	log.Fatalf("[fatal] %v", http.ListenAndServe(":5000", nil))
 }

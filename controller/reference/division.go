@@ -18,18 +18,18 @@ package reference
 
 import (
 	"encoding/json"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 )
 
 type DivisionServer struct {
-	reference.IDivisionRepository
+	businesslogic.IDivisionRepository
 }
 
 func (server DivisionServer) SearchDivisionHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(reference.SearchDivisionCriteria)
+	criteria := new(businesslogic.SearchDivisionCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, "invalid request data", parseErr.Error())
 		return

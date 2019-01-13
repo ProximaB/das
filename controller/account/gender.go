@@ -18,14 +18,14 @@ package account
 
 import (
 	"encoding/json"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 )
 
 // GenderServer serves requests that ask for all possible gender options in DAS
 type GenderServer struct {
-	reference.IGenderRepository
+	businesslogic.IGenderRepository
 }
 
 // GetAccountGenderHandler handles request

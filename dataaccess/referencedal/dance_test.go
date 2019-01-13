@@ -17,7 +17,7 @@
 package referencedal_test
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/referencedal"
 	"github.com/Masterminds/squirrel"
 	"github.com/stretchr/testify/assert"
@@ -50,7 +50,7 @@ func TestPostgresDanceRepository_SearchDance(t *testing.T) {
 
 	mock.ExpectQuery(`SELECT ID, NAME, ABBREVIATION, DESCRIPTION, STYLE_ID, CREATE_USER_ID, 
 			DATETIME_CREATED, UPDATE_USER_ID, DATETIME_UPDATED FROM DAS.DANCE`).WillReturnRows(rows)
-	dances, _ := danceRepo.SearchDance(reference.SearchDanceCriteria{})
+	dances, _ := danceRepo.SearchDance(businesslogic.SearchDanceCriteria{})
 
 	assert.EqualValues(t, 2, len(dances), "search with empty criteria should return all dances")
 }
@@ -67,7 +67,7 @@ func TestPostgresDanceRepository_CreateDance(t *testing.T) {
 	mock.ExpectExec(`INSERT INTO DAS.DANCE`)
 	mock.ExpectCommit()
 
-	args := reference.Dance{ID: 3, Name: "Foxtrot", StyleID: 4, DateTimeUpdated: time.Now()}
+	args := businesslogic.Dance{ID: 3, Name: "Foxtrot", StyleID: 4, DateTimeUpdated: time.Now()}
 
 	err = danceRepo.CreateDance(&args)
 
@@ -86,7 +86,7 @@ func TestPostgresDanceRepository_DeleteDance(t *testing.T) {
 	mock.ExpectExec(`DELETE FROM DAS.DANCE`).WillReturnResult(sqlmock.NewResult(3, 1))
 	mock.ExpectCommit()
 
-	args := reference.Dance{ID: 3, Name: "Foxtrot", StyleID: 4, DateTimeUpdated: time.Now()}
+	args := businesslogic.Dance{ID: 3, Name: "Foxtrot", StyleID: 4, DateTimeUpdated: time.Now()}
 
 	err = danceRepo.DeleteDance(args)
 
@@ -105,7 +105,7 @@ func TestPostgresDanceRepository_UpdateDance(t *testing.T) {
 	mock.ExpectExec(`UPDATE DAS.DANCE SET`).WillReturnResult(sqlmock.NewResult(3, 1))
 	mock.ExpectCommit()
 
-	args := reference.Dance{ID: 3, Name: "Foxtrot", StyleID: 4, DateTimeUpdated: time.Now()}
+	args := businesslogic.Dance{ID: 3, Name: "Foxtrot", StyleID: 4, DateTimeUpdated: time.Now()}
 
 	err = danceRepo.UpdateDance(args)
 

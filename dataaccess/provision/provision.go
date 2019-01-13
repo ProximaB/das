@@ -46,6 +46,7 @@ func (repo PostgresOrganizerProvisionRepository) CreateOrganizerProvision(provis
 	stmt := repo.SqlBuilder.Insert("").
 		Into(DAS_ORGANIZER_PROVISION).
 		Columns(
+			common.ColumnAccountID,
 			DAS_ORGANIZER_PROVISION_COL_ORGANIZER_ID,
 			DAS_ORGANIZER_PROVISION_COL_HOSTED,
 			DAS_ORGANIZER_PROVISION_COL_AVAILABLE,
@@ -53,16 +54,24 @@ func (repo PostgresOrganizerProvisionRepository) CreateOrganizerProvision(provis
 			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
 			common.ColumnDateTimeUpdated,
-		).Values(provision.OrganizerID, provision.Hosted, provision.Available, provision.CreateUserID, provision.DateTimeCreated, provision.UpdateUserID, provision.DateTimeUpdated)
+		).Values(
+		provision.AccountID,
+		provision.OrganizerRoleID,
+		provision.Hosted,
+		provision.Available,
+		provision.CreateUserID,
+		provision.DateTimeCreated,
+		provision.UpdateUserID,
+		provision.DateTimeUpdated)
 	_, err := stmt.RunWith(repo.Database).Exec()
 	if err != nil {
-		log.Printf("[error] initializing organizer organizer: %s\n", err.Error())
+		log.Printf("[error] initializing organizer provision: %s\n", err.Error())
 		return err
 	}
 
 	//CreateOrganizerProvisionHistoryEntry(accountID, 0, "initial organizer", accountID)
 	if err != nil {
-		log.Printf("[error] initializing organizer organizer history: %s\n", err.Error())
+		log.Printf("[error] initializing organizer provision history: %s\n", err.Error())
 		return err
 	}
 	return err
@@ -79,7 +88,7 @@ func (repo PostgresOrganizerProvisionRepository) UpdateOrganizerProvision(provis
 		Set(DAS_ORGANIZER_PROVISION_COL_AVAILABLE, provision.Available).
 		Set(DAS_ORGANIZER_PROVISION_COL_HOSTED, provision.Hosted).
 		Set(common.ColumnDateTimeUpdated, provision.DateTimeUpdated).
-		Where(squirrel.Eq{DAS_ORGANIZER_PROVISION_COL_ORGANIZER_ID: provision.OrganizerID})
+		Where(squirrel.Eq{DAS_ORGANIZER_PROVISION_COL_ORGANIZER_ID: provision.OrganizerRoleID})
 	_, err := stmt.RunWith(repo.Database).Exec()
 	return err
 }
@@ -127,7 +136,7 @@ func (repo PostgresOrganizerProvisionRepository) SearchOrganizerProvision(
 		rows.Scan(
 			&each.ID,
 			&each.AccountID,
-			&each.OrganizerID,
+			&each.OrganizerRoleID,
 			&each.Hosted,
 			&each.Available,
 			&each.CreateUserID,

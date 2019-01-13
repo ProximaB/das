@@ -22,7 +22,6 @@ import (
 	"firebase.google.com/go"
 	"firebase.google.com/go/auth"
 	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
 	"google.golang.org/api/option"
 	"log"
 	"net/http"
@@ -54,7 +53,7 @@ func (strategy FirebaseAuthenticationStrategy) convertFirebaseUserToDasUser(user
 		}
 		return businesslogic.Account{
 			AccountStatusID: businesslogic.AccountStatusActivated,
-			UserGenderID:    reference.GENDER_UNKNOWN,
+			UserGenderID:    businesslogic.GENDER_UNKNOWN,
 			FirstName:       firstName,
 			LastName:        lastName,
 			Email:           user.Email,

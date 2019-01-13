@@ -50,7 +50,7 @@ func (repo PostgresOrganizerProvisionHistoryRepository) CreateOrganizerProvision
 		common.ColumnUpdateUserID,
 		common.ColumnDateTimeUpdated,
 	).Values(
-		history.OrganizerID,
+		history.OrganizerRoleID,
 		history.Amount,
 		history.Note,
 		history.CreateUserID,
@@ -98,7 +98,7 @@ func (repo PostgresOrganizerProvisionHistoryRepository) SearchOrganizerProvision
 		each := businesslogic.OrganizerProvisionHistoryEntry{}
 		rows.Scan(
 			&each.ID,
-			&each.OrganizerID,
+			&each.OrganizerRoleID,
 			&each.Amount,
 			&each.Note,
 			&each.CreateUserID,

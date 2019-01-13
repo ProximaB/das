@@ -17,7 +17,7 @@
 package referencedal_test
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/referencedal"
 	"github.com/Masterminds/squirrel"
 	"github.com/stretchr/testify/assert"
@@ -46,7 +46,7 @@ func TestPostgresStudioRepository_SearchStudio(t *testing.T) {
 	).AddRow(1, "Wisconsin", "WI", 8, 3, time.Now(), 4, time.Now())
 
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
-	studios, _ := studioRepository.SearchStudio(reference.SearchStudioCriteria{})
+	studios, _ := studioRepository.SearchStudio(businesslogic.SearchStudioCriteria{})
 
 	assert.NotZero(t, len(studios))
 }
@@ -59,7 +59,7 @@ func TestPostgresStudioRepository_CreateStudio(t *testing.T) {
 	defer db.Close()
 	studioRepository.Database = db
 
-	args := reference.Studio{Name: "Super Dance Studio", CityID: 34}
+	args := businesslogic.Studio{Name: "Super Dance Studio", CityID: 34}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`INSERT INTO DAS.STUDIO (NAME, ADDRESS, CITY_ID, WEBSITE, CREATE_USER_ID, DATETIME_CREATED, 
@@ -78,7 +78,7 @@ func TestPostgresStudioRepository_DeleteStudio(t *testing.T) {
 	defer db.Close()
 	studioRepository.Database = db
 
-	args := reference.Studio{ID: 29, Name: "Super Dance Studio", CityID: 34}
+	args := businesslogic.Studio{ID: 29, Name: "Super Dance Studio", CityID: 34}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`DELETE FROM DAS.STUDIO`).WillReturnResult(sqlmock.NewResult(29, 1))
@@ -96,7 +96,7 @@ func TestPostgresStudioRepository_UpdateStudio(t *testing.T) {
 	defer db.Close()
 	studioRepository.Database = db
 
-	args := reference.Studio{ID: 29, Name: "Super Dance Studio", CityID: 34}
+	args := businesslogic.Studio{ID: 29, Name: "Super Dance Studio", CityID: 34}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`UPDATE DAS.STUDIO`).WillReturnResult(sqlmock.NewResult(29, 1))

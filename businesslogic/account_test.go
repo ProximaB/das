@@ -19,7 +19,6 @@ package businesslogic_test
 import (
 	"errors"
 	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
 	"github.com/DancesportSoftware/das/mock/businesslogic"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -30,25 +29,25 @@ import (
 var testAthleteAccount = businesslogic.Account{
 	FirstName:             "First Name",
 	LastName:              "Last Name",
-	UserGenderID:          reference.GENDER_MALE,
+	UserGenderID:          businesslogic.GENDER_MALE,
 	DateOfBirth:           time.Date(2017, time.January, 1, 1, 1, 1, 1, time.UTC),
 	ToSAccepted:           true,
 	PrivacyPolicyAccepted: true,
-	Email:      "test@test.com",
-	Phone:      "1232234442",
-	Signature:  "I am a parent",
-	ByGuardian: true,
+	Email:                 "test@test.com",
+	Phone:                 "1232234442",
+	Signature:             "I am a parent",
+	ByGuardian:            true,
 }
 
 var testOrganizerAccount = businesslogic.Account{
 	FirstName:             "Mighty",
 	LastName:              "Meerkat",
-	UserGenderID:          reference.GENDER_FEMALE,
+	UserGenderID:          businesslogic.GENDER_FEMALE,
 	DateOfBirth:           time.Date(1997, time.May, 22, 1, 1, 1, 1, time.UTC),
 	ToSAccepted:           true,
 	PrivacyPolicyAccepted: true,
-	Email: "mighty.meerkat@email.com",
-	Phone: "3321231232",
+	Email:                 "mighty.meerkat@email.com",
+	Phone:                 "3321231232",
 }
 
 func TestGetAccountByEmail(t *testing.T) {

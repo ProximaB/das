@@ -18,19 +18,19 @@ package reference
 
 import (
 	"encoding/json"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 )
 
 type ProficiencyServer struct {
-	reference.IProficiencyRepository
+	businesslogic.IProficiencyRepository
 }
 
 // GET /api/reference/proficiency
 func (server ProficiencyServer) SearchProficiencyHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(reference.SearchProficiencyCriteria)
+	criteria := new(businesslogic.SearchProficiencyCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, "invalid request data", parseErr.Error())
 		return

@@ -16,7 +16,9 @@
 
 package viewmodel
 
-import "github.com/DancesportSoftware/das/businesslogic/reference"
+import (
+	"github.com/DancesportSoftware/das/businesslogic"
+)
 
 type Proficiency struct {
 	ProficiencyID int    `json:"id"`
@@ -24,7 +26,7 @@ type Proficiency struct {
 	Division      int    `json:"division"`
 }
 
-func ProficiencyDataModelToViewModel(dm reference.Proficiency) Proficiency {
+func ProficiencyDataModelToViewModel(dm businesslogic.Proficiency) Proficiency {
 	return Proficiency{
 		ProficiencyID: dm.ID,
 		Name:          dm.Name,

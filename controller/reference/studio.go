@@ -18,19 +18,19 @@ package reference
 
 import (
 	"encoding/json"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 )
 
 type StudioServer struct {
-	reference.IStudioRepository
+	businesslogic.IStudioRepository
 }
 
 // GET /api/reference/studio
 func (server StudioServer) SearchStudioHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(reference.SearchStudioCriteria)
+	criteria := new(businesslogic.SearchStudioCriteria)
 
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())

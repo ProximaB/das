@@ -20,7 +20,7 @@ import "time"
 
 type OrganizerProvisionHistoryEntry struct {
 	ID              int
-	OrganizerID     int
+	OrganizerRoleID int
 	Amount          int
 	Note            string
 	CreateUserID    int
@@ -33,9 +33,9 @@ type SearchOrganizerProvisionHistoryCriteria struct {
 	OrganizerID int
 }
 
-func newProvisionHistory(provision OrganizerProvision, competition Competition) OrganizerProvisionHistoryEntry {
+func newProvisionHistoryEntry(provision OrganizerProvision, competition Competition) OrganizerProvisionHistoryEntry {
 	historyEntry := OrganizerProvisionHistoryEntry{
-		OrganizerID:     provision.OrganizerID,
+		OrganizerRoleID: provision.OrganizerRoleID,
 		Amount:          -1,
 		Note:            "created competition " + competition.Name,
 		CreateUserID:    competition.CreateUserID,
@@ -51,8 +51,4 @@ type IOrganizerProvisionHistoryRepository interface {
 	UpdateOrganizerProvisionHistory(history OrganizerProvisionHistoryEntry) error
 	DeleteOrganizerProvisionHistory(history OrganizerProvisionHistoryEntry) error
 	CreateOrganizerProvisionHistory(history *OrganizerProvisionHistoryEntry) error
-}
-
-func GetOrganizerProvisionHistory(organizerID int, repo IOrganizerProvisionHistoryRepository) ([]OrganizerProvisionHistoryEntry, error) {
-	return repo.SearchOrganizerProvisionHistory(SearchOrganizerProvisionHistoryCriteria{OrganizerID: organizerID})
 }

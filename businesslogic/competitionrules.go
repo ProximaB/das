@@ -19,7 +19,7 @@ package businesslogic
 import "errors"
 
 type IRule interface {
-	Apply(registration EventRegistration) error
+	Apply(registration EventRegistrationForm) error
 }
 
 type GenderRule struct {
@@ -28,7 +28,7 @@ type GenderRule struct {
 	IPartnershipRepository
 }
 
-func (rule GenderRule) Apply(registration EventRegistration) error {
+func (rule GenderRule) Apply(registration EventRegistrationForm) error {
 	if partnershipResults, err := rule.SearchPartnership(SearchPartnershipCriteria{
 		PartnershipID: registration.PartnershipID,
 	}); err != nil {

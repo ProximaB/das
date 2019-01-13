@@ -18,19 +18,19 @@ package reference
 
 import (
 	"encoding/json"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 )
 
 type DanceServer struct {
-	reference.IDanceRepository
+	businesslogic.IDanceRepository
 }
 
 // GET /api/reference/dance
 func (server DanceServer) SearchDanceHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(reference.SearchDanceCriteria)
+	criteria := new(businesslogic.SearchDanceCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, "invalid request data", parseErr.Error())
 		return

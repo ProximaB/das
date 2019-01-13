@@ -18,7 +18,6 @@ package viewmodel
 
 import (
 	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
 )
 
 type AccountType struct {
@@ -47,7 +46,7 @@ func (dto CreateAccountDTO) ToAccountModel() businesslogic.Account {
 	account := businesslogic.Account{
 		FirstName:             dto.FirstName,
 		LastName:              dto.LastName,
-		UserGenderID:          reference.GENDER_UNKNOWN,
+		UserGenderID:          businesslogic.GENDER_UNKNOWN,
 		Email:                 dto.Email,
 		Phone:                 dto.Phone,
 		ToSAccepted:           true,

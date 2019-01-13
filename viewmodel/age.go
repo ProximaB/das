@@ -16,9 +16,7 @@
 
 package viewmodel
 
-import (
-	"github.com/DancesportSoftware/das/businesslogic/reference"
-)
+import "github.com/DancesportSoftware/das/businesslogic"
 
 type SearchAge struct {
 	DivisionID int `schema:"division"`
@@ -34,7 +32,7 @@ type Age struct {
 	Maximum  int    `json:"maximum"`
 }
 
-func AgeDataModelToViewModel(dm reference.Age) Age {
+func AgeDataModelToViewModel(dm businesslogic.Age) Age {
 	return Age{
 		ID:       dm.ID,
 		Name:     dm.Name,

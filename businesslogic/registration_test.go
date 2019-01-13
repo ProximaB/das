@@ -67,19 +67,16 @@ func TestCompetitionRegistrationService_ValidateEventRegistration_LegitimateData
 
 	athleteEventEntryRepo := mock_businesslogic.NewMockIAthleteEventEntryRepository(mockCtrl)
 
-	partnershipCompEntryRepo := mock_businesslogic.NewMockIPartnershipCompetitionEntryRepository(mockCtrl)
-	partnershipEventEntryRepo := mock_businesslogic.NewMockIPartnershipEventEntryRepository(mockCtrl)
+	// partnershipCompEntryRepo := mock_businesslogic.NewMockIPartnershipCompetitionEntryRepository(mockCtrl)
+	// partnershipEventEntryRepo := mock_businesslogic.NewMockIPartnershipEventEntryRepository(mockCtrl)
 
-	service := businesslogic.CompetitionRegistrationService{
+	service := businesslogic.NewCompetitionRegistrationService(
 		accountRepo,
 		partnershipRepo,
 		compRepo,
 		eventRepo,
 		athleteEntryRepo,
-		partnershipCompEntryRepo,
-		athleteEventEntryRepo,
-		partnershipEventEntryRepo,
-	}
+		athleteEventEntryRepo)
 
 	registration := businesslogic.EventRegistrationForm{
 		PartnershipID: 33,

@@ -10,66 +10,6 @@ import (
 	reflect "reflect"
 )
 
-// MockIRoleApplicationRepository is a mock of IRoleApplicationRepository interface
-type MockIRoleApplicationRepository struct {
-	ctrl     *gomock.Controller
-	recorder *MockIRoleApplicationRepositoryMockRecorder
-}
-
-// MockIRoleApplicationRepositoryMockRecorder is the mock recorder for MockIRoleApplicationRepository
-type MockIRoleApplicationRepositoryMockRecorder struct {
-	mock *MockIRoleApplicationRepository
-}
-
-// NewMockIRoleApplicationRepository creates a new mock instance
-func NewMockIRoleApplicationRepository(ctrl *gomock.Controller) *MockIRoleApplicationRepository {
-	mock := &MockIRoleApplicationRepository{ctrl: ctrl}
-	mock.recorder = &MockIRoleApplicationRepositoryMockRecorder{mock}
-	return mock
-}
-
-// EXPECT returns an object that allows the caller to indicate expected use
-func (m *MockIRoleApplicationRepository) EXPECT() *MockIRoleApplicationRepositoryMockRecorder {
-	return m.recorder
-}
-
-// CreateApplication mocks base method
-func (m *MockIRoleApplicationRepository) CreateApplication(application *businesslogic.RoleApplication) error {
-	ret := m.ctrl.Call(m, "CreateApplication", application)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// CreateApplication indicates an expected call of CreateApplication
-func (mr *MockIRoleApplicationRepositoryMockRecorder) CreateApplication(application interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateApplication", reflect.TypeOf((*MockIRoleApplicationRepository)(nil).CreateApplication), application)
-}
-
-// SearchApplication mocks base method
-func (m *MockIRoleApplicationRepository) SearchApplication(criteria businesslogic.SearchRoleApplicationCriteria) ([]businesslogic.RoleApplication, error) {
-	ret := m.ctrl.Call(m, "SearchApplication", criteria)
-	ret0, _ := ret[0].([]businesslogic.RoleApplication)
-	ret1, _ := ret[1].(error)
-	return ret0, ret1
-}
-
-// SearchApplication indicates an expected call of SearchApplication
-func (mr *MockIRoleApplicationRepositoryMockRecorder) SearchApplication(criteria interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchApplication", reflect.TypeOf((*MockIRoleApplicationRepository)(nil).SearchApplication), criteria)
-}
-
-// UpdateApplication mocks base method
-func (m *MockIRoleApplicationRepository) UpdateApplication(application businesslogic.RoleApplication) error {
-	ret := m.ctrl.Call(m, "UpdateApplication", application)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// UpdateApplication indicates an expected call of UpdateApplication
-func (mr *MockIRoleApplicationRepositoryMockRecorder) UpdateApplication(application interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateApplication", reflect.TypeOf((*MockIRoleApplicationRepository)(nil).UpdateApplication), application)
-}
-
 // MockIOrganizerProvisionRepository is a mock of IOrganizerProvisionRepository interface
 type MockIOrganizerProvisionRepository struct {
 	ctrl     *gomock.Controller

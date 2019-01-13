@@ -25,7 +25,7 @@
 MOCK_ROOT_DIR="./mock/"
 #
 # list of modules to mock
-declare -a modules=("./businesslogic/" "./businesslogic/reference/")
+declare -a modules=("./businesslogic/")
 #
 # remove existing mock and create a new one
 rm -rf $MOCK_ROOT_DIR

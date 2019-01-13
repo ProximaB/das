@@ -17,7 +17,7 @@
 package referencedal_test
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/referencedal"
 	"github.com/Masterminds/squirrel"
 	"github.com/stretchr/testify/assert"
@@ -46,7 +46,7 @@ func TestPostgresStateRepository_SearchState(t *testing.T) {
 	).AddRow(1, "Kanopy", "WI", 8, "www.example.com", 3, time.Now(), 4, time.Now())
 
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
-	states, _ := stateRepository.SearchState(reference.SearchStateCriteria{})
+	states, _ := stateRepository.SearchState(businesslogic.SearchStateCriteria{})
 
 	assert.NotZero(t, len(states))
 }
@@ -59,7 +59,7 @@ func TestPostgresStateRepository_CreateState(t *testing.T) {
 	defer db.Close()
 	stateRepository.Database = db
 
-	args := reference.State{Name: "Commonwealth", CountryID: 32}
+	args := businesslogic.State{Name: "Commonwealth", CountryID: 32}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`INSERT INTO DAS.STATE (NAME, ABBREVIATION, COUNTRY_ID, CREATE_USER_ID, DATETIME_CREATED,
@@ -78,7 +78,7 @@ func TestPostgresStateRepository_DeleteState(t *testing.T) {
 	defer db.Close()
 	stateRepository.Database = db
 
-	args := reference.State{ID: 22, Name: "Commonwealth", CountryID: 32}
+	args := businesslogic.State{ID: 22, Name: "Commonwealth", CountryID: 32}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`DELETE FROM DAS.STATE`).WillReturnResult(sqlmock.NewResult(22, 1))
@@ -96,7 +96,7 @@ func TestPostgresStateRepository_UpdateState(t *testing.T) {
 	defer db.Close()
 	stateRepository.Database = db
 
-	args := reference.State{ID: 18, Name: "Commonwealth", CountryID: 32}
+	args := businesslogic.State{ID: 18, Name: "Commonwealth", CountryID: 32}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`UPDATE DAS.STATE`).WillReturnResult(sqlmock.NewResult(18, 1))

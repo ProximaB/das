@@ -64,6 +64,9 @@ func TestCompetitionRegistrationService_ValidateEventRegistration_LegitimateData
 		{ID: 3, AthleteID: 12,
 			CompetitionEntry: businesslogic.BaseCompetitionEntry{CompetitionID: 44}},
 	}, nil)
+
+	athleteEventEntryRepo := mock_businesslogic.NewMockIAthleteEventEntryRepository(mockCtrl)
+
 	partnershipCompEntryRepo := mock_businesslogic.NewMockIPartnershipCompetitionEntryRepository(mockCtrl)
 	partnershipEventEntryRepo := mock_businesslogic.NewMockIPartnershipEventEntryRepository(mockCtrl)
 
@@ -74,6 +77,7 @@ func TestCompetitionRegistrationService_ValidateEventRegistration_LegitimateData
 		eventRepo,
 		athleteEntryRepo,
 		partnershipCompEntryRepo,
+		athleteEventEntryRepo,
 		partnershipEventEntryRepo,
 	}
 

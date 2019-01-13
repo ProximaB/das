@@ -18,7 +18,7 @@ package referencedal_test
 
 import (
 	"errors"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/referencedal"
 	"github.com/Masterminds/squirrel"
 	"github.com/stretchr/testify/assert"
@@ -40,7 +40,7 @@ func TestPostgresCountryRepository_CreateCountry(t *testing.T) {
 	defer db.Close()
 
 	countryRepo.Database = db
-	country := reference.Country{
+	country := businesslogic.Country{
 		Name:         "United States",
 		Abbreviation: "USA",
 	}
@@ -74,7 +74,7 @@ func TestPostgresCountryRepository_SearchCountry(t *testing.T) {
 		CREATE_USER_ID,  DATETIME_CREATED, UPDATE_USER_ID,
 		DATETIME_UPDATED FROM DAS.COUNTRY`).WillReturnRows(rows)
 
-	countries, err := countryRepo.SearchCountry(reference.SearchCountryCriteria{
+	countries, err := countryRepo.SearchCountry(businesslogic.SearchCountryCriteria{
 		CountryID: 1, Name: "Canada",
 	})
 	assert.Nil(t, err, "should get all countries")
@@ -93,7 +93,7 @@ func TestPostgresCountryRepository_DeleteCountry(t *testing.T) {
 	mock.ExpectExec(`^DELETE FROM DAS.COUNTRY`).WillReturnResult(sqlmock.NewErrorResult(errors.New("")))
 	mock.ExpectCommit()
 
-	err = countryRepo.DeleteCountry(reference.Country{ID: 1})
+	err = countryRepo.DeleteCountry(businesslogic.Country{ID: 1})
 	assert.Nil(t, err, "should delete country without error")
 }
 
@@ -105,7 +105,7 @@ func TestPostgresCountryRepository_UpdateCountry(t *testing.T) {
 	defer db.Close()
 	countryRepo.Database = db
 
-	args := reference.Country{ID: 1, Name: "New Name"}
+	args := businesslogic.Country{ID: 1, Name: "New Name"}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`UPDATE DAS.COUNTRY`).WillReturnResult(sqlmock.NewResult(1, 1))

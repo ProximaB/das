@@ -17,7 +17,7 @@
 package referencedal_test
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/referencedal"
 	"github.com/Masterminds/squirrel"
 	"github.com/stretchr/testify/assert"
@@ -46,7 +46,7 @@ func TestPostgresStyleRepository_SearchStyle(t *testing.T) {
 	).AddRow(1, "Standard", "International Standard", 3, time.Now(), 4, time.Now())
 
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
-	styles, _ := styleRepository.SearchStyle(reference.SearchStyleCriteria{})
+	styles, _ := styleRepository.SearchStyle(businesslogic.SearchStyleCriteria{})
 	assert.NotZero(t, len(styles))
 }
 
@@ -58,7 +58,7 @@ func TestPostgresStyleRepository_CreateStyle(t *testing.T) {
 	defer db.Close()
 	styleRepository.Database = db
 
-	args := reference.Style{Name: "Rhythm", DateTimeCreated: time.Now(), DateTimeUpdated: time.Now()}
+	args := businesslogic.Style{Name: "Rhythm", DateTimeCreated: time.Now(), DateTimeUpdated: time.Now()}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`INSERT INTO DAS.STYLE (NAME, DESCRIPTION, CREATE_USER_ID, 
@@ -77,7 +77,7 @@ func TestPostgresStyleRepository_DeleteStyle(t *testing.T) {
 	defer db.Close()
 	styleRepository.Database = db
 
-	args := reference.Style{ID: 2, Name: "Rhythm"}
+	args := businesslogic.Style{ID: 2, Name: "Rhythm"}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`DELETE FROM DAS.STYLE WHERE`).WillReturnResult(sqlmock.NewResult(2, 1))
@@ -95,7 +95,7 @@ func TestPostgresStyleRepository_UpdateStyle(t *testing.T) {
 	defer db.Close()
 	styleRepository.Database = db
 
-	args := reference.Style{ID: 2, Name: "Rhythm"}
+	args := businesslogic.Style{ID: 2, Name: "Rhythm"}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`UPDATE DAS.STYLE`).WillReturnResult(sqlmock.NewResult(2, 1))

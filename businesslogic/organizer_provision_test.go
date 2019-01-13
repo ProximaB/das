@@ -238,6 +238,9 @@ func TestRoleProvisionService_UpdateApplication_ValidApplication(t *testing.T) {
 	mockRoleRepo.EXPECT().SearchAccountRole(gomock.Any()).Return([]businesslogic.AccountRole{
 		{ID: 22, AccountID: 7, AccountTypeID: businesslogic.AccountTypeAthlete},
 	}, nil)
+	mockRoleRepo.EXPECT().SearchAccountRole(gomock.Any()).Return([]businesslogic.AccountRole{
+		{ID: 22, AccountID: 7, AccountTypeID: businesslogic.AccountTypeAthlete},
+	}, nil)
 	mockRoleAppRepo.EXPECT().UpdateApplication(gomock.Any()).Return(nil)
 	mockRoleRepo.EXPECT().CreateAccountRole(gomock.Any()).Return(nil)
 	mockOrgProvRepo.EXPECT().CreateOrganizerProvision(gomock.Any()).Return(nil)

@@ -17,7 +17,7 @@
 package referencedal_test
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/referencedal"
 	"github.com/Masterminds/squirrel"
 	"github.com/stretchr/testify/assert"
@@ -31,7 +31,7 @@ var cityRepository = referencedal.PostgresCityRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
-var city = reference.City{
+var city = businesslogic.City{
 	Name:            "Test City",
 	StateID:         1,
 	DateTimeCreated: time.Now(),
@@ -55,7 +55,7 @@ func TestPostgresCityRepository_SearchCity(t *testing.T) {
 	)
 
 	mock.ExpectQuery(`SELECT ID, NAME, STATE_ID, CREATE_USER_ID, DATETIME_CREATED, UPDATE_USER_ID, DATETIME_UPDATED FROM DAS.CITY`).WillReturnRows(rows)
-	cities, err := cityRepository.SearchCity(reference.SearchCityCriteria{})
+	cities, err := cityRepository.SearchCity(businesslogic.SearchCityCriteria{})
 
 	assert.NotZero(t, len(cities), "should retrieve cities that were populated to Database")
 	assert.Nil(t, err, "schema for DAS.CITY should be up to date")
@@ -89,7 +89,7 @@ func TestPostgresCityRepository_DeleteCity(t *testing.T) {
 	mock.ExpectExec(`^DELETE FROM DAS.CITY`).WillReturnResult(sqlmock.NewResult(1, 1))
 	mock.ExpectCommit()
 
-	err = cityRepository.DeleteCity(reference.City{ID: 1, Name: "Shenzhen"})
+	err = cityRepository.DeleteCity(businesslogic.City{ID: 1, Name: "Shenzhen"})
 
 	assert.Nil(t, err, "should delete city without error")
 }
@@ -106,7 +106,7 @@ func TestPostgresCityRepository_UpdateCity(t *testing.T) {
 	mock.ExpectExec("UPDATE DAS.CITY").WillReturnResult(sqlmock.NewResult(12, 1))
 	mock.ExpectCommit()
 
-	args := reference.City{ID: 12, Name: "New City", StateID: 77}
+	args := businesslogic.City{ID: 12, Name: "New City", StateID: 77}
 
 	err = cityRepository.UpdateCity(args)
 

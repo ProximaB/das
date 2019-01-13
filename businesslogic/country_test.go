@@ -18,9 +18,9 @@ package businesslogic_test
 
 import (
 	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/mock/businesslogic"
 	"testing"
 
-	"github.com/DancesportSoftware/das/mock/businesslogic/reference"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
@@ -29,7 +29,7 @@ func TestCountry_GetStates(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	mockRepo := mock_reference.NewMockIStateRepository(mockCtrl)
+	mockRepo := mock_businesslogic.NewMockIStateRepository(mockCtrl)
 	mockRepo.EXPECT().SearchState(businesslogic.SearchStateCriteria{}).Return([]businesslogic.State{
 		{ID: 1, Name: "Alaska", Abbreviation: "AK"},
 		{ID: 2, Name: "Michigan", Abbreviation: "MI"},
@@ -46,7 +46,7 @@ func TestCountry_GetFederations(t *testing.T) {
 	ctrl := gomock.NewController(t)
 	defer ctrl.Finish()
 
-	mockFederationRepo := mock_reference.NewMockIFederationRepository(ctrl)
+	mockFederationRepo := mock_businesslogic.NewMockIFederationRepository(ctrl)
 	mockFederationRepo.EXPECT().SearchFederation(businesslogic.SearchFederationCriteria{}).Return(
 		[]businesslogic.Federation{
 			{ID: 1, Name: "WDSF"},

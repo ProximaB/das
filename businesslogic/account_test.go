@@ -19,7 +19,6 @@ package businesslogic_test
 import (
 	"errors"
 	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
 	"github.com/DancesportSoftware/das/mock/businesslogic"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -30,7 +29,7 @@ import (
 var testAthleteAccount = businesslogic.Account{
 	FirstName:             "First Name",
 	LastName:              "Last Name",
-	UserGenderID:          reference.GENDER_MALE,
+	UserGenderID:          businesslogic.GENDER_MALE,
 	DateOfBirth:           time.Date(2017, time.January, 1, 1, 1, 1, 1, time.UTC),
 	ToSAccepted:           true,
 	PrivacyPolicyAccepted: true,
@@ -43,7 +42,7 @@ var testAthleteAccount = businesslogic.Account{
 var testOrganizerAccount = businesslogic.Account{
 	FirstName:             "Mighty",
 	LastName:              "Meerkat",
-	UserGenderID:          reference.GENDER_FEMALE,
+	UserGenderID:          businesslogic.GENDER_FEMALE,
 	DateOfBirth:           time.Date(1997, time.May, 22, 1, 1, 1, 1, time.UTC),
 	ToSAccepted:           true,
 	PrivacyPolicyAccepted: true,

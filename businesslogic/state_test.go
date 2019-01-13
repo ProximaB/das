@@ -19,7 +19,7 @@ package businesslogic_test
 import (
 	"errors"
 	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/mock/businesslogic/reference"
+	"github.com/DancesportSoftware/das/mock/businesslogic"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"testing"
@@ -29,7 +29,7 @@ func TestState_GetCities(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	mockRepo := mock_reference.NewMockICityRepository(mockCtrl)
+	mockRepo := mock_businesslogic.NewMockICityRepository(mockCtrl)
 
 	// behavior 1
 	mockRepo.EXPECT().SearchCity(businesslogic.SearchCityCriteria{StateID: 1}).Return([]businesslogic.City{

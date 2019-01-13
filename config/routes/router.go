@@ -84,18 +84,15 @@ func addDasControllerGroup(router *mux.Router, group util.DasControllerGroup) {
 }
 
 const (
-	EnvApiVersion = "API_VERSION"
-	EnvBuildDate  = "BUILD_DATE"
+	EnvBuildDate = "BUILD_DATE"
 )
 
 func rootController(w http.ResponseWriter, r *http.Request) {
-	apiVersion := os.Getenv(EnvApiVersion)
 	buildDate := os.Getenv(EnvBuildDate)
 
 	data := struct {
-		APIVersion string `json:"api_version"`
-		BuildDate  string `json:"build_date"`
-	}{apiVersion, buildDate}
+		BuildDate string `json:"version"`
+	}{buildDate}
 
 	output, _ := json.Marshal(data)
 	w.Write(output)

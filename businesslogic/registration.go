@@ -70,6 +70,19 @@ type CompetitionRegistrationService struct {
 	PartnershipCompetitionEntryRepo IPartnershipCompetitionEntryRepository
 	AthleteEventEntryRepo           IAthleteEventEntryRepository
 	PartnershipEventEntryRepo       IPartnershipEventEntryRepository
+	athleteCompetitionEntryService  AthleteCompetitionEntryService
+}
+
+func NewCompetitionRegistrationService(
+	accountRepo IAccountRepository,
+	partnershipRepo IPartnershipRepository,
+	competitionRepo ICompetitionRepository,
+	eventRepo IEventRepository,
+	athleteCompetitionEntryRepo IAthleteCompetitionEntryRepository,
+	athleteEventEntryRepo IAthleteEventEntryRepository) CompetitionRegistrationService {
+	service := CompetitionRegistrationService{}
+	service.athleteCompetitionEntryService = NewAthleteCompetitionEntryService(accountRepo, competitionRepo, athleteCompetitionEntryRepo)
+	return service
 }
 
 func (service CompetitionRegistrationService) UpdateRegistration(currentUser Account, form EventRegistrationForm) error {
@@ -259,8 +272,8 @@ func (service CompetitionRegistrationService) CreateAthleteCompetitionEntry(curr
 		PaymentReceivedIndicator: false,
 	}
 
-	leadCompEntry.createAthleteCompetitionEntry(service.CompetitionRepository, service.AthleteCompetitionEntryRepo)
-	followCompEntry.createAthleteCompetitionEntry(service.CompetitionRepository, service.AthleteCompetitionEntryRepo)
+	service.athleteCompetitionEntryService.CreateAthleteCompetitionEntry(&leadCompEntry)
+	service.athleteCompetitionEntryService.CreateAthleteCompetitionEntry(&followCompEntry)
 	return nil
 }
 

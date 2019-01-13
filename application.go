@@ -21,6 +21,7 @@ import (
 	"github.com/DancesportSoftware/das/config/routes"
 	"log"
 	"net/http"
+	"os"
 )
 
 func main() {
@@ -36,5 +37,12 @@ func main() {
 
 	http.Handle("/", router)
 	log.Println("[info] service is ready")
-	log.Fatalf("[fatal] %v", http.ListenAndServe(":8080", nil))
+
+	port := os.Getenv("APP_PORT")
+	if port == "" {
+		port = "5000"
+	}
+
+	log.Printf("[info] DAS will be running on port " + port)
+	log.Fatalf("[fatal] %v", http.ListenAndServe(":"+port, nil))
 }

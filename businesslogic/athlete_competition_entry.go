@@ -62,12 +62,15 @@ type IAthleteCompetitionEntryRepository interface {
 	UpdateEntry(entry AthleteCompetitionEntry) error
 }
 
+// AthleteCompetitionEntryService encapsulates the data flow of Athlete's Competition Entry, including data validation
+// and sanitization.
 type AthleteCompetitionEntryService struct {
 	accountRepo          IAccountRepository
 	competitionRepo      ICompetitionRepository
 	athleteCompEntryRepo IAthleteCompetitionEntryRepository
 }
 
+// NewAthleteCompetitionEntryService instantiates a new AthleteCompetitionEntryService.
 func NewAthleteCompetitionEntryService(accountRepo IAccountRepository, competitionRepo ICompetitionRepository, athleteCompEntryRepo IAthleteCompetitionEntryRepository) AthleteCompetitionEntryService {
 	return AthleteCompetitionEntryService{
 		accountRepo,
@@ -76,9 +79,16 @@ func NewAthleteCompetitionEntryService(accountRepo IAccountRepository, competiti
 	}
 }
 
-// CreateAthleteCompetitionEntry checks if current entry exists in the repository. If yes, an error will be returned,
-// if not, a competition entry will be created for this athlete.
-// Competition must be during open registration stage.
+// CreateAthleteCompetitionEntry attempts to create competition for an athlete if following checks pass:
+// - If the create user is authorized
+//		- If the create user is the athlete: proceed
+//		- If the create user is an organizer or scrutineer of this competition
+// - If current entry exists in the repository:
+// 		- yes, return error
+//		- no: proceed
+// - If Competition is in open registration stage:
+//		- yes: proceed
+//		- no: return error
 func (service AthleteCompetitionEntryService) CreateAthleteCompetitionEntry(entry *AthleteCompetitionEntry) error {
 	// check if competition still accept entries
 	compSearchResults, searchCompErr := service.competitionRepo.SearchCompetition(
@@ -112,4 +122,8 @@ func (service AthleteCompetitionEntryService) CreateAthleteCompetitionEntry(entr
 	}
 
 	return errors.New("cannot create competition entry for this athlete")
+}
+
+func (service AthleteCompetitionEntryService) DeleteAthleteCompetitionEntry(entry AthleteCompetitionEntry) error {
+	return errors.New("Not implemented")
 }

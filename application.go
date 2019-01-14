@@ -40,7 +40,7 @@ func main() {
 
 	port := os.Getenv("APP_PORT")
 	if port == "" {
-		port = "5000"
+		port = "5000" // default port for AWS elastic beanstalk
 	}
 
 	log.Printf("[info] DAS will be running on port " + port)

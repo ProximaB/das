@@ -25,7 +25,8 @@ const (
 	COMPETITION_INVITATION_STATUS_ACCEPTED = "Accepted"
 	COMPETITION_INVITATION_STATUS_REJECTED = "Rejected"
 	COMPETITION_INVITATION_STATUS_PENDING  = "Pending"
-	COMPETITION_INVITATION_STATUS_Revoked  = "Revoked"
+	COMPETITION_INVITATION_STATUS_REVOKED  = "Revoked"
+	COMPETITION_INVITATION_STATUS_EXPIRED  = "Expired"
 )
 
 type CompetitionOfficialInvitation struct {
@@ -35,6 +36,7 @@ type CompetitionOfficialInvitation struct {
 	ServiceCompetition Competition // the competition that the recipient will serve at if accepted
 	AssignedRoleID     int         // only allow Adjudicator, Scrutineer, Deck Captain, Emcee
 	InvitationStatus   string
+	ExpirationDate     time.Time
 	CreateUserId       int
 	DateTimeCreated    time.Time
 	UpdateUserId       int
@@ -95,11 +97,32 @@ func (service CompetitionOfficialInvitationService) NewCompetitionOfficialInvita
 
 	invitation.Recipient = recipient
 	invitation.AssignedRoleID = serviceRole
+	invitation.DateTimeCreated = time.Now()
+	invitation.CreateUserId = sender.ID
+	invitation.DateTimeUpdated = time.Now()
+	invitation.UpdateUserId = sender.ID
 
-	// create the role
+	// invitation will expire either:
+	// - 30 days after the invitation, or
+	// - after the competition
+	thirtyDayLimit := time.Now().AddDate(0, 0, 30)
+	if thirtyDayLimit.Before(comp.EndDateTime) {
+		invitation.ExpirationDate = thirtyDayLimit
+	} else {
+		invitation.ExpirationDate = comp.EndDateTime
+	}
+
+	// initialize invitation status to pending
+	invitation.InvitationStatus = COMPETITION_INVITATION_STATUS_PENDING
+
+	// create the role invitation
 	createErr := service.invitationRepo.CreateCompetitionOfficialInvitationRepository(&invitation)
 
 	// TODO: send notification to recipient (requires notification)
 
 	return invitation, createErr
+}
+
+func (service CompetitionOfficialInvitation) RespondCompetitionOfficialInvitation(currentUser Account, invitation CompetitionOfficialInvitation, response string) error {
+	return errors.New("not implemented")
 }

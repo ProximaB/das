@@ -19,14 +19,14 @@ package routes
 import (
 	"encoding/json"
 	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/config/routes/internal/account"
-	"github.com/DancesportSoftware/das/config/routes/internal/admin"
-	"github.com/DancesportSoftware/das/config/routes/internal/competition"
-	"github.com/DancesportSoftware/das/config/routes/internal/organizer"
-	"github.com/DancesportSoftware/das/config/routes/internal/partnership"
-	"github.com/DancesportSoftware/das/config/routes/internal/reference"
-	"github.com/DancesportSoftware/das/config/routes/internal/registration"
+	"github.com/DancesportSoftware/das/config/routes/account"
+	"github.com/DancesportSoftware/das/config/routes/admin"
+	"github.com/DancesportSoftware/das/config/routes/competition"
 	"github.com/DancesportSoftware/das/config/routes/middleware"
+	"github.com/DancesportSoftware/das/config/routes/organizer"
+	"github.com/DancesportSoftware/das/config/routes/partnership"
+	"github.com/DancesportSoftware/das/config/routes/reference"
+	"github.com/DancesportSoftware/das/config/routes/registration"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/gorilla/mux"
 	"log"
@@ -151,7 +151,7 @@ func NewDasRouter() *mux.Router {
 	// organizer (only)
 	addDasControllerGroup(router, organizer.OrganizerCompetitionManagementControllerGroup)
 	addDasControllerGroup(router, organizer.OrganizerEventManagementControllerGroup)
-	addDasControllerGroup(router, organizer.OrganizerEntryManagementControllerGroup)
+	addDasController(router, organizer.SearchEligibleCompetitionOfficialController)
 	addDasControllerGroup(router, organizer.OrganizerCompetitionOfficialInvitationControllerGroup)
 
 	// competition

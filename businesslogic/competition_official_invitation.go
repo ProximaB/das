@@ -44,6 +44,13 @@ type CompetitionOfficialInvitation struct {
 }
 
 type SearchCompetitionOfficialInvitationCriteria struct {
+	SenderID             int
+	RecipientID          int
+	ServiceCompetitionID int
+	AssignedRoleID       int
+	Status               string
+	CreateUserID         int
+	UpdateUserID         int
 }
 
 type ICompetitionOfficialInvitationRepository interface {
@@ -73,7 +80,7 @@ func NewCompetitionOfficialInvitationService(
 	}
 }
 
-func (service CompetitionOfficialInvitationService) NewCompetitionOfficialInvitation(sender, recipient Account, serviceRole int, comp Competition) (CompetitionOfficialInvitation, error) {
+func (service CompetitionOfficialInvitationService) CreateCompetitionOfficialInvitation(sender, recipient Account, serviceRole int, comp Competition) (CompetitionOfficialInvitation, error) {
 	invitation := CompetitionOfficialInvitation{}
 
 	// sender must be the creator of the competition

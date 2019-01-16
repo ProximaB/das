@@ -40,7 +40,7 @@ func main() {
 
 	port := os.Getenv("APP_PORT")
 	if port == "" {
-		port = "5000" // default port for AWS elastic beanstalk
+		port = "8080" // default port for Google CLoud
 	}
 
 	log.Printf("[info] DAS will be running on port " + port)

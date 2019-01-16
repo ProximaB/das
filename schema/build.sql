@@ -4,6 +4,7 @@
 --    $ psql -d das -f build.sql -U dasdev
 --
 -- configure database settings
+\! echo "Create DAS Schema"
 SET TIME ZONE 'America/Chicago';
 
 -- drop existing schemas

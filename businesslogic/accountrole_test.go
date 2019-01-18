@@ -86,7 +86,6 @@ func TestGrantRole_Success(t *testing.T) {
 		mockedAccountRoleRepo,
 	)
 
-	// fmt.Println(mockedAccountRoleProvisionService.GrantRole(userAdmin, userRequestingRole, businesslogic.AccountTypeScrutineer))
 	assert.Error(t, mockedAccountRoleProvisionService.GrantRole(
 		userAdmin,
 		userRequestingRole,

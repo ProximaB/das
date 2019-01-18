@@ -80,6 +80,10 @@ func NewCompetitionOfficialInvitationService(
 	}
 }
 
+func (service CompetitionOfficialInvitationService) SearchCompetitionOfficialInvitation(criteria SearchCompetitionOfficialInvitationCriteria) ([]CompetitionOfficialInvitation, error) {
+	return service.invitationRepo.SearchCompetitionOfficialInvitationRepository(criteria)
+}
+
 func (service CompetitionOfficialInvitationService) CreateCompetitionOfficialInvitation(sender, recipient Account, serviceRole int, comp Competition) (CompetitionOfficialInvitation, error) {
 	invitation := CompetitionOfficialInvitation{}
 
@@ -130,6 +134,66 @@ func (service CompetitionOfficialInvitationService) CreateCompetitionOfficialInv
 	return invitation, createErr
 }
 
-func (service CompetitionOfficialInvitation) RespondCompetitionOfficialInvitation(currentUser Account, invitation CompetitionOfficialInvitation, response string) error {
-	return errors.New("not implemented")
+func (service CompetitionOfficialInvitationService) UpdateCompetitionOfficialInvitation(currentUser Account, invitation CompetitionOfficialInvitation, response string) error {
+	// only the sender and the recipient can make changes to the invitation
+	if currentUser.ID != invitation.Sender.ID && currentUser.ID != invitation.Recipient.ID {
+		return errors.New("Not authorized to make changes to this invitation")
+	}
+
+	// check terminal status
+	if invitation.InvitationStatus == COMPETITION_INVITATION_STATUS_EXPIRED {
+		return errors.New("Invitation is expired and can no longer be updated")
+	}
+	if invitation.InvitationStatus == COMPETITION_INVITATION_STATUS_REVOKED {
+		return errors.New("Invitation is revoked and can no longer be updated")
+	}
+	if invitation.InvitationStatus == COMPETITION_INVITATION_STATUS_REJECTED {
+		return errors.New("Invitation is rejected and can no longer be updated")
+	}
+
+	// for no-terminal status: pending and accepted
+	// pending request can be updated by:
+	// - recipient to accept/reject
+	// - sender to revoke
+	// accepted request can be updated by:
+	// - recipient to reject
+	// - sender to revoke
+	canUpdate := false
+	if invitation.InvitationStatus == COMPETITION_INVITATION_STATUS_PENDING {
+		if currentUser.ID == invitation.Recipient.ID {
+			// can accept or reject
+			if response != COMPETITION_INVITATION_STATUS_ACCEPTED && response != COMPETITION_INVITATION_STATUS_REJECTED {
+				return errors.New("The invitation can only be accepted or rejected.")
+			} else {
+				canUpdate = true
+			}
+		} else if currentUser.ID == invitation.Sender.ID {
+			if response != COMPETITION_INVITATION_STATUS_REVOKED {
+				return errors.New("The invitation can only be revoked")
+			} else {
+				canUpdate = true
+			}
+		}
+
+	} else if invitation.InvitationStatus == COMPETITION_INVITATION_STATUS_ACCEPTED {
+		if currentUser.ID == invitation.Recipient.ID {
+			if response != COMPETITION_INVITATION_STATUS_REJECTED {
+				return errors.New("The invitation can only be rejected.")
+			}
+		} else if currentUser.ID == invitation.Sender.ID {
+			if response != COMPETITION_INVITATION_STATUS_REVOKED {
+				return errors.New("The invitation can only be revoked")
+			} else {
+				canUpdate = true
+			}
+		}
+	}
+
+	if canUpdate {
+		invitation.InvitationStatus = response
+		invitation.DateTimeUpdated = time.Now()
+		invitation.UpdateUserId = currentUser.ID
+		return service.invitationRepo.UpdateCompetitionOfficialInvitationRepository(invitation)
+	}
+	return errors.New("An unknown error occurred while processing this invitation. Please report this incident to site administrator.")
 }

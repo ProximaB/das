@@ -168,6 +168,7 @@ func NewDasRouter() *mux.Router {
 	// adjudicator
 
 	// administrator
+	addDasControllerGroup(router, admin.AdminManageUserControllerGroup)
 	addDasControllerGroup(router, admin.ManageOrganizerProvisionControllerGroup)
 
 	// public only

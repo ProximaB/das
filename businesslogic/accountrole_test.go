@@ -1,7 +1,6 @@
 package businesslogic_test
 
 import (
-	"errors"
 	"testing"
 	"time"
 
@@ -79,14 +78,14 @@ func TestGrantRole_Success(t *testing.T) {
 		DateTimeCreated: time.Now(),
 		UpdateUserID:    5,
 		DateTimeUpdated: time.Now(),
-	}).Return(errors.New("Return an error"))
+	}).Return(nil)
 
 	mockedAccountRoleProvisionService := businesslogic.NewAccountRoleProvisionService(
 		mockedAccountRepo,
 		mockedAccountRoleRepo,
 	)
 
-	assert.Error(t, mockedAccountRoleProvisionService.GrantRole(
+	assert.Nil(t, mockedAccountRoleProvisionService.GrantRole(
 		userAdmin,
 		userRequestingRole,
 		businesslogic.AccountTypeScrutineer,

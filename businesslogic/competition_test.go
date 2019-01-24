@@ -116,6 +116,7 @@ func getCompetitionByIDAssertNilHandler(t *testing.T, competitionRepo businesslo
 	assert.Nil(t, twoValueReturnHandler(businesslogic.GetCompetitionByID(2, competitionRepo)).err)
 }
 
+// GetCompetitionByID tests
 func TestCompetition_GetCompetitionByID_ErrorNotNil(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
@@ -157,4 +158,27 @@ func TestCompetition_GetCompetitionByID_Success(t *testing.T) {
 
 	competitionRepo := getCompetitionByIDMockHandler(mockCtrl, 2, []businesslogic.Competition{}, nil)
 	getCompetitionByIDAssertNilHandler(t, competitionRepo)
+}
+
+func TestCompetition_UpdateCompetition_ErrorNotNil(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	user := businesslogic.Account{ID: 2}
+	competition := businesslogic.OrganizerUpdateCompetition{
+		CompetitionID: 2,
+		Status:        businesslogic.CompetitionStatusInProgress,
+		Name:          "The Great American Ball",
+		Website:       "www.tgab.com",
+		StartDate:     time.Date(2018, time.November, 18, 9, 0, 0, 0, time.UTC),
+		EndDate:       time.Date(2018, time.November, 19, 22, 0, 0, 0, time.UTC),
+	}
+	searchComp := businesslogic.SearchCompetitionCriteria{ID: competition.CompetitionID}
+	competitionRepo := mock_businesslogic.NewMockICompetitionRepository(mockCtrl)
+	competitionRepo.EXPECT().SearchCompetition(searchComp).Return(
+		[]businesslogic.Competition{},
+		errors.New("Return an error"),
+	)
+
+	assert.Error(t, businesslogic.UpdateCompetition(&user, competition, competitionRepo))
 }

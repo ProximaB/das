@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 	"time"
 )
@@ -39,7 +40,7 @@ type PostgresCountryRepository struct {
 // CreateCountry inserts a Country object into a Postgres database
 func (repo PostgresCountryRepository) CreateCountry(country *businesslogic.Country) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresCountryRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Insert("").
@@ -74,7 +75,7 @@ func (repo PostgresCountryRepository) CreateCountry(country *businesslogic.Count
 // DeleteCountry deletes a Country object from a Postgres database
 func (repo PostgresCountryRepository) DeleteCountry(country businesslogic.Country) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresCountryRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Delete("").From(DAS_COUNTRY_TABLE).
 		Where(squirrel.Eq{common.ColumnPrimaryKey: country.ID})
@@ -91,7 +92,7 @@ func (repo PostgresCountryRepository) DeleteCountry(country businesslogic.Countr
 // UpdateCountry updates a Country object in a Postgres database
 func (repo PostgresCountryRepository) UpdateCountry(country businesslogic.Country) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresCountryRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_COUNTRY_TABLE)
 	if country.ID > 0 {
@@ -120,7 +121,7 @@ func (repo PostgresCountryRepository) UpdateCountry(country businesslogic.Countr
 // SearchCountry searches the Country object in a Postgres database with the provided criteria
 func (repo PostgresCountryRepository) SearchCountry(criteria businesslogic.SearchCountryCriteria) ([]businesslogic.Country, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresCountryRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s",

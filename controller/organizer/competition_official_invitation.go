@@ -19,11 +19,14 @@ package organizer
 import (
 	"github.com/DancesportSoftware/das/auth"
 	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 )
 
 type CompetitionOfficialInvitationServer struct {
 	auth.IAuthenticationStrategy
+	businesslogic.IAccountRepository
 	businesslogic.CompetitionOfficialInvitationService
 }
 
@@ -36,6 +39,16 @@ func (server CompetitionOfficialInvitationServer) OrganizerGetCompetitionOfficia
 // POST /api/v1/organizer/competition/official/invitation
 func (server CompetitionOfficialInvitationServer) OrganizerCreateCompetitionOfficialInvitationHandler(w http.ResponseWriter, r *http.Request) {
 	w.WriteHeader(http.StatusNotImplemented)
+
+	createDTO := new(viewmodel.CreateCompetitionOfficialInvitationDTO)
+	if parseErr := util.ParseRequestBodyData(r, createDTO); parseErr != nil {
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
+		return
+	}
+
+	//currentUser, _ := server.GetCurrentUser(r)
+	// server.CompetitionOfficialInvitationService.CreateCompetitionOfficialInvitation(currentUser, )
+
 	w.Write([]byte("not implemented"))
 }
 

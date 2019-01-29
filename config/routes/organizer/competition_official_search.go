@@ -25,7 +25,7 @@ import (
 	"net/http"
 )
 
-const apiOrganizerCompeitionOfficialSearch = "/api/v1/organizer/competition/official/eligible"
+const apiOrganizerCompetitionOfficialSearch = "/api/v1/organizer/competition/official/eligible"
 
 var organizerCompetitionOfficialSearchServer = organizer.OrganizerCompetitionOfficialSearchServer{
 	IAuthenticationStrategy: middleware.AuthenticationStrategy,
@@ -37,7 +37,7 @@ var SearchEligibleCompetitionOfficialController = util.DasController{
 	Name:         "SearchEligibleCompetitionOfficialController",
 	Description:  "Organzier search eligible officials for competition",
 	Method:       http.MethodGet,
-	Endpoint:     apiOrganizerCompeitionOfficialSearch,
+	Endpoint:     apiOrganizerCompetitionOfficialSearch,
 	Handler:      organizerCompetitionOfficialSearchServer.SearchEligibleOfficialHandler,
 	AllowedRoles: []int{businesslogic.AccountTypeOrganizer},
 }

@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 	"time"
 )
@@ -57,7 +58,7 @@ type PostgresCompetitionRepository struct {
 
 func (repo PostgresCompetitionRepository) CreateCompetition(competition *businesslogic.Competition) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresCompetitionRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Insert("").
@@ -158,7 +159,7 @@ func (repo PostgresCompetitionRepository) DeleteCompetition(competition business
 
 func (repo PostgresCompetitionRepository) SearchCompetition(criteria businesslogic.SearchCompetitionCriteria) ([]businesslogic.Competition, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresCompetitionRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Select(fmt.Sprintf(
 		"%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",

@@ -18,6 +18,7 @@ package organizer
 
 import (
 	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/config/database"
 	"github.com/DancesportSoftware/das/config/routes/middleware"
 	"github.com/DancesportSoftware/das/controller/organizer"
 	"github.com/DancesportSoftware/das/controller/util"
@@ -26,8 +27,12 @@ import (
 
 const apiOrganizerCompetitionOfficialInvitation = "/api/v1/organizer/competition/official/invitation"
 
+var competitionOfficialInvitationService = businesslogic.NewCompetitionOfficialInvitationService(database.AccountRepository, database.CompetitionRepository, database.CompetitionOfficialRepository, database.CompetitionOfficialInvitationRepository)
+
 var organzierCompetitionOfficialInvitationServer = organizer.CompetitionOfficialInvitationServer{
-	IAuthenticationStrategy: middleware.AuthenticationStrategy,
+	middleware.AuthenticationStrategy,
+	database.AccountRepository,
+	competitionOfficialInvitationService,
 }
 
 var createCompetitionOfficialInvitationController = util.DasController{

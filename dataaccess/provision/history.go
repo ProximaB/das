@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -39,7 +40,7 @@ type PostgresOrganizerProvisionHistoryRepository struct {
 
 func (repo PostgresOrganizerProvisionHistoryRepository) CreateOrganizerProvisionHistory(history *businesslogic.OrganizerProvisionHistoryEntry) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresOrganizerProvisionHistoryRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_ORGANIZER_PROVISION_HISTORY).Columns(
 		DAS_ORGANIZER_PROVISION_HISTORY_COL_ORGANIZER_ID,
@@ -72,7 +73,7 @@ func (repo PostgresOrganizerProvisionHistoryRepository) CreateOrganizerProvision
 
 func (repo PostgresOrganizerProvisionHistoryRepository) SearchOrganizerProvisionHistory(criteria businesslogic.SearchOrganizerProvisionHistoryCriteria) ([]businesslogic.OrganizerProvisionHistoryEntry, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresOrganizerProvisionHistoryRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	clause := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
 		common.ColumnPrimaryKey,
@@ -113,14 +114,14 @@ func (repo PostgresOrganizerProvisionHistoryRepository) SearchOrganizerProvision
 
 func (repo PostgresOrganizerProvisionHistoryRepository) DeleteOrganizerProvisionHistory(history businesslogic.OrganizerProvisionHistoryEntry) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresOrganizerProvisionHistoryRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	return errors.New("not implemented")
 }
 
 func (repo PostgresOrganizerProvisionHistoryRepository) UpdateOrganizerProvisionHistory(history businesslogic.OrganizerProvisionHistoryEntry) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresOrganizerProvisionHistoryRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	return errors.New("not implemented")
 }

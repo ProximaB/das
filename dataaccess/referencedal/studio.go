@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -36,7 +37,7 @@ type PostgresStudioRepository struct {
 
 func (repo PostgresStudioRepository) SearchStudio(criteria businesslogic.SearchStudioCriteria) ([]businesslogic.Studio, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresStudioRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf(`DAS.STUDIO.%s, DAS.STUDIO.%s, DAS.STUDIO.%s, DAS.STUDIO.%s, 
@@ -91,7 +92,7 @@ func (repo PostgresStudioRepository) SearchStudio(criteria businesslogic.SearchS
 
 func (repo PostgresStudioRepository) CreateStudio(studio *businesslogic.Studio) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresStudioRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_STUDIO_TABLE).Columns(
 		common.COL_NAME,
@@ -128,7 +129,7 @@ func (repo PostgresStudioRepository) CreateStudio(studio *businesslogic.Studio) 
 
 func (repo PostgresStudioRepository) UpdateStudio(studio businesslogic.Studio) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresStudioRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_STUDIO_TABLE)
 	if studio.ID > 0 {
@@ -153,7 +154,7 @@ func (repo PostgresStudioRepository) UpdateStudio(studio businesslogic.Studio) e
 
 func (repo PostgresStudioRepository) DeleteStudio(studio businesslogic.Studio) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresStudioRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Delete("").From(DAS_STUDIO_TABLE).Where(squirrel.Eq{common.ColumnPrimaryKey: studio.ID})
 	var err error

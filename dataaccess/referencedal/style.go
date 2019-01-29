@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -38,7 +39,7 @@ type PostgresStyleRepository struct {
 
 func (repo PostgresStyleRepository) CreateStyle(style *businesslogic.Style) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresStyleRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_STYLE_TABLE).Columns(
 		common.COL_NAME,
@@ -71,7 +72,7 @@ func (repo PostgresStyleRepository) CreateStyle(style *businesslogic.Style) erro
 
 func (repo PostgresStyleRepository) DeleteStyle(style businesslogic.Style) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresStyleRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Delete("").
@@ -89,7 +90,7 @@ func (repo PostgresStyleRepository) DeleteStyle(style businesslogic.Style) error
 
 func (repo PostgresStyleRepository) SearchStyle(criteria businesslogic.SearchStyleCriteria) ([]businesslogic.Style, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresStyleRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Select(
 		fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s",
@@ -132,7 +133,7 @@ func (repo PostgresStyleRepository) SearchStyle(criteria businesslogic.SearchSty
 
 func (repo PostgresStyleRepository) UpdateStyle(style businesslogic.Style) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresStyleRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_STYLE_TABLE)
 	if style.ID > 0 {

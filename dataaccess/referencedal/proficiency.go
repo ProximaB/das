@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -36,7 +37,7 @@ type PostgresProficiencyRepository struct {
 
 func (repo PostgresProficiencyRepository) CreateProficiency(proficiency *businesslogic.Proficiency) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresProficiencyRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_PROFICIENCY_TABLE).Columns(
 		common.COL_NAME,
@@ -71,7 +72,7 @@ func (repo PostgresProficiencyRepository) CreateProficiency(proficiency *busines
 
 func (repo PostgresProficiencyRepository) UpdateProficiency(proficiency businesslogic.Proficiency) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresProficiencyRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_PROFICIENCY_TABLE)
 	if proficiency.ID > 0 {
@@ -98,7 +99,7 @@ func (repo PostgresProficiencyRepository) UpdateProficiency(proficiency business
 
 func (repo PostgresProficiencyRepository) DeleteProficiency(proficiency businesslogic.Proficiency) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresProficiencyRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Delete("").
@@ -118,7 +119,7 @@ func (repo PostgresProficiencyRepository) DeleteProficiency(proficiency business
 
 func (repo PostgresProficiencyRepository) SearchProficiency(criteria businesslogic.SearchProficiencyCriteria) ([]businesslogic.Proficiency, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresProficiencyRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
 		common.ColumnPrimaryKey,

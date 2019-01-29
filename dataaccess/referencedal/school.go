@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -36,7 +37,7 @@ type PostgresSchoolRepository struct {
 
 func (repo PostgresSchoolRepository) CreateSchool(school *businesslogic.School) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresSchoolRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_SCHOOL_TABLE).Columns(
 		common.COL_NAME,
@@ -69,7 +70,7 @@ func (repo PostgresSchoolRepository) CreateSchool(school *businesslogic.School) 
 
 func (repo PostgresSchoolRepository) UpdateSchool(school businesslogic.School) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresSchoolRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_SCHOOL_TABLE)
 	if school.ID > 0 {
@@ -94,7 +95,7 @@ func (repo PostgresSchoolRepository) UpdateSchool(school businesslogic.School) e
 
 func (repo PostgresSchoolRepository) DeleteSchool(school businesslogic.School) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresSchoolRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Delete("").
@@ -114,7 +115,7 @@ func (repo PostgresSchoolRepository) DeleteSchool(school businesslogic.School) e
 
 func (repo PostgresSchoolRepository) SearchSchool(criteria businesslogic.SearchSchoolCriteria) ([]businesslogic.School, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresSchoolRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf(

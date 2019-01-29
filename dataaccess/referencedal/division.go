@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -36,7 +37,7 @@ type PostgresDivisionRepository struct {
 
 func (repo PostgresDivisionRepository) SearchDivision(criteria businesslogic.SearchDivisionCriteria) ([]businesslogic.Division, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresDivisionRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
@@ -81,7 +82,7 @@ func (repo PostgresDivisionRepository) SearchDivision(criteria businesslogic.Sea
 
 func (repo PostgresDivisionRepository) CreateDivision(division *businesslogic.Division) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresDivisionRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_DIVISION_TABLE).Columns(
 		common.COL_NAME,
@@ -120,7 +121,7 @@ func (repo PostgresDivisionRepository) CreateDivision(division *businesslogic.Di
 
 func (repo PostgresDivisionRepository) UpdateDivision(division businesslogic.Division) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresDivisionRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_DIVISION_TABLE)
 	if division.ID > 0 {
@@ -147,7 +148,7 @@ func (repo PostgresDivisionRepository) UpdateDivision(division businesslogic.Div
 
 func (repo PostgresDivisionRepository) DeleteDivision(division businesslogic.Division) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresDivisionRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Delete("").

@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -36,7 +37,7 @@ type PostgresStateRepository struct {
 
 func (repo PostgresStateRepository) SearchState(criteria businesslogic.SearchStateCriteria) ([]businesslogic.State, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresStateRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
@@ -89,7 +90,7 @@ func (repo PostgresStateRepository) SearchState(criteria businesslogic.SearchSta
 
 func (repo PostgresStateRepository) CreateState(state *businesslogic.State) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresStateRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_STATE_TABLE).Columns(
 		common.COL_NAME,
@@ -124,7 +125,7 @@ func (repo PostgresStateRepository) CreateState(state *businesslogic.State) erro
 
 func (repo PostgresStateRepository) UpdateState(state businesslogic.State) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresStateRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_STATE_TABLE)
 	if state.ID > 0 {
@@ -151,7 +152,7 @@ func (repo PostgresStateRepository) UpdateState(state businesslogic.State) error
 
 func (repo PostgresStateRepository) DeleteState(state businesslogic.State) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresStateRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Delete("").From(DAS_STATE_TABLE).Where(squirrel.Eq{common.ColumnPrimaryKey: state.ID})
 	var err error

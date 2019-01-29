@@ -22,8 +22,8 @@ import (
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
-	"log"
 )
 
 const (
@@ -38,7 +38,7 @@ type PostgresFederationRepository struct {
 
 func (repo PostgresFederationRepository) CreateFederation(federation *businesslogic.Federation) error {
 	if repo.Database == nil {
-		log.Println(common.ErrorMessageEmptyDatabase)
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Insert("").
 		Into(DAS_FEDERATION_TABLE).
@@ -78,7 +78,7 @@ func (repo PostgresFederationRepository) CreateFederation(federation *businesslo
 
 func (repo PostgresFederationRepository) SearchFederation(criteria businesslogic.SearchFederationCriteria) ([]businesslogic.Federation, error) {
 	if repo.Database == nil {
-		log.Println(common.ErrorMessageEmptyDatabase)
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s",
@@ -129,7 +129,7 @@ func (repo PostgresFederationRepository) SearchFederation(criteria businesslogic
 
 func (repo PostgresFederationRepository) DeleteFederation(federation businesslogic.Federation) error {
 	if repo.Database == nil {
-		log.Println(common.ErrorMessageEmptyDatabase)
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Delete("").From(DAS_FEDERATION_TABLE).Where(squirrel.Eq{common.ColumnPrimaryKey: federation.ID})
 
@@ -145,7 +145,7 @@ func (repo PostgresFederationRepository) DeleteFederation(federation businesslog
 
 func (repo PostgresFederationRepository) UpdateFederation(federation businesslogic.Federation) error {
 	if repo.Database == nil {
-		log.Println(common.ErrorMessageEmptyDatabase)
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_FEDERATION_TABLE)
 	if federation.ID > 0 {

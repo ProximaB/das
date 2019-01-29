@@ -3,6 +3,7 @@ package viewmodel
 import "github.com/DancesportSoftware/das/businesslogic"
 
 type CompetitionOfficialProfileDTO struct {
+	ID            string `json:"id"`
 	Name          string `json:"name"`
 	IsAdjudicator bool   `json:"isAdjudicator"`
 	IsScrutineer  bool   `json:"isScrutineer"`

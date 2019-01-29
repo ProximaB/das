@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -39,7 +40,7 @@ type PostgresAgeRepository struct {
 
 func (repo PostgresAgeRepository) CreateAge(age *businesslogic.Age) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresAgeRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_AGE_TABLE).Columns(
 		common.COL_NAME,
@@ -77,7 +78,7 @@ func (repo PostgresAgeRepository) CreateAge(age *businesslogic.Age) error {
 
 func (repo PostgresAgeRepository) DeleteAge(age businesslogic.Age) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresAgeRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Delete("").From(DAS_AGE_TABLE).
 		Where(squirrel.Eq{common.ColumnPrimaryKey: age.ID})
@@ -93,7 +94,7 @@ func (repo PostgresAgeRepository) DeleteAge(age businesslogic.Age) error {
 
 func (repo PostgresAgeRepository) SearchAge(criteria businesslogic.SearchAgeCriteria) ([]businesslogic.Age, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresAgeRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
@@ -144,7 +145,7 @@ func (repo PostgresAgeRepository) SearchAge(criteria businesslogic.SearchAgeCrit
 
 func (repo PostgresAgeRepository) UpdateAge(age businesslogic.Age) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresAgeRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_AGE_TABLE)
 	if age.ID > 0 {

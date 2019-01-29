@@ -32,7 +32,8 @@ type CompetitionOfficial struct {
 	DateTimeUpdated time.Time
 }
 
-func (official CompetitionOfficial) ValidAtPresent() bool {
+// Active checks if the status of this position is still active.
+func (official CompetitionOfficial) Active() bool {
 	return time.Now().Before(official.EffectiveUntil) && time.Now().After(official.EffectiveFrom)
 }
 

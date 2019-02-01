@@ -40,7 +40,7 @@ func (official CompetitionOfficial) Active() bool {
 type SearchCompetitionOfficialCriteria struct {
 	ID             int
 	CompetitionID  int
-	OfficialID     int
+	OfficialID     string
 	OfficialRoleID int
 }
 

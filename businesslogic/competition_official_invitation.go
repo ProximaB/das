@@ -35,6 +35,7 @@ type CompetitionOfficialInvitation struct {
 	Recipient          Account
 	ServiceCompetition Competition // the competition that the recipient will serve at if accepted
 	AssignedRoleID     int         // only allow Adjudicator, Scrutineer, Deck Captain, Emcee
+	Message            string
 	InvitationStatus   string
 	ExpirationDate     time.Time
 	CreateUserId       int

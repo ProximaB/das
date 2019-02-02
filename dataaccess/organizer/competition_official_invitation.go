@@ -79,7 +79,7 @@ func (repo PostgresCompetitionOfficialInvitationRepository) CreateCompetitionOff
 	if hasError {
 		return errors.New("An error occurred while creating competition official invitation record")
 	}
-	return errors.New("not implemented")
+	return nil
 }
 func (repo PostgresCompetitionOfficialInvitationRepository) DeleteCompetitionOfficialInvitationRepository(invitation businesslogic.CompetitionOfficialInvitation) error {
 	if repo.Database == nil {

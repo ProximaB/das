@@ -145,8 +145,12 @@ func GetCompetitionByID(id int, repo ICompetitionRepository) (Competition, error
 func CreateCompetition(competition Competition, competitionRepo ICompetitionRepository,
 	provisionRepo IOrganizerProvisionRepository, historyRepo IOrganizerProvisionHistoryRepository) error {
 	// check if data received is validationErr
-	if validationErr := validateCreateCompetition(competition); validationErr != nil {
+	if validationErr := competition.validateCreateCompetition(); validationErr != nil {
 		return validationErr
+	}
+
+	if competition.statusID == 0 {
+		competition.statusID = CompetitionStatusPreRegistration
 	}
 
 	// check if organizer is provisioned with available competitions
@@ -170,50 +174,50 @@ func CreateCompetition(competition Competition, competitionRepo ICompetitionRepo
 	return err
 }
 
-func validateCreateCompetition(competition Competition) error {
-	if competition.FederationID < 1 {
+func (comp Competition) validateCreateCompetition() error {
+	if comp.FederationID < 1 {
 		return errors.New("invalid federation")
 	}
-	if len(competition.Name) < 3 {
-		return errors.New("competition name is too short")
+	if len(comp.Name) < 3 {
+		return errors.New("comp name is too short")
 	}
-	if len(competition.Website) < 7 { // requires "http://"
-		return errors.New("official competition website is required")
+	if len(comp.Website) < 7 { // requires "http://"
+		return errors.New("official comp website is required")
 	}
-	if competition.GetStatus() > CompetitionStatusClosedRegistration {
-		return errors.New("cannot create competition that no longer allows new registration")
+	if comp.GetStatus() > CompetitionStatusClosedRegistration {
+		return errors.New("cannot create comp that no longer allows new registration")
 	}
-	if competition.StartDateTime.After(competition.EndDateTime) {
+	if comp.StartDateTime.After(comp.EndDateTime) {
 		return errors.New("start date must be ahead of end date")
 	}
-	if competition.StartDateTime.Before(time.Now()) {
-		return errors.New("competition must starts in a future time")
+	if comp.StartDateTime.Before(time.Now()) {
+		return errors.New("comp must starts in a future time")
 	}
-	if competition.StartDateTime.After(time.Now().AddDate(1, 0, 0)) {
-		return errors.New("cannot create far-future competition")
+	if comp.StartDateTime.After(time.Now().AddDate(1, 0, 0)) {
+		return errors.New("cannot create far-future comp")
 	}
-	if len(competition.ContactName) < 3 {
+	if len(comp.ContactName) < 3 {
 		return errors.New("contact name is too short")
 	}
-	if len(competition.ContactEmail) < 5 {
+	if len(comp.ContactEmail) < 5 {
 		return errors.New("contact email is too short")
 	}
-	if len(competition.ContactPhone) < 9 {
+	if len(comp.ContactPhone) < 9 {
 		return errors.New("contact phone is too short")
 	}
-	if competition.City.ID < 1 {
+	if comp.City.ID < 1 {
 		return errors.New("city is required")
 	}
-	if competition.State.ID < 1 {
+	if comp.State.ID < 1 {
 		return errors.New("state is required")
 	}
-	if competition.Country.ID < 1 {
+	if comp.Country.ID < 1 {
 		return errors.New("country is required")
 	}
-	if competition.CreateUserID < 1 {
+	if comp.CreateUserID < 1 {
 		return errors.New("unauthorized")
 	}
-	if competition.UpdateUserID < 1 {
+	if comp.UpdateUserID < 1 {
 		return errors.New("unauthorized")
 	}
 	return nil

@@ -24,6 +24,7 @@ import (
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
+	"log"
 	"time"
 )
 
@@ -98,16 +99,32 @@ func (repo PostgresCompetitionRepository) CreateCompetition(competition *busines
 			competition.DateTimeCreated,
 			competition.UpdateUserID,
 			competition.DateTimeUpdated,
-		).Suffix("RETURNING ID")
-	clause, args, err := stmt.ToSql()
-	if tx, txErr := repo.Database.Begin(); txErr != nil {
-		return txErr
-	} else {
-		row := repo.Database.QueryRow(clause, args...)
-		row.Scan(&competition.ID)
-		err = tx.Commit()
-		return err
+		).Suffix(dalutil.SQLSuffixReturningID)
+	hasError := false
+	clause, args, sqlErr := stmt.ToSql()
+	if sqlErr != nil {
+		log.Printf("[error] generating SQL clause: %v", sqlErr)
+		hasError = true
 	}
+	tx, txErr := repo.Database.Begin()
+	if txErr != nil {
+		log.Printf("[error] starting transaction: %v", txErr)
+		hasError = true
+	}
+
+	row := repo.Database.QueryRow(clause, args...)
+	if scanErr := row.Scan(&competition.ID); scanErr != nil {
+		log.Printf("[error] getting ID of newly created competition %v: %v", competition.Name, scanErr)
+		hasError = true
+	}
+	if commitErr := tx.Commit(); commitErr != nil {
+		log.Printf("[error] commiting transaction: %v", commitErr)
+		hasError = true
+	}
+	if hasError {
+		return errors.New("an error occurred while creating data record for competition")
+	}
+	return nil
 }
 
 func (repo PostgresCompetitionRepository) UpdateCompetition(competition businesslogic.Competition) error {

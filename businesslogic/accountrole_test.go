@@ -1,14 +1,12 @@
 package businesslogic_test
 
 import (
-	"testing"
-	"time"
-
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/accountdal"
 	"github.com/DancesportSoftware/das/mock/businesslogic"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
+	"testing"
 )
 
 func TestNewAccountRoleProvisionService(t *testing.T) {
@@ -70,7 +68,7 @@ func TestGrantRole_Success(t *testing.T) {
 
 	mockedAccountRepo := mock_businesslogic.NewMockIAccountRepository(mockCtrl)
 	mockedAccountRoleRepo := mock_businesslogic.NewMockIAccountRoleRepository(mockCtrl)
-	mockedAccountRoleRepo.EXPECT().CreateAccountRole(&businesslogic.AccountRole{
+	/*mockedAccountRoleRepo.EXPECT().CreateAccountRole(&businesslogic.AccountRole{
 		ID:              0,
 		AccountID:       1,
 		AccountTypeID:   businesslogic.AccountTypeScrutineer,
@@ -78,7 +76,8 @@ func TestGrantRole_Success(t *testing.T) {
 		DateTimeCreated: time.Now(),
 		UpdateUserID:    5,
 		DateTimeUpdated: time.Now(),
-	}).Return(nil)
+	}).Return(nil)*/
+	mockedAccountRoleRepo.EXPECT().CreateAccountRole(gomock.Any()).Return(nil)
 
 	mockedAccountRoleProvisionService := businesslogic.NewAccountRoleProvisionService(
 		mockedAccountRepo,

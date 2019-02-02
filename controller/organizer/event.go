@@ -35,7 +35,7 @@ func (server OrganizerEventServer) CreateEventHandler(w http.ResponseWriter, r *
 		util.RespondJsonResult(w, http.StatusInternalServerError, err.Error(), nil)
 		return
 	}
-	util.RespondJsonResult(w, http.StatusOK, "success", nil)
+	util.RespondJsonResult(w, http.StatusOK, "event is created", nil)
 }
 
 // UpdateEventHandler handles the request

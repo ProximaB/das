@@ -23,6 +23,7 @@ import (
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/accountdal"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 	"log"
 )
@@ -48,7 +49,7 @@ type PostgresPartnershipRepository struct {
 // CreatePartnership creates the specified partnership in Postgres database and updates the ID
 func (repo PostgresPartnershipRepository) CreatePartnership(partnership *businesslogic.Partnership) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresPartnershipRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	clause := repo.SqlBuilder.Insert("").
 		Into(DasPartnershipTable).
@@ -80,7 +81,7 @@ func (repo PostgresPartnershipRepository) CreatePartnership(partnership *busines
 // SearchPartnership searches partnerships in a Postgres database based on the criteria of search
 func (repo PostgresPartnershipRepository) SearchPartnership(criteria businesslogic.SearchPartnershipCriteria) ([]businesslogic.Partnership, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresPartnershipRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Select(fmt.Sprintf("%s,%s,%s,%s,%s,%s,%s,%s,%s,%s",
 		common.ColumnPrimaryKey,
@@ -163,14 +164,14 @@ func (repo PostgresPartnershipRepository) SearchPartnership(criteria businesslog
 
 func (repo PostgresPartnershipRepository) DeletePartnership(partnership businesslogic.Partnership) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresPartnershipRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	return errors.New("not implemented")
 }
 
 func (repo PostgresPartnershipRepository) UpdatePartnership(partnership businesslogic.Partnership) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresPartnershipRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	return errors.New("not implemented")
 }

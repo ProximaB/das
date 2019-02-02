@@ -20,8 +20,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -34,9 +35,9 @@ type PostgresProficiencyRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresProficiencyRepository) CreateProficiency(proficiency *reference.Proficiency) error {
+func (repo PostgresProficiencyRepository) CreateProficiency(proficiency *businesslogic.Proficiency) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresProficiencyRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_PROFICIENCY_TABLE).Columns(
 		common.COL_NAME,
@@ -69,9 +70,9 @@ func (repo PostgresProficiencyRepository) CreateProficiency(proficiency *referen
 	return err
 }
 
-func (repo PostgresProficiencyRepository) UpdateProficiency(proficiency reference.Proficiency) error {
+func (repo PostgresProficiencyRepository) UpdateProficiency(proficiency businesslogic.Proficiency) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresProficiencyRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_PROFICIENCY_TABLE)
 	if proficiency.ID > 0 {
@@ -96,9 +97,9 @@ func (repo PostgresProficiencyRepository) UpdateProficiency(proficiency referenc
 	}
 }
 
-func (repo PostgresProficiencyRepository) DeleteProficiency(proficiency reference.Proficiency) error {
+func (repo PostgresProficiencyRepository) DeleteProficiency(proficiency businesslogic.Proficiency) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresProficiencyRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Delete("").
@@ -116,9 +117,9 @@ func (repo PostgresProficiencyRepository) DeleteProficiency(proficiency referenc
 	}
 }
 
-func (repo PostgresProficiencyRepository) SearchProficiency(criteria reference.SearchProficiencyCriteria) ([]reference.Proficiency, error) {
+func (repo PostgresProficiencyRepository) SearchProficiency(criteria businesslogic.SearchProficiencyCriteria) ([]businesslogic.Proficiency, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresProficiencyRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
 		common.ColumnPrimaryKey,
@@ -138,12 +139,12 @@ func (repo PostgresProficiencyRepository) SearchProficiency(criteria reference.S
 		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ProficiencyID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	proficiencies := make([]reference.Proficiency, 0)
+	proficiencies := make([]businesslogic.Proficiency, 0)
 	if err != nil {
 		return proficiencies, err
 	}
 	for rows.Next() {
-		each := reference.Proficiency{}
+		each := businesslogic.Proficiency{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,

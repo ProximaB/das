@@ -19,8 +19,15 @@ package main
 import (
 	"github.com/DancesportSoftware/das/config/database"
 	"github.com/DancesportSoftware/das/config/routes"
+	"github.com/gorilla/csrf"
 	"log"
 	"net/http"
+	"os"
+)
+
+const (
+	envAppPort = "APP_PORT"
+	envCsrfKey = "CSRF_KEY"
 )
 
 func main() {
@@ -34,7 +41,21 @@ func main() {
 		log.Println("[error] database is not responding to ping")
 	}
 
-	http.Handle("/", router)
-	log.Println("[info] service is ready")
-	log.Fatalf("[fatal] %v", http.ListenAndServe(":8080", nil))
+	csrfKey := os.Getenv(envCsrfKey)
+	if csrfKey != "" {
+		csrfProtector := csrf.Protect([]byte(csrfKey))
+		http.Handle("/", csrfProtector(router))
+		log.Printf("[info] CSRF_KEY is added to request handlers")
+	} else {
+		http.Handle("/", router)
+		log.Printf("[warning] CSRF_KEY is not defined and DAS is not protected from CSRF")
+	}
+
+	port := os.Getenv(envAppPort)
+	if port == "" {
+		port = "8080" // default port for Google CLoud
+	}
+
+	log.Printf("[info] DAS will be running on port " + port)
+	log.Fatalf("[fatal] %v", http.ListenAndServe(":"+port, nil))
 }

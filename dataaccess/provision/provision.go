@@ -23,6 +23,7 @@ import (
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/accountdal"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 	"log"
 )
@@ -41,11 +42,12 @@ type PostgresOrganizerProvisionRepository struct {
 
 func (repo PostgresOrganizerProvisionRepository) CreateOrganizerProvision(provision *businesslogic.OrganizerProvision) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresOrganizerProvisionRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Insert("").
 		Into(DAS_ORGANIZER_PROVISION).
 		Columns(
+			common.ColumnAccountID,
 			DAS_ORGANIZER_PROVISION_COL_ORGANIZER_ID,
 			DAS_ORGANIZER_PROVISION_COL_HOSTED,
 			DAS_ORGANIZER_PROVISION_COL_AVAILABLE,
@@ -53,16 +55,24 @@ func (repo PostgresOrganizerProvisionRepository) CreateOrganizerProvision(provis
 			common.ColumnDateTimeCreated,
 			common.ColumnUpdateUserID,
 			common.ColumnDateTimeUpdated,
-		).Values(provision.OrganizerID, provision.Hosted, provision.Available, provision.CreateUserID, provision.DateTimeCreated, provision.UpdateUserID, provision.DateTimeUpdated)
+		).Values(
+		provision.AccountID,
+		provision.OrganizerRoleID,
+		provision.Hosted,
+		provision.Available,
+		provision.CreateUserID,
+		provision.DateTimeCreated,
+		provision.UpdateUserID,
+		provision.DateTimeUpdated)
 	_, err := stmt.RunWith(repo.Database).Exec()
 	if err != nil {
-		log.Printf("[error] initializing organizer organizer: %s\n", err.Error())
+		log.Printf("[error] initializing organizer provision: %s\n", err.Error())
 		return err
 	}
 
 	//CreateOrganizerProvisionHistoryEntry(accountID, 0, "initial organizer", accountID)
 	if err != nil {
-		log.Printf("[error] initializing organizer organizer history: %s\n", err.Error())
+		log.Printf("[error] initializing organizer provision history: %s\n", err.Error())
 		return err
 	}
 	return err
@@ -72,14 +82,14 @@ func (repo PostgresOrganizerProvisionRepository) CreateOrganizerProvision(provis
 // record of the organizer.
 func (repo PostgresOrganizerProvisionRepository) UpdateOrganizerProvision(provision businesslogic.OrganizerProvision) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresOrganizerProvisionRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Update("").
 		Table(DAS_ORGANIZER_PROVISION).
 		Set(DAS_ORGANIZER_PROVISION_COL_AVAILABLE, provision.Available).
 		Set(DAS_ORGANIZER_PROVISION_COL_HOSTED, provision.Hosted).
 		Set(common.ColumnDateTimeUpdated, provision.DateTimeUpdated).
-		Where(squirrel.Eq{DAS_ORGANIZER_PROVISION_COL_ORGANIZER_ID: provision.OrganizerID})
+		Where(squirrel.Eq{DAS_ORGANIZER_PROVISION_COL_ORGANIZER_ID: provision.OrganizerRoleID})
 	_, err := stmt.RunWith(repo.Database).Exec()
 	return err
 }
@@ -88,7 +98,7 @@ func (repo PostgresOrganizerProvisionRepository) UpdateOrganizerProvision(provis
 func (repo PostgresOrganizerProvisionRepository) SearchOrganizerProvision(
 	criteria businesslogic.SearchOrganizerProvisionCriteria) ([]businesslogic.OrganizerProvision, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresOrganizerProvisionRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	accountRepo := accountdal.PostgresAccountRepository{
 		repo.Database,
@@ -127,7 +137,7 @@ func (repo PostgresOrganizerProvisionRepository) SearchOrganizerProvision(
 		rows.Scan(
 			&each.ID,
 			&each.AccountID,
-			&each.OrganizerID,
+			&each.OrganizerRoleID,
 			&each.Hosted,
 			&each.Available,
 			&each.CreateUserID,
@@ -144,7 +154,7 @@ func (repo PostgresOrganizerProvisionRepository) SearchOrganizerProvision(
 
 func (repo PostgresOrganizerProvisionRepository) DeleteOrganizerProvision(provision businesslogic.OrganizerProvision) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresOrganizerProvisionRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	return errors.New("deleting organizer provision history is prohibited")
 }

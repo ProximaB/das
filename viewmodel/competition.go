@@ -19,7 +19,6 @@ package viewmodel
 import (
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
 	"strings"
 	"time"
 )
@@ -111,9 +110,9 @@ func (createDTO CreateCompetition) ToCompetitionDataModel(user businesslogic.Acc
 		Name:         createDTO.Name,
 		Website:      createDTO.WebsiteUrl,
 
-		Country: reference.Country{},
-		State:   reference.State{},
-		City:    reference.City{},
+		Country: businesslogic.Country{},
+		State:   businesslogic.State{},
+		City:    businesslogic.City{},
 		Street:  createDTO.VenueStreet,
 
 		ContactName:  createDTO.ContactName,

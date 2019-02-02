@@ -17,7 +17,7 @@
 package viewmodel
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 )
 
 type City struct {
@@ -31,8 +31,8 @@ type CreateCity struct {
 	StateID int    `schema:"state"`
 }
 
-func (create CreateCity) ToCityDataModel() reference.City {
-	return reference.City{
+func (create CreateCity) ToCityDataModel() businesslogic.City {
+	return businesslogic.City{
 		Name:    create.Name,
 		StateID: create.StateID,
 	}

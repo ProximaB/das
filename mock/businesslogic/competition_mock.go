@@ -6,7 +6,6 @@ package mock_businesslogic
 
 import (
 	businesslogic "github.com/DancesportSoftware/das/businesslogic"
-	reference "github.com/DancesportSoftware/das/businesslogic/reference"
 	gomock "github.com/golang/mock/gomock"
 	reflect "reflect"
 )
@@ -107,9 +106,9 @@ func (m *MockIEventMetaRepository) EXPECT() *MockIEventMetaRepositoryMockRecorde
 }
 
 // GetEventUniqueFederations mocks base method
-func (m *MockIEventMetaRepository) GetEventUniqueFederations(competition businesslogic.Competition) ([]reference.Federation, error) {
+func (m *MockIEventMetaRepository) GetEventUniqueFederations(competition businesslogic.Competition) ([]businesslogic.Federation, error) {
 	ret := m.ctrl.Call(m, "GetEventUniqueFederations", competition)
-	ret0, _ := ret[0].([]reference.Federation)
+	ret0, _ := ret[0].([]businesslogic.Federation)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -120,9 +119,9 @@ func (mr *MockIEventMetaRepositoryMockRecorder) GetEventUniqueFederations(compet
 }
 
 // GetEventUniqueDivisions mocks base method
-func (m *MockIEventMetaRepository) GetEventUniqueDivisions(competition businesslogic.Competition) ([]reference.Division, error) {
+func (m *MockIEventMetaRepository) GetEventUniqueDivisions(competition businesslogic.Competition) ([]businesslogic.Division, error) {
 	ret := m.ctrl.Call(m, "GetEventUniqueDivisions", competition)
-	ret0, _ := ret[0].([]reference.Division)
+	ret0, _ := ret[0].([]businesslogic.Division)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -133,9 +132,9 @@ func (mr *MockIEventMetaRepositoryMockRecorder) GetEventUniqueDivisions(competit
 }
 
 // GetEventUniqueAges mocks base method
-func (m *MockIEventMetaRepository) GetEventUniqueAges(competition businesslogic.Competition) ([]reference.Age, error) {
+func (m *MockIEventMetaRepository) GetEventUniqueAges(competition businesslogic.Competition) ([]businesslogic.Age, error) {
 	ret := m.ctrl.Call(m, "GetEventUniqueAges", competition)
-	ret0, _ := ret[0].([]reference.Age)
+	ret0, _ := ret[0].([]businesslogic.Age)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -146,9 +145,9 @@ func (mr *MockIEventMetaRepositoryMockRecorder) GetEventUniqueAges(competition i
 }
 
 // GetEventUniqueProficiencies mocks base method
-func (m *MockIEventMetaRepository) GetEventUniqueProficiencies(competition businesslogic.Competition) ([]reference.Proficiency, error) {
+func (m *MockIEventMetaRepository) GetEventUniqueProficiencies(competition businesslogic.Competition) ([]businesslogic.Proficiency, error) {
 	ret := m.ctrl.Call(m, "GetEventUniqueProficiencies", competition)
-	ret0, _ := ret[0].([]reference.Proficiency)
+	ret0, _ := ret[0].([]businesslogic.Proficiency)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }
@@ -159,9 +158,9 @@ func (mr *MockIEventMetaRepositoryMockRecorder) GetEventUniqueProficiencies(comp
 }
 
 // GetEventUniqueStyles mocks base method
-func (m *MockIEventMetaRepository) GetEventUniqueStyles(competition businesslogic.Competition) ([]reference.Style, error) {
+func (m *MockIEventMetaRepository) GetEventUniqueStyles(competition businesslogic.Competition) ([]businesslogic.Style, error) {
 	ret := m.ctrl.Call(m, "GetEventUniqueStyles", competition)
-	ret0, _ := ret[0].([]reference.Style)
+	ret0, _ := ret[0].([]businesslogic.Style)
 	ret1, _ := ret[1].(error)
 	return ret0, ret1
 }

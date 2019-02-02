@@ -20,10 +20,10 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
-	"log"
 )
 
 const (
@@ -36,9 +36,9 @@ type PostgresFederationRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresFederationRepository) CreateFederation(federation *reference.Federation) error {
+func (repo PostgresFederationRepository) CreateFederation(federation *businesslogic.Federation) error {
 	if repo.Database == nil {
-		log.Println(common.ErrorMessageEmptyDatabase)
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Insert("").
 		Into(DAS_FEDERATION_TABLE).
@@ -76,9 +76,9 @@ func (repo PostgresFederationRepository) CreateFederation(federation *reference.
 	return err
 }
 
-func (repo PostgresFederationRepository) SearchFederation(criteria reference.SearchFederationCriteria) ([]reference.Federation, error) {
+func (repo PostgresFederationRepository) SearchFederation(criteria businesslogic.SearchFederationCriteria) ([]businesslogic.Federation, error) {
 	if repo.Database == nil {
-		log.Println(common.ErrorMessageEmptyDatabase)
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s",
@@ -103,13 +103,13 @@ func (repo PostgresFederationRepository) SearchFederation(criteria reference.Sea
 		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ID})
 	}
 
-	federations := make([]reference.Federation, 0)
+	federations := make([]businesslogic.Federation, 0)
 	rows, err := stmt.RunWith(repo.Database).Query()
 	if err != nil {
 		return federations, err
 	}
 	for rows.Next() {
-		each := reference.Federation{}
+		each := businesslogic.Federation{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -127,9 +127,9 @@ func (repo PostgresFederationRepository) SearchFederation(criteria reference.Sea
 	return federations, err
 }
 
-func (repo PostgresFederationRepository) DeleteFederation(federation reference.Federation) error {
+func (repo PostgresFederationRepository) DeleteFederation(federation businesslogic.Federation) error {
 	if repo.Database == nil {
-		log.Println(common.ErrorMessageEmptyDatabase)
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Delete("").From(DAS_FEDERATION_TABLE).Where(squirrel.Eq{common.ColumnPrimaryKey: federation.ID})
 
@@ -143,9 +143,9 @@ func (repo PostgresFederationRepository) DeleteFederation(federation reference.F
 	return err
 }
 
-func (repo PostgresFederationRepository) UpdateFederation(federation reference.Federation) error {
+func (repo PostgresFederationRepository) UpdateFederation(federation businesslogic.Federation) error {
 	if repo.Database == nil {
-		log.Println(common.ErrorMessageEmptyDatabase)
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_FEDERATION_TABLE)
 	if federation.ID > 0 {

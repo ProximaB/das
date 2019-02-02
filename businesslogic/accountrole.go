@@ -45,6 +45,7 @@ func NewAccountRole(user Account, accountType int) AccountRole {
 
 // SearchAccountRoleCriteria specifies the parameters that can be used to search Account Roles in a repository
 type SearchAccountRoleCriteria struct {
+	ID            int
 	AccountID     int
 	AccountTypeID int
 }
@@ -56,11 +57,14 @@ type IAccountRoleRepository interface {
 }
 
 type AccountRoleProvisionService struct {
-	accountRepo     IAccountRepository
-	accountRoleRepo IAccountRoleRepository
+	accountRepo               IAccountRepository
+	accountRoleRepo           IAccountRoleRepository
+	organizerProvisionService OrganizerProvisionService
 }
 
-func NewAccountRoleProvisionService(accountRepo IAccountRepository, accountRoleRepo IAccountRoleRepository) *AccountRoleProvisionService {
+func NewAccountRoleProvisionService(
+	accountRepo IAccountRepository,
+	accountRoleRepo IAccountRoleRepository) *AccountRoleProvisionService {
 	service := AccountRoleProvisionService{
 		accountRepo:     accountRepo,
 		accountRoleRepo: accountRoleRepo,

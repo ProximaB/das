@@ -245,6 +245,15 @@ func (repo PostgresAccountRepository) SearchAccount(criteria businesslogic.Searc
 		roleRows.Close()
 		accounts[i].SetRoles(accountRoles)
 	}
+	output := make([]businesslogic.Account, 0)
+	if criteria.AccountType != 0 {
+		for _, each := range accounts {
+			if each.HasRole(criteria.AccountType) {
+				output = append(output, each)
+			}
+		}
+		return output, err
+	}
 	return accounts, err
 }
 

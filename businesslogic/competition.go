@@ -18,7 +18,6 @@ package businesslogic
 
 import (
 	"errors"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
 	"time"
 )
 
@@ -29,9 +28,9 @@ type Competition struct {
 	FederationID              int
 	Name                      string
 	Street                    string
-	City                      reference.City
-	State                     reference.State
-	Country                   reference.Country
+	City                      City
+	State                     State
+	Country                   Country
 	StartDateTime             time.Time
 	EndDateTime               time.Time
 	CreateUserID              int
@@ -46,6 +45,7 @@ type Competition struct {
 	Attendance                int
 	RegistrationOpenDateTime  time.Time
 	RegistrationCloseDateTime time.Time
+	officials                 map[int][]Account
 }
 
 // UpdateStatus will attempt to change the status of the caller competition to statusID, if the change is in logical order
@@ -58,6 +58,37 @@ func (comp *Competition) UpdateStatus(statusID int) error {
 	}
 	comp.statusID = statusID
 	return nil
+}
+
+func (comp *Competition) AddOfficial(role int, official Account) error {
+	if comp.officials == nil {
+		comp.officials = make(map[int][]Account)
+	}
+
+	if !official.HasRole(role) {
+		return errors.New("This user does not have the appointed role provisioned.")
+	}
+
+	if comp.officials[role] == nil {
+		comp.officials[role] = make([]Account, 0)
+	}
+
+	// check if this official is already added
+	for _, each := range comp.officials[role] {
+		if each.ID == official.ID {
+			return errors.New("This user is already added to the list of officials")
+		}
+	}
+	comp.officials[role] = append(comp.officials[role], official)
+
+	return nil
+}
+
+func (comp Competition) GetOfficials(role int) ([]Account, error) {
+	if comp.officials == nil {
+		return nil, errors.New("No official has been assigned to this competition")
+	}
+	return comp.officials[role], nil
 }
 
 func (comp Competition) GetStatus() int {
@@ -131,7 +162,7 @@ func CreateCompetition(competition Competition, competitionRepo ICompetitionRepo
 	}
 
 	newProvision := provision.updateForCreateCompetition(competition)
-	historyEntry := newProvisionHistory(newProvision, competition)
+	historyEntry := newProvisionHistoryEntry(newProvision, competition)
 	updateOrganizerProvision(newProvision, historyEntry, provisionRepo, historyRepo)
 
 	err := competitionRepo.CreateCompetition(&competition)
@@ -253,26 +284,26 @@ func validateUpdateCompetition(user *Account,
 }
 
 type IEventMetaRepository interface {
-	GetEventUniqueFederations(competition Competition) ([]reference.Federation, error)
-	GetEventUniqueDivisions(competition Competition) ([]reference.Division, error)
-	GetEventUniqueAges(competition Competition) ([]reference.Age, error)
-	GetEventUniqueProficiencies(competition Competition) ([]reference.Proficiency, error)
-	GetEventUniqueStyles(competition Competition) ([]reference.Style, error)
+	GetEventUniqueFederations(competition Competition) ([]Federation, error)
+	GetEventUniqueDivisions(competition Competition) ([]Division, error)
+	GetEventUniqueAges(competition Competition) ([]Age, error)
+	GetEventUniqueProficiencies(competition Competition) ([]Proficiency, error)
+	GetEventUniqueStyles(competition Competition) ([]Style, error)
 }
 
 // Get a list of unique federations that a competition has
-func (competition Competition) GetEventUniqueFederations(eventRepository IEventMetaRepository) ([]reference.Federation, error) {
+func (competition Competition) GetEventUniqueFederations(eventRepository IEventMetaRepository) ([]Federation, error) {
 	return eventRepository.GetEventUniqueFederations(competition)
 }
-func (competition Competition) GetEventUniqueDivisions(eventRepository IEventMetaRepository) ([]reference.Division, error) {
+func (competition Competition) GetEventUniqueDivisions(eventRepository IEventMetaRepository) ([]Division, error) {
 	return eventRepository.GetEventUniqueDivisions(competition)
 }
-func (competition Competition) GetEventUniqueAges(eventRepository IEventMetaRepository) ([]reference.Age, error) {
+func (competition Competition) GetEventUniqueAges(eventRepository IEventMetaRepository) ([]Age, error) {
 	return eventRepository.GetEventUniqueAges(competition)
 }
-func (competition Competition) GetEventUniqueProficiencies(eventRepository IEventMetaRepository) ([]reference.Proficiency, error) {
+func (competition Competition) GetEventUniqueProficiencies(eventRepository IEventMetaRepository) ([]Proficiency, error) {
 	return eventRepository.GetEventUniqueProficiencies(competition)
 }
-func (competition Competition) GetEventUniqueStyles(eventRepository IEventMetaRepository) ([]reference.Style, error) {
+func (competition Competition) GetEventUniqueStyles(eventRepository IEventMetaRepository) ([]Style, error) {
 	return eventRepository.GetEventUniqueStyles(competition)
 }

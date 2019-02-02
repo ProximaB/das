@@ -20,8 +20,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -34,9 +35,9 @@ type PostgresStateRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresStateRepository) SearchState(criteria reference.SearchStateCriteria) ([]reference.State, error) {
+func (repo PostgresStateRepository) SearchState(criteria businesslogic.SearchStateCriteria) ([]businesslogic.State, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresStateRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
@@ -61,14 +62,14 @@ func (repo PostgresStateRepository) SearchState(criteria reference.SearchStateCr
 	stmt = stmt.OrderBy(common.ColumnPrimaryKey,
 		common.COL_NAME)
 
-	states := make([]reference.State, 0)
+	states := make([]businesslogic.State, 0)
 	rows, err := stmt.RunWith(repo.Database).Query()
 	if err != nil {
 		return states, err
 	}
 
 	for rows.Next() {
-		each := reference.State{}
+		each := businesslogic.State{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -87,9 +88,9 @@ func (repo PostgresStateRepository) SearchState(criteria reference.SearchStateCr
 	return states, nil
 }
 
-func (repo PostgresStateRepository) CreateState(state *reference.State) error {
+func (repo PostgresStateRepository) CreateState(state *businesslogic.State) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresStateRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_STATE_TABLE).Columns(
 		common.COL_NAME,
@@ -122,9 +123,9 @@ func (repo PostgresStateRepository) CreateState(state *reference.State) error {
 	return err
 }
 
-func (repo PostgresStateRepository) UpdateState(state reference.State) error {
+func (repo PostgresStateRepository) UpdateState(state businesslogic.State) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresStateRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_STATE_TABLE)
 	if state.ID > 0 {
@@ -149,9 +150,9 @@ func (repo PostgresStateRepository) UpdateState(state reference.State) error {
 	}
 }
 
-func (repo PostgresStateRepository) DeleteState(state reference.State) error {
+func (repo PostgresStateRepository) DeleteState(state businesslogic.State) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresStateRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Delete("").From(DAS_STATE_TABLE).Where(squirrel.Eq{common.ColumnPrimaryKey: state.ID})
 	var err error

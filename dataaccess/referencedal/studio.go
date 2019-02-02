@@ -20,8 +20,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -34,9 +35,9 @@ type PostgresStudioRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresStudioRepository) SearchStudio(criteria reference.SearchStudioCriteria) ([]reference.Studio, error) {
+func (repo PostgresStudioRepository) SearchStudio(criteria businesslogic.SearchStudioCriteria) ([]businesslogic.Studio, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresStudioRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf(`DAS.STUDIO.%s, DAS.STUDIO.%s, DAS.STUDIO.%s, DAS.STUDIO.%s, 
@@ -65,13 +66,13 @@ func (repo PostgresStudioRepository) SearchStudio(criteria reference.SearchStudi
 			Join(`DAS.STATE S ON S.ID = C.STATE_ID`).Where(squirrel.Eq{`S.ID`: criteria.StateID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	studios := make([]reference.Studio, 0)
+	studios := make([]businesslogic.Studio, 0)
 	if err != nil {
 		return studios, err
 	}
 
 	for rows.Next() {
-		each := reference.Studio{}
+		each := businesslogic.Studio{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -89,9 +90,9 @@ func (repo PostgresStudioRepository) SearchStudio(criteria reference.SearchStudi
 	return studios, err
 }
 
-func (repo PostgresStudioRepository) CreateStudio(studio *reference.Studio) error {
+func (repo PostgresStudioRepository) CreateStudio(studio *businesslogic.Studio) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresStudioRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_STUDIO_TABLE).Columns(
 		common.COL_NAME,
@@ -126,9 +127,9 @@ func (repo PostgresStudioRepository) CreateStudio(studio *reference.Studio) erro
 	return err
 }
 
-func (repo PostgresStudioRepository) UpdateStudio(studio reference.Studio) error {
+func (repo PostgresStudioRepository) UpdateStudio(studio businesslogic.Studio) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresStudioRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_STUDIO_TABLE)
 	if studio.ID > 0 {
@@ -151,9 +152,9 @@ func (repo PostgresStudioRepository) UpdateStudio(studio reference.Studio) error
 	}
 }
 
-func (repo PostgresStudioRepository) DeleteStudio(studio reference.Studio) error {
+func (repo PostgresStudioRepository) DeleteStudio(studio businesslogic.Studio) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresStudioRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Delete("").From(DAS_STUDIO_TABLE).Where(squirrel.Eq{common.ColumnPrimaryKey: studio.ID})
 	var err error

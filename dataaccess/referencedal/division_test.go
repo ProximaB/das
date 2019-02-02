@@ -17,7 +17,7 @@
 package referencedal_test
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/referencedal"
 	"github.com/Masterminds/squirrel"
 	"github.com/stretchr/testify/assert"
@@ -50,7 +50,7 @@ func TestPostgresDivisionRepository_SearchDivision(t *testing.T) {
 	divisionRepo.Database = db
 	mock.ExpectQuery(`SELECT ID, NAME, ABBREVIATION, DESCRIPTION, NOTE, FEDERATION_ID, DATETIME_CREATED, 
 DATETIME_UPDATED FROM DAS.DIVISION ORDER BY ID`).WillReturnRows(rows)
-	divisions, err := divisionRepo.SearchDivision(reference.SearchDivisionCriteria{})
+	divisions, err := divisionRepo.SearchDivision(businesslogic.SearchDivisionCriteria{})
 
 	assert.Nil(t, err, "should search divisions without error")
 	assert.EqualValues(t, 2, len(divisions), "should return all divisions when search with empty criteria")
@@ -64,7 +64,7 @@ func TestPostgresDivisionRepository_CreateDivision(t *testing.T) {
 	defer db.Close()
 	divisionRepo.Database = db
 
-	args := reference.Division{Name: "Amateur", FederationID: 33}
+	args := businesslogic.Division{Name: "Amateur", FederationID: 33}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`INSERT INTO DAS.DIVISION (NAME, ABBREVIATION, DESCRIPTION, NOTE,
@@ -83,7 +83,7 @@ func TestPostgresDivisionRepository_DeleteDivision(t *testing.T) {
 	defer db.Close()
 	divisionRepo.Database = db
 
-	args := reference.Division{ID: 17, Name: "Professional", FederationID: 12}
+	args := businesslogic.Division{ID: 17, Name: "Professional", FederationID: 12}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`DELETE FROM DAS.DIVISION`).WillReturnResult(sqlmock.NewResult(17, 1))
@@ -101,7 +101,7 @@ func TestPostgresDivisionRepository_UpdateDivision(t *testing.T) {
 	defer db.Close()
 	divisionRepo.Database = db
 
-	args := reference.Division{ID: 17, Name: "Professional", FederationID: 12}
+	args := businesslogic.Division{ID: 17, Name: "Professional", FederationID: 12}
 
 	mock.ExpectBegin()
 	mock.ExpectExec(`UPDATE DAS.DIVISION`).WillReturnResult(sqlmock.NewResult(17, 1))

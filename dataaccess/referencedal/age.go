@@ -20,8 +20,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -37,9 +38,9 @@ type PostgresAgeRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresAgeRepository) CreateAge(age *reference.Age) error {
+func (repo PostgresAgeRepository) CreateAge(age *businesslogic.Age) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresAgeRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_AGE_TABLE).Columns(
 		common.COL_NAME,
@@ -75,9 +76,9 @@ func (repo PostgresAgeRepository) CreateAge(age *reference.Age) error {
 	return err
 }
 
-func (repo PostgresAgeRepository) DeleteAge(age reference.Age) error {
+func (repo PostgresAgeRepository) DeleteAge(age businesslogic.Age) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresAgeRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Delete("").From(DAS_AGE_TABLE).
 		Where(squirrel.Eq{common.ColumnPrimaryKey: age.ID})
@@ -91,9 +92,9 @@ func (repo PostgresAgeRepository) DeleteAge(age reference.Age) error {
 	return err
 }
 
-func (repo PostgresAgeRepository) SearchAge(criteria reference.SearchAgeCriteria) ([]reference.Age, error) {
+func (repo PostgresAgeRepository) SearchAge(criteria businesslogic.SearchAgeCriteria) ([]businesslogic.Age, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresAgeRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
@@ -117,12 +118,12 @@ func (repo PostgresAgeRepository) SearchAge(criteria reference.SearchAgeCriteria
 		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.AgeID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	output := make([]reference.Age, 0)
+	output := make([]businesslogic.Age, 0)
 	if err != nil {
 		return output, err
 	}
 	for rows.Next() {
-		age := reference.Age{}
+		age := businesslogic.Age{}
 		rows.Scan(
 			&age.ID,
 			&age.Name,
@@ -142,9 +143,9 @@ func (repo PostgresAgeRepository) SearchAge(criteria reference.SearchAgeCriteria
 	return output, err
 }
 
-func (repo PostgresAgeRepository) UpdateAge(age reference.Age) error {
+func (repo PostgresAgeRepository) UpdateAge(age businesslogic.Age) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresAgeRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_AGE_TABLE)
 	if age.ID > 0 {

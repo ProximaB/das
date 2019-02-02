@@ -16,7 +16,7 @@
 package viewmodel
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 )
 
 type Gender struct {
@@ -24,7 +24,7 @@ type Gender struct {
 	Name string `json:"name"`
 }
 
-func GenderDataModelToViewModel(gender reference.Gender) Gender {
+func GenderDataModelToViewModel(gender businesslogic.Gender) Gender {
 	return Gender{
 		ID:   gender.ID,
 		Name: gender.Name,

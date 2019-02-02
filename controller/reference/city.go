@@ -18,14 +18,14 @@ package reference
 
 import (
 	"encoding/json"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 )
 
 type CityServer struct {
-	reference.ICityRepository
+	businesslogic.ICityRepository
 }
 
 // POST /api/reference/city
@@ -53,7 +53,7 @@ func (server CityServer) DeleteCityHandler(w http.ResponseWriter, r *http.Reques
 		return
 	}
 
-	if cities, searchErr := server.ICityRepository.SearchCity(reference.SearchCityCriteria{CityID: deleteDTO.ID}); searchErr != nil {
+	if cities, searchErr := server.ICityRepository.SearchCity(businesslogic.SearchCityCriteria{CityID: deleteDTO.ID}); searchErr != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, searchErr.Error(), nil)
 		return
 	} else if len(cities) != 1 {
@@ -82,7 +82,7 @@ func (server CityServer) UpdateCityHandler(w http.ResponseWriter, r *http.Reques
 
 // GET /api/reference/city
 func (server CityServer) SearchCityHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(reference.SearchCityCriteria)
+	criteria := new(businesslogic.SearchCityCriteria)
 	err := util.ParseRequestData(r, criteria)
 	if err != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, err.Error())

@@ -17,7 +17,7 @@
 package referencedal_test
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/referencedal"
 	"github.com/Masterminds/squirrel"
 	"github.com/stretchr/testify/assert"
@@ -46,7 +46,7 @@ func TestPostgresSchoolRepository_SearchSchool(t *testing.T) {
 	).AddRow(1, "UW-Madison", 3, 3, time.Now(), 4, time.Now())
 
 	mock.ExpectQuery("SELECT").WillReturnRows(rows)
-	schools, _ := schoolRepository.SearchSchool(reference.SearchSchoolCriteria{})
+	schools, _ := schoolRepository.SearchSchool(businesslogic.SearchSchoolCriteria{})
 
 	assert.NotZero(t, len(schools))
 }
@@ -63,7 +63,7 @@ func TestPostgresSchoolRepository_CreateSchool(t *testing.T) {
 	mock.ExpectExec(`INSERT INTO DAS.SCHOOL (NAME, CITY_ID, CREATE_USER_ID, DATETIME_CREATED,
 		UPDATE_USER_ID, DATETIME_UPDATED)`)
 	mock.ExpectCommit()
-	args := reference.School{Name: "Intergalactic College", CityID: 44}
+	args := businesslogic.School{Name: "Intergalactic College", CityID: 44}
 	err = schoolRepository.CreateSchool(&args)
 
 	assert.Nil(t, err, "should insert new school without error")
@@ -77,7 +77,7 @@ func TestPostgresSchoolRepository_DeleteSchool(t *testing.T) {
 	defer db.Close()
 	schoolRepository.Database = db
 
-	args := reference.School{ID: 66, Name: "Intergalactic College", CityID: 44}
+	args := businesslogic.School{ID: 66, Name: "Intergalactic College", CityID: 44}
 	mock.ExpectBegin()
 	mock.ExpectExec(`DELETE FROM DAS.SCHOOL`).WillReturnResult(sqlmock.NewResult(66, 1))
 	mock.ExpectCommit()
@@ -94,7 +94,7 @@ func TestPostgresSchoolRepository_UpdateSchool(t *testing.T) {
 	defer db.Close()
 	schoolRepository.Database = db
 
-	args := reference.School{ID: 66, Name: "Intergalactic College", CityID: 44}
+	args := businesslogic.School{ID: 66, Name: "Intergalactic College", CityID: 44}
 	mock.ExpectBegin()
 	mock.ExpectExec(`UPDATE DAS.SCHOOL`).WillReturnResult(sqlmock.NewResult(66, 1))
 	mock.ExpectCommit()

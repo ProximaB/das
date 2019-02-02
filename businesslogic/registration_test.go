@@ -25,7 +25,7 @@ import (
 )
 
 func TestEventRegistration_Validate(t *testing.T) {
-	registration := businesslogic.EventRegistration{}
+	registration := businesslogic.EventRegistrationForm{}
 	assert.NotNil(t, registration.Validate(), "should throw an error if Competition is not specified")
 
 	registration.CompetitionID = 12
@@ -64,22 +64,25 @@ func TestCompetitionRegistrationService_ValidateEventRegistration_LegitimateData
 		{ID: 3, AthleteID: 12,
 			CompetitionEntry: businesslogic.BaseCompetitionEntry{CompetitionID: 44}},
 	}, nil)
-	partnershipCompEntryRepo := mock_businesslogic.NewMockIPartnershipCompetitionEntryRepository(mockCtrl)
-	partnershipEventEntryRepo := mock_businesslogic.NewMockIPartnershipEventEntryRepository(mockCtrl)
 
-	service := businesslogic.CompetitionRegistrationService{
+	athleteEventEntryRepo := mock_businesslogic.NewMockIAthleteEventEntryRepository(mockCtrl)
+
+	// partnershipCompEntryRepo := mock_businesslogic.NewMockIPartnershipCompetitionEntryRepository(mockCtrl)
+	// partnershipEventEntryRepo := mock_businesslogic.NewMockIPartnershipEventEntryRepository(mockCtrl)
+
+	service := businesslogic.NewCompetitionRegistrationService(
 		accountRepo,
 		partnershipRepo,
 		compRepo,
 		eventRepo,
 		athleteEntryRepo,
-		partnershipCompEntryRepo,
-		partnershipEventEntryRepo,
-	}
+		athleteEventEntryRepo)
 
-	registration := businesslogic.EventRegistration{
+	registration := businesslogic.EventRegistrationForm{
 		PartnershipID: 33,
 		CompetitionID: 127,
+		EventsAdded:   []int{},
+		EventsDropped: []int{},
 	}
 	currentUser := businesslogic.Account{}
 

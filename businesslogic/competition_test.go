@@ -22,7 +22,6 @@ import (
 	"time"
 
 	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
 	"github.com/DancesportSoftware/das/mock/businesslogic"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
@@ -45,9 +44,9 @@ func TestCreateCompetition(t *testing.T) {
 		ContactName:   "James Bond",
 		ContactEmail:  "james.bond@email.com",
 		ContactPhone:  "2290092292",
-		City:          reference.City{ID: 26},
-		State:         reference.State{ID: 17},
-		Country:       reference.Country{ID: 19},
+		City:          businesslogic.City{ID: 26},
+		State:         businesslogic.State{ID: 17},
+		Country:       businesslogic.Country{ID: 19},
 		CreateUserID:  1,
 		UpdateUserID:  1,
 	}
@@ -56,7 +55,7 @@ func TestCreateCompetition(t *testing.T) {
 	provisionRepo.EXPECT().SearchOrganizerProvision(businesslogic.SearchOrganizerProvisionCriteria{
 		OrganizerID: 1,
 	}).Return([]businesslogic.OrganizerProvision{
-		{ID: 3, OrganizerID: 1, Available: 3, Hosted: 7},
+		{ID: 3, OrganizerRoleID: 1, Available: 3, Hosted: 7},
 	}, nil)
 	provisionRepo.EXPECT().UpdateOrganizerProvision(gomock.Any()).Return(nil)
 	provisionHistoryRepo.EXPECT().CreateOrganizerProvisionHistory(gomock.Any()).Return(nil)

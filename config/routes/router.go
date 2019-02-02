@@ -19,14 +19,14 @@ package routes
 import (
 	"encoding/json"
 	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/config/routes/internal/account"
-	"github.com/DancesportSoftware/das/config/routes/internal/admin"
-	"github.com/DancesportSoftware/das/config/routes/internal/competition"
-	"github.com/DancesportSoftware/das/config/routes/internal/organizer"
-	"github.com/DancesportSoftware/das/config/routes/internal/partnership"
-	"github.com/DancesportSoftware/das/config/routes/internal/reference"
-	"github.com/DancesportSoftware/das/config/routes/internal/registration"
+	"github.com/DancesportSoftware/das/config/routes/account"
+	"github.com/DancesportSoftware/das/config/routes/admin"
+	"github.com/DancesportSoftware/das/config/routes/competition"
 	"github.com/DancesportSoftware/das/config/routes/middleware"
+	"github.com/DancesportSoftware/das/config/routes/organizer"
+	"github.com/DancesportSoftware/das/config/routes/partnership"
+	"github.com/DancesportSoftware/das/config/routes/reference"
+	"github.com/DancesportSoftware/das/config/routes/registration"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/gorilla/mux"
 	"log"
@@ -84,18 +84,15 @@ func addDasControllerGroup(router *mux.Router, group util.DasControllerGroup) {
 }
 
 const (
-	EnvApiVersion = "API_VERSION"
-	EnvBuildDate  = "BUILD_DATE"
+	EnvBuildDate = "BUILD_DATE"
 )
 
 func rootController(w http.ResponseWriter, r *http.Request) {
-	apiVersion := os.Getenv(EnvApiVersion)
 	buildDate := os.Getenv(EnvBuildDate)
 
 	data := struct {
-		APIVersion string `json:"api_version"`
-		BuildDate  string `json:"build_date"`
-	}{apiVersion, buildDate}
+		BuildDate string `json:"version"`
+	}{buildDate}
 
 	output, _ := json.Marshal(data)
 	w.Write(output)
@@ -154,7 +151,8 @@ func NewDasRouter() *mux.Router {
 	// organizer (only)
 	addDasControllerGroup(router, organizer.OrganizerCompetitionManagementControllerGroup)
 	addDasControllerGroup(router, organizer.OrganizerEventManagementControllerGroup)
-	addDasControllerGroup(router, organizer.OrganizerEntryManagementControllerGroup)
+	addDasController(router, organizer.SearchEligibleCompetitionOfficialController)
+	addDasControllerGroup(router, organizer.OrganizerCompetitionOfficialInvitationControllerGroup)
 
 	// competition
 	addDasController(router, competition.GetCompetitionStatusController)
@@ -171,6 +169,7 @@ func NewDasRouter() *mux.Router {
 	// adjudicator
 
 	// administrator
+	addDasControllerGroup(router, admin.AdminManageUserControllerGroup)
 	addDasControllerGroup(router, admin.ManageOrganizerProvisionControllerGroup)
 
 	// public only

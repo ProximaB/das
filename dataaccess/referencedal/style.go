@@ -20,8 +20,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -36,9 +37,9 @@ type PostgresStyleRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresStyleRepository) CreateStyle(style *reference.Style) error {
+func (repo PostgresStyleRepository) CreateStyle(style *businesslogic.Style) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresStyleRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_STYLE_TABLE).Columns(
 		common.COL_NAME,
@@ -69,9 +70,9 @@ func (repo PostgresStyleRepository) CreateStyle(style *reference.Style) error {
 	return err
 }
 
-func (repo PostgresStyleRepository) DeleteStyle(style reference.Style) error {
+func (repo PostgresStyleRepository) DeleteStyle(style businesslogic.Style) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresStyleRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Delete("").
@@ -87,9 +88,9 @@ func (repo PostgresStyleRepository) DeleteStyle(style reference.Style) error {
 	return err
 }
 
-func (repo PostgresStyleRepository) SearchStyle(criteria reference.SearchStyleCriteria) ([]reference.Style, error) {
+func (repo PostgresStyleRepository) SearchStyle(criteria businesslogic.SearchStyleCriteria) ([]businesslogic.Style, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresStyleRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Select(
 		fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s",
@@ -109,12 +110,12 @@ func (repo PostgresStyleRepository) SearchStyle(criteria reference.SearchStyleCr
 		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: criteria.Name})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	styles := make([]reference.Style, 0)
+	styles := make([]businesslogic.Style, 0)
 	if err != nil {
 		return styles, err
 	}
 	for rows.Next() {
-		each := reference.Style{}
+		each := businesslogic.Style{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -130,9 +131,9 @@ func (repo PostgresStyleRepository) SearchStyle(criteria reference.SearchStyleCr
 	return styles, err
 }
 
-func (repo PostgresStyleRepository) UpdateStyle(style reference.Style) error {
+func (repo PostgresStyleRepository) UpdateStyle(style businesslogic.Style) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresStyleRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_STYLE_TABLE)
 	if style.ID > 0 {

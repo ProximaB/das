@@ -19,19 +19,19 @@ package reference
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 )
 
 type StateServer struct {
-	reference.IStateRepository
+	businesslogic.IStateRepository
 }
 
 // GET /api/reference/state
 func (server StateServer) SearchStateHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(reference.SearchStateCriteria)
+	criteria := new(businesslogic.SearchStateCriteria)
 	err := util.ParseRequestData(r, criteria)
 	if err != nil {
 		w.WriteHeader(http.StatusBadRequest)

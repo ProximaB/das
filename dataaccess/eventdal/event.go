@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 	"time"
 )
@@ -41,7 +42,7 @@ type PostgresEventRepository struct {
 // SearchEvent searches Event in a Postgres database
 func (repo PostgresEventRepository) SearchEvent(criteria businesslogic.SearchEventCriteria) ([]businesslogic.Event, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresEventRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SQLBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
 		common.ColumnPrimaryKey,
@@ -115,7 +116,7 @@ func (repo PostgresEventRepository) SearchEvent(criteria businesslogic.SearchEve
 // CreateEvent creates an Event in a Postgres database
 func (repo PostgresEventRepository) CreateEvent(event *businesslogic.Event) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresEventRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SQLBuilder.Insert("").
 		Into(dasEventTable).
@@ -165,7 +166,7 @@ func (repo PostgresEventRepository) CreateEvent(event *businesslogic.Event) erro
 // UpdateEvent updates an Event in a Postgres database
 func (repo PostgresEventRepository) UpdateEvent(event businesslogic.Event) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresEventRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SQLBuilder.Update("").Table(dasEventTable).
 		Set(dasEventColumnEventStatusID, event.StatusID).
@@ -182,7 +183,7 @@ func (repo PostgresEventRepository) UpdateEvent(event businesslogic.Event) error
 // DeleteEvent deletes an Event from a Postgres database
 func (repo PostgresEventRepository) DeleteEvent(event businesslogic.Event) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresEventRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	return errors.New("not implemented")
 }

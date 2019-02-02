@@ -20,8 +20,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -37,9 +38,9 @@ type PostgresCityRepository struct {
 }
 
 // CreateCity inserts a new City record in the database and updates the ID key of city
-func (repo PostgresCityRepository) CreateCity(city *reference.City) error {
+func (repo PostgresCityRepository) CreateCity(city *businesslogic.City) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresCityRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Insert("").
@@ -70,9 +71,9 @@ func (repo PostgresCityRepository) CreateCity(city *reference.City) error {
 }
 
 // DeleteCity removes the City record from the database
-func (repo PostgresCityRepository) DeleteCity(city reference.City) error {
+func (repo PostgresCityRepository) DeleteCity(city businesslogic.City) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresCityRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Delete("").From(dasCityTable)
 	if city.ID > 0 {
@@ -94,9 +95,9 @@ func (repo PostgresCityRepository) DeleteCity(city reference.City) error {
 }
 
 // UpdateCity updates the value in a City record
-func (repo PostgresCityRepository) UpdateCity(city reference.City) error {
+func (repo PostgresCityRepository) UpdateCity(city businesslogic.City) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresCityRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Update("").Table(dasCityTable).
 		SetMap(squirrel.Eq{common.COL_NAME: city.Name, common.COL_STATE_ID: city.StateID}).
@@ -118,9 +119,9 @@ func (repo PostgresCityRepository) UpdateCity(city reference.City) error {
 }
 
 // SearchCity selects cityes
-func (repo PostgresCityRepository) SearchCity(criteria reference.SearchCityCriteria) ([]reference.City, error) {
+func (repo PostgresCityRepository) SearchCity(criteria businesslogic.SearchCityCriteria) ([]businesslogic.City, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresCityRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s",
@@ -143,12 +144,12 @@ func (repo PostgresCityRepository) SearchCity(criteria reference.SearchCityCrite
 	}
 
 	rows, err := stmt.RunWith(repo.Database).Query()
-	cities := make([]reference.City, 0)
+	cities := make([]businesslogic.City, 0)
 	if err != nil {
 		return cities, err
 	}
 	for rows.Next() {
-		each := reference.City{}
+		each := businesslogic.City{}
 		scanErr := rows.Scan(
 			&each.ID,
 			&each.Name,

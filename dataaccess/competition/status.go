@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -36,7 +37,7 @@ type PostgresCompetitionStatusRepository struct {
 
 func (repo PostgresCompetitionStatusRepository) GetCompetitionAllStatus() ([]businesslogic.CompetitionStatus, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresCompetitionStatusRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	clause := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s",
 		common.ColumnPrimaryKey,

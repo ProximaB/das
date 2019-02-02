@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -37,7 +38,7 @@ const (
 
 func (repo PostgresEventDanceRepository) SearchEventDance(criteria businesslogic.SearchEventDanceCriteria) ([]businesslogic.EventDance, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresEventDanceRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Select(
 		fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s",
@@ -74,7 +75,7 @@ func (repo PostgresEventDanceRepository) SearchEventDance(criteria businesslogic
 }
 func (repo PostgresEventDanceRepository) CreateEventDance(eventDance *businesslogic.EventDance) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresEventDanceRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Insert("").
 		Into(DAS_EVENT_DANCES_TABLE).
@@ -107,13 +108,13 @@ func (repo PostgresEventDanceRepository) CreateEventDance(eventDance *businesslo
 }
 func (repo PostgresEventDanceRepository) DeleteEventDance(eventDance businesslogic.EventDance) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresEventDanceRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	return errors.New("not implemented")
 }
 func (repo PostgresEventDanceRepository) UpdateEventDance(eventDance businesslogic.EventDance) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresEventDanceRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	return errors.New("not implemented")
 }

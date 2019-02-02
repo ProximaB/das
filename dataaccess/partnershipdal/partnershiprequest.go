@@ -22,6 +22,7 @@ import (
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -42,7 +43,7 @@ type PostgresPartnershipRequestRepository struct {
 
 func (repo PostgresPartnershipRequestRepository) SearchPartnershipRequest(criteria businesslogic.SearchPartnershipRequestCriteria) ([]businesslogic.PartnershipRequest, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresPartnershipRequestRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	requests := make([]businesslogic.PartnershipRequest, 0)
 	stmt := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
@@ -102,7 +103,7 @@ func (repo PostgresPartnershipRequestRepository) SearchPartnershipRequest(criter
 
 func (repo PostgresPartnershipRequestRepository) CreatePartnershipRequest(request *businesslogic.PartnershipRequest) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresPartnershipRequestRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_PARTNERSHIP_REQUEST_TABLE).Columns(
 		DAS_PARTNERSHIP_REQUEST_COL_SENDER_ID,
@@ -143,7 +144,7 @@ func (repo PostgresPartnershipRequestRepository) CreatePartnershipRequest(reques
 
 func (repo PostgresPartnershipRequestRepository) UpdatePartnershipRequest(request businesslogic.PartnershipRequest) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresPartnershipRequestRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	clause := repo.SqlBuilder.Update("").
 		Table(DAS_PARTNERSHIP_REQUEST_TABLE).
@@ -158,7 +159,7 @@ func (repo PostgresPartnershipRequestRepository) UpdatePartnershipRequest(reques
 
 func (repo PostgresPartnershipRequestRepository) DeletePartnershipRequest(request businesslogic.PartnershipRequest) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresPartnershipRequestRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	return errors.New("not implemented")
 }

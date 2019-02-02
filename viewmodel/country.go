@@ -17,7 +17,7 @@
 package viewmodel
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"time"
 )
 
@@ -27,7 +27,7 @@ type Country struct {
 	Abbreviation string `json:"abbreviation"`
 }
 
-func CountriesToViewModel(countries []reference.Country) []Country {
+func CountriesToViewModel(countries []businesslogic.Country) []Country {
 	results := make([]Country, 0)
 	for _, each := range countries {
 		results = append(results, countryToViewModel(each))
@@ -35,7 +35,7 @@ func CountriesToViewModel(countries []reference.Country) []Country {
 	return results
 }
 
-func countryToViewModel(country reference.Country) Country {
+func countryToViewModel(country businesslogic.Country) Country {
 	return Country{
 		ID:           country.ID,
 		Name:         country.Name,
@@ -49,8 +49,8 @@ type CreateCountry struct {
 	Abbreviation string `schema:"abbreviation"`
 }
 
-func (cc *CreateCountry) ToDataModel() reference.Country {
-	return reference.Country{
+func (cc *CreateCountry) ToDataModel() businesslogic.Country {
+	return businesslogic.Country{
 		Name:            cc.Name,
 		Abbreviation:    cc.Abbreviation,
 		DateTimeCreated: time.Now(),

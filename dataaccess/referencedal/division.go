@@ -20,8 +20,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -34,9 +35,9 @@ type PostgresDivisionRepository struct {
 	SqlBuilder squirrel.StatementBuilderType
 }
 
-func (repo PostgresDivisionRepository) SearchDivision(criteria reference.SearchDivisionCriteria) ([]reference.Division, error) {
+func (repo PostgresDivisionRepository) SearchDivision(criteria businesslogic.SearchDivisionCriteria) ([]businesslogic.Division, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresDivisionRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
@@ -57,12 +58,12 @@ func (repo PostgresDivisionRepository) SearchDivision(criteria reference.SearchD
 		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
-	divisions := make([]reference.Division, 0)
+	divisions := make([]businesslogic.Division, 0)
 	if err != nil {
 		return divisions, err
 	}
 	for rows.Next() {
-		each := reference.Division{}
+		each := businesslogic.Division{}
 		rows.Scan(
 			&each.ID,
 			&each.Name,
@@ -79,9 +80,9 @@ func (repo PostgresDivisionRepository) SearchDivision(criteria reference.SearchD
 	return divisions, err
 }
 
-func (repo PostgresDivisionRepository) CreateDivision(division *reference.Division) error {
+func (repo PostgresDivisionRepository) CreateDivision(division *businesslogic.Division) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresDivisionRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_DIVISION_TABLE).Columns(
 		common.COL_NAME,
@@ -118,9 +119,9 @@ func (repo PostgresDivisionRepository) CreateDivision(division *reference.Divisi
 	return err
 }
 
-func (repo PostgresDivisionRepository) UpdateDivision(division reference.Division) error {
+func (repo PostgresDivisionRepository) UpdateDivision(division businesslogic.Division) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresDivisionRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_DIVISION_TABLE)
 	if division.ID > 0 {
@@ -145,9 +146,9 @@ func (repo PostgresDivisionRepository) UpdateDivision(division reference.Divisio
 	}
 }
 
-func (repo PostgresDivisionRepository) DeleteDivision(division reference.Division) error {
+func (repo PostgresDivisionRepository) DeleteDivision(division businesslogic.Division) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresDivisionRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Delete("").

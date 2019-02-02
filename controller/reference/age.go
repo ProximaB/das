@@ -18,14 +18,14 @@ package reference
 
 import (
 	"encoding/json"
-	"github.com/DancesportSoftware/das/businesslogic/reference"
+	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
 )
 
 type AgeServer struct {
-	reference.IAgeRepository
+	businesslogic.IAgeRepository
 }
 
 // SearchAgeHandler handles request
@@ -42,7 +42,7 @@ type AgeServer struct {
 //		{ "id": 4, "name": "Senior I", "division": 4, "enforced": true, "minimum": 36, "maximum": 45 },
 //	]
 func (server AgeServer) SearchAgeHandler(w http.ResponseWriter, r *http.Request) {
-	criteria := new(reference.SearchAgeCriteria)
+	criteria := new(businesslogic.SearchAgeCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
 		return

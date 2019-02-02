@@ -95,7 +95,7 @@ func (repo PostgresPartnershipRequestBlacklistRepository) SearchPartnershipReque
 }
 func (repo PostgresPartnershipRequestBlacklistRepository) CreatePartnershipRequestBlacklist(blacklist *businesslogic.PartnershipRequestBlacklistEntry) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresPartnershipRequestBlacklistRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Insert("").Into(DasPartnershipRequestBlacklistTable).Columns(
 		DasPartnershipRequestBlacklistColumnReporterID,
@@ -133,7 +133,7 @@ func (repo PostgresPartnershipRequestBlacklistRepository) CreatePartnershipReque
 }
 func (repo PostgresPartnershipRequestBlacklistRepository) DeletePartnershipRequestBlacklist(blacklist businesslogic.PartnershipRequestBlacklistEntry) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresPartnershipRequestBlacklistRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Delete("").
@@ -153,7 +153,7 @@ func (repo PostgresPartnershipRequestBlacklistRepository) DeletePartnershipReque
 // not allowed.
 func (repo PostgresPartnershipRequestBlacklistRepository) UpdatePartnershipRequestBlacklist(blacklist businesslogic.PartnershipRequestBlacklistEntry) error {
 	if repo.Database == nil {
-		return errors.New("data source of PostgresPartnershipRequestBlacklistRepository is not specified")
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DasPartnershipRequestBlacklistTable)
 	if blacklist.ID > 0 {

@@ -87,7 +87,7 @@ func (repo PostgresAthleteCompetitionEntryRepository) CreateEntry(entry *busines
 // SearchEntry searches AthleteCompetitionEntry in a Postgres database
 func (repo PostgresAthleteCompetitionEntryRepository) SearchEntry(criteria businesslogic.SearchAthleteCompetitionEntryCriteria) ([]businesslogic.AthleteCompetitionEntry, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresCompetitionEntryRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	clause := repo.SQLBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s",
 		common.ColumnPrimaryKey,

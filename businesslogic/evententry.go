@@ -1,5 +1,5 @@
 // Dancesport Application System (DAS)
-// Copyright (C) 2017, 2018 Yubing Hou
+// Copyright (C) 2017, 2018, 2019 Yubing Hou
 //
 // This program is free software: you can redistribute it and/or modify
 // it under the terms of the GNU General Public License as published by
@@ -32,6 +32,35 @@ type EventEntry struct {
 	DateTimeCreated time.Time
 	UpdateUserID    int
 	DateTimeUpdated time.Time
+}
+
+type AthleteEventEntry struct {
+	ID              int
+	AthleteID       int // should be the account ID, not the Athlete Role id
+	FirstName       string
+	LastName        string
+	CompetitionID   int
+	EventID         int
+	CheckedIn       bool
+	Placement       int // default should be 0: unplaced
+	CreateUserID    int
+	DateTimeCreated time.Time
+	UpdateUserID    int
+	DateTimeUpdated time.Time
+}
+
+type SearchAthleteEventEntryCriteria struct {
+	ID            int
+	AthleteID     int
+	CompetitionID int
+	EventID       int
+}
+
+type IAthleteEventEntryRepository interface {
+	CreateAthleteEventEntry(entry *AthleteEventEntry) error
+	DeleteAthleteEventEntry(entry AthleteEventEntry) error
+	SearchAthleteEventEntry(criteria SearchAthleteEventEntryCriteria) ([]AthleteEventEntry, error)
+	UpdateAthleteEventEntry(entry AthleteEventEntry) error
 }
 
 // PartnershipEventEntry defines the Entry of a Partnership at an Event

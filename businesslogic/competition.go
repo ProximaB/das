@@ -18,6 +18,7 @@ package businesslogic
 
 import (
 	"errors"
+	"fmt"
 	"time"
 )
 
@@ -170,6 +171,23 @@ func CreateCompetition(competition Competition, competitionRepo ICompetitionRepo
 	updateOrganizerProvision(newProvision, historyEntry, provisionRepo, historyRepo)
 
 	err := competitionRepo.CreateCompetition(&competition)
+	if err != nil {
+		// refund competition organizer's provision
+		refundProvision := newProvision
+		refundProvision.Available += 1
+		refundProvision.Hosted -= 1
+
+		refundEntry := OrganizerProvisionHistoryEntry{
+			OrganizerRoleID: refundProvision.OrganizerRoleID,
+			Amount:          1,
+			Note:            fmt.Sprintf("Refund for failing in creating competition %v %v", competition.Name, competition.StartDateTime),
+			CreateUserID:    competition.CreateUserID,
+			DateTimeCreated: time.Now(),
+			UpdateUserID:    competition.UpdateUserID,
+			DateTimeUpdated: time.Now(),
+		}
+		updateOrganizerProvision(refundProvision, refundEntry, provisionRepo, historyRepo)
+	}
 
 	return err
 }

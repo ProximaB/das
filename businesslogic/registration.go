@@ -81,6 +81,11 @@ func NewCompetitionRegistrationService(
 	athleteCompetitionEntryRepo IAthleteCompetitionEntryRepository,
 	athleteEventEntryRepo IAthleteEventEntryRepository) CompetitionRegistrationService {
 	service := CompetitionRegistrationService{}
+	service.AccountRepository = accountRepo
+	service.PartnershipRepository = partnershipRepo
+	service.CompetitionRepository = competitionRepo
+	service.EventRepository = eventRepo
+	service.AthleteCompetitionEntryRepo = athleteCompetitionEntryRepo
 	service.athleteCompetitionEntryService = NewAthleteCompetitionEntryService(accountRepo, competitionRepo, athleteCompetitionEntryRepo)
 	return service
 }

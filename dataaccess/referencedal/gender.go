@@ -18,9 +18,11 @@ package referencedal
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -34,6 +36,9 @@ const (
 )
 
 func (repo PostgresGenderRepository) GetAllGenders() ([]businesslogic.Gender, error) {
+	if repo.Database == nil {
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
 	genders := make([]businesslogic.Gender, 0)
 	stmt := repo.SqlBuilder.Select(
 		fmt.Sprintf(

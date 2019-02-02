@@ -22,8 +22,8 @@ import (
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
-	"log"
 )
 
 const (
@@ -37,7 +37,7 @@ type PostgresDanceRepository struct {
 
 func (repo PostgresDanceRepository) SearchDance(criteria businesslogic.SearchDanceCriteria) ([]businesslogic.Dance, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresDanceRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.
 		Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s",
@@ -86,6 +86,9 @@ func (repo PostgresDanceRepository) SearchDance(criteria businesslogic.SearchDan
 }
 
 func (repo PostgresDanceRepository) CreateDance(dance *businesslogic.Dance) error {
+	if repo.Database == nil {
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
 	stmt := repo.SqlBuilder.Insert("").Into(DAS_DANCE_TABLE).Columns(
 		common.COL_NAME,
 		common.ColumnAbbreviation,
@@ -120,6 +123,9 @@ func (repo PostgresDanceRepository) CreateDance(dance *businesslogic.Dance) erro
 }
 
 func (repo PostgresDanceRepository) UpdateDance(dance businesslogic.Dance) error {
+	if repo.Database == nil {
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_DANCE_TABLE)
 	if dance.ID > 0 {
 		stmt = stmt.Set(common.COL_NAME, dance.Name).
@@ -143,7 +149,7 @@ func (repo PostgresDanceRepository) UpdateDance(dance businesslogic.Dance) error
 
 func (repo PostgresDanceRepository) DeleteDance(dance businesslogic.Dance) error {
 	if repo.Database == nil {
-		log.Println(common.ErrorMessageEmptyDatabase)
+		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SqlBuilder.Delete("").From(DAS_DANCE_TABLE).Where(
 		squirrel.Eq{common.ColumnPrimaryKey: dance.ID},

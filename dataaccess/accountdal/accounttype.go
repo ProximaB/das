@@ -18,9 +18,11 @@ package accountdal
 
 import (
 	"database/sql"
+	"errors"
 	"fmt"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -34,6 +36,9 @@ type PostgresAccountTypeRepository struct {
 }
 
 func (repo PostgresAccountTypeRepository) GetAccountTypes() ([]businesslogic.AccountType, error) {
+	if repo.Database == nil {
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
 	accountTypes := make([]businesslogic.AccountType, 0)
 	stmt := repo.SqlBuilder.
 		Select(

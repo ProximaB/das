@@ -20,6 +20,7 @@ import (
 	"database/sql"
 	"errors"
 	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 
@@ -30,7 +31,7 @@ type PostgresEventMetaRepository struct {
 
 func (repo PostgresEventMetaRepository) GetEventUniqueFederations(competition businesslogic.Competition) ([]businesslogic.Federation, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresEventRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 
 	clause := `SELECT DISTINCT E.FEDERATION_ID, F.NAME, F.ABBREVIATION, F.DESCRIPTION, F.YEAR_FOUNDED, F.COUNTRY_ID,
@@ -66,7 +67,7 @@ func (repo PostgresEventMetaRepository) GetEventUniqueFederations(competition bu
 
 func (repo PostgresEventMetaRepository) GetEventUniqueDivisions(competition businesslogic.Competition) ([]businesslogic.Division, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresEventRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	clause := `SELECT DISTINCT E.DIVISION_ID, D.NAME, D.ABBREVIATION, D.DESCRIPTION, D.NOTE, D.FEDERATION_ID, 
 				D.DATETIME_CREATED, D.DATETIME_UPDATED 
@@ -99,7 +100,7 @@ func (repo PostgresEventMetaRepository) GetEventUniqueDivisions(competition busi
 
 func (repo PostgresEventMetaRepository) GetEventUniqueAges(competition businesslogic.Competition) ([]businesslogic.Age, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresEventRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	clause := `SELECT DISTINCT E.AGE_ID, A.NAME, A.DESCRIPTION, A.DIVISION_ID, A. ENFORCED, A.MINIMUM_AGE, 
 			A.MAXIMUM_AGE, A.CREATE_USER_ID, A.DATETIME_CREATED, A.UPDATE_USER_ID, A.DATETIME_UPDATED
@@ -135,7 +136,7 @@ func (repo PostgresEventMetaRepository) GetEventUniqueAges(competition businessl
 
 func (repo PostgresEventMetaRepository) GetEventUniqueProficiencies(competition businesslogic.Competition) ([]businesslogic.Proficiency, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresEventRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	clause := `SELECT DISTINCT E.PROFICIENCY_ID, P.NAME, P.DIVISION_ID P.DESCRIPTION, P.CREATE_USER_ID, P.DATETIME_CREATED,
 			P.UPDATE_USER_ID, P.DATETIME_UPDATED FROM DAS.EVENT E JOIN DAS.PROFICIENCY P ON E.PROFICIENCY_ID = P.ID 
@@ -167,7 +168,7 @@ func (repo PostgresEventMetaRepository) GetEventUniqueProficiencies(competition 
 
 func (repo PostgresEventMetaRepository) GetEventUniqueStyles(competition businesslogic.Competition) ([]businesslogic.Style, error) {
 	if repo.Database == nil {
-		return nil, errors.New("data source of PostgresEventRepository is not specified")
+		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	clause := `SELECT DISTINCT E.STYLE_ID, S.NAME, S.DESCRIPTION, S.CREATE_USER_ID, S.DATETIME_CREATED,
 				S.UPDATE_USER_ID, S.DATETIME_UPDATED FROM DAS.EVENT E JOIN DAS.STYLE S ON E.STYLE_ID = S.ID

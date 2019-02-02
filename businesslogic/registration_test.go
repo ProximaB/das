@@ -81,6 +81,8 @@ func TestCompetitionRegistrationService_ValidateEventRegistration_LegitimateData
 	registration := businesslogic.EventRegistrationForm{
 		PartnershipID: 33,
 		CompetitionID: 127,
+		EventsAdded:   []int{},
+		EventsDropped: []int{},
 	}
 	currentUser := businesslogic.Account{}
 

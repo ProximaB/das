@@ -21,6 +21,7 @@ import (
 	"github.com/DancesportSoftware/das/dataaccess/competition"
 	"github.com/DancesportSoftware/das/dataaccess/entrydal"
 	"github.com/DancesportSoftware/das/dataaccess/eventdal"
+	"github.com/DancesportSoftware/das/dataaccess/organizer"
 	"github.com/DancesportSoftware/das/dataaccess/partnershipdal"
 	"github.com/DancesportSoftware/das/dataaccess/provision"
 	"github.com/DancesportSoftware/das/dataaccess/referencedal"
@@ -139,6 +140,14 @@ var CompetitionStatusRepository = competition.PostgresCompetitionStatusRepositor
 }
 
 var CompetitionRepository = competition.PostgresCompetitionRepository{
+	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
+var CompetitionOfficialRepository = organizer.PostgresCompetitionOfficialRepository{
+	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
+var CompetitionOfficialInvitationRepository = organizer.PostgresCompetitionOfficialInvitationRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 

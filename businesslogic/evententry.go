@@ -35,18 +35,19 @@ type EventEntry struct {
 }
 
 type AthleteEventEntry struct {
-	ID              int
-	AthleteID       int // should be the account ID, not the Athlete Role id
-	FirstName       string
-	LastName        string
-	CompetitionID   int
-	EventID         int
-	CheckedIn       bool
-	Placement       int // default should be 0: unplaced
-	CreateUserID    int
-	DateTimeCreated time.Time
-	UpdateUserID    int
-	DateTimeUpdated time.Time
+	ID                int
+	AthleteID         int // should be the account ID, not the Athlete Role id
+	FirstName         string
+	LastName          string
+	CompetitionID     int
+	EventID           int
+	CheckedIn         bool
+	DateTimeCheckedIn bool
+	Placement         int // default should be 0: unplaced
+	CreateUserID      int
+	DateTimeCreated   time.Time
+	UpdateUserID      int
+	DateTimeUpdated   time.Time
 }
 
 type SearchAthleteEventEntryCriteria struct {

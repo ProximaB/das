@@ -20,11 +20,18 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"log"
 
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
+)
+
+const (
+	dasAthleteEventEntryTable = "DAS.EVENT_ENTRY_ATHLETE"
+	columnCheckinIndicator    = "CHECKIN_IND"
+	columnCheckinDateTime     = "CHECKIN_DATETIME"
 )
 
 type PostgresAthleteEventEntryRepository struct {
@@ -67,8 +74,61 @@ func (repo PostgresAthleteEventEntryRepository) SearchAthleteEventEntry(criteria
 	if repo.Database == nil {
 		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	return nil, errors.New("Not implemented")
+	stmt := repo.SQLBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
+		common.ColumnPrimaryKey,
+		common.COL_ATHLETE_ID,
+		common.COL_COMPETITION_ID,
+		common.COL_EVENT_ID,
+		columnCheckinIndicator,
+		columnCheckinDateTime,
+		common.COL_PLACEMENT,
+		common.ColumnCreateUserID,
+		common.ColumnDateTimeCreated,
+		common.ColumnUpdateUserID,
+		common.ColumnDateTimeUpdated,
+	)).From(dasAthleteEventEntryTable)
 
+	if criteria.ID > 0 {
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ID})
+	}
+	if criteria.CompetitionID > 0 {
+		stmt = stmt.Where(squirrel.Eq{common.COL_COMPETITION_ID: criteria.CompetitionID})
+	}
+	if criteria.EventID > 0 {
+		stmt = stmt.Where(squirrel.Eq{common.COL_EVENT_ID: criteria.EventID})
+	}
+	if criteria.AthleteID > 0 {
+		stmt = stmt.Where(squirrel.Eq{common.COL_ATHLETE_ID: criteria.AthleteID})
+	}
+
+	entries := make([]businesslogic.AthleteEventEntry, 0)
+	rows, err := stmt.RunWith(repo.Database).Query()
+	if err != nil {
+		return nil, err
+	}
+
+	for rows.Next() {
+		each := businesslogic.AthleteEventEntry{}
+		scanErr := rows.Scan(
+			&each.ID,
+			&each.AthleteID,
+			&each.CompetitionID,
+			&each.EventID,
+			&each.CheckedIn,
+			&each.DateTimeCheckedIn,
+			&each.Placement,
+			&each.CreateUserID,
+			&each.DateTimeCreated,
+			&each.UpdateUserID,
+			&each.DateTimeUpdated)
+		if scanErr != nil {
+			log.Printf("[error] scanning Athlete Event Entry: %v", scanErr)
+			return entries, scanErr
+		}
+		entries = append(entries, each)
+	}
+	rows.Close()
+	return entries, err
 }
 
 func (repo PostgresAthleteEventEntryRepository) UpdateAthleteEventEntry(entry businesslogic.AthleteEventEntry) error {
@@ -171,13 +231,12 @@ func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(
 	rows, err := clause.RunWith(repo.Database).Query()
 
 	if err != nil {
-		rows.Close()
 		return entries, err
 	}
 
 	for rows.Next() {
 		each := businesslogic.PartnershipEventEntry{}
-		rows.Scan(
+		scanErr := rows.Scan(
 			&each.ID,
 			&each.EventEntry.EventID,
 			&each.PartnershipID,
@@ -187,10 +246,13 @@ func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(
 			&each.EventEntry.UpdateUserID,
 			&each.EventEntry.DateTimeUpdated,
 		)
+		if scanErr != nil {
+			log.Printf("[error] scanning Partnership Event Entry: %v", scanErr)
+			return entries, scanErr
+		}
 		entries = append(entries, each)
 	}
-	rows.Close()
-	return entries, err
+	return entries, rows.Close()
 }
 
 // PostgresAdjudicatorEventEntryRepository implements IAdjudicatorEventEntryRepository with a Postgres database

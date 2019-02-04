@@ -14,7 +14,7 @@
 // You should have received a copy of the GNU General Public License
 // along with this program.  If not, see <http://www.gnu.org/licenses/>.
 
-package controller
+package athlete
 
 import (
 	"encoding/json"
@@ -46,7 +46,7 @@ func (server CompetitionRegistrationServer) CreateAthleteRegistrationHandler(w h
 	// validate identity first
 	account, _ := server.GetCurrentUser(r)
 
-	registrationDTO := new(viewmodel.SubmitCompetitionRegistrationForm)
+	registrationDTO := new(viewmodel.AthleteCompetitionRegistrationForm)
 	if parseErr := util.ParseRequestBodyData(r, registrationDTO); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
 		return

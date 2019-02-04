@@ -39,14 +39,14 @@ type PartnershipCompetitionRepresentation struct {
 
 // EventRegistrationForm specifies the data needed to create/update/drop event registration
 type EventRegistrationForm struct {
-	CompetitionID      int   `json:"competition"`
-	PartnershipID      int   `json:"partnership"`
-	EventsAdded        []int `json:"added"`   // event id, should not be competitive ballroom event id
-	EventsDropped      []int `json:"dropped"` // event id, should not be competitive ballroom event id
-	CountryRepresented int   `json:"country"`
-	StateRepresented   int   `json:"state"`
-	SchoolRepresented  int   `json:"school"`
-	StudioRepresented  int   `json:"studio"`
+	CompetitionID      int
+	PartnershipID      int
+	EventsAdded        []int
+	EventsDropped      []int
+	CountryRepresented int
+	StateRepresented   int
+	SchoolRepresented  int
+	StudioRepresented  int
 }
 
 // Validate performs sanity check of EventRegistrationForm

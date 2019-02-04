@@ -146,7 +146,7 @@ func (repo PostgresCompetitionOfficialInvitationRepository) SearchCompetitionOff
 			&each.DateTimeUpdated)
 		if scanErr != nil {
 			log.Printf("[error] scanning Competition Official Invitation: %v", scanErr)
-			return invitations, err
+			return invitations, scanErr
 		}
 		invitations = append(invitations, each)
 	}

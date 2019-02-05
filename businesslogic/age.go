@@ -38,8 +38,9 @@ type Age struct {
 
 // SearchAgeCriteria provides parameters when searching Age in IAgeRepository
 type SearchAgeCriteria struct {
-	DivisionID int `schema:"division"`
-	AgeID      int `schema:"id"`
+	Name       string `schema:"name"`
+	DivisionID int    `schema:"division"`
+	AgeID      int    `schema:"id"`
 }
 
 // IAgeRepository provides an interface for other businesslogic code to access Age data

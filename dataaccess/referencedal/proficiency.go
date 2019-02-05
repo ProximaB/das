@@ -24,6 +24,7 @@ import (
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
+	"log"
 )
 
 const (
@@ -138,6 +139,9 @@ func (repo PostgresProficiencyRepository) SearchProficiency(criteria businesslog
 	if criteria.ProficiencyID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ProficiencyID})
 	}
+	if len(criteria.Name) > 0 {
+		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: criteria.Name})
+	}
 	rows, err := stmt.RunWith(repo.Database).Query()
 	proficiencies := make([]businesslogic.Proficiency, 0)
 	if err != nil {
@@ -145,7 +149,7 @@ func (repo PostgresProficiencyRepository) SearchProficiency(criteria businesslog
 	}
 	for rows.Next() {
 		each := businesslogic.Proficiency{}
-		rows.Scan(
+		scanErr := rows.Scan(
 			&each.ID,
 			&each.Name,
 			&each.DivisionID,
@@ -155,8 +159,11 @@ func (repo PostgresProficiencyRepository) SearchProficiency(criteria businesslog
 			&each.UpdateUserID,
 			&each.DateTImeUpdated,
 		)
+		if scanErr != nil {
+			log.Printf("[error] scanning proficiency: %v", scanErr)
+			return proficiencies, scanErr
+		}
 		proficiencies = append(proficiencies, each)
 	}
-	rows.Close()
-	return proficiencies, err
+	return proficiencies, rows.Close()
 }

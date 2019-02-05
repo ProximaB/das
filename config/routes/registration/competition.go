@@ -20,14 +20,14 @@ import (
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/config/database"
 	"github.com/DancesportSoftware/das/config/routes/middleware"
-	"github.com/DancesportSoftware/das/controller"
+	"github.com/DancesportSoftware/das/controller/athlete"
 	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
 )
 
 const apiAthleteCompetitionRegistrationEndpoint = "/api/v1.0/athlete/competition/registration"
 
-var athleteCompetitionRegistrationServer = controller.CompetitionRegistrationServer{
+var athleteCompetitionRegistrationServer = athlete.CompetitionRegistrationServer{
 	IAuthenticationStrategy: middleware.AuthenticationStrategy,
 	Service: businesslogic.CompetitionRegistrationService{
 		AccountRepository:               database.AccountRepository,

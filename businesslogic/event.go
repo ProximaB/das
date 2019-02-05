@@ -57,10 +57,15 @@ type Event struct {
 	Description     string
 	StatusID        int
 	FederationID    int
+	Federation      Federation
 	DivisionID      int
+	Division        Division
 	AgeID           int
+	Age             Age
 	ProficiencyID   int
+	Proficiency     Proficiency
 	StyleID         int
+	Style           Style
 	dances          map[int]bool
 	Rounds          []int
 	CreateUserID    int

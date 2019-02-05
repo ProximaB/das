@@ -24,6 +24,7 @@ import (
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
+	"log"
 )
 
 const (
@@ -117,6 +118,9 @@ func (repo PostgresAgeRepository) SearchAge(criteria businesslogic.SearchAgeCrit
 	if criteria.AgeID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.AgeID})
 	}
+	if len(criteria.Name) > 0 {
+		stmt = stmt.Where(squirrel.Eq{common.COL_NAME: criteria.Name})
+	}
 	rows, err := stmt.RunWith(repo.Database).Query()
 	output := make([]businesslogic.Age, 0)
 	if err != nil {
@@ -124,7 +128,7 @@ func (repo PostgresAgeRepository) SearchAge(criteria businesslogic.SearchAgeCrit
 	}
 	for rows.Next() {
 		age := businesslogic.Age{}
-		rows.Scan(
+		scanErr := rows.Scan(
 			&age.ID,
 			&age.Name,
 			&age.Description,
@@ -137,10 +141,13 @@ func (repo PostgresAgeRepository) SearchAge(criteria businesslogic.SearchAgeCrit
 			&age.UpdateUserID,
 			&age.DateTimeUpdated,
 		)
+		if scanErr != nil {
+			log.Printf("[error] scanning age: %v", scanErr)
+			return output, nil
+		}
 		output = append(output, age)
 	}
-	rows.Close()
-	return output, err
+	return output, rows.Close()
 }
 
 func (repo PostgresAgeRepository) UpdateAge(age businesslogic.Age) error {

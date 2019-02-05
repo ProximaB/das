@@ -32,8 +32,9 @@ type Proficiency struct {
 }
 
 type SearchProficiencyCriteria struct {
-	ProficiencyID int `schema:"id"`
-	DivisionID    int `schema:"division"`
+	ProficiencyID int    `schema:"id"`
+	DivisionID    int    `schema:"division"`
+	Name          string `schema:"name"`
 }
 
 type IProficiencyRepository interface {

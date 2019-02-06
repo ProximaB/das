@@ -17,11 +17,13 @@
 package businesslogic_test
 
 import (
+	"errors"
+	"testing"
+
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/mock/businesslogic"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
-	"testing"
 )
 
 func TestAccount_GetAllPartnerships(t *testing.T) {
@@ -46,4 +48,55 @@ func TestAccount_GetAllPartnerships(t *testing.T) {
 
 	assert.Nil(t, err, "should get all partnerships without error")
 	assert.EqualValues(t, 3, len(partnerships), "should get all partnerships as lead and follow")
+}
+
+// HasAthlete tests
+func TestPartnership_HasAthlete_False(t *testing.T) {
+	leadAccount := businesslogic.Account{ID: 7}
+	followAccount := businesslogic.Account{ID: 6}
+	partnership := businesslogic.Partnership{
+		Lead:   leadAccount,
+		Follow: followAccount,
+	}
+
+	assert.False(t, partnership.HasAthlete(5))
+}
+
+func TestPartnership_HasAthlete_True(t *testing.T) {
+	leadAccount := businesslogic.Account{ID: 7}
+	followAccount := businesslogic.Account{ID: 6}
+	partnership := businesslogic.Partnership{
+		Lead:   leadAccount,
+		Follow: followAccount,
+	}
+
+	assert.True(t, partnership.HasAthlete(6))
+}
+
+// GetPartnershipByID helper functions
+type getPartnershipByIDResult struct {
+	comp businesslogic.Partnership
+	err  error
+}
+
+func partnershipTwoValueReturnHandler(c businesslogic.Partnership, e error) getPartnershipByIDResult {
+	result := getPartnershipByIDResult{comp: c, err: e}
+
+	return result
+}
+
+// GetPartnershipByID tests
+func TestPartnership_GetPartnershipByID_SearchError(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	partnershipRepo := mock_businesslogic.NewMockIPartnershipRepository(mockCtrl)
+	partnershipRepo.EXPECT().SearchPartnership(businesslogic.SearchPartnershipCriteria{
+		PartnershipID: 5,
+	}).Return(businesslogic.Partnership{}, errors.New("Return an error"))
+
+	assert.Error(
+		t,
+		partnershipTwoValueReturnHandler(businesslogic.GetPartnershipByID(0, partnershipRepo)).err,
+	)
 }

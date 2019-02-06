@@ -91,7 +91,7 @@ type getCompetitionByIDResult struct {
 	err  error
 }
 
-func twoValueReturnHandler(c businesslogic.Competition, e error) getCompetitionByIDResult {
+func competitionTwoValueReturnHandler(c businesslogic.Competition, e error) getCompetitionByIDResult {
 	result := getCompetitionByIDResult{comp: c, err: e}
 
 	return result
@@ -109,10 +109,10 @@ func getCompetitionByIDMockHandler(m *gomock.Controller, id int, r []businesslog
 func getCompetitionByIDAssertNilHandler(t *testing.T, competitionRepo businesslogic.ICompetitionRepository) {
 	assert.Equal(
 		t,
-		twoValueReturnHandler(businesslogic.Competition{}, errors.New("Return an error")).comp,
-		twoValueReturnHandler(businesslogic.GetCompetitionByID(2, competitionRepo)).comp,
+		competitionTwoValueReturnHandler(businesslogic.Competition{}, errors.New("Return an error")).comp,
+		competitionTwoValueReturnHandler(businesslogic.GetCompetitionByID(2, competitionRepo)).comp,
 	)
-	assert.Nil(t, twoValueReturnHandler(businesslogic.GetCompetitionByID(2, competitionRepo)).err)
+	assert.Nil(t, competitionTwoValueReturnHandler(businesslogic.GetCompetitionByID(2, competitionRepo)).err)
 }
 
 // GetCompetitionByID tests
@@ -128,11 +128,10 @@ func TestCompetition_GetCompetitionByID_ErrorNotNil(t *testing.T) {
 	)
 	assert.Equal(
 		t,
-		twoValueReturnHandler(businesslogic.Competition{}, errors.New("Return an error")).comp,
-		twoValueReturnHandler(businesslogic.GetCompetitionByID(2, competitionRepo)).comp,
+		competitionTwoValueReturnHandler(businesslogic.Competition{}, errors.New("Return an error")).comp,
+		competitionTwoValueReturnHandler(businesslogic.GetCompetitionByID(2, competitionRepo)).comp,
 	)
-	assert.Error(t, twoValueReturnHandler(businesslogic.GetCompetitionByID(2, competitionRepo)).err)
-
+	assert.Error(t, competitionTwoValueReturnHandler(businesslogic.GetCompetitionByID(2, competitionRepo)).err)
 }
 
 func TestCompetition_GetCompetitionByID_SearchResultNil(t *testing.T) {

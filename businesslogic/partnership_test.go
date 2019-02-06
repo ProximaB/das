@@ -75,14 +75,39 @@ func TestPartnership_HasAthlete_True(t *testing.T) {
 
 // GetPartnershipByID helper functions
 type getPartnershipByIDResult struct {
-	comp businesslogic.Partnership
-	err  error
+	partnership businesslogic.Partnership
+	err         error
 }
 
-func partnershipTwoValueReturnHandler(c businesslogic.Partnership, e error) getPartnershipByIDResult {
-	result := getPartnershipByIDResult{comp: c, err: e}
+func partnershipTwoValueReturnHandler(p businesslogic.Partnership, e error) getPartnershipByIDResult {
+	result := getPartnershipByIDResult{partnership: p, err: e}
 
 	return result
+}
+
+func getPartnershipByIDMockHandler(m *gomock.Controller, partnerID int,
+	partnership []businesslogic.Partnership, err error) businesslogic.IPartnershipRepository {
+
+	partnershipRepo := mock_businesslogic.NewMockIPartnershipRepository(m)
+	partnershipRepo.EXPECT().SearchPartnership(businesslogic.SearchPartnershipCriteria{
+		PartnershipID: partnerID,
+	}).Return(partnership, err).MaxTimes(2)
+
+	return partnershipRepo
+}
+
+func getPartnershipByIDAssertEqualNilHandler(t *testing.T, partnerID int,
+	partnershipRepo businesslogic.IPartnershipRepository) {
+
+	assert.Equal(
+		t,
+		partnershipTwoValueReturnHandler(businesslogic.Partnership{}, errors.New("Return an error")).partnership,
+		partnershipTwoValueReturnHandler(businesslogic.GetPartnershipByID(partnerID, partnershipRepo)).partnership,
+	)
+	assert.Nil(
+		t,
+		partnershipTwoValueReturnHandler(businesslogic.GetPartnershipByID(5, partnershipRepo)).err,
+	)
 }
 
 // GetPartnershipByID tests
@@ -90,13 +115,38 @@ func TestPartnership_GetPartnershipByID_SearchError(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
-	partnershipRepo := mock_businesslogic.NewMockIPartnershipRepository(mockCtrl)
-	partnershipRepo.EXPECT().SearchPartnership(businesslogic.SearchPartnershipCriteria{
-		PartnershipID: 5,
-	}).Return(businesslogic.Partnership{}, errors.New("Return an error"))
-
+	partnershipRepo := getPartnershipByIDMockHandler(mockCtrl, 5, nil, errors.New("Return an error"))
+	assert.Equal(
+		t,
+		partnershipTwoValueReturnHandler(businesslogic.Partnership{}, errors.New("Return an error")).partnership,
+		partnershipTwoValueReturnHandler(businesslogic.GetPartnershipByID(5, partnershipRepo)).partnership,
+	)
 	assert.Error(
 		t,
-		partnershipTwoValueReturnHandler(businesslogic.GetPartnershipByID(0, partnershipRepo)).err,
+		partnershipTwoValueReturnHandler(businesslogic.GetPartnershipByID(5, partnershipRepo)).err,
 	)
+}
+
+func TestPartnership_GetPartnershipByID_SearchResultNil(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	partnershipRepo := getPartnershipByIDMockHandler(mockCtrl, 5, nil, nil)
+	getPartnershipByIDAssertEqualNilHandler(t, 5, partnershipRepo)
+}
+
+func TestPartnership_GetPartnershipByID_SearchResultLengthNotOne(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	partnershipRepo := getPartnershipByIDMockHandler(mockCtrl, 5, make([]businesslogic.Partnership, 2), nil)
+	getPartnershipByIDAssertEqualNilHandler(t, 5, partnershipRepo)
+}
+
+func TestPartnership_GetPartnershipByID_SearchResultSuccess(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	partnershipRepo := getPartnershipByIDMockHandler(mockCtrl, 5, []businesslogic.Partnership{}, nil)
+	getPartnershipByIDAssertEqualNilHandler(t, 5, partnershipRepo)
 }

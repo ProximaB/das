@@ -3,6 +3,7 @@ package businesslogic
 import (
 	"errors"
 	"fmt"
+	"time"
 )
 
 type CompetitionEventFactory struct {
@@ -103,18 +104,29 @@ func (factory CompetitionEventFactory) GenerateEvent(federationName, divisionNam
 	return *event, nil
 }
 
-type CompetitionTemplateEventService struct {
-	factory CompetitionEventFactory
+type EventTemplate struct {
+	Federation  string
+	Division    string
+	Age         string
+	Proficiency string
+	Style       string
+	Dances      []string
 }
 
-// TODO: this should be refactored with JSON configuration
-//	[
-//		{ federation: "Collegiate", division: "Collegiate", age: "Collegiate", proficiency: "Championship", style: "Latin", dances: ["Cha Cha", "Samba", "Rumba", "Jive", "Paso Doble"]
-//
-//	]
-func (service CompetitionTemplateEventService) GenerateCollegiateEvents() ([]Event, error) {
-	events := make([]Event, 0)
-	err := errors.New("not implemented")
+type CompetitionEventTemplate struct {
+	ID               int
+	Name             string
+	Description      string
+	TargetFederation Federation
+	TemplateEvents   []EventTemplate
+	DateTimeCreate   time.Time
+}
 
-	return events, err
+type SearchCompetitionEventTemplateCriteria struct {
+	ID   int
+	Name string
+}
+
+type ICompetitionEventTemplateRepository interface {
+	SearchCompetitionEventTemplates(criteria SearchCompetitionEventTemplateCriteria) ([]CompetitionEventTemplate, error)
 }

@@ -27,8 +27,12 @@ import (
 
 const apiOrganizerEventEndpointV1_0 = "/api/v1.0/organizer/event"
 
-var organizerEventService = businesslogic.NewOrganizerEventService(database.AccountRepository, database.AccountRoleRepository,
-	database.CompetitionRepository, database.EventRepository, database.EventDanceRepository)
+var organizerEventService = businesslogic.NewOrganizerEventService(
+	database.AccountRepository,
+	database.AccountRoleRepository,
+	database.CompetitionRepository,
+	database.EventRepository,
+	database.EventDanceRepository)
 var organizerEventServer = organizer.OrganizerEventServer{
 	middleware.AuthenticationStrategy,
 	organizerEventService,

@@ -164,16 +164,64 @@ func GetEventByID(id int, repo IEventRepository) (Event, error) {
 
 // OrganizerEventService provides a layer of abstraction of services used by organizers to manage events of competitions
 type OrganizerEventService struct {
-	accountRepo     IAccountRepository
-	roleRepo        IAccountRoleRepository
-	competitionRepo ICompetitionRepository
-	eventRepo       IEventRepository
-	eventDanceRepo  IEventDanceRepository
+	accountRepo       IAccountRepository
+	roleRepo          IAccountRoleRepository
+	competitionRepo   ICompetitionRepository
+	eventRepo         IEventRepository
+	eventDanceRepo    IEventDanceRepository
+	eventTemplateRepo ICompetitionEventTemplateRepository
+	factory           CompetitionEventFactory
 }
 
-func NewOrganizerEventService(accountRepo IAccountRepository, roleRepo IAccountRoleRepository,
-	compRepo ICompetitionRepository, eventRepo IEventRepository, eventDanceRepo IEventDanceRepository) OrganizerEventService {
-	return OrganizerEventService{accountRepo, roleRepo, compRepo, eventRepo, eventDanceRepo}
+func NewOrganizerEventService(accountRepo IAccountRepository,
+	roleRepo IAccountRoleRepository,
+	compRepo ICompetitionRepository,
+	eventRepo IEventRepository,
+	eventDanceRepo IEventDanceRepository,
+	eventTemplateRepo ICompetitionEventTemplateRepository,
+	factory CompetitionEventFactory) OrganizerEventService {
+
+	return OrganizerEventService{
+		accountRepo,
+		roleRepo,
+		compRepo,
+		eventRepo,
+		eventDanceRepo,
+		eventTemplateRepo,
+		factory}
+}
+
+func (service OrganizerEventService) generateTemplateEvents(templateID int) ([]Event, error) {
+	events := make([]Event, 0)
+	results, err := service.eventTemplateRepo.SearchCompetitionEventTemplates(SearchCompetitionEventTemplateCriteria{
+		ID: templateID,
+	})
+	if err != nil {
+		return events, err
+	}
+
+	for _, each := range results[0].TemplateEvents {
+		item, genErr := service.factory.GenerateEvent(each.Federation, each.Division, each.Age, each.Proficiency, each.Style, each.Dances)
+		if genErr != nil {
+			return events, genErr
+		}
+		events = append(events, item)
+	}
+	return events, nil
+}
+
+func (service OrganizerEventService) GenerateEventsFromTemplate(competitionID int, templateID int) error {
+	events, err := service.generateTemplateEvents(templateID)
+	if err != nil {
+		return err
+	}
+	for i := 0; i < len(events); i++ {
+		genErr := service.CreateEvent(&events[i])
+		if genErr != nil {
+			return genErr
+		}
+	}
+	return nil
 }
 
 func (service OrganizerEventService) CreateEvent(event *Event) error {

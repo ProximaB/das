@@ -75,6 +75,7 @@ CREATE SCHEMA IF NOT EXISTS USADANCE;
 \i 'tables/das/event_category.sql'
 \i 'tables/das/event.sql'
 \i 'tables/das/event_dances.sql'
+\i 'tables/das/event_template.sql'
 
 -- round section
 \i 'tables/das/round.sql'

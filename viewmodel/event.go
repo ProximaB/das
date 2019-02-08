@@ -47,8 +47,15 @@ func (criteria OrganizerSearchEventCriteria) ToBusinessModel() businesslogic.Sea
 	}
 }
 
-// CreateEventViewModel defines the payload for creating an Event
-type CreateEventViewModel struct {
+type SearchCompetitionEventTemplateForm struct {
+	ID         int    `schema:"templateId"`
+	Name       string `schema:"name"`
+	Federation string `schema:"federation"`
+	OwnerID    int
+}
+
+// CreateEventForm defines the payload for creating an Event
+type CreateEventForm struct {
 	CompetitionID   int   `json:"competition"`
 	EventCategoryID int   `json:"category"`
 	FederationID    int   `json:"federation"`
@@ -57,10 +64,11 @@ type CreateEventViewModel struct {
 	ProficiencyID   int   `json:"proficiency"`
 	StyleID         int   `json:"style"`
 	Dances          []int `json:"dances"`
+	Template        int   `json:"template,omitempty"`
 }
 
-// ToDomainModel converts the caller CreateEventViewModel to the Event domain model
-func (dto CreateEventViewModel) ToDomainModel(user businesslogic.Account) *businesslogic.Event {
+// ToDomainModel converts the caller CreateEventForm to the Event domain model
+func (dto CreateEventForm) ToDomainModel(user businesslogic.Account) *businesslogic.Event {
 	event := businesslogic.NewEvent()
 	event.CompetitionID = dto.CompetitionID
 	event.CategoryID = businesslogic.EventCategoryCompetitiveBallroom

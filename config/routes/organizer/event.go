@@ -27,12 +27,23 @@ import (
 
 const apiOrganizerEventEndpointV1_0 = "/api/v1.0/organizer/event"
 
+var factory = businesslogic.CompetitionEventFactory{
+	database.FederationRepository,
+	database.DivisionRepository,
+	database.AgeRepository,
+	database.ProficiencyRepository,
+	database.StyleRepository,
+	database.DanceRepository,
+}
+
 var organizerEventService = businesslogic.NewOrganizerEventService(
 	database.AccountRepository,
 	database.AccountRoleRepository,
 	database.CompetitionRepository,
 	database.EventRepository,
-	database.EventDanceRepository)
+	database.EventDanceRepository,
+	database.CompetitionEventTemplateRepository,
+	factory)
 var organizerEventServer = organizer.OrganizerEventServer{
 	middleware.AuthenticationStrategy,
 	organizerEventService,
@@ -80,5 +91,32 @@ var OrganizerEventManagementControllerGroup = util.DasControllerGroup{
 		deleteEventController,
 		searchEventController,
 		updateEventController,
+	},
+}
+
+const apiOrganizeEventTemplateEndpoint = "/api/v1/organizer/event/template"
+
+var searchCompetitionEventTemplateController = util.DasController{
+	Name:         "SearchCompetitionEventTemplateController",
+	Description:  "Template for populating competition events",
+	Method:       http.MethodGet,
+	Endpoint:     apiOrganizeEventTemplateEndpoint,
+	Handler:      organizerEventServer.SearchCompetitionEventTemplateHandler,
+	AllowedRoles: []int{businesslogic.AccountTypeOrganizer},
+}
+
+var createCompetitionEventTemplateController = util.DasController{
+	Name:         "CreateCompetitionEventTemplateHandler",
+	Description:  "Creating a template for particular user",
+	Method:       http.MethodPost,
+	Endpoint:     apiOrganizeEventTemplateEndpoint,
+	Handler:      organizerEventServer.CreateCompetitionEventTemplateHanlder,
+	AllowedRoles: []int{businesslogic.AccountTypeOrganizer},
+}
+
+var OrganizerCompetitionEventTemplateControllerGroup = util.DasControllerGroup{
+	Controllers: []util.DasController{
+		createCompetitionEventTemplateController,
+		searchCompetitionEventTemplateController,
 	},
 }

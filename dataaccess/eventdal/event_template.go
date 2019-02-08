@@ -63,13 +63,12 @@ func (repo PostgresCompetitionEventTemplateRepository) SearchCompetitionEventTem
 		}
 
 		templateEvents := make([]businesslogic.EventTemplate, 0)
-		unmarshalErr := json.Unmarshal([]byte(list), templateEvents)
+		unmarshalErr := json.Unmarshal([]byte(list), &templateEvents)
 		if unmarshalErr != nil {
 			return templates, unmarshalErr
 		}
 		each.TemplateEvents = templateEvents
 		templates = append(templates, each)
 	}
-
 	return templates, nil
 }

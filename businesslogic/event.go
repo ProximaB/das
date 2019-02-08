@@ -224,6 +224,10 @@ func (service OrganizerEventService) GenerateEventsFromTemplate(competitionID in
 	return nil
 }
 
+func (service OrganizerEventService) SearchCompetitionEventTemplate(criteria SearchCompetitionEventTemplateCriteria) ([]CompetitionEventTemplate, error) {
+	return service.eventTemplateRepo.SearchCompetitionEventTemplates(criteria)
+}
+
 func (service OrganizerEventService) CreateEvent(event *Event) error {
 	competition, _ := GetCompetitionByID(event.CompetitionID, service.competitionRepo)
 

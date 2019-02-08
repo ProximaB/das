@@ -7,18 +7,18 @@ import (
 )
 
 type CompetitionEventFactory struct {
-	federationRepo  IFederationRepository
-	divisionRepo    IDivisionRepository
-	ageRepo         IAgeRepository
-	proficiencyRepo IProficiencyRepository
-	styleRepo       IStyleRepository
-	danceRepo       IDanceRepository
+	FederationRepo  IFederationRepository
+	DivisionRepo    IDivisionRepository
+	AgeRepo         IAgeRepository
+	ProficiencyRepo IProficiencyRepository
+	StyleRepo       IStyleRepository
+	DanceRepo       IDanceRepository
 }
 
 func (factory CompetitionEventFactory) GenerateEvent(federationName, divisionName, ageName, proficiencyName, styleName string, danceNames []string) (Event, error) {
 	event := NewEvent()
 	if federationName != "" {
-		searchResults, err := factory.federationRepo.SearchFederation(SearchFederationCriteria{Name: federationName})
+		searchResults, err := factory.FederationRepo.SearchFederation(SearchFederationCriteria{Name: federationName})
 		if len(searchResults) == 1 && err == nil {
 			event.FederationID = searchResults[0].ID
 			event.Federation = searchResults[0]
@@ -30,7 +30,7 @@ func (factory CompetitionEventFactory) GenerateEvent(federationName, divisionNam
 	}
 
 	if divisionName != "" {
-		searchResults, err := factory.divisionRepo.SearchDivision(SearchDivisionCriteria{
+		searchResults, err := factory.DivisionRepo.SearchDivision(SearchDivisionCriteria{
 			Name:         divisionName,
 			FederationID: event.FederationID,
 		})
@@ -45,7 +45,7 @@ func (factory CompetitionEventFactory) GenerateEvent(federationName, divisionNam
 	}
 
 	if ageName != "" {
-		searchResults, err := factory.ageRepo.SearchAge(SearchAgeCriteria{
+		searchResults, err := factory.AgeRepo.SearchAge(SearchAgeCriteria{
 			Name:       ageName,
 			DivisionID: event.DivisionID,
 		})
@@ -60,7 +60,7 @@ func (factory CompetitionEventFactory) GenerateEvent(federationName, divisionNam
 	}
 
 	if proficiencyName != "" {
-		searchResults, err := factory.proficiencyRepo.SearchProficiency(SearchProficiencyCriteria{
+		searchResults, err := factory.ProficiencyRepo.SearchProficiency(SearchProficiencyCriteria{
 			Name:       proficiencyName,
 			DivisionID: event.DivisionID,
 		})
@@ -75,7 +75,7 @@ func (factory CompetitionEventFactory) GenerateEvent(federationName, divisionNam
 	}
 
 	if styleName != "" {
-		searchResults, err := factory.styleRepo.SearchStyle(SearchStyleCriteria{
+		searchResults, err := factory.StyleRepo.SearchStyle(SearchStyleCriteria{
 			Name: styleName,
 		})
 		if len(searchResults) == 1 && err == nil {
@@ -90,7 +90,7 @@ func (factory CompetitionEventFactory) GenerateEvent(federationName, divisionNam
 
 	if len(danceNames) != 0 {
 		for _, each := range danceNames {
-			searchResults, err := factory.danceRepo.SearchDance(SearchDanceCriteria{
+			searchResults, err := factory.DanceRepo.SearchDance(SearchDanceCriteria{
 				StyleID: event.StyleID,
 				Name:    each,
 			})
@@ -105,12 +105,12 @@ func (factory CompetitionEventFactory) GenerateEvent(federationName, divisionNam
 }
 
 type EventTemplate struct {
-	Federation  string
-	Division    string
-	Age         string
-	Proficiency string
-	Style       string
-	Dances      []string
+	Federation  string   `json:"federation"`
+	Division    string   `json:"division"`
+	Age         string   `json:"age"`
+	Proficiency string   `json:"proficiency"`
+	Style       string   `json:"style"`
+	Dances      []string `json:"dances"`
 }
 
 type CompetitionEventTemplate struct {
@@ -123,8 +123,9 @@ type CompetitionEventTemplate struct {
 }
 
 type SearchCompetitionEventTemplateCriteria struct {
-	ID   int
-	Name string
+	ID           int
+	Name         string
+	CreateUserID int
 }
 
 type ICompetitionEventTemplateRepository interface {

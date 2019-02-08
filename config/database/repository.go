@@ -171,6 +171,10 @@ var EventDanceRepository = eventdal.PostgresEventDanceRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
+var CompetitionEventTemplateRepository = eventdal.PostgresCompetitionEventTemplateRepository{
+	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
 var PartnershipEventEntryRepository = entrydal.PostgresPartnershipEventEntryRepository{
 	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }

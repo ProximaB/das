@@ -28,6 +28,7 @@ import (
 )
 
 type SearchOrganizerCompetitionViewModel struct {
+	ID     int  `schema:"id"`
 	Future bool `schema:"future"`
 }
 
@@ -73,6 +74,7 @@ func (server OrganizerCompetitionServer) OrganizerSearchCompetitionHandler(w htt
 			return
 		}
 		criteria := businesslogic.SearchCompetitionCriteria{
+			ID:          searchDTO.ID,
 			OrganizerID: account.ID,
 		}
 		if searchDTO.Future {

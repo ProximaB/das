@@ -67,6 +67,7 @@ type Event struct {
 	StyleID         int
 	Style           Style
 	dances          map[int]bool
+	eventDances     map[int]EventDance
 	Rounds          []int
 	CreateUserID    int
 	DateTimeCreated time.Time
@@ -78,6 +79,7 @@ type Event struct {
 func NewEvent() *Event {
 	e := Event{}
 	e.dances = make(map[int]bool)
+	e.eventDances = make(map[int]EventDance)
 	return &e
 }
 
@@ -124,6 +126,20 @@ func (event *Event) SetDances(dances []int) {
 // HasDance checks if a dance of the provided ID is in the event
 func (event Event) HasDance(danceID int) bool {
 	return event.dances[danceID]
+}
+
+func (event *Event) AddEventDance(eveDance EventDance) {
+	if _, has := event.eventDances[eveDance.ID]; !has {
+		event.eventDances[eveDance.ID] = eveDance
+	}
+}
+
+func (event Event) GetEventDances() []EventDance {
+	output := make([]EventDance, 0)
+	for _, v := range event.eventDances {
+		output = append(output, v)
+	}
+	return output
 }
 
 // EquivalentTo checks if two events are equivalent in Federation, Division, Age, Proficiency, Style, and dances

@@ -90,7 +90,7 @@ func (repo PostgresEventRepository) SearchEvent(criteria businesslogic.SearchEve
 		return events, err
 	}
 	for rows.Next() {
-		each := businesslogic.Event{}
+		each := businesslogic.NewEvent()
 		rows.Scan(
 			&each.ID,
 			&each.CompetitionID,
@@ -107,9 +107,30 @@ func (repo PostgresEventRepository) SearchEvent(criteria businesslogic.SearchEve
 			&each.UpdateUserID,
 			&each.DateTimeUpdated,
 		)
-		events = append(events, each)
+		events = append(events, *each)
 	}
-	rows.Close()
+	closeErr := rows.Close()
+	if closeErr != nil {
+		return events, closeErr
+	}
+
+	// get event dances
+	eventDanceRepo := PostgresEventDanceRepository{
+		repo.Database,
+		repo.SQLBuilder,
+	}
+	for i := 0; i < len(events); i++ {
+		eventDances, searchDanceErr := eventDanceRepo.SearchEventDance(businesslogic.SearchEventDanceCriteria{
+			EventID: events[i].ID,
+		})
+		if searchDanceErr != nil {
+			return events, err
+		}
+		for j := 0; j < len(eventDances); j++ {
+			(events[i]).AddEventDance(eventDances[j])
+			events[i].AddDance(eventDances[j].DanceID)
+		}
+	}
 	return events, err
 }
 

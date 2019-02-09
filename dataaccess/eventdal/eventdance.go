@@ -24,6 +24,7 @@ import (
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
+	"log"
 )
 
 // PostgresEventDanceRepository implements IEventDanceRepository
@@ -51,27 +52,34 @@ func (repo PostgresEventDanceRepository) SearchEventDance(criteria businesslogic
 			common.ColumnDateTimeUpdated),
 	).From(DAS_EVENT_DANCES_TABLE).
 		OrderBy(common.ColumnPrimaryKey)
-	if criteria.CompetitionID > 0 {
-		stmt = stmt.Where(squirrel.Eq{common.COL_COMPETITION_ID: criteria.CompetitionID})
-	}
 	if criteria.EventID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_EVENT_ID: criteria.EventID})
 	}
 	rows, err := stmt.RunWith(repo.Database).Query()
 	output := make([]businesslogic.EventDance, 0)
 	if err != nil {
+		log.Printf("[error] querying EventDances with criteria %#v: %v", criteria, err)
 		return output, err
 	}
 	for rows.Next() {
 		each := businesslogic.EventDance{}
-		rows.Scan(
+		scanErr := rows.Scan(
 			&each.ID,
 			&each.EventID,
+			&each.DanceID,
+			&each.CreateUserID,
+			&each.DateTimeCreated,
+			&each.UpdateUserID,
+			&each.DateTimeUpdated,
 		)
+		if scanErr != nil {
+			log.Printf("[error] scanning EventDance with %#v: %v", criteria, scanErr)
+			return output, scanErr
+		}
 		output = append(output, each)
 	}
-	rows.Close()
-	return nil, errors.New("not implemented")
+	closeErr := rows.Close()
+	return output, closeErr
 }
 func (repo PostgresEventDanceRepository) CreateEventDance(eventDance *businesslogic.EventDance) error {
 	if repo.Database == nil {

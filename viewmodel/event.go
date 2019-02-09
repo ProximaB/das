@@ -93,20 +93,33 @@ func (dto CreateEventForm) ToDomainModel(user businesslogic.Account) *businesslo
 	return event
 }
 
-// EventViewModel defines the JSON structure of Event which is used in outbound API
-type EventViewModel struct {
-	ID            int   `json:"eventId"`
-	CompetitionID int   `json:"competitionId"`
-	FederationID  int   `json:"federationId"`
-	DivisionID    int   `json:"divisionId"`
-	AgeID         int   `json:"ageId"`
-	ProficiencyID int   `json:"proficiencyId"`
-	StyleID       int   `json:"styleId"`
-	Dances        []int `json:"dances"`
+type EventDanceViewModel struct {
+	ID      int `json:"eventDanceId"`
+	EventId int `json:"eventId"`
+	DanceId int `json:"danceId"`
 }
 
-// Populate populates the caller EventViewModel data fields with data from business logic Event
-func (view *EventViewModel) Populate(model businesslogic.Event) {
+func (view *EventDanceViewModel) PopulateViewModel(model businesslogic.EventDance) {
+	view.ID = model.ID
+	view.EventId = model.EventID
+	view.DanceId = model.DanceID
+}
+
+// EventViewModel defines the JSON structure of Event which is used in outbound API
+type EventViewModel struct {
+	ID            int                   `json:"eventId"`
+	CompetitionID int                   `json:"competitionId"`
+	FederationID  int                   `json:"federationId"`
+	DivisionID    int                   `json:"divisionId"`
+	AgeID         int                   `json:"ageId"`
+	ProficiencyID int                   `json:"proficiencyId"`
+	StyleID       int                   `json:"styleId"`
+	Dances        []int                 `json:"dances"`
+	EventDances   []EventDanceViewModel `json:"eventDances"`
+}
+
+// PopulateViewModel populates the caller EventViewModel data fields with data from business logic Event
+func (view *EventViewModel) PopulateViewModel(model businesslogic.Event) {
 	view.ID = model.ID
 	view.CompetitionID = model.CompetitionID
 	view.FederationID = model.FederationID
@@ -115,4 +128,10 @@ func (view *EventViewModel) Populate(model businesslogic.Event) {
 	view.ProficiencyID = model.ProficiencyID
 	view.StyleID = model.StyleID
 	view.Dances = model.GetDances()
+	view.EventDances = make([]EventDanceViewModel, 0)
+	for _, each := range model.GetEventDances() {
+		item := EventDanceViewModel{}
+		item.PopulateViewModel(each)
+		view.EventDances = append(view.EventDances, item)
+	}
 }

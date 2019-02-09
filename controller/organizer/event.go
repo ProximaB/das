@@ -73,9 +73,9 @@ func (server OrganizerEventServer) SearchEventHandler(w http.ResponseWriter, r *
 
 	viewbag := make([]viewmodel.EventViewModel, 0)
 	for _, each := range events {
-		view := viewmodel.EventViewModel{}
-		view.Populate(each)
-		viewbag = append(viewbag, view)
+		item := viewmodel.EventViewModel{}
+		item.PopulateViewModel(each)
+		viewbag = append(viewbag, item)
 	}
 	output, _ := json.Marshal(viewbag)
 	w.Write(output)

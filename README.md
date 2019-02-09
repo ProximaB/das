@@ -3,8 +3,7 @@ Web services for Dancesport Application System (DAS).
 
 [Join the DAS Slack Community](https://join.slack.com/t/ballroomdev/shared_invite/enQtMzg4OTU4OTAyNjQ3LTZmYWU2ZTA1Njc2NmI2YWIyZGRlMTQ1MGYyODM0ZWVmZjAzN2ZkNTcyYzNiM2NiMjE2MjI4YjQyNjcyNTU1MGE)
 
-
-[![License: GPL v3](https://img.shields.io/badge/License-GPL%20v3-blue.svg)](https://www.gnu.org/licenses/gpl-3.0)
+![](https://img.shields.io/github/license/DancesportSoftware/das.svg?style=flat-square)
 [![GoDoc](https://godoc.org/github.com/DancesportSoftware/das?status.svg)](https://godoc.org/github.com/DancesportSoftware/das)
 [![Build Status](https://travis-ci.org/DancesportSoftware/das.svg?branch=master)](https://travis-ci.org/DancesportSoftware/das)
 [![codecov](https://codecov.io/gh/DancesportSoftware/das/branch/development/graph/badge.svg)](https://codecov.io/gh/DancesportSoftware/das)

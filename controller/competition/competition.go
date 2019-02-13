@@ -51,6 +51,10 @@ func (server PublicCompetitionServer) GetUniqueEventFederationHandler(w http.Res
 	}
 
 	searchResults, _ := server.SearchCompetition(businesslogic.SearchCompetitionCriteria{ID: compID})
+	if len(searchResults) == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	competition := searchResults[0]
 
 	federations, err := competition.GetEventUniqueFederations(server.IEventMetaRepository)
@@ -82,6 +86,10 @@ func (server PublicCompetitionServer) GetEventUniqueDivisionsHandler(w http.Resp
 	}
 
 	searchResults, _ := server.SearchCompetition(businesslogic.SearchCompetitionCriteria{ID: compID})
+	if len(searchResults) == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	competition := searchResults[0]
 
 	divisions, err := competition.GetEventUniqueDivisions(server.IEventMetaRepository)
@@ -113,6 +121,10 @@ func (server PublicCompetitionServer) GetEventUniqueAgesHandler(w http.ResponseW
 	}
 
 	searchResults, _ := server.SearchCompetition(businesslogic.SearchCompetitionCriteria{ID: compID})
+	if len(searchResults) == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	competition := searchResults[0]
 	ages, err := competition.GetEventUniqueAges(server.IEventMetaRepository)
 	if err != nil {
@@ -144,6 +156,10 @@ func (server PublicCompetitionServer) GetEventUniqueProficienciesHandler(w http.
 		return
 	}
 	searchResults, _ := server.SearchCompetition(businesslogic.SearchCompetitionCriteria{ID: compID})
+	if len(searchResults) == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	competition := searchResults[0]
 	proficiencies, err := competition.GetEventUniqueProficiencies(server.IEventMetaRepository)
 	if err != nil {
@@ -170,6 +186,10 @@ func (server PublicCompetitionServer) GetEventUniqueStylesHandler(w http.Respons
 	}
 
 	searchResults, _ := server.SearchCompetition(businesslogic.SearchCompetitionCriteria{ID: compID})
+	if len(searchResults) == 0 {
+		w.WriteHeader(http.StatusNotFound)
+		return
+	}
 	competition := searchResults[0]
 	styles, err := competition.GetEventUniqueStyles(server.IEventMetaRepository)
 	if err != nil {

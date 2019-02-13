@@ -98,6 +98,12 @@ func validateAPNSConfig(config *APNSConfig) error {
 
 func validateAPNSPayload(payload *APNSPayload) error {
 	if payload != nil {
+		m := payload.standardFields()
+		for k := range payload.CustomData {
+			if _, contains := m[k]; contains {
+				return fmt.Errorf("multiple specifications for the key %q", k)
+			}
+		}
 		return validateAps(payload.Aps)
 	}
 	return nil
@@ -107,6 +113,14 @@ func validateAps(aps *Aps) error {
 	if aps != nil {
 		if aps.Alert != nil && aps.AlertString != "" {
 			return fmt.Errorf("multiple alert specifications")
+		}
+		if aps.CriticalSound != nil {
+			if aps.Sound != "" {
+				return fmt.Errorf("multiple sound specifications")
+			}
+			if aps.CriticalSound.Volume < 0 || aps.CriticalSound.Volume > 1 {
+				return fmt.Errorf("critical sound volume must be in the interval [0, 1]")
+			}
 		}
 		m := aps.standardFields()
 		for k := range aps.CustomData {

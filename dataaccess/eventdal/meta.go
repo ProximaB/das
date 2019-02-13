@@ -6,6 +6,7 @@ import (
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
+	"log"
 )
 
 type PostgresEventMetaRepository struct {
@@ -25,7 +26,6 @@ func (repo PostgresEventMetaRepository) GetEventUniqueFederations(competition bu
 	rows, err := repo.Database.Query(clause, competition.ID)
 	federations := make([]businesslogic.Federation, 0)
 	if err != nil {
-		rows.Close()
 		return federations, err
 	}
 
@@ -60,7 +60,6 @@ func (repo PostgresEventMetaRepository) GetEventUniqueDivisions(competition busi
 	rows, err := repo.Database.Query(clause, competition.ID)
 	divisions := make([]businesslogic.Division, 0)
 	if err != nil {
-		rows.Close()
 		return divisions, err
 	}
 
@@ -93,7 +92,6 @@ func (repo PostgresEventMetaRepository) GetEventUniqueAges(competition businessl
 	rows, err := repo.Database.Query(clause, competition.ID)
 	ages := make([]businesslogic.Age, 0)
 	if err != nil {
-		rows.Close()
 		return ages, err
 	}
 
@@ -122,13 +120,12 @@ func (repo PostgresEventMetaRepository) GetEventUniqueProficiencies(competition 
 	if repo.Database == nil {
 		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	clause := `SELECT DISTINCT E.PROFICIENCY_ID, P.NAME, P.DIVISION_ID P.DESCRIPTION, P.CREATE_USER_ID, P.DATETIME_CREATED,
+	clause := `SELECT DISTINCT E.PROFICIENCY_ID, P.NAME, P.DIVISION_ID, P.DESCRIPTION, P.CREATE_USER_ID, P.DATETIME_CREATED,
 			P.UPDATE_USER_ID, P.DATETIME_UPDATED FROM DAS.EVENT E JOIN DAS.PROFICIENCY P ON E.PROFICIENCY_ID = P.ID 
-			WHERE E.COMPETITION_ID = $1`
+			WHERE E.COMPETITION_ID = $1;`
 	rows, err := repo.Database.Query(clause, competition.ID)
 	proficiencies := make([]businesslogic.Proficiency, 0)
 	if err != nil {
-		rows.Close()
 		return proficiencies, err
 	}
 
@@ -156,12 +153,12 @@ func (repo PostgresEventMetaRepository) GetEventUniqueStyles(competition busines
 	}
 	clause := `SELECT DISTINCT E.STYLE_ID, S.NAME, S.DESCRIPTION, S.CREATE_USER_ID, S.DATETIME_CREATED,
 				S.UPDATE_USER_ID, S.DATETIME_UPDATED FROM DAS.EVENT E JOIN DAS.STYLE S ON E.STYLE_ID = S.ID
-				WHERE E.COMPETITION_ID = $1`
+				WHERE E.COMPETITION_ID = $1;`
 
-	rows, err := repo.Database.Query(clause, competition)
+	rows, err := repo.Database.Query(clause, competition.ID)
 	styles := make([]businesslogic.Style, 0)
 	if err != nil {
-		rows.Close()
+		log.Printf("[error] querying unique styles at competiion %#v: %v", competition, err)
 		return styles, err
 	}
 

@@ -32,12 +32,13 @@ func CompetitionDataModelToViewModel(competition businesslogic.Competition, acco
 		Name:       competition.Name,
 		Website:    competition.Website,
 		CountryID:  competition.Country.ID,
-		StateID:    competition.GetStatus(),
+		StateID:    competition.State.ID,
 		CityID:     competition.City.ID,
 		Address:    competition.Street,
 		StartDate:  competition.StartDateTime,
 		EndDate:    competition.EndDateTime,
 		Attendance: competition.Attendance,
+		Status:     competition.GetStatus(),
 	}
 
 	if accountType == businesslogic.AccountTypeOrganizer {

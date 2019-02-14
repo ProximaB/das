@@ -86,15 +86,20 @@ func (server OrganizerCompetitionServer) OrganizerUpdateCompetitionHandler(w htt
 	updateDTO := new(businesslogic.OrganizerUpdateCompetition)
 
 	if parseErr := util.ParseRequestBodyData(r, updateDTO); parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, nil)
 		return
 	}
 
 	competitions, _ := server.SearchCompetition(businesslogic.SearchCompetitionCriteria{ID: updateDTO.CompetitionID})
-	competitions[0].Street = updateDTO.Address
-	competitions[0].UpdateStatus(updateDTO.Status) // TODO; error prone
-	competitions[0].DateTimeUpdated = time.Now()
-	competitions[0].UpdateUserID = account.ID
+	if competitions[0].CreateUserID == account.ID {
+		competitions[0].Street = updateDTO.Address
+		competitions[0].UpdateStatus(updateDTO.Status) // TODO; error prone
+		competitions[0].DateTimeUpdated = time.Now()
+		competitions[0].UpdateUserID = account.ID
+	} else {
+		util.RespondJsonResult(w, http.StatusUnauthorized, "not authorized to make changes to this competition", nil)
+		return
+	}
 
 	if updateErr := server.UpdateCompetition(competitions[0]); updateErr != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP500ErrorRetrievingData, updateErr.Error())

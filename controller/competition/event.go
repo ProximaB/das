@@ -1,4 +1,4 @@
-package controller
+package competition
 
 import (
 	"encoding/json"
@@ -25,26 +25,26 @@ func (server EventServer) GetEventHandler(w http.ResponseWriter, r *http.Request
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
 		return
-	} else {
-
-		events, err := server.SearchEvent(*criteria)
-		if err != nil {
-			util.RespondJsonResult(w, http.StatusInternalServerError, err.Error(), nil)
-			return
-		}
-		data := make([]EventViewModel, 0)
-		for _, each := range events {
-			data = append(data, EventViewModel{
-				ID:            each.ID,
-				CompetitionID: each.CompetitionID,
-				Category:      each.CategoryID,
-				Description:   each.Description,
-				StatusID:      each.StatusID,
-			})
-		}
-		output, _ := json.Marshal(data)
-		w.Write(output)
 	}
+
+	events, err := server.SearchEvent(*criteria)
+	if err != nil {
+		util.RespondJsonResult(w, http.StatusInternalServerError, err.Error(), nil)
+		return
+	}
+	data := make([]EventViewModel, 0)
+	for _, each := range events {
+		data = append(data, EventViewModel{
+			ID:            each.ID,
+			CompetitionID: each.CompetitionID,
+			Category:      each.CategoryID,
+			Description:   each.Description,
+			StatusID:      each.StatusID,
+		})
+	}
+	output, _ := json.Marshal(data)
+	w.Write(output)
+
 }
 
 type SearchCompetitiveBallroomEventViewModel struct {

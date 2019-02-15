@@ -21,13 +21,13 @@ const (
 // SearchEventCriteria specifies the parameters that can be used to search events
 type SearchEventCriteria struct {
 	EventID       int `schema:"id"`
-	CompetitionID int `schema:"competition"`
+	CompetitionID int `schema:"competitionId,required"`
 	CategoryID    int `schema:"category"`
-	FederationID  int `schema:"federation"`
-	DivisionID    int `schema:"division"`
-	AgeID         int `schema:"age"`
-	ProficiencyID int `schema:"proficiency"`
-	StyleID       int `schema:"style"`
+	FederationID  int `schema:"federationId"`
+	DivisionID    int `schema:"divisionId"`
+	AgeID         int `schema:"ageId"`
+	ProficiencyID int `schema:"proficiencyId"`
+	StyleID       int `schema:"styleId"`
 	StatusID      int `schema:"status"`
 	OrganizerID   int `schema:"organizerID"`
 }

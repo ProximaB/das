@@ -92,5 +92,6 @@ var PublicCompetitionViewControllerGroup = util.DasControllerGroup{
 		searchCompetitionUniqueEventAgeController,
 		searchCompetitionUniqueEventProficiencyController,
 		searchCompetitionUniqueEventStyleController,
+		searchCompetitionEventsController,
 	},
 }

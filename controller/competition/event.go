@@ -15,12 +15,8 @@ type EventViewModel struct {
 	StatusID      int    `json:"status"`
 }
 
-type EventServer struct {
-	businesslogic.IEventRepository
-}
-
 // GET /api/event
-func (server EventServer) GetEventHandler(w http.ResponseWriter, r *http.Request) {
+func (server PublicCompetitionServer) GetEventHandler(w http.ResponseWriter, r *http.Request) {
 	criteria := new(businesslogic.SearchEventCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())

@@ -161,3 +161,14 @@ func TestPartnership_MustGetPartnershipByID_SearchError(t *testing.T) {
 	}).Return(nil, errors.New("Return an error"))
 	assert.Panics(t, func() { businesslogic.MustGetPartnershipByID(6, partnershipRepo) })
 }
+
+func TestPartnership_MuGetPartnershpiByID_SearchResultLengthNotOne(t *testing.T) {
+	mockCtrl := gomock.NewController(t)
+	defer mockCtrl.Finish()
+
+	partnershipRepo := mock_businesslogic.NewMockIPartnershipRepository(mockCtrl)
+	partnershipRepo.EXPECT().SearchPartnership(businesslogic.SearchPartnershipCriteria{
+		PartnershipID: 6,
+	}).Return(make([]businesslogic.Partnership, 2), nil)
+	assert.Panics(t, func() { businesslogic.MustGetPartnershipByID(6, partnershipRepo) })
+}

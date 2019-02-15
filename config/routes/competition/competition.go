@@ -15,6 +15,7 @@ const (
 	apiCompetitionAgeEndpoint         = "/api/competition/age"
 	apiCompetitionProficiencyEndpoint = "/api/competition/proficiency"
 	apiCompetitionStyleEndpoint       = "/api/competition/style"
+	apiCompetitionEventEndpoint       = "/api/competition/events"
 )
 
 var publicCompetitionServer = competition.PublicCompetitionServer{
@@ -74,6 +75,15 @@ var searchCompetitionUniqueEventStyleController = util.DasController{
 	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
 
+var searchCompetitionEventsController = util.DasController{
+	Name:         "SearchCompetitionEventsController",
+	Description:  "Search events of competition",
+	Method:       http.MethodGet,
+	Endpoint:     apiCompetitionEventEndpoint,
+	Handler:      publicCompetitionServer.GetEventHandler,
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
+}
+
 var PublicCompetitionViewControllerGroup = util.DasControllerGroup{
 	Controllers: []util.DasController{
 		searchCompetitionController,
@@ -82,5 +92,6 @@ var PublicCompetitionViewControllerGroup = util.DasControllerGroup{
 		searchCompetitionUniqueEventAgeController,
 		searchCompetitionUniqueEventProficiencyController,
 		searchCompetitionUniqueEventStyleController,
+		searchCompetitionEventsController,
 	},
 }

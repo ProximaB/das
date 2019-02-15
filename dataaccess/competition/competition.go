@@ -117,12 +117,17 @@ func (repo PostgresCompetitionRepository) UpdateCompetition(competition business
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_COMPETITION_TABLE)
 	if competition.ID > 0 {
-		stmt = stmt.Set(common.COL_NAME, competition.Name).
+		stmt = stmt.
+			Set(common.COL_FEDERATION_ID, competition.FederationID).
+			Set(common.COL_NAME, competition.Name).
 			Set(common.COL_WEBSITE, competition.Website).
+			Set(DAS_COMPETITION_COL_ADDRESS, competition.Street).
+			Set(common.COL_CITY_ID, competition.City.ID).
+			Set(common.COL_STATE_ID, competition.State.ID).
+			Set(common.COL_COUNTRY_ID, competition.Country.ID).
 			Set(DAS_COMPETITION_COL_STATUS_ID, competition.GetStatus()).
 			Set(DAS_COMPETITION_COL_DATETIME_START, competition.StartDateTime).
 			Set(DAS_COMPETITION_COL_DATETIME_END, competition.EndDateTime).
-			Set(DAS_COMPETITION_COL_ADDRESS, competition.Street).
 			Set(DAS_COMPETITION_COL_CONTACT_NAME, competition.ContactName).
 			Set(DAS_COMPETITION_COL_CONTACT_EMAIL, competition.ContactEmail).
 			Set(DAS_COMPETITION_COL_CONTACT_PHONE, competition.ContactPhone).

@@ -93,11 +93,15 @@ type SearchCompetitionCriteria struct {
 }
 
 type OrganizerUpdateCompetition struct {
-	CompetitionID int       `json:"competition"`
+	CompetitionID int       `json:"competitionId"`
 	Name          string    `json:"name"`
 	Website       string    `json:"website"`
-	Status        int       `json:"status"`
+	Status        int       `json:"statusId"`
 	Address       string    `json:"street"`
+	CityID        int       `json:"cityId"`
+	StateID       int       `json:"stateId"`
+	CountryID     int       `json:"countryId"`
+	FederationID  int       `json:"federationId"`
 	ContactName   string    `json:"contact"`
 	ContactEmail  string    `json:"email"`
 	ContactPhone  string    `json:"phone"`

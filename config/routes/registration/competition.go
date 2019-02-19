@@ -21,6 +21,7 @@ var athleteCompetitionRegistrationServer = athlete.CompetitionRegistrationServer
 		AthleteCompetitionEntryRepo:     database.AthleteCompetitionEntryRepository,
 		PartnershipCompetitionEntryRepo: database.PartnershipCompetitionEntryRepository,
 		PartnershipEventEntryRepo:       database.PartnershipEventEntryRepository,
+		AthleteCompetitionEntryService:  businesslogic.NewAthleteCompetitionEntryService(database.AccountRepository, database.CompetitionRepository, database.AthleteCompetitionEntryRepository),
 	},
 }
 

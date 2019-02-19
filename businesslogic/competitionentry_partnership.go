@@ -15,8 +15,9 @@ type PartnershipCompetitionEntry struct {
 // SearchPartnershipCompetitionEntryCriteria specifies parameters that can be used to search the Competition Entry
 // of a Partnership
 type SearchPartnershipCompetitionEntryCriteria struct {
-	Partnership int `schema:"partnership"`
-	Competition int `schema:"competition"`
+	ID            int `schema:"id"`
+	PartnershipID int `schema:"partnership"`
+	CompetitionID int `schema:"competition"`
 }
 
 // IPartnershipCompetitionEntryRepository specifies functions that should be implemented to
@@ -39,4 +40,19 @@ func (entry *PartnershipCompetitionEntry) createPartnershipCompetitionEntry(comp
 	}
 
 	return nil
+}
+
+type PartnershipCompetitionEntryService struct {
+}
+
+func (service PartnershipCompetitionEntryService) CreatePartnershipCompetitionEntry() error {
+	return errors.New("not implemented")
+}
+
+func (service PartnershipCompetitionEntryService) DeletePartnershipCompetitionEntry() error {
+	return errors.New("not implemented")
+}
+
+func (service PartnershipCompetitionEntryService) SearchPartnershipCompetitionEntry() error {
+	return errors.New("not implemented")
 }

@@ -20,7 +20,7 @@ import (
 
 /*
 var restAPIRouter = []Route{
-	// Competition
+	// CompetitionID
 
 	// Events
 	{"Public view of events", http.MethodGet, "/api/event", authorizeSingleRole(getEventHandler, businesslogic.AccountTypeNoAuth)},

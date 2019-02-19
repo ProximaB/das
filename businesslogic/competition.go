@@ -30,7 +30,7 @@ type Competition struct {
 	Attendance                int
 	RegistrationOpenDateTime  time.Time
 	RegistrationCloseDateTime time.Time
-	officials                 map[int][]Account
+	officials                 map[int][]Account // the integer key is the type of official: adjudicator, scrutineer, emcee, and deck captain
 }
 
 // UpdateStatus will attempt to change the status of the caller competition to statusID, if the change is in logical order
@@ -302,18 +302,18 @@ type IEventMetaRepository interface {
 }
 
 // Get a list of unique federations that a competition has
-func (competition Competition) GetEventUniqueFederations(eventRepository IEventMetaRepository) ([]Federation, error) {
-	return eventRepository.GetEventUniqueFederations(competition)
+func (comp Competition) GetEventUniqueFederations(eventRepository IEventMetaRepository) ([]Federation, error) {
+	return eventRepository.GetEventUniqueFederations(comp)
 }
-func (competition Competition) GetEventUniqueDivisions(eventRepository IEventMetaRepository) ([]Division, error) {
-	return eventRepository.GetEventUniqueDivisions(competition)
+func (comp Competition) GetEventUniqueDivisions(eventRepository IEventMetaRepository) ([]Division, error) {
+	return eventRepository.GetEventUniqueDivisions(comp)
 }
-func (competition Competition) GetEventUniqueAges(eventRepository IEventMetaRepository) ([]Age, error) {
-	return eventRepository.GetEventUniqueAges(competition)
+func (comp Competition) GetEventUniqueAges(eventRepository IEventMetaRepository) ([]Age, error) {
+	return eventRepository.GetEventUniqueAges(comp)
 }
-func (competition Competition) GetEventUniqueProficiencies(eventRepository IEventMetaRepository) ([]Proficiency, error) {
-	return eventRepository.GetEventUniqueProficiencies(competition)
+func (comp Competition) GetEventUniqueProficiencies(eventRepository IEventMetaRepository) ([]Proficiency, error) {
+	return eventRepository.GetEventUniqueProficiencies(comp)
 }
-func (competition Competition) GetEventUniqueStyles(eventRepository IEventMetaRepository) ([]Style, error) {
-	return eventRepository.GetEventUniqueStyles(competition)
+func (comp Competition) GetEventUniqueStyles(eventRepository IEventMetaRepository) ([]Style, error) {
+	return eventRepository.GetEventUniqueStyles(comp)
 }

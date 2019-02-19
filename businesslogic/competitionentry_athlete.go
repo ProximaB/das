@@ -6,19 +6,6 @@ import (
 	"time"
 )
 
-// BaseCompetitionEntry is the entry for a competition (not including events) and is a
-// base entry for more specific entry such as AthleteCompetitionEntry, PartnershipCompetitionEntry,
-// and AdjudicatorCompetitionEntry
-type BaseCompetitionEntry struct {
-	CompetitionID    int
-	CheckInIndicator bool
-	DateTimeCheckIn  time.Time
-	CreateUserID     int
-	DateTimeCreated  time.Time
-	UpdateUserID     int
-	DateTimeUpdated  time.Time
-}
-
 // AthleteCompetitionEntry wraps BaseCompetitionEntry and adds additional data to manage payment status for Athletes. It
 // also allows quick indexing of competition attendance
 type AthleteCompetitionEntry struct {
@@ -57,9 +44,9 @@ type AthleteCompetitionEntryService struct {
 // NewAthleteCompetitionEntryService instantiates a new AthleteCompetitionEntryService.
 func NewAthleteCompetitionEntryService(accountRepo IAccountRepository, competitionRepo ICompetitionRepository, athleteCompEntryRepo IAthleteCompetitionEntryRepository) AthleteCompetitionEntryService {
 	return AthleteCompetitionEntryService{
-		accountRepo,
-		competitionRepo,
-		athleteCompEntryRepo,
+		accountRepo:          accountRepo,
+		competitionRepo:      competitionRepo,
+		athleteCompEntryRepo: athleteCompEntryRepo,
 	}
 }
 
@@ -109,5 +96,9 @@ func (service AthleteCompetitionEntryService) CreateAthleteCompetitionEntry(entr
 }
 
 func (service AthleteCompetitionEntryService) DeleteAthleteCompetitionEntry(entry AthleteCompetitionEntry) error {
-	return errors.New("Not implemented")
+	return errors.New("not implemented")
+}
+
+func (service AthleteCompetitionEntryService) SearchAthleteCompetitionEntry(currentUser Account, criteria SearchAthleteCompetitionEntryCriteria) ([]AthleteCompetitionEntry, error) {
+	return make([]AthleteCompetitionEntry, 0), errors.New("not implemented")
 }

@@ -13,9 +13,10 @@ import (
 )
 
 const (
-	dasAthleteEventEntryTable = "DAS.EVENT_ENTRY_ATHLETE"
-	columnCheckinIndicator    = "CHECKIN_IND"
-	columnCheckinDateTime     = "CHECKIN_DATETIME"
+	dasAthleteEventEntryTable     = "DAS.EVENT_ENTRY_ATHLETE"
+	dasPartnershipEventEntryTable = "DAS.EVENT_ENTRY_PARTNERSHIP"
+	columnCheckinIndicator        = "CHECKIN_IND"
+	columnCheckinDateTime         = "CHECKIN_DATETIME"
 )
 
 type PostgresAthleteEventEntryRepository struct {
@@ -28,10 +29,19 @@ func (repo PostgresAthleteEventEntryRepository) CreateAthleteEventEntry(entry *b
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SQLBuilder.Insert("").
+		Into(dasAthleteEventEntryTable).
 		Columns(
-			common.ColumnPrimaryKey,
-
-			"").
+			common.COL_ATHLETE_ID,
+			common.COL_COMPETITION_ID,
+			common.COL_EVENT_ID,
+			columnCheckinIndicator,
+			columnCheckinDateTime,
+			common.COL_PLACEMENT,
+			common.ColumnCreateUserID,
+			common.ColumnDateTimeCreated,
+			common.ColumnUpdateUserID,
+			common.ColumnDateTimeUpdated,
+		).
 		Values(
 			entry.AthleteID,
 			entry.CompetitionID,
@@ -41,9 +51,24 @@ func (repo PostgresAthleteEventEntryRepository) CreateAthleteEventEntry(entry *b
 			entry.CreateUserID,
 			entry.DateTimeCreated,
 			entry.UpdateUserID,
-			entry.DateTimeUpdated)
-	stmt.Exec()
-	return errors.New("Not implemented")
+			entry.DateTimeUpdated).
+		Suffix(dalutil.SQLSuffixReturningID)
+
+	clause, args, err := stmt.ToSql()
+	if tx, txErr := repo.Database.Begin(); txErr != nil {
+		return txErr
+	} else {
+		row := repo.Database.QueryRow(clause, args...)
+		scanErr := row.Scan(&entry.ID)
+		if scanErr != nil {
+			return scanErr
+		}
+		txErr := tx.Commit()
+		if txErr != nil {
+			return txErr
+		}
+	}
+	return err
 
 }
 
@@ -51,7 +76,21 @@ func (repo PostgresAthleteEventEntryRepository) DeleteAthleteEventEntry(entry bu
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	return errors.New("Not implemented")
+	stmt := repo.SQLBuilder.Delete("").From(dasAthleteEventEntryTable)
+	if entry.ID > 0 {
+		stmt = stmt.Where(squirrel.Eq{common.ColumnPrimaryKey: entry.ID})
+	} else {
+		return errors.New(fmt.Sprintf("cannot find this Athlete Event Entry with ID: %v", entry.ID))
+	}
+
+	var err error
+	if tx, txErr := repo.Database.Begin(); txErr != nil {
+		return txErr
+	} else {
+		_, err = stmt.RunWith(repo.Database).Exec()
+		err = tx.Commit()
+	}
+	return err
 }
 
 func (repo PostgresAthleteEventEntryRepository) SearchAthleteEventEntry(criteria businesslogic.SearchAthleteEventEntryCriteria) ([]businesslogic.AthleteEventEntry, error) {
@@ -119,7 +158,7 @@ func (repo PostgresAthleteEventEntryRepository) UpdateAthleteEventEntry(entry bu
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	return errors.New("Nt implemented")
+	return errors.New("not implemented")
 }
 
 // PostgresPartnershipEventEntryRepository is a Postgres-based implementation of IPartnershipEventEntryRepository
@@ -149,7 +188,7 @@ func (repo PostgresPartnershipEventEntryRepository) CreatePartnershipEventEntry(
 	).Values(
 		entry.EventEntry.EventID,
 		entry.PartnershipID,
-		entry.EventEntry.Mask,
+		entry.EventEntry.CompetitorTag,
 		entry.EventEntry.CreateUserID,
 		entry.EventEntry.DateTimeCreated,
 		entry.EventEntry.UpdateUserID,
@@ -170,6 +209,9 @@ func (repo PostgresPartnershipEventEntryRepository) CreatePartnershipEventEntry(
 func (repo PostgresPartnershipEventEntryRepository) DeletePartnershipEventEntry(entry businesslogic.PartnershipEventEntry) error {
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+	}
+	if entry.ID == 0 {
+		return errors.New("ID of Partnership Event Entry is required")
 	}
 	clause := repo.SQLBuilder.Delete("").
 		From(dasEventCompetitiveBallroomEntryTable).
@@ -224,7 +266,7 @@ func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(
 			&each.ID,
 			&each.EventEntry.EventID,
 			&each.PartnershipID,
-			&each.EventEntry.Mask,
+			&each.EventEntry.CompetitorTag,
 			&each.EventEntry.CreateUserID,
 			&each.EventEntry.DateTimeCreated,
 			&each.EventEntry.UpdateUserID,

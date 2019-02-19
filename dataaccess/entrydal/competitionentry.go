@@ -62,16 +62,23 @@ func (repo PostgresAthleteCompetitionEntryRepository) CreateEntry(entry *busines
 		return txErr
 	} else {
 		row := repo.Database.QueryRow(clause, args...)
-		row.Scan(&entry.ID)
-		tx.Commit()
+		scanErr := row.Scan(&entry.ID)
+		if scanErr != nil {
+			return scanErr
+		}
+		if commitErr := tx.Commit(); commitErr != nil {
+			return commitErr
+		}
 	}
 	return err
 }
 
 // SearchEntry searches AthleteCompetitionEntry in a Postgres database
 func (repo PostgresAthleteCompetitionEntryRepository) SearchEntry(criteria businesslogic.SearchAthleteCompetitionEntryCriteria) ([]businesslogic.AthleteCompetitionEntry, error) {
+	entries := make([]businesslogic.AthleteCompetitionEntry, 0)
+
 	if repo.Database == nil {
-		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+		return entries, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	clause := repo.SQLBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s",
 		common.ColumnPrimaryKey,
@@ -95,7 +102,6 @@ func (repo PostgresAthleteCompetitionEntryRepository) SearchEntry(criteria busin
 	}
 
 	rows, err := clause.RunWith(repo.Database).Query()
-	entries := make([]businesslogic.AthleteCompetitionEntry, 0)
 	if err != nil {
 		return entries, err
 	}
@@ -104,7 +110,7 @@ func (repo PostgresAthleteCompetitionEntryRepository) SearchEntry(criteria busin
 		each := businesslogic.AthleteCompetitionEntry{
 			CompetitionEntry: businesslogic.BaseCompetitionEntry{},
 		}
-		rows.Scan(
+		scanErr := rows.Scan(
 			&each.ID,
 			&each.CompetitionEntry.CompetitionID,
 			&each.AthleteID,
@@ -115,6 +121,9 @@ func (repo PostgresAthleteCompetitionEntryRepository) SearchEntry(criteria busin
 			&each.CompetitionEntry.UpdateUserID,
 			&each.CompetitionEntry.DateTimeUpdated,
 		)
+		if scanErr != nil {
+			return entries, scanErr
+		}
 		entries = append(entries, each)
 	}
 	return entries, err
@@ -228,10 +237,60 @@ func (repo PostgresPartnershipCompetitionEntryRepository) DeleteEntry(entry busi
 
 // SearchEntry searches PartnershipCompetitionEntry in a Postgres database
 func (repo PostgresPartnershipCompetitionEntryRepository) SearchEntry(criteria businesslogic.SearchPartnershipCompetitionEntryCriteria) ([]businesslogic.PartnershipCompetitionEntry, error) {
+	entries := make([]businesslogic.PartnershipCompetitionEntry, 0)
+
 	if repo.Database == nil {
-		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+		return entries, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	return nil, errors.New("not implemented")
+
+	clause := repo.SQLBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s",
+		common.ColumnPrimaryKey,
+		common.COL_COMPETITION_ID,
+		common.COL_PARTNERSHIP_ID,
+		dasCompetitionEntryColCheckinInd,
+		dasCompetitionEntryColCheckinDateTime,
+		common.ColumnCreateUserID,
+		common.ColumnDateTimeCreated,
+		common.ColumnUpdateUserID,
+		common.ColumnDateTimeUpdated)).From(dasPartnershipCompetitionEntryTable)
+
+	if criteria.ID > 0 {
+		clause = clause.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ID})
+	}
+	if criteria.PartnershipID > 0 {
+		clause = clause.Where(squirrel.Eq{common.COL_PARTNERSHIP_ID: criteria.PartnershipID})
+	}
+	if criteria.CompetitionID > 0 {
+		clause = clause.Where(squirrel.Eq{common.COL_COMPETITION_ID: criteria.CompetitionID})
+	}
+
+	rows, err := clause.RunWith(repo.Database).Query()
+	if err != nil {
+		return entries, err
+	}
+
+	for rows.Next() {
+		each := businesslogic.PartnershipCompetitionEntry{
+			CompetitionEntry: businesslogic.BaseCompetitionEntry{},
+		}
+		scanErr := rows.Scan(
+			&each.ID,
+			&each.CompetitionEntry.CompetitionID,
+			&each.PartnershipID,
+			&each.CompetitionEntry.CheckInIndicator,
+			&each.CompetitionEntry.DateTimeCheckIn,
+			&each.CompetitionEntry.CreateUserID,
+			&each.CompetitionEntry.DateTimeCreated,
+			&each.CompetitionEntry.UpdateUserID,
+			&each.CompetitionEntry.DateTimeUpdated,
+		)
+		if scanErr != nil {
+			return entries, scanErr
+		}
+		entries = append(entries, each)
+	}
+
+	return nil, err
 }
 
 // UpdateEntry updates a PartnershipCompetitionEntry in a Postgres database

@@ -1,8 +1,6 @@
 package businesslogic
 
 import (
-	"errors"
-	"fmt"
 	"time"
 )
 
@@ -11,66 +9,11 @@ type EventEntry struct {
 	ID              int
 	EventID         int
 	CheckInTime     time.Time
-	Mask            int
+	CompetitorTag   int
 	CreateUserID    int
 	DateTimeCreated time.Time
 	UpdateUserID    int
 	DateTimeUpdated time.Time
-}
-
-type AthleteEventEntry struct {
-	ID                int
-	AthleteID         int // should be the account ID, not the Athlete Role id
-	FirstName         string
-	LastName          string
-	CompetitionID     int
-	EventID           int
-	CheckedIn         bool
-	DateTimeCheckedIn bool
-	Placement         int // default should be 0: unplaced
-	CreateUserID      int
-	DateTimeCreated   time.Time
-	UpdateUserID      int
-	DateTimeUpdated   time.Time
-}
-
-type SearchAthleteEventEntryCriteria struct {
-	ID            int
-	AthleteID     int
-	CompetitionID int
-	EventID       int
-}
-
-type IAthleteEventEntryRepository interface {
-	CreateAthleteEventEntry(entry *AthleteEventEntry) error
-	DeleteAthleteEventEntry(entry AthleteEventEntry) error
-	SearchAthleteEventEntry(criteria SearchAthleteEventEntryCriteria) ([]AthleteEventEntry, error)
-	UpdateAthleteEventEntry(entry AthleteEventEntry) error
-}
-
-// PartnershipEventEntry defines the Entry of a Partnership at an Event
-type PartnershipEventEntry struct {
-	ID            int
-	EventEntry    EventEntry
-	PartnershipID int
-	leadAge       int
-	followAge     int
-	CheckInTime   time.Time
-}
-
-// SearchPartnershipEventEntryCriteria specifies the parameters that can be used to search the Event Entry of a Partnership
-type SearchPartnershipEventEntryCriteria struct {
-	PartnershipID int
-	EventID       int
-}
-
-// IPartnershipEventEntryRepository defines the functions that need to be implemented to perform CRUD function
-// for businesslogic to use
-type IPartnershipEventEntryRepository interface {
-	CreatePartnershipEventEntry(entry *PartnershipEventEntry) error
-	DeletePartnershipEventEntry(entry PartnershipEventEntry) error
-	SearchPartnershipEventEntry(criteria SearchPartnershipEventEntryCriteria) ([]PartnershipEventEntry, error)
-	UpdatePartnershipEventEntry(entry PartnershipEventEntry) error
 }
 
 // AdjudicatorEventEntry defines the participation of an Adjudicator at an Event.
@@ -110,23 +53,4 @@ type PartnershipEventEntryList struct {
 type AdjudicatorEventEntryList struct {
 	EventID   int
 	EntryList []AdjudicatorEventEntry
-}
-
-// CreatePartnershipEventEntry checks if an entry for the specified Partnership already exists in the specified Event. If
-// not, a new PartnershipEventEntry will be created for the specified event in the provided repository
-func CreatePartnershipEventEntry(entry PartnershipEventEntry, entryRepo IPartnershipEventEntryRepository) error {
-	// check if entries were already created
-	searchedResults, err := entryRepo.SearchPartnershipEventEntry(SearchPartnershipEventEntryCriteria{
-		PartnershipID: entry.PartnershipID,
-		EventID:       entry.EventEntry.EventID,
-	})
-	if err != nil {
-		return err
-	}
-	if len(searchedResults) > 0 {
-		return errors.New(fmt.Sprintf("entry for partnership %d already exists for event %d", entry.PartnershipID, entry.EventEntry.EventID))
-	}
-
-	// entry does not exist, create the entry
-	return entryRepo.CreatePartnershipEventEntry(&entry)
 }

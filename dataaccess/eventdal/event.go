@@ -75,7 +75,7 @@ func (repo PostgresEventRepository) SearchEvent(criteria businesslogic.SearchEve
 	}
 	for rows.Next() {
 		each := businesslogic.NewEvent()
-		rows.Scan(
+		scanErr := rows.Scan(
 			&each.ID,
 			&each.CompetitionID,
 			&each.CategoryID,
@@ -91,6 +91,9 @@ func (repo PostgresEventRepository) SearchEvent(criteria businesslogic.SearchEve
 			&each.UpdateUserID,
 			&each.DateTimeUpdated,
 		)
+		if scanErr != nil {
+			return events, scanErr
+		}
 		events = append(events, *each)
 	}
 	closeErr := rows.Close()
@@ -190,5 +193,12 @@ func (repo PostgresEventRepository) DeleteEvent(event businesslogic.Event) error
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	return errors.New("not implemented")
+	stmt := repo.SQLBuilder.Delete("").From(dasEventTable).Where(squirrel.Eq{common.ColumnPrimaryKey: event.ID})
+	tx, txErr := repo.Database.Begin()
+	if txErr != nil {
+		return txErr
+	}
+	_, err := stmt.RunWith(repo.Database).Exec()
+	err = tx.Commit()
+	return err
 }

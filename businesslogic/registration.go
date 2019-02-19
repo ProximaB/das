@@ -54,7 +54,7 @@ type CompetitionRegistrationService struct {
 	PartnershipCompetitionEntryRepo IPartnershipCompetitionEntryRepository
 	AthleteEventEntryRepo           IAthleteEventEntryRepository
 	PartnershipEventEntryRepo       IPartnershipEventEntryRepository
-	athleteCompetitionEntryService  AthleteCompetitionEntryService
+	AthleteCompetitionEntryService  AthleteCompetitionEntryService
 }
 
 func NewCompetitionRegistrationService(
@@ -70,7 +70,7 @@ func NewCompetitionRegistrationService(
 	service.CompetitionRepository = competitionRepo
 	service.EventRepository = eventRepo
 	service.AthleteCompetitionEntryRepo = athleteCompetitionEntryRepo
-	service.athleteCompetitionEntryService = NewAthleteCompetitionEntryService(accountRepo, competitionRepo, athleteCompetitionEntryRepo)
+	service.AthleteCompetitionEntryService = NewAthleteCompetitionEntryService(accountRepo, competitionRepo, athleteCompetitionEntryRepo)
 	return service
 }
 
@@ -214,7 +214,7 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 			PartnershipID: registration.PartnershipID,
 			EventEntry: EventEntry{
 				EventID:         each,
-				Mask:            0,
+				CompetitorTag:   0,
 				CreateUserID:    currentUser.ID,
 				DateTimeCreated: time.Now(),
 				UpdateUserID:    currentUser.ID,
@@ -261,8 +261,8 @@ func (service CompetitionRegistrationService) CreateAthleteCompetitionEntry(curr
 		PaymentReceivedIndicator: false,
 	}
 
-	service.athleteCompetitionEntryService.CreateAthleteCompetitionEntry(&leadCompEntry)
-	service.athleteCompetitionEntryService.CreateAthleteCompetitionEntry(&followCompEntry)
+	service.AthleteCompetitionEntryService.CreateAthleteCompetitionEntry(&leadCompEntry)
+	service.AthleteCompetitionEntryService.CreateAthleteCompetitionEntry(&followCompEntry)
 	return nil
 }
 
@@ -297,7 +297,7 @@ func (service CompetitionRegistrationService) CreatePartnershipEventEntries(curr
 			PartnershipID: registration.PartnershipID,
 			EventEntry: EventEntry{
 				EventID:         each,
-				Mask:            0,
+				CompetitorTag:   0,
 				CreateUserID:    currentUser.ID,
 				DateTimeCreated: time.Now(),
 				UpdateUserID:    currentUser.ID,
@@ -316,8 +316,8 @@ func (service CompetitionRegistrationService) CreatePartnershipEventEntries(curr
 // if that partnership, competition, or entry does not exist, and error will be thrown
 func (service CompetitionRegistrationService) DropPartnershipCompetitionEntry(partnershipID, competitionID int) error {
 	if results, err := service.PartnershipCompetitionEntryRepo.SearchEntry(SearchPartnershipCompetitionEntryCriteria{
-		Partnership: partnershipID,
-		Competition: competitionID,
+		PartnershipID: partnershipID,
+		CompetitionID: competitionID,
 	}); err != nil {
 		log.Printf("[error] cannot find competition entry for partnership ID = %d and competition ID = %d: %v", partnershipID, competitionID, err)
 		return errors.New("an error occurred while searching for partnership competition entry")

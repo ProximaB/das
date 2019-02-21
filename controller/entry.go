@@ -12,9 +12,10 @@ type EntryServer struct {
 	businesslogic.IPartnershipEventEntryRepository
 }
 
-// GET /api/entries
+// GetCompetitionEntryHandler handles the request
+//	GET /api/competition/entries
 // Public view for competitive event entry
-func (server EntryServer) getCompetitiveBallroomEventEntryHandler(w http.ResponseWriter, r *http.Request) {
+func (server EntryServer) GetCompetitionEntryHandler(w http.ResponseWriter, r *http.Request) {
 	criteria := new(businesslogic.SearchPartnershipEventEntryCriteria)
 	if parseErr := util.ParseRequestData(r, criteria); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
@@ -29,5 +30,4 @@ func (server EntryServer) getCompetitiveBallroomEventEntryHandler(w http.Respons
 
 	output, _ := json.Marshal(entries)
 	w.Write(output)
-
 }

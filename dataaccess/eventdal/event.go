@@ -12,7 +12,7 @@ import (
 )
 
 const (
-	dasEventTable                 = "DAS.EVENT"
+	DAS_EVENT_TABLE               = "DAS.EVENT"
 	dasEventColumnEventCategoryID = "CATEGORY_ID"
 	dasEventColumnEventStatusID   = "EVENT_STATUS_ID"
 )
@@ -43,7 +43,7 @@ func (repo PostgresEventRepository) SearchEvent(criteria businesslogic.SearchEve
 		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
 		common.ColumnDateTimeUpdated,
-	)).From(dasEventTable).OrderBy(common.ColumnPrimaryKey)
+	)).From(DAS_EVENT_TABLE).OrderBy(common.ColumnPrimaryKey)
 	if criteria.CompetitionID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_COMPETITION_ID: criteria.CompetitionID})
 	}
@@ -103,8 +103,8 @@ func (repo PostgresEventRepository) SearchEvent(criteria businesslogic.SearchEve
 
 	// get event dances
 	eventDanceRepo := PostgresEventDanceRepository{
-		repo.Database,
-		repo.SQLBuilder,
+		Database:   repo.Database,
+		SqlBuilder: repo.SQLBuilder,
 	}
 	for i := 0; i < len(events); i++ {
 		eventDances, searchDanceErr := eventDanceRepo.SearchEventDance(businesslogic.SearchEventDanceCriteria{
@@ -127,7 +127,7 @@ func (repo PostgresEventRepository) CreateEvent(event *businesslogic.Event) erro
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SQLBuilder.Insert("").
-		Into(dasEventTable).
+		Into(DAS_EVENT_TABLE).
 		Columns(
 			common.COL_COMPETITION_ID,
 			dasEventColumnEventCategoryID,
@@ -176,7 +176,7 @@ func (repo PostgresEventRepository) UpdateEvent(event businesslogic.Event) error
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	stmt := repo.SQLBuilder.Update("").Table(dasEventTable).
+	stmt := repo.SQLBuilder.Update("").Table(DAS_EVENT_TABLE).
 		Set(dasEventColumnEventStatusID, event.StatusID).
 		Where(squirrel.Eq{common.COL_COMPETITION_ID: event.CompetitionID})
 	tx, txErr := repo.Database.Begin()
@@ -193,7 +193,7 @@ func (repo PostgresEventRepository) DeleteEvent(event businesslogic.Event) error
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	stmt := repo.SQLBuilder.Delete("").From(dasEventTable).Where(squirrel.Eq{common.ColumnPrimaryKey: event.ID})
+	stmt := repo.SQLBuilder.Delete("").From(DAS_EVENT_TABLE).Where(squirrel.Eq{common.ColumnPrimaryKey: event.ID})
 	tx, txErr := repo.Database.Begin()
 	if txErr != nil {
 		return txErr

@@ -8,7 +8,7 @@ import (
 // Account is the base account data for all users in DAS. Some fields are required with others are not
 type Account struct {
 	ID                    int    // userID will be account ID, too
-	UID                   string // uuid that will be used in communicating with client
+	UID                   string // uuid that will be used in communicating with client. This is firebase UID
 	accountRoles          map[int]AccountRole
 	AccountStatusID       int
 	UserGenderID          int

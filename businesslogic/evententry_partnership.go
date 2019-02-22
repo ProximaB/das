@@ -8,20 +8,23 @@ import (
 
 // PartnershipEventEntry defines the Entry of a PartnershipID at an Event
 type PartnershipEventEntry struct {
-	ID              int
-	EventEntry      EventEntry
-	PartnershipID   int
-	leadAge         int
-	followAge       int
-	CheckInTime     time.Time
-	CreateUserID    int
-	DateTimeCreated time.Time
-	UpdateUserID    int
-	DateTimeUpdated time.Time
+	ID                int
+	Couple            Partnership
+	Competition       Competition
+	Event             Event
+	CompetitorTag     int
+	CheckedIn         bool
+	DateTimeCheckedIn time.Time
+	Placement         int
+	CreateUserID      int
+	DateTimeCreated   time.Time
+	UpdateUserID      int
+	DateTimeUpdated   time.Time
 }
 
 // SearchPartnershipEventEntryCriteria specifies the parameters that can be used to search the Event Entry of a PartnershipID
 type SearchPartnershipEventEntryCriteria struct {
+	CompetitionID int
 	PartnershipID int
 	EventID       int
 }
@@ -42,14 +45,14 @@ type PartnershipEventEntryService struct{}
 func CreatePartnershipEventEntry(entry PartnershipEventEntry, entryRepo IPartnershipEventEntryRepository) error {
 	// check if entries were already created
 	searchedResults, err := entryRepo.SearchPartnershipEventEntry(SearchPartnershipEventEntryCriteria{
-		PartnershipID: entry.PartnershipID,
-		EventID:       entry.EventEntry.EventID,
+		PartnershipID: entry.Couple.ID,
+		EventID:       entry.Event.ID,
 	})
 	if err != nil {
 		return err
 	}
 	if len(searchedResults) > 0 {
-		return errors.New(fmt.Sprintf("entry for partnership %d already exists for event %d", entry.PartnershipID, entry.EventEntry.EventID))
+		return errors.New(fmt.Sprintf("entry for partnership %d already exists for event %d", entry.Couple.ID, entry.Event.ID))
 	}
 
 	// entry does not exist, create the entry

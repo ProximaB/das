@@ -13,10 +13,9 @@ func NewDanceScoreSheet() DanceScoreSheet {
 
 func (sheet *DanceScoreSheet) AddJudgeMarks(marks JudgeMarks) {}
 
-func (sheet DanceScoreSheet) CalculateDancePlacements (algorithm string) ([][]int, error) {
+func (sheet DanceScoreSheet) CalculateDancePlacements(algorithm string) ([][]int, error) {
 	return make([][]int, 0), nil
 }
-
 
 type RoundScoreSheet struct {
 }

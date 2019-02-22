@@ -2,6 +2,8 @@ package athlete
 
 import (
 	"encoding/json"
+	"errors"
+	"fmt"
 	"github.com/DancesportSoftware/das/auth"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
@@ -23,6 +25,56 @@ type CompetitionRegistrationServer struct {
 	Service businesslogic.CompetitionRegistrationService
 }
 
+func (server CompetitionRegistrationServer) prepareRegistrationForm(dto viewmodel.AthleteCompetitionRegistrationForm) (businesslogic.EventRegistrationForm, error) {
+	form := businesslogic.EventRegistrationForm{}
+
+	competitions, findCompErr := server.ICompetitionRepository.SearchCompetition(businesslogic.SearchCompetitionCriteria{ID: dto.CompetitionID})
+	if findCompErr != nil || len(competitions) != 1 {
+		return form, errors.New(fmt.Sprintf("cannot find competition with ID = %v", dto.CompetitionID))
+	}
+	form.Competition = competitions[0]
+
+	partnerships, findCoupleErr := server.IPartnershipRepository.SearchPartnership(businesslogic.SearchPartnershipCriteria{PartnershipID: dto.PartnershipID})
+	if findCoupleErr != nil || len(partnerships) != 1 {
+		return form, errors.New(fmt.Sprintf("cannot find parntership with ID = %v", dto.PartnershipID))
+	}
+	form.Couple = partnerships[0]
+
+	addedEvents := make([]businesslogic.Event, 0)
+	droppedEvents := make([]businesslogic.Event, 0)
+
+	for _, each := range dto.AddedEvents {
+		evts, searchErr := server.IEventRepository.SearchEvent(businesslogic.SearchEventCriteria{EventID: each})
+		if searchErr != nil {
+			return form, nil
+		}
+		if len(evts) != 1 {
+			return form, errors.New(fmt.Sprintf("event with ID = %v cannot be found", each))
+		}
+		addedEvents = append(addedEvents, evts[0])
+	}
+	form.EventsAdded = addedEvents
+
+	for _, each := range dto.DroppedEvents {
+		evts, searchErr := server.IEventRepository.SearchEvent(businesslogic.SearchEventCriteria{EventID: each})
+		if searchErr != nil {
+			return form, nil
+		}
+		if len(evts) != 1 {
+			return form, errors.New(fmt.Sprintf("event with ID = %v cannot be found", each))
+		}
+		droppedEvents = append(droppedEvents, evts[0])
+	}
+	form.EventsDropped = droppedEvents
+
+	form.CountryRepresented.ID = dto.Representation.CountryId
+	form.StateRepresented.ID = dto.Representation.StateId
+	form.SchoolRepresented.ID = dto.Representation.SchoolId
+	form.StudioRepresented.ID = dto.Representation.StudioId
+
+	return form, nil
+}
+
 // CreateAthleteRegistrationHandler handles the request
 //	POST /api/v1.0/competition/registration
 // This DasController is for athlete use only. Organizer will have to use a different DasController
@@ -36,31 +88,19 @@ func (server CompetitionRegistrationServer) CreateAthleteRegistrationHandler(w h
 		return
 	}
 
-	form := registrationDTO.EventRegistration()
+	form, formErr := server.prepareRegistrationForm(*registrationDTO)
+	if formErr != nil {
+		util.RespondJsonResult(w, http.StatusBadRequest, formErr.Error(), nil)
+		return
+	}
 
-	validationErr := server.Service.ValidateEventRegistration(account, form)
+	validationErr := server.Service.UpdateRegistration(account, form)
 
 	// if registration is not valid, return error
 	if validationErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, validationErr.Error(), nil)
 		return
 	}
-
-	server.Service.CreateAthleteCompetitionEntry(account, form)
-
-	createEntryErr := server.Service.CreatePartnershipEventEntries(account, form)
-	dropEventErr := server.Service.DropPartnershipEventEntries(account, form)
-
-	if createEntryErr != nil {
-		util.RespondJsonResult(w, http.StatusInternalServerError, "error in creating event entry", createEntryErr.Error())
-		return
-	}
-
-	if dropEventErr != nil {
-		util.RespondJsonResult(w, http.StatusInternalServerError, "error in dropping event entry", dropEventErr.Error())
-		return
-	}
-
 	util.RespondJsonResult(w, http.StatusOK, "event entries have been successfully added and/or dropped", nil)
 }
 

@@ -18,7 +18,7 @@ func TestJudgeMarks_ValidCallbacks(t *testing.T) {
 	marks.AddCallback(102, true)
 
 	assert.Equal(t, 2, len(marks.GetCallbacks()), "total callback should be the sum of all callbacks")
-	assert.Equal(t,[]int{101, 102}, marks.GetCallbacks(), "callbacks should return the ID of couples that are recalled")
+	assert.Equal(t, []int{101, 102}, marks.GetCallbacks(), "callbacks should return the ID of couples that are recalled")
 }
 
 func TestJudgeMarks_HasIgnoredCouples(t *testing.T) {
@@ -29,7 +29,7 @@ func TestJudgeMarks_HasIgnoredCouples(t *testing.T) {
 	marks.AddCallback(103, false)
 
 	assert.Equal(t, 2, len(marks.GetCallbacks()), "total callback should be the sum of all callbacks")
-	assert.Equal(t,[]int{101, 102}, marks.GetCallbacks(), "callbacks should return the ID of couples that are recalled")
+	assert.Equal(t, []int{101, 102}, marks.GetCallbacks(), "callbacks should return the ID of couples that are recalled")
 }
 
 func TestJudgeMarks_GetCouples(t *testing.T) {
@@ -39,11 +39,11 @@ func TestJudgeMarks_GetCouples(t *testing.T) {
 	marks.AddCallback(105, true)
 	marks.AddCallback(101, false)
 
-	assert.Equal(t, 3,len(marks.GetCouples()), "should return all couples that are placed regardless of callback")
+	assert.Equal(t, 3, len(marks.GetCouples()), "should return all couples that are placed regardless of callback")
 	assert.Equal(t, []int{101, 103, 105}, marks.GetCouples(), "should return all couples in a sorted order")
 }
 
-func TestJudgeMarks_AddUniquePlacement (t *testing.T) {
+func TestJudgeMarks_AddUniquePlacement(t *testing.T) {
 	marks := skating.NewJudgeMarks(6)
 
 	marks.AddPlacement(101, 2)
@@ -56,7 +56,7 @@ func TestJudgeMarks_AddUniquePlacement (t *testing.T) {
 	assert.Equal(t, 6, len(marks.GetPlacements()), "should get all the placements of couples")
 }
 
-func TestJudgeMarks_AddDuplicatePlacements (t *testing.T) {
+func TestJudgeMarks_AddDuplicatePlacements(t *testing.T) {
 	marks := skating.NewJudgeMarks(3)
 
 	err := marks.AddPlacement(101, 2)
@@ -65,7 +65,7 @@ func TestJudgeMarks_AddDuplicatePlacements (t *testing.T) {
 	assert.Equal(t, skating.DUPLICATE_PLACEMENT_ERROR(2), err)
 }
 
-func TestJudgeMarks_InvalidPlacements (t *testing.T) {
+func TestJudgeMarks_InvalidPlacements(t *testing.T) {
 	marks := skating.NewJudgeMarks(2)
 
 	err := marks.AddPlacement(101, -2)

@@ -23,38 +23,30 @@ type PartnershipCompetitionRepresentation struct {
 
 // EventRegistrationForm specifies the data needed to create/update/drop event registration
 type EventRegistrationForm struct {
-	CompetitionID      int
-	PartnershipID      int
-	EventsAdded        []int
-	EventsDropped      []int
-	CountryRepresented int
-	StateRepresented   int
-	SchoolRepresented  int
-	StudioRepresented  int
-}
-
-// Validate performs sanity check of EventRegistrationForm
-func (registration EventRegistrationForm) Validate() error {
-	if registration.PartnershipID < 1 {
-		return errors.New("partnership should be specified")
-	}
-	if registration.CompetitionID < 1 {
-		return errors.New("competition should be specified")
-	}
-	return nil
+	Competition        Competition
+	Couple             Partnership
+	EventsAdded        []Event
+	EventsDropped      []Event
+	CountryRepresented Country
+	StateRepresented   State
+	SchoolRepresented  School
+	StudioRepresented  Studio
 }
 
 // CompetitionRegistrationService provides a high level operation for Competition Registration
 type CompetitionRegistrationService struct {
-	AccountRepository               IAccountRepository
-	PartnershipRepository           IPartnershipRepository
-	CompetitionRepository           ICompetitionRepository
-	EventRepository                 IEventRepository
-	AthleteCompetitionEntryRepo     IAthleteCompetitionEntryRepository
-	PartnershipCompetitionEntryRepo IPartnershipCompetitionEntryRepository
-	AthleteEventEntryRepo           IAthleteEventEntryRepository
-	PartnershipEventEntryRepo       IPartnershipEventEntryRepository
-	AthleteCompetitionEntryService  AthleteCompetitionEntryService
+	AccountRepository                  IAccountRepository
+	PartnershipRepository              IPartnershipRepository
+	CompetitionRepository              ICompetitionRepository
+	EventRepository                    IEventRepository
+	AthleteCompetitionEntryRepo        IAthleteCompetitionEntryRepository
+	PartnershipCompetitionEntryRepo    IPartnershipCompetitionEntryRepository
+	AthleteEventEntryRepo              IAthleteEventEntryRepository
+	PartnershipEventEntryRepo          IPartnershipEventEntryRepository
+	AthleteCompetitionEntryService     AthleteCompetitionEntryService
+	partnershipCompetitionEntryService PartnershipCompetitionEntryService
+	athleteEventEntryService           AthleteEventEntryService
+	parntershipEventEntryService       PartnershipEventEntryService
 }
 
 func NewCompetitionRegistrationService(
@@ -74,29 +66,133 @@ func NewCompetitionRegistrationService(
 	return service
 }
 
-func (service CompetitionRegistrationService) UpdateRegistration(currentUser Account, form EventRegistrationForm) error {
+// UpdateRegistration is the only method that handles registration. This methods handles the following situations
+// - Create new entries, if entries are not created
+// - Delete entries, if exists
+func (service CompetitionRegistrationService) UpdateRegistration(currentUser Account, registration EventRegistrationForm) error {
 	// data access control: current user must be one of the following:
 	// - Athlete: competition is still in: Open Registration
 	// - Scrutineer: competition is in progress
 	// - Organizer: competition is in 1) closed registration, 2) in progress
-	competitions, compErr := service.CompetitionRepository.SearchCompetition(SearchCompetitionCriteria{
-		ID: form.CompetitionID,
-	})
-	if compErr != nil || len(competitions) != 1 {
-		log.Printf(compErr.Error())
-		return errors.New("Error in finding this competition")
-	}
-	competition := competitions[0]
 
 	// TODO: implement role and ownership check. This will be dependent on the implementation of competition officials
 
 	canChange := false
-	if currentUser.HasRole(AccountTypeAthlete) && competition.GetStatus() == CompetitionStatusOpenRegistration {
+	if currentUser.HasRole(AccountTypeAthlete) && registration.Competition.GetStatus() == CompetitionStatusOpenRegistration {
 		canChange = true
 	}
 
 	if !canChange {
-		return errors.New("Registration can no longer be updated")
+		return errors.New("registration can no longer be updated or you are not authorized")
+	}
+
+	var err error
+
+	currentCoupleCompEntries, err := service.PartnershipCompetitionEntryRepo.SearchEntry(SearchPartnershipCompetitionEntryCriteria{
+		PartnershipID: registration.Couple.ID,
+		CompetitionID: registration.Competition.ID,
+	})
+	if err != nil {
+		log.Printf("[error] searching competition entry of partnership ID = %v: %v", registration.Couple.ID, err)
+	}
+	if len(currentCoupleCompEntries) == 0 {
+		entry := PartnershipCompetitionEntry{
+			Competition:     registration.Competition,
+			Couple:          registration.Couple,
+			CreateUserID:    currentUser.ID,
+			DateTimeCreated: time.Now(),
+			UpdateUserID:    currentUser.ID,
+			DateTimeUpdated: time.Now(),
+		}
+		if err = service.PartnershipCompetitionEntryRepo.CreateEntry(&entry); err != nil {
+			return err
+		}
+	}
+
+	currentLeadCompEntries, err := service.AthleteCompetitionEntryRepo.SearchEntry(SearchAthleteCompetitionEntryCriteria{CompetitionID: registration.Competition.ID, AthleteID: registration.Couple.Lead.ID})
+	if err != nil {
+		log.Printf("[error] searching athlete competition entry of lead %v: %v", registration.Couple.Lead.FullName(), err)
+		return err
+	}
+	if len(currentLeadCompEntries) == 0 {
+		entry := AthleteCompetitionEntry{
+			Competition:              registration.Competition,
+			Athlete:                  registration.Couple.Lead,
+			CheckedIn:                false,
+			PaymentReceivedIndicator: false,
+			CreateUserID:             currentUser.ID,
+			DateTimeCreated:          time.Now(),
+			UpdateUserID:             currentUser.ID,
+			DateTimeUpdated:          time.Now(),
+		}
+		if err = service.AthleteCompetitionEntryRepo.CreateEntry(&entry); err != nil {
+			return err
+		}
+
+	}
+
+	currentFollowCompEntries, err := service.AthleteCompetitionEntryRepo.SearchEntry(SearchAthleteCompetitionEntryCriteria{CompetitionID: registration.Competition.ID, AthleteID: registration.Couple.Follow.ID})
+	if err != nil {
+		log.Printf("[error] searching athlete competition entry of follow %v: %v", registration.Couple.Follow.FullName(), err)
+		return err
+	}
+	if len(currentFollowCompEntries) == 0 {
+		entry := AthleteCompetitionEntry{
+			Competition:              registration.Competition,
+			Athlete:                  registration.Couple.Follow,
+			CheckedIn:                false,
+			PaymentReceivedIndicator: false,
+			CreateUserID:             currentUser.ID,
+			DateTimeCreated:          time.Now(),
+			UpdateUserID:             currentUser.ID,
+			DateTimeUpdated:          time.Now(),
+		}
+		if err = service.AthleteCompetitionEntryRepo.CreateEntry(&entry); err != nil {
+			return err
+		}
+	}
+
+	// TODO: add logic for droping competition entries.
+	// TODO: maybe Athlete competition is not needed?
+	// TODO: maybe ahtlete event entries is not needed? The only case that this can be useful is if the event does not requrie partnership
+
+	existingEntries, err := service.PartnershipEventEntryRepo.SearchPartnershipEventEntry(SearchPartnershipEventEntryCriteria{PartnershipID: registration.Couple.ID, CompetitionID: registration.Competition.ID})
+	for _, each := range registration.EventsAdded {
+		hasEntry := false
+		for _, existing := range existingEntries {
+			if each.ID == existing.Event.ID {
+				hasEntry = true
+				break
+			}
+		}
+		if !hasEntry {
+			coupleEntry := PartnershipEventEntry{
+				Event:           each,
+				Couple:          registration.Couple,
+				CreateUserID:    currentUser.ID,
+				DateTimeCreated: time.Now(),
+				UpdateUserID:    currentUser.ID,
+				DateTimeUpdated: time.Now(),
+			}
+			if err = service.PartnershipEventEntryRepo.CreatePartnershipEventEntry(&coupleEntry); err != nil {
+				return err
+			}
+		}
+	}
+
+	for _, each := range registration.EventsDropped {
+		idx := -1
+		for i := 0; i < len(existingEntries); i++ {
+			if each.ID == existingEntries[i].Event.ID {
+				idx = i
+				break
+			}
+		}
+		if idx >= 0 {
+			if err = service.PartnershipEventEntryRepo.DeletePartnershipEventEntry(existingEntries[idx]); err != nil {
+				return err
+			}
+		}
 	}
 
 	// for scrutineer and organizer, check if they are either invited officials of the competition
@@ -106,99 +202,67 @@ func (service CompetitionRegistrationService) UpdateRegistration(currentUser Acc
 
 	// if has existing registration, get the existing registration
 	//
-	return errors.New("Not implementeds")
+	return nil
 }
 
 // ValidateEventRegistration validates if the registration data is valid. This does not create the registration
 func (service CompetitionRegistrationService) ValidateEventRegistration(currentUser Account, registration EventRegistrationForm) error {
-	if err := registration.Validate(); err != nil {
-		return err
+	if registration.Couple.ID < 1 {
+		return errors.New("partnership should be specified")
+	}
+	if registration.Competition.ID < 1 {
+		return errors.New("competition should be specified")
 	}
 
-	partnership, err := GetPartnershipByID(registration.PartnershipID, service.PartnershipRepository)
-	if err != nil {
-		return err
-	}
-
-	competition, err := GetCompetitionByID(registration.CompetitionID, service.CompetitionRepository)
-	if err != nil {
-		return nil
-	}
-
-	if currentUser.HasRole(AccountTypeAthlete) && competition.GetStatus() != CompetitionStatusOpenRegistration {
+	if currentUser.HasRole(AccountTypeAthlete) && registration.Competition.GetStatus() != CompetitionStatusOpenRegistration {
 		return errors.New("registration is no longer open")
 	}
 
 	// check if organizer is authorized to change this partnership's registration
-	organizer := GetAccountByID(competition.CreateUserID, service.AccountRepository) // creator may not be the organizer of specified competition
+	organizer := GetAccountByID(registration.Competition.CreateUserID, service.AccountRepository) // creator may not be the organizer of specified competition
 	if currentUser.HasRole(AccountTypeOrganizer) && organizer.ID != currentUser.ID {
 		return errors.New("not an authorized organizer to update the registration")
 	}
 
 	// check if the creator of the entry is competitor
-	if currentUser.HasRole(AccountTypeAthlete) && (!partnership.HasAthlete(currentUser.ID)) {
+	if currentUser.HasRole(AccountTypeAthlete) && (!registration.Couple.HasAthlete(currentUser.ID)) {
 		// request was sent by people who are neither the lead or the follow of this partnership
 		return errors.New("not an authorized athlete to update the registration")
 	}
 
 	// check if those events are valid and open for registration
 	for _, each := range registration.EventsAdded {
-		cbe, err := GetEventByID(each, service.EventRepository)
-		if err != nil || cbe.ID == 0 {
-			return errors.New("competitive ballroom event does not exist")
-		}
-
-		event, searchErr := service.EventRepository.SearchEvent(SearchEventCriteria{EventID: cbe.ID})
-		if searchErr != nil || len(event) != 1 {
-			return errors.New("event does not exist")
-		} else if event[0].StatusID != EVENT_STATUS_OPEN {
+		if each.StatusID != EVENT_STATUS_OPEN {
 			return errors.New("event is not open for registration")
 		}
 	}
 
 	// create competition entry for the lead, if the entry has not been created yet
 	entries, hasEntryErr := service.AthleteCompetitionEntryRepo.SearchEntry(SearchAthleteCompetitionEntryCriteria{
-		CompetitionID: registration.CompetitionID,
-		AthleteID:     partnership.Lead.ID,
+		CompetitionID: registration.Competition.ID,
+		AthleteID:     registration.Couple.Lead.ID,
 	})
 	if len(entries) != 1 || hasEntryErr != nil {
 		service.AthleteCompetitionEntryRepo.CreateEntry(&AthleteCompetitionEntry{
-			CompetitionEntry: BaseCompetitionEntry{
-				CompetitionID: registration.CompetitionID,
+			Competition: Competition{
+				ID: registration.Competition.ID,
 			},
-			//AthleteID:     partnership.LeadID,
+			Athlete: registration.Couple.Lead,
 		})
 	}
 
 	// create competition entry for the follow, if the entry has not been created yet
 	entries, hasEntryErr = service.AthleteCompetitionEntryRepo.SearchEntry(SearchAthleteCompetitionEntryCriteria{
-		CompetitionID: registration.CompetitionID,
-		AthleteID:     partnership.Follow.ID,
+		CompetitionID: registration.Competition.ID,
+		AthleteID:     registration.Couple.Lead.ID,
 	})
 	if len(entries) != 1 || hasEntryErr != nil {
 		service.AthleteCompetitionEntryRepo.CreateEntry(&AthleteCompetitionEntry{
-			CompetitionEntry: BaseCompetitionEntry{
-				CompetitionID: registration.CompetitionID,
+			Competition: Competition{
+				ID: registration.Competition.ID,
 			},
-			//AthleteID:     partnership.FollowID,
+			Athlete: registration.Couple.Follow,
 		})
-	}
-
-	// check if added events are open
-	for _, each := range registration.EventsAdded {
-		cbe, findErr := GetEventByID(each, service.EventRepository)
-		if findErr != nil {
-			return errors.New("a competitive ballroom event does not exist")
-		}
-		events, eventErr := service.EventRepository.SearchEvent(SearchEventCriteria{
-			EventID: cbe.ID,
-		})
-		if eventErr != nil || len(events) != 1 {
-			return errors.New("a competitive ballroom event is invalid")
-		}
-		if events[0].StatusID != EVENT_STATUS_OPEN {
-			return errors.New("event is no longer open for registration")
-		}
 	}
 
 	// check if dropped events are open
@@ -211,15 +275,8 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 	// TODO: eligibility check
 	for _, each := range registration.EventsAdded {
 		eventEntry := PartnershipEventEntry{
-			PartnershipID: registration.PartnershipID,
-			EventEntry: EventEntry{
-				EventID:         each,
-				CompetitorTag:   0,
-				CreateUserID:    currentUser.ID,
-				DateTimeCreated: time.Now(),
-				UpdateUserID:    currentUser.ID,
-				DateTimeUpdated: time.Now(),
-			},
+			Couple: registration.Couple,
+			Event:  each,
 		}
 		eligibilityErr := checkEventEligibility(eventEntry)
 		if eligibilityErr != nil {
@@ -232,32 +289,24 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 // CreateEntry takes the current user and the registration data and create new Competition Entry for
 // each of the athlete
 func (service CompetitionRegistrationService) CreateAthleteCompetitionEntry(currentUser Account, registration EventRegistrationForm) error {
-	partnership, findPartnershipErr := GetPartnershipByID(registration.PartnershipID, service.PartnershipRepository)
-	if findPartnershipErr != nil {
-		return findPartnershipErr
-	}
 	leadCompEntry := AthleteCompetitionEntry{
-		CompetitionEntry: BaseCompetitionEntry{
-			CompetitionID:    registration.CompetitionID,
-			CheckInIndicator: false,
-			CreateUserID:     currentUser.ID,
-			DateTimeCreated:  time.Now(),
-			UpdateUserID:     currentUser.ID,
-			DateTimeUpdated:  time.Now(),
-		},
-		AthleteID:                partnership.Lead.ID,
+		Competition:              registration.Competition,
+		CheckedIn:                false,
+		CreateUserID:             currentUser.ID,
+		DateTimeCreated:          time.Now(),
+		UpdateUserID:             currentUser.ID,
+		DateTimeUpdated:          time.Now(),
+		Athlete:                  registration.Couple.Lead,
 		PaymentReceivedIndicator: false,
 	}
 	followCompEntry := AthleteCompetitionEntry{
-		CompetitionEntry: BaseCompetitionEntry{
-			CompetitionID:    registration.CompetitionID,
-			CheckInIndicator: false,
-			CreateUserID:     currentUser.ID,
-			DateTimeCreated:  time.Now(),
-			UpdateUserID:     currentUser.ID,
-			DateTimeUpdated:  time.Now(),
-		},
-		AthleteID:                partnership.Follow.ID,
+		Competition:              registration.Competition,
+		CheckedIn:                false,
+		CreateUserID:             currentUser.ID,
+		DateTimeCreated:          time.Now(),
+		UpdateUserID:             currentUser.ID,
+		DateTimeUpdated:          time.Now(),
+		Athlete:                  registration.Couple.Follow,
 		PaymentReceivedIndicator: false,
 	}
 
@@ -269,21 +318,15 @@ func (service CompetitionRegistrationService) CreateAthleteCompetitionEntry(curr
 // CreateEntry takes the current user and registration data and create a Competition Entry for
 // this Partnership
 func (service CompetitionRegistrationService) CreatePartnershipCompetitionEntry(currentUser Account, registration EventRegistrationForm) error {
-	partnership, findPartnershipErr := GetPartnershipByID(registration.PartnershipID, service.PartnershipRepository)
-	if findPartnershipErr != nil {
-		return findPartnershipErr
-	}
 
 	partnershipEntry := PartnershipCompetitionEntry{
-		PartnershipID: partnership.ID,
-		CompetitionEntry: BaseCompetitionEntry{
-			CompetitionID:    registration.CompetitionID,
-			CheckInIndicator: false,
-			CreateUserID:     currentUser.ID,
-			DateTimeCreated:  time.Now(),
-			UpdateUserID:     currentUser.ID,
-			DateTimeUpdated:  time.Now(),
-		},
+		Couple:          registration.Couple,
+		Competition:     registration.Competition,
+		CheckedIn:       false,
+		CreateUserID:    currentUser.ID,
+		DateTimeCreated: time.Now(),
+		UpdateUserID:    currentUser.ID,
+		DateTimeUpdated: time.Now(),
 	}
 	partnershipEntry.createPartnershipCompetitionEntry(service.CompetitionRepository, service.PartnershipCompetitionEntryRepo)
 	return nil
@@ -293,16 +336,8 @@ func (service CompetitionRegistrationService) CreatePartnershipCompetitionEntry(
 func (service CompetitionRegistrationService) CreatePartnershipEventEntries(currentUser Account, registration EventRegistrationForm) error {
 	for _, each := range registration.EventsAdded {
 		eventEntry := PartnershipEventEntry{
-
-			PartnershipID: registration.PartnershipID,
-			EventEntry: EventEntry{
-				EventID:         each,
-				CompetitorTag:   0,
-				CreateUserID:    currentUser.ID,
-				DateTimeCreated: time.Now(),
-				UpdateUserID:    currentUser.ID,
-				DateTimeUpdated: time.Now(),
-			},
+			Couple: registration.Couple,
+			Event:  each,
 		}
 		createErr := service.PartnershipEventEntryRepo.CreatePartnershipEventEntry(&eventEntry)
 		if createErr != nil {
@@ -332,11 +367,9 @@ func (service CompetitionRegistrationService) DropPartnershipCompetitionEntry(pa
 func (service CompetitionRegistrationService) DropPartnershipEventEntries(currentUser Account, registration EventRegistrationForm) error {
 	for _, each := range registration.EventsDropped {
 		eventEntry := PartnershipEventEntry{
-			EventEntry: EventEntry{
-				EventID:      each,
-				UpdateUserID: currentUser.ID,
-			},
-			PartnershipID: registration.PartnershipID,
+			Event:        each,
+			UpdateUserID: currentUser.ID,
+			Couple:       registration.Couple,
 		}
 		dropErr := service.PartnershipEventEntryRepo.DeletePartnershipEventEntry(eventEntry)
 		if dropErr != nil {

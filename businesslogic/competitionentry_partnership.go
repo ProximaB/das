@@ -2,14 +2,20 @@ package businesslogic
 
 import (
 	"errors"
+	"time"
 )
 
 // PartnershipCompetitionEntry defines a partnership's participation of a competition
 type PartnershipCompetitionEntry struct {
-	ID               int
-	PartnershipID    int
-	Partnership      Partnership
-	CompetitionEntry BaseCompetitionEntry
+	ID                int
+	Couple            Partnership
+	Competition       Competition
+	CheckedIn         bool
+	DateTimeCheckedIn time.Time
+	CreateUserID      int
+	DateTimeCreated   time.Time
+	UpdateUserID      int
+	DateTimeUpdated   time.Time
 }
 
 // SearchPartnershipCompetitionEntryCriteria specifies parameters that can be used to search the Competition Entry
@@ -31,7 +37,7 @@ type IPartnershipCompetitionEntryRepository interface {
 
 func (entry *PartnershipCompetitionEntry) createPartnershipCompetitionEntry(compRepo ICompetitionRepository, entryRepo IPartnershipCompetitionEntryRepository) error {
 	// check if competition still accepts new entries
-	competition, findCompErr := GetCompetitionByID(entry.CompetitionEntry.CompetitionID, compRepo)
+	competition, findCompErr := GetCompetitionByID(entry.Competition.ID, compRepo)
 	if findCompErr != nil {
 		return findCompErr
 	}

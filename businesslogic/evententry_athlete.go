@@ -7,11 +7,10 @@ import (
 
 type AthleteEventEntry struct {
 	ID                int
-	AthleteID         int // should be the account ID, not the Athlete Role id
-	FirstName         string
-	LastName          string
-	CompetitionID     int
-	EventID           int
+	Athlete           Account
+	Competition       Competition
+	Event             Event
+	CompetitorTag     int
 	CheckedIn         bool
 	DateTimeCheckedIn bool
 	Placement         int // default should be 0: unplaced

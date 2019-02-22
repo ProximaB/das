@@ -4,6 +4,9 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/DancesportSoftware/das/dataaccess/accountdal"
+	"github.com/DancesportSoftware/das/dataaccess/competition"
+	"github.com/DancesportSoftware/das/dataaccess/eventdal"
 	"log"
 
 	"github.com/DancesportSoftware/das/businesslogic"
@@ -43,10 +46,11 @@ func (repo PostgresAthleteEventEntryRepository) CreateAthleteEventEntry(entry *b
 			common.ColumnDateTimeUpdated,
 		).
 		Values(
-			entry.AthleteID,
-			entry.CompetitionID,
-			entry.EventID,
+			entry.Athlete.ID,
+			entry.Competition.ID,
+			entry.Event.ID,
 			entry.CheckedIn,
+			entry.DateTimeCheckedIn,
 			entry.Placement,
 			entry.CreateUserID,
 			entry.DateTimeCreated,
@@ -69,7 +73,6 @@ func (repo PostgresAthleteEventEntryRepository) CreateAthleteEventEntry(entry *b
 		}
 	}
 	return err
-
 }
 
 func (repo PostgresAthleteEventEntryRepository) DeleteAthleteEventEntry(entry businesslogic.AthleteEventEntry) error {
@@ -134,9 +137,9 @@ func (repo PostgresAthleteEventEntryRepository) SearchAthleteEventEntry(criteria
 		each := businesslogic.AthleteEventEntry{}
 		scanErr := rows.Scan(
 			&each.ID,
-			&each.AthleteID,
-			&each.CompetitionID,
-			&each.EventID,
+			&each.Athlete.ID,
+			&each.Competition.ID,
+			&each.Event.ID,
 			&each.CheckedIn,
 			&each.DateTimeCheckedIn,
 			&each.Placement,
@@ -150,8 +153,31 @@ func (repo PostgresAthleteEventEntryRepository) SearchAthleteEventEntry(criteria
 		}
 		entries = append(entries, each)
 	}
-	rows.Close()
-	return entries, err
+
+	accountRepo := accountdal.PostgresAccountRepository{
+		Database:   repo.Database,
+		SQLBuilder: repo.SQLBuilder,
+	}
+	competitionRepo := competition.PostgresCompetitionRepository{
+		Database:   repo.Database,
+		SqlBuilder: repo.SQLBuilder,
+	}
+	eventRepo := eventdal.PostgresEventRepository{
+		Database:   repo.Database,
+		SQLBuilder: repo.SQLBuilder,
+	}
+
+	for _, each := range entries {
+		athletes, _ := accountRepo.SearchAccount(businesslogic.SearchAccountCriteria{ID: each.Athlete.ID})
+		each.Athlete = athletes[0]
+
+		competitions, _ := competitionRepo.SearchCompetition(businesslogic.SearchCompetitionCriteria{ID: each.Competition.ID})
+		each.Competition = competitions[0]
+
+		events, _ := eventRepo.SearchEvent(businesslogic.SearchEventCriteria{EventID: each.Event.ID})
+		each.Event = events[0]
+	}
+	return entries, rows.Close()
 }
 
 func (repo PostgresAthleteEventEntryRepository) UpdateAthleteEventEntry(entry businesslogic.AthleteEventEntry) error {
@@ -168,8 +194,7 @@ type PostgresPartnershipEventEntryRepository struct {
 }
 
 const (
-	dasEventCompetitiveBallroomEntryTable = "DAS.EVENT_ENTRY_PARTNERSHIP"
-	leadTag                               = "LEADTAG"
+	leadTag = "LEADTAG"
 )
 
 // CreatePartnershipEventEntry creates a Partnership Event Entry in a Postgres database
@@ -177,7 +202,7 @@ func (repo PostgresPartnershipEventEntryRepository) CreatePartnershipEventEntry(
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	stmt := repo.SQLBuilder.Insert("").Into(dasEventCompetitiveBallroomEntryTable).Columns(
+	stmt := repo.SQLBuilder.Insert("").Into(dasPartnershipEventEntryTable).Columns(
 		common.COL_EVENT_ID,
 		common.COL_PARTNERSHIP_ID,
 		leadTag,
@@ -186,13 +211,13 @@ func (repo PostgresPartnershipEventEntryRepository) CreatePartnershipEventEntry(
 		common.ColumnUpdateUserID,
 		common.ColumnDateTimeUpdated,
 	).Values(
-		entry.EventEntry.EventID,
-		entry.PartnershipID,
-		entry.EventEntry.CompetitorTag,
-		entry.EventEntry.CreateUserID,
-		entry.EventEntry.DateTimeCreated,
-		entry.EventEntry.UpdateUserID,
-		entry.EventEntry.DateTimeUpdated,
+		entry.Event.ID,
+		entry.Couple.ID,
+		entry.CompetitorTag, // TODO: this needs to be fixed later
+		entry.CreateUserID,
+		entry.DateTimeCreated,
+		entry.UpdateUserID,
+		entry.DateTimeUpdated,
 	).Suffix(dalutil.SQLSuffixReturningID)
 	clause, args, err := stmt.ToSql()
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
@@ -214,9 +239,9 @@ func (repo PostgresPartnershipEventEntryRepository) DeletePartnershipEventEntry(
 		return errors.New("ID of Partnership Event Entry is required")
 	}
 	clause := repo.SQLBuilder.Delete("").
-		From(dasEventCompetitiveBallroomEntryTable).
-		Where(squirrel.Eq{common.COL_EVENT_ID: entry.EventEntry.EventID}).
-		Where(squirrel.Eq{common.COL_PARTNERSHIP_ID: entry.PartnershipID})
+		From(dasPartnershipEventEntryTable).
+		Where(squirrel.Eq{common.COL_EVENT_ID: entry.Event.ID}).
+		Where(squirrel.Eq{common.COL_PARTNERSHIP_ID: entry.Couple.ID})
 	_, err := clause.RunWith(repo.Database).Exec()
 	return err
 }
@@ -235,22 +260,25 @@ func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(
 		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	clause := repo.SQLBuilder.Select(
-		fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
-			common.ColumnPrimaryKey,
-			common.COL_EVENT_ID,
-			common.COL_PARTNERSHIP_ID,
-			dasCompetitionEntryColCompetitorTag,
-			common.ColumnCreateUserID,
-			common.ColumnDateTimeCreated,
-			common.ColumnUpdateUserID,
-			common.ColumnDateTimeUpdated)).
-		From(dasEventCompetitiveBallroomEntryTable)
+		fmt.Sprintf("%s.%s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s",
+			dasPartnershipEventEntryTable, common.ColumnPrimaryKey,
+			dasPartnershipEventEntryTable, common.COL_EVENT_ID,
+			dasPartnershipEventEntryTable, common.COL_PARTNERSHIP_ID,
+			dasPartnershipEventEntryTable, dasCompetitionEntryColCompetitorTag,
+			dasPartnershipEventEntryTable, common.ColumnCreateUserID,
+			dasPartnershipEventEntryTable, common.ColumnDateTimeCreated,
+			dasPartnershipEventEntryTable, common.ColumnUpdateUserID,
+			dasPartnershipEventEntryTable, common.ColumnDateTimeUpdated)).
+		From(dasPartnershipEventEntryTable)
 
 	if criteria.PartnershipID > 0 {
 		clause = clause.Where(squirrel.Eq{common.COL_PARTNERSHIP_ID: criteria.PartnershipID})
 	}
 	if criteria.EventID > 0 {
 		clause = clause.Where(squirrel.Eq{common.COL_EVENT_ID: criteria.EventID})
+	}
+	if criteria.CompetitionID > 0 {
+		clause = clause.Join("DAS.EVENT ON DAS.EVENT.ID = DAS.EVENT_ENTRY_PARTNERSHIP.EVENT_ID AND DAS.EVENT.COMPETITION_ID = $1", criteria.CompetitionID)
 	}
 
 	entries := make([]businesslogic.PartnershipEventEntry, 0)
@@ -264,13 +292,13 @@ func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(
 		each := businesslogic.PartnershipEventEntry{}
 		scanErr := rows.Scan(
 			&each.ID,
-			&each.EventEntry.EventID,
-			&each.PartnershipID,
-			&each.EventEntry.CompetitorTag,
-			&each.EventEntry.CreateUserID,
-			&each.EventEntry.DateTimeCreated,
-			&each.EventEntry.UpdateUserID,
-			&each.EventEntry.DateTimeUpdated,
+			&each.Event.ID,
+			&each.Couple.ID,
+			&each.CompetitorTag,
+			&each.CreateUserID,
+			&each.DateTimeCreated,
+			&each.UpdateUserID,
+			&each.DateTimeUpdated,
 		)
 		if scanErr != nil {
 			log.Printf("[error] scanning Partnership Event Entry: %v", scanErr)

@@ -10,10 +10,16 @@ import (
 // also allows quick indexing of competition attendance
 type AthleteCompetitionEntry struct {
 	ID                       int
-	CompetitionEntry         BaseCompetitionEntry
-	AthleteID                int
+	Athlete                  Account
+	Competition              Competition
+	CheckedIn                bool
+	DateTimeCheckedIn        time.Time
 	PaymentReceivedIndicator bool
 	DateTimeOfPayment        time.Time
+	CreateUserID             int
+	DateTimeCreated          time.Time
+	UpdateUserID             int
+	DateTimeUpdated          time.Time
 }
 
 // SearchAthleteCompetitionEntryCriteria specifies the parameters that can be used
@@ -64,7 +70,7 @@ func (service AthleteCompetitionEntryService) CreateAthleteCompetitionEntry(entr
 	// check if competition still accept entries
 	compSearchResults, searchCompErr := service.competitionRepo.SearchCompetition(
 		SearchCompetitionCriteria{
-			ID:       entry.CompetitionEntry.CompetitionID,
+			ID:       entry.Competition.ID,
 			StatusID: CompetitionStatusOpenRegistration,
 		})
 	if searchCompErr != nil {
@@ -75,8 +81,8 @@ func (service AthleteCompetitionEntryService) CreateAthleteCompetitionEntry(entr
 	}
 
 	criteria := SearchAthleteCompetitionEntryCriteria{
-		AthleteID:     entry.AthleteID,
-		CompetitionID: entry.CompetitionEntry.CompetitionID,
+		AthleteID:     entry.Athlete.ID,
+		CompetitionID: entry.Competition.ID,
 	}
 
 	searchResults, err := service.athleteCompEntryRepo.SearchEntry(criteria)
@@ -89,7 +95,7 @@ func (service AthleteCompetitionEntryService) CreateAthleteCompetitionEntry(entr
 	}
 
 	if len(searchResults) > 0 {
-		return errors.New(fmt.Sprintf("competition entry for athlete %d is already created", entry.AthleteID))
+		return errors.New(fmt.Sprintf("competition entry for athlete %v is already created", entry.Athlete.ID))
 	}
 
 	return errors.New("cannot create competition entry for this athlete")

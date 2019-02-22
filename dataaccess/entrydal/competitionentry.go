@@ -4,6 +4,8 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
+	"github.com/DancesportSoftware/das/dataaccess/accountdal"
+	"github.com/DancesportSoftware/das/dataaccess/competition"
 	"log"
 
 	"github.com/DancesportSoftware/das/businesslogic"
@@ -37,7 +39,7 @@ func (repo PostgresAthleteCompetitionEntryRepository) CreateEntry(entry *busines
 		Into(dasAthleteCompetitionEntryTable).
 		Columns(
 			common.COL_COMPETITION_ID,
-			"ATHLETE_ID",
+			common.COL_ATHLETE_ID,
 			dasCompetitionEntryColCheckinInd,
 			dasCompetitionEntryColCheckinDateTime,
 			"PAYMENT_IND",
@@ -46,15 +48,15 @@ func (repo PostgresAthleteCompetitionEntryRepository) CreateEntry(entry *busines
 			common.ColumnUpdateUserID,
 			common.ColumnDateTimeUpdated).
 		Values(
-			entry.CompetitionEntry.CompetitionID,
-			entry.AthleteID,
-			entry.CompetitionEntry.CheckInIndicator,
-			entry.CompetitionEntry.DateTimeCheckIn,
+			entry.Competition.ID,
+			entry.Athlete.ID,
+			entry.CheckedIn,
+			entry.DateTimeCheckedIn,
 			entry.PaymentReceivedIndicator,
-			entry.CompetitionEntry.CreateUserID,
-			entry.CompetitionEntry.DateTimeCreated,
-			entry.CompetitionEntry.UpdateUserID,
-			entry.CompetitionEntry.DateTimeUpdated).
+			entry.CreateUserID,
+			entry.DateTimeCreated,
+			entry.UpdateUserID,
+			entry.DateTimeUpdated).
 		Suffix("RETURNING ID")
 
 	clause, args, err := stmt.ToSql()
@@ -83,7 +85,7 @@ func (repo PostgresAthleteCompetitionEntryRepository) SearchEntry(criteria busin
 	clause := repo.SQLBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s",
 		common.ColumnPrimaryKey,
 		common.COL_COMPETITION_ID,
-		common.ColumnAccountID,
+		common.COL_ATHLETE_ID,
 		dasCompetitionEntryColCheckinInd,
 		dasCompetitionEntryColCheckinDateTime,
 		common.ColumnCreateUserID,
@@ -95,7 +97,7 @@ func (repo PostgresAthleteCompetitionEntryRepository) SearchEntry(criteria busin
 		clause = clause.Where(squirrel.Eq{common.ColumnPrimaryKey: criteria.ID})
 	}
 	if criteria.AthleteID > 0 {
-		clause = clause.Where(squirrel.Eq{common.ColumnAccountID: criteria.AthleteID})
+		clause = clause.Where(squirrel.Eq{common.COL_ATHLETE_ID: criteria.AthleteID})
 	}
 	if criteria.CompetitionID > 0 {
 		clause = clause.Where(squirrel.Eq{common.COL_COMPETITION_ID: criteria.CompetitionID})
@@ -106,24 +108,37 @@ func (repo PostgresAthleteCompetitionEntryRepository) SearchEntry(criteria busin
 		return entries, err
 	}
 
+	accountRepo := accountdal.PostgresAccountRepository{
+		Database:   repo.Database,
+		SQLBuilder: repo.SQLBuilder,
+	}
+	compRepo := competition.PostgresCompetitionRepository{
+		Database:   repo.Database,
+		SqlBuilder: repo.SQLBuilder,
+	}
+
 	for rows.Next() {
 		each := businesslogic.AthleteCompetitionEntry{
-			CompetitionEntry: businesslogic.BaseCompetitionEntry{},
+			Competition: businesslogic.Competition{},
 		}
 		scanErr := rows.Scan(
 			&each.ID,
-			&each.CompetitionEntry.CompetitionID,
-			&each.AthleteID,
-			&each.CompetitionEntry.CheckInIndicator,
-			&each.CompetitionEntry.DateTimeCheckIn,
-			&each.CompetitionEntry.CreateUserID,
-			&each.CompetitionEntry.DateTimeCreated,
-			&each.CompetitionEntry.UpdateUserID,
-			&each.CompetitionEntry.DateTimeUpdated,
+			&each.Competition.ID,
+			&each.Athlete.ID,
+			&each.CheckedIn,
+			&each.DateTimeCheckedIn,
+			&each.CreateUserID,
+			&each.DateTimeCreated,
+			&each.UpdateUserID,
+			&each.DateTimeUpdated,
 		)
 		if scanErr != nil {
 			return entries, scanErr
 		}
+		athletes, _ := accountRepo.SearchAccount(businesslogic.SearchAccountCriteria{ID: each.Athlete.ID})
+		competitions, _ := compRepo.SearchCompetition(businesslogic.SearchCompetitionCriteria{ID: each.Competition.ID})
+		each.Athlete = athletes[0]
+		each.Competition = competitions[0]
 		entries = append(entries, each)
 	}
 	return entries, err
@@ -192,14 +207,14 @@ func (repo PostgresPartnershipCompetitionEntryRepository) CreateEntry(entry *bus
 			common.ColumnUpdateUserID,
 			common.ColumnDateTimeUpdated).
 		Values(
-			entry.CompetitionEntry.CompetitionID,
-			entry.PartnershipID,
-			entry.CompetitionEntry.CheckInIndicator,
-			entry.CompetitionEntry.DateTimeCheckIn,
-			entry.CompetitionEntry.CreateUserID,
-			entry.CompetitionEntry.DateTimeCreated,
-			entry.CompetitionEntry.UpdateUserID,
-			entry.CompetitionEntry.DateTimeUpdated).
+			entry.Competition.ID,
+			entry.Couple.ID,
+			entry.CheckedIn,
+			entry.DateTimeCheckedIn,
+			entry.CreateUserID,
+			entry.DateTimeCreated,
+			entry.UpdateUserID,
+			entry.DateTimeUpdated).
 		Suffix(dalutil.SQLSuffixReturningID)
 
 	clause, args, err := stmt.ToSql()
@@ -207,8 +222,11 @@ func (repo PostgresPartnershipCompetitionEntryRepository) CreateEntry(entry *bus
 		return txErr
 	} else {
 		row := repo.Database.QueryRow(clause, args...)
-		row.Scan(&entry.ID)
-		tx.Commit()
+		scanErr := row.Scan(&entry.ID)
+		if scanErr != nil {
+			return scanErr
+		}
+		err = tx.Commit()
 	}
 	return err
 }
@@ -270,19 +288,17 @@ func (repo PostgresPartnershipCompetitionEntryRepository) SearchEntry(criteria b
 	}
 
 	for rows.Next() {
-		each := businesslogic.PartnershipCompetitionEntry{
-			CompetitionEntry: businesslogic.BaseCompetitionEntry{},
-		}
+		each := businesslogic.PartnershipCompetitionEntry{}
 		scanErr := rows.Scan(
 			&each.ID,
-			&each.CompetitionEntry.CompetitionID,
-			&each.PartnershipID,
-			&each.CompetitionEntry.CheckInIndicator,
-			&each.CompetitionEntry.DateTimeCheckIn,
-			&each.CompetitionEntry.CreateUserID,
-			&each.CompetitionEntry.DateTimeCreated,
-			&each.CompetitionEntry.UpdateUserID,
-			&each.CompetitionEntry.DateTimeUpdated,
+			&each.Competition.ID,
+			&each.Couple.ID,
+			&each.CheckedIn,
+			&each.DateTimeCheckedIn,
+			&each.CreateUserID,
+			&each.DateTimeCreated,
+			&each.UpdateUserID,
+			&each.DateTimeUpdated,
 		)
 		if scanErr != nil {
 			return entries, scanErr
@@ -290,7 +306,7 @@ func (repo PostgresPartnershipCompetitionEntryRepository) SearchEntry(criteria b
 		entries = append(entries, each)
 	}
 
-	return nil, err
+	return entries, err
 }
 
 // UpdateEntry updates a PartnershipCompetitionEntry in a Postgres database

@@ -33,7 +33,7 @@ import (
 //356	1	2	3	 	6	1(1)	6	10	2(3)	10	2
 //295	3	1	2	 	6	1(1)	4	9	2(3)	9	3
 //
-func TestDanceScoreSheet_CalculateDancePlacements (t *testing.T) {
+func TestDanceScoreSheet_CalculateDancePlacements(t *testing.T) {
 	sheet := skating.NewDanceScoreSheet()
 
 	// use rumba dance
@@ -69,6 +69,7 @@ func TestDanceScoreSheet_CalculateDancePlacements (t *testing.T) {
 	ranks, err := sheet.CalculateDancePlacements(skating.ALGORITHM_SKATING)
 	assert.Equal(t, []int{[]int{1, 295}, []int{2, 356}, []int{3, 281}}, ranks)
 }
+
 /*
 func TestRoundScoreSheet_NewRoundScoreSheet (t *testing.T) {
 	roundSheet := skating.NewRoundScoreSheet()

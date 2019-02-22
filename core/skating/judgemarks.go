@@ -6,7 +6,7 @@ import (
 	"sort"
 )
 
-var DUPLICATE_PLACEMENT_ERROR = func (placement int) error {
+var DUPLICATE_PLACEMENT_ERROR = func(placement int) error {
 	return errors.New(fmt.Sprintf("placement %v is already taken by someone else", placement))
 }
 
@@ -18,18 +18,17 @@ var PLACEMENT_OUTOFRANGE_ERROR = func(coupleID, placement int) error {
 	return errors.New(fmt.Sprintf("placement of couple %v is out of range: %v", coupleID, placement))
 }
 
-
 type JudgeMarks struct {
-	callbacks map[int]bool // key: coupleID, value: recall
-	placements map[int]int // key: placement, value: coupleID
-	roundSize int
+	callbacks  map[int]bool // key: coupleID, value: recall
+	placements map[int]int  // key: placement, value: coupleID
+	roundSize  int
 }
 
 func NewJudgeMarks(roundSize int) JudgeMarks {
 	return JudgeMarks{
-		callbacks: make(map[int]bool),
+		callbacks:  make(map[int]bool),
 		placements: make(map[int]int),
-		roundSize: roundSize,
+		roundSize:  roundSize,
 	}
 }
 
@@ -69,7 +68,7 @@ func (marks JudgeMarks) GetCallbacks() []int {
 	return callbacks
 }
 
-func (marks JudgeMarks) GetPlacements()([][]int) {
+func (marks JudgeMarks) GetPlacements() [][]int {
 	placements := make([][]int, 0)
 	for place, couple := range marks.placements {
 		placements = append(placements, []int{place, couple})
@@ -77,7 +76,7 @@ func (marks JudgeMarks) GetPlacements()([][]int) {
 	return placements
 }
 
-func (marks JudgeMarks) GetCouples () []int {
+func (marks JudgeMarks) GetCouples() []int {
 	couples := make([]int, 0)
 	for each := range marks.callbacks {
 		couples = append(couples, each)

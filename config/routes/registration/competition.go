@@ -12,7 +12,14 @@ import (
 const apiAthleteCompetitionRegistrationEndpoint = "/api/v1.0/athlete/competition/registration"
 
 var athleteCompetitionRegistrationServer = athlete.CompetitionRegistrationServer{
-	IAuthenticationStrategy: middleware.AuthenticationStrategy,
+	IAccountRepository:                     database.AccountRepository,
+	ICompetitionRepository:                 database.CompetitionRepository,
+	IAthleteCompetitionEntryRepository:     database.AthleteCompetitionEntryRepository,
+	IPartnershipCompetitionEntryRepository: database.PartnershipCompetitionEntryRepository,
+	IPartnershipRepository:                 database.PartnershipRepository,
+	IPartnershipEventEntryRepository:       database.PartnershipEventEntryRepository,
+	IEventRepository:                       database.EventRepository,
+	IAuthenticationStrategy:                middleware.AuthenticationStrategy,
 	Service: businesslogic.CompetitionRegistrationService{
 		AccountRepository:               database.AccountRepository,
 		PartnershipRepository:           database.PartnershipRepository,

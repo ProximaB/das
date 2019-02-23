@@ -43,10 +43,10 @@ type IAdjudicatorEventEntryRepository interface {
 	UpdateEventEntry(entry AdjudicatorEventEntry) error
 }
 
-// PartnershipEventEntryList contains the ID of an event and the Partnerships that are competing in this event
-type PartnershipEventEntryList struct {
-	EventID   int
-	EntryList []PartnershipEventEntry
+type EventEntryList struct {
+	Event          Event
+	AthleteEntries []AthleteEventEntry
+	CoupleEntries  []PartnershipEventEntry
 }
 
 // AdjudicatorEventEntryList contains the ID of an event and the Adjudicators that are assigned to this event

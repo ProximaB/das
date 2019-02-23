@@ -75,3 +75,18 @@ func (dto CreateAccountDTO) ToAccountModel() businesslogic.Account {
 	}
 	return account
 }
+
+// AthleteTinyViewModel is the minimum data of an athlete
+type AthleteTinyViewModel struct {
+	UID       string `json:"uid"`
+	FirstName string `json:"firstName"`
+	LastName  string `json:"lastName"`
+}
+
+func AthleteToTinyViewModel(athlete businesslogic.Account) AthleteTinyViewModel {
+	return AthleteTinyViewModel{
+		UID:       athlete.UID,
+		FirstName: athlete.FirstName,
+		LastName:  athlete.LastName,
+	}
+}

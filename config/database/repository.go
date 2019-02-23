@@ -159,6 +159,10 @@ var CompetitionEventTemplateRepository = eventdal.PostgresCompetitionEventTempla
 	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
+var AthleteEventEntryRepository = entrydal.PostgresAthleteEventEntryRepository{
+	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
 var PartnershipEventEntryRepository = entrydal.PostgresPartnershipEventEntryRepository{
 	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }

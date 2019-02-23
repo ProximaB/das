@@ -2,6 +2,7 @@ package businesslogic
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"time"
 )
@@ -41,12 +42,12 @@ type CompetitionRegistrationService struct {
 	EventRepository                    IEventRepository
 	AthleteCompetitionEntryRepo        IAthleteCompetitionEntryRepository
 	PartnershipCompetitionEntryRepo    IPartnershipCompetitionEntryRepository
-	AthleteEventEntryRepo              IAthleteEventEntryRepository
+	athleteEventEntryRepo              IAthleteEventEntryRepository
 	PartnershipEventEntryRepo          IPartnershipEventEntryRepository
 	AthleteCompetitionEntryService     AthleteCompetitionEntryService
 	partnershipCompetitionEntryService PartnershipCompetitionEntryService
 	athleteEventEntryService           AthleteEventEntryService
-	parntershipEventEntryService       PartnershipEventEntryService
+	coupleEventEntryService            PartnershipEventEntryService
 }
 
 func NewCompetitionRegistrationService(
@@ -55,13 +56,19 @@ func NewCompetitionRegistrationService(
 	competitionRepo ICompetitionRepository,
 	eventRepo IEventRepository,
 	athleteCompetitionEntryRepo IAthleteCompetitionEntryRepository,
-	athleteEventEntryRepo IAthleteEventEntryRepository) CompetitionRegistrationService {
+	athleteEventEntryRepo IAthleteEventEntryRepository,
+	coupleCompetitionEntryRepo IPartnershipCompetitionEntryRepository,
+	coupleEventEntryRepo IPartnershipEventEntryRepository) CompetitionRegistrationService {
 	service := CompetitionRegistrationService{}
 	service.AccountRepository = accountRepo
 	service.PartnershipRepository = partnershipRepo
 	service.CompetitionRepository = competitionRepo
 	service.EventRepository = eventRepo
+	service.athleteEventEntryRepo = athleteEventEntryRepo
 	service.AthleteCompetitionEntryRepo = athleteCompetitionEntryRepo
+	service.athleteEventEntryRepo = athleteEventEntryRepo
+	service.PartnershipCompetitionEntryRepo = coupleCompetitionEntryRepo
+	service.PartnershipEventEntryRepo = coupleEventEntryRepo
 	service.AthleteCompetitionEntryService = NewAthleteCompetitionEntryService(accountRepo, competitionRepo, athleteCompetitionEntryRepo)
 	return service
 }
@@ -88,6 +95,7 @@ func (service CompetitionRegistrationService) UpdateRegistration(currentUser Acc
 
 	var err error
 
+	// Get current PartnershipCompetitionEntry, if not exists, then create a new one
 	currentCoupleCompEntries, err := service.PartnershipCompetitionEntryRepo.SearchEntry(SearchPartnershipCompetitionEntryCriteria{
 		PartnershipID: registration.Couple.ID,
 		CompetitionID: registration.Competition.ID,
@@ -128,7 +136,6 @@ func (service CompetitionRegistrationService) UpdateRegistration(currentUser Acc
 		if err = service.AthleteCompetitionEntryRepo.CreateEntry(&entry); err != nil {
 			return err
 		}
-
 	}
 
 	currentFollowCompEntries, err := service.AthleteCompetitionEntryRepo.SearchEntry(SearchAthleteCompetitionEntryCriteria{CompetitionID: registration.Competition.ID, AthleteID: registration.Couple.Follow.ID})
@@ -152,9 +159,7 @@ func (service CompetitionRegistrationService) UpdateRegistration(currentUser Acc
 		}
 	}
 
-	// TODO: add logic for droping competition entries.
-	// TODO: maybe Athlete competition is not needed?
-	// TODO: maybe ahtlete event entries is not needed? The only case that this can be useful is if the event does not requrie partnership
+	// TODO: add logic for dropping competition entries.
 
 	existingEntries, err := service.PartnershipEventEntryRepo.SearchPartnershipEventEntry(SearchPartnershipEventEntryCriteria{PartnershipID: registration.Couple.ID, CompetitionID: registration.Competition.ID})
 	for _, each := range registration.EventsAdded {
@@ -195,6 +200,10 @@ func (service CompetitionRegistrationService) UpdateRegistration(currentUser Acc
 		}
 	}
 
+	// TODO: if partnership has no remaining event entries, then drop the competition entry of this couple
+
+	// TODO: update attendance of a competition based on athlete competition entry
+
 	// for scrutineer and organizer, check if they are either invited officials of the competition
 	// Scrutineer/Organizer of one competitions should not be able to update the registration forms of other competitions
 
@@ -203,6 +212,22 @@ func (service CompetitionRegistrationService) UpdateRegistration(currentUser Acc
 	// if has existing registration, get the existing registration
 	//
 	return nil
+}
+
+type SearchEntryCriteria struct {
+	CompetitionID int
+	EventID       int
+	FederationID  int
+	DivisionID    int
+	AgeID         int
+	ProficiencyID int
+	StyleID       int
+	AthleteID     int
+	PartnershipID int
+}
+
+func (service CompetitionRegistrationService) SearchEntries(criteria SearchEntryCriteria) {
+
 }
 
 // ValidateEventRegistration validates if the registration data is valid. This does not create the registration
@@ -284,6 +309,72 @@ func (service CompetitionRegistrationService) ValidateEventRegistration(currentU
 		}
 	}
 	return nil
+}
+
+func (service CompetitionRegistrationService) SearchCompetitionEntries(criteria SearchEntryCriteria) (CompetitionEntryList, error) {
+	var err error
+	entries := CompetitionEntryList{}
+
+	athleteEntries, err := service.AthleteCompetitionEntryRepo.SearchEntry(SearchAthleteCompetitionEntryCriteria{
+		CompetitionID: criteria.CompetitionID,
+		AthleteID:     criteria.AthleteID,
+	})
+	if err != nil {
+		return entries, err
+	}
+
+	partnershipEntries, err := service.PartnershipCompetitionEntryRepo.SearchEntry(SearchPartnershipCompetitionEntryCriteria{
+		CompetitionID: criteria.CompetitionID,
+		PartnershipID: criteria.PartnershipID,
+	})
+	if err != nil {
+		return entries, err
+	}
+
+	competitions, err := service.CompetitionRepository.SearchCompetition(SearchCompetitionCriteria{ID: criteria.CompetitionID})
+	if err != nil || len(competitions) != 1 {
+		return entries, errors.New(fmt.Sprintf("cannot find competition with ID = %v", criteria.CompetitionID))
+	}
+
+	entries.Competition = competitions[0]
+	entries.AthleteEntries = athleteEntries
+	entries.CoupleEntries = partnershipEntries
+
+	return entries, nil
+}
+
+func (service CompetitionRegistrationService) SearchEventEntries(criteria SearchEntryCriteria) (EventEntryList, error) {
+	var err error
+	entries := EventEntryList{}
+
+	athleteEntries, err := service.athleteEventEntryRepo.SearchAthleteEventEntry(SearchAthleteEventEntryCriteria{
+		CompetitionID: criteria.CompetitionID,
+		EventID:       criteria.EventID,
+		AthleteID:     criteria.AthleteID,
+	})
+	if err != nil {
+		return entries, err
+	}
+
+	partnershipEntries, err := service.PartnershipEventEntryRepo.SearchPartnershipEventEntry(SearchPartnershipEventEntryCriteria{
+		CompetitionID: criteria.CompetitionID,
+		EventID:       criteria.EventID,
+		PartnershipID: criteria.PartnershipID,
+	})
+	if err != nil {
+		return entries, err
+	}
+
+	competitions, err := service.EventRepository.SearchEvent(SearchEventCriteria{CompetitionID: criteria.CompetitionID, EventID: criteria.EventID})
+	if err != nil || len(competitions) != 1 {
+		return entries, errors.New(fmt.Sprintf("cannot find competition with ID = %v", criteria.CompetitionID))
+	}
+
+	entries.Event = competitions[0]
+	entries.AthleteEntries = athleteEntries
+	entries.CoupleEntries = partnershipEntries
+
+	return entries, nil
 }
 
 // CreateEntry takes the current user and the registration data and create new Competition Entry for

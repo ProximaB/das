@@ -108,3 +108,9 @@ func (service AthleteCompetitionEntryService) DeleteAthleteCompetitionEntry(entr
 func (service AthleteCompetitionEntryService) SearchAthleteCompetitionEntry(currentUser Account, criteria SearchAthleteCompetitionEntryCriteria) ([]AthleteCompetitionEntry, error) {
 	return make([]AthleteCompetitionEntry, 0), errors.New("not implemented")
 }
+
+type CompetitionEntryList struct {
+	Competition    Competition
+	AthleteEntries []AthleteCompetitionEntry
+	CoupleEntries  []PartnershipCompetitionEntry
+}

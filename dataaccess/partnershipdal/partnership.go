@@ -140,6 +140,7 @@ func (repo PostgresPartnershipRepository) SearchPartnership(criteria businesslog
 		} else {
 			each.Follow = follows[0]
 		}
+
 		partnerships = append(partnerships, each)
 	}
 	rows.Close()

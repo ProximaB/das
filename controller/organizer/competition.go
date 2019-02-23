@@ -70,7 +70,7 @@ func (server OrganizerCompetitionServer) OrganizerSearchCompetitionHandler(w htt
 			util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP500ErrorRetrievingData, err.Error())
 			return
 		} else {
-			data := make([]viewmodel.Competition, 0)
+			data := make([]viewmodel.CompetitionViewModel, 0)
 			for _, each := range comps {
 				data = append(data, viewmodel.CompetitionDataModelToViewModel(each, businesslogic.AccountTypeOrganizer))
 			}

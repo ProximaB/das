@@ -31,7 +31,7 @@ func (server PublicCompetitionServer) SearchCompetitionHandler(w http.ResponseWr
 			util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP500ErrorRetrievingData, err.Error())
 			return
 		} else {
-			data := make([]viewmodel.Competition, 0)
+			data := make([]viewmodel.CompetitionViewModel, 0)
 			for _, each := range competitions {
 				data = append(data, viewmodel.CompetitionDataModelToViewModel(each, businesslogic.AccountTypeNoAuth))
 			}

@@ -6,6 +6,7 @@ import (
 	"fmt"
 	"github.com/DancesportSoftware/das/dataaccess/accountdal"
 	"github.com/DancesportSoftware/das/dataaccess/competition"
+	"github.com/DancesportSoftware/das/dataaccess/partnershipdal"
 	"log"
 
 	"github.com/DancesportSoftware/das/businesslogic"
@@ -287,6 +288,11 @@ func (repo PostgresPartnershipCompetitionEntryRepository) SearchEntry(criteria b
 		return entries, err
 	}
 
+	partnershipRepo := partnershipdal.PostgresPartnershipRepository{
+		Database:   repo.Database,
+		SqlBuilder: repo.SQLBuilder,
+	}
+
 	for rows.Next() {
 		each := businesslogic.PartnershipCompetitionEntry{}
 		scanErr := rows.Scan(
@@ -303,6 +309,9 @@ func (repo PostgresPartnershipCompetitionEntryRepository) SearchEntry(criteria b
 		if scanErr != nil {
 			return entries, scanErr
 		}
+
+		couples, _ := partnershipRepo.SearchPartnership(businesslogic.SearchPartnershipCriteria{PartnershipID: each.Couple.ID})
+		each.Couple = couples[0]
 		entries = append(entries, each)
 	}
 

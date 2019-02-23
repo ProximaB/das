@@ -4,6 +4,7 @@ import (
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/config/database"
 	"github.com/DancesportSoftware/das/config/routes/middleware"
+	"github.com/DancesportSoftware/das/controller"
 	"github.com/DancesportSoftware/das/controller/athlete"
 	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
@@ -20,16 +21,16 @@ var athleteCompetitionRegistrationServer = athlete.CompetitionRegistrationServer
 	IPartnershipEventEntryRepository:       database.PartnershipEventEntryRepository,
 	IEventRepository:                       database.EventRepository,
 	IAuthenticationStrategy:                middleware.AuthenticationStrategy,
-	Service: businesslogic.CompetitionRegistrationService{
-		AccountRepository:               database.AccountRepository,
-		PartnershipRepository:           database.PartnershipRepository,
-		CompetitionRepository:           database.CompetitionRepository,
-		EventRepository:                 database.EventRepository,
-		AthleteCompetitionEntryRepo:     database.AthleteCompetitionEntryRepository,
-		PartnershipCompetitionEntryRepo: database.PartnershipCompetitionEntryRepository,
-		PartnershipEventEntryRepo:       database.PartnershipEventEntryRepository,
-		AthleteCompetitionEntryService:  businesslogic.NewAthleteCompetitionEntryService(database.AccountRepository, database.CompetitionRepository, database.AthleteCompetitionEntryRepository),
-	},
+	Service: businesslogic.NewCompetitionRegistrationService(
+		database.AccountRepository,
+		database.PartnershipRepository,
+		database.CompetitionRepository,
+		database.EventRepository,
+		database.AthleteCompetitionEntryRepository,
+		database.AthleteEventEntryRepository,
+		database.PartnershipCompetitionEntryRepository,
+		database.PartnershipEventEntryRepository,
+	),
 }
 
 var createCompetitionRegistrationController = util.DasController{
@@ -41,10 +42,65 @@ var createCompetitionRegistrationController = util.DasController{
 	AllowedRoles: []int{businesslogic.AccountTypeAthlete},
 }
 
+const apiCompetitionEntryEndpoint = "/api/v1.0/competition/entries"
+const apiEventEntryEndpoint = "/api/v1.0/event/entries"
+const apiAthleteEntryEndpoint = "/api/v1.0/athlete/entries"
+const apiPartnershipEntryEndpoint = "/api/v1.0/partnership/entries"
+
+var entryServer = controller.EntryServer{
+	Service: businesslogic.NewCompetitionRegistrationService(
+		database.AccountRepository,
+		database.PartnershipRepository,
+		database.CompetitionRepository,
+		database.EventRepository,
+		database.AthleteCompetitionEntryRepository,
+		database.AthleteEventEntryRepository,
+		database.PartnershipCompetitionEntryRepository,
+		database.PartnershipEventEntryRepository,
+	),
+}
+var searchCompetitionEntryController = util.DasController{
+	Name:         "SearchEntryController",
+	Description:  "Search Athlete/Partnership Competition/Event entries",
+	Method:       http.MethodGet,
+	Endpoint:     apiCompetitionEntryEndpoint,
+	Handler:      entryServer.SearchCompetitionEntryHandler,
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
+}
+
+var searchEventEntryController = util.DasController{
+	Name:         "SearchEntryController",
+	Description:  "Search Athlete/Partnership Competition/Event entries",
+	Method:       http.MethodGet,
+	Endpoint:     apiEventEntryEndpoint,
+	Handler:      entryServer.SearchEventEntryHandler,
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
+}
+var searchAthleteEntryController = util.DasController{
+	Name:         "SearchEntryController",
+	Description:  "Search Athlete/Partnership Competition/Event entries",
+	Method:       http.MethodGet,
+	Endpoint:     apiAthleteEntryEndpoint,
+	Handler:      entryServer.SearchAthleteEntryHandler,
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
+}
+var searchPartnershipEntryController = util.DasController{
+	Name:         "SearchEntryController",
+	Description:  "Search Athlete/Partnership Competition/Event entries",
+	Method:       http.MethodGet,
+	Endpoint:     apiPartnershipEntryEndpoint,
+	Handler:      entryServer.SearchPartnershipEntryHandler,
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
+}
+
 // CompetitionRegistrationControllerGroup is a collection of handler functions for managing
 // Competition Registration in DAS
 var CompetitionRegistrationControllerGroup = util.DasControllerGroup{
 	Controllers: []util.DasController{
 		createCompetitionRegistrationController,
+		searchCompetitionEntryController,
+		searchEventEntryController,
+		searchAthleteEntryController,
+		searchPartnershipEntryController,
 	},
 }

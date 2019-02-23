@@ -14,6 +14,20 @@ type Partnership struct {
 	Favorite   bool      `json:"favorite"`
 }
 
+type PartnershipTinyViewModel struct {
+	ID     int    `json:"id"`
+	Lead   string `json:"lead"`
+	Follow string `json:"follow"`
+}
+
+func PartnershipToTinyViewModel(partnership businesslogic.Partnership) PartnershipTinyViewModel {
+	return PartnershipTinyViewModel{
+		ID:     partnership.ID,
+		Lead:   partnership.Lead.FullName(),
+		Follow: partnership.Follow.FullName(),
+	}
+}
+
 func PartnershipDataModelToViewModel(currentUser businesslogic.Account, partnership businesslogic.Partnership) Partnership {
 	dto := Partnership{
 		ID:         partnership.ID,

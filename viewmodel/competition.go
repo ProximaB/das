@@ -7,7 +7,7 @@ import (
 	"time"
 )
 
-type Competition struct {
+type CompetitionViewModel struct {
 	ID           int       `json:"id"`
 	Federation   int       `json:"federationId"`
 	Name         string    `json:"name"`
@@ -25,8 +25,8 @@ type Competition struct {
 	ContactEmail string    `json:"email"`
 }
 
-func CompetitionDataModelToViewModel(competition businesslogic.Competition, accountType int) Competition {
-	view := Competition{
+func CompetitionDataModelToViewModel(competition businesslogic.Competition, accountType int) CompetitionViewModel {
+	view := CompetitionViewModel{
 		ID:         competition.ID,
 		Federation: competition.FederationID,
 		Name:       competition.Name,

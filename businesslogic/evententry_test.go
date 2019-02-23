@@ -20,9 +20,9 @@ func TestCreatePartnershipEventEntry_NoError(t *testing.T) {
 	repo.EXPECT().CreatePartnershipEventEntry(gomock.Any()).Return(nil)
 
 	entry := businesslogic.PartnershipEventEntry{
-		PartnershipID: 3,
-		EventEntry: businesslogic.EventEntry{
-			EventID: 12,
+		Couple: businesslogic.Partnership{ID: 3},
+		Event: businesslogic.Event{
+			ID: 12,
 		},
 	}
 
@@ -40,9 +40,9 @@ func TestCreatePartnershipEventEntry_WithError(t *testing.T) {
 	repo.EXPECT().SearchPartnershipEventEntry(gomock.Any()).Return([]businesslogic.PartnershipEventEntry{}, errors.New("a random error"))
 
 	entry := businesslogic.PartnershipEventEntry{
-		PartnershipID: 3,
-		EventEntry: businesslogic.EventEntry{
-			EventID: 12,
+		Couple: businesslogic.Partnership{ID: 3},
+		Event: businesslogic.Event{
+			ID: 12,
 		},
 	}
 
@@ -58,16 +58,15 @@ func TestCreatePartnershipEventEntry_ExistingEntry(t *testing.T) {
 
 	// defines expected behavior
 	repo.EXPECT().SearchPartnershipEventEntry(gomock.Any()).Return([]businesslogic.PartnershipEventEntry{
-		{PartnershipID: 3, EventEntry: businesslogic.EventEntry{
-			EventID: 12,
-		}},
+		{
+			Couple: businesslogic.Partnership{ID: 3},
+			Event:  businesslogic.Event{ID: 12},
+		},
 	}, nil)
 
 	entry := businesslogic.PartnershipEventEntry{
-		PartnershipID: 3,
-		EventEntry: businesslogic.EventEntry{
-			EventID: 12,
-		},
+		Couple: businesslogic.Partnership{ID: 3},
+		Event:  businesslogic.Event{ID: 12},
 	}
 
 	result := businesslogic.CreatePartnershipEventEntry(entry, repo)

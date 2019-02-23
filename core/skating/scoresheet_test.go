@@ -66,8 +66,9 @@ func TestDanceScoreSheet_CalculateDancePlacements(t *testing.T) {
 	sheet.AddJudgeMarks(marks2)
 	sheet.AddJudgeMarks(marks3)
 
-	ranks, err := sheet.CalculateDancePlacements(skating.ALGORITHM_SKATING)
-	assert.Equal(t, []int{[]int{1, 295}, []int{2, 356}, []int{3, 281}}, ranks)
+	ranks, err := sheet.CalculateDancePlacements(skating.ALGORITHM_SKATING, skating.FINAL_ROUND)
+	assert.Equal(t, [][]int{{1, 295}, {2, 356}, {3, 281}}, ranks)
+	assert.Nil(t, err)
 }
 
 /*

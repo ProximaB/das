@@ -35,6 +35,8 @@ func TestCreateCompetition(t *testing.T) {
 		UpdateUserID:  1,
 	}
 
+	err := comp.UpdateStatus(1) // competition must be initialized with a valid status
+
 	competitionRepo.EXPECT().CreateCompetition(&comp).Return(nil)
 	provisionRepo.EXPECT().SearchOrganizerProvision(businesslogic.SearchOrganizerProvisionCriteria{
 		OrganizerID: 1,
@@ -44,7 +46,7 @@ func TestCreateCompetition(t *testing.T) {
 	provisionRepo.EXPECT().UpdateOrganizerProvision(gomock.Any()).Return(nil)
 	provisionHistoryRepo.EXPECT().CreateOrganizerProvisionHistory(gomock.Any()).Return(nil)
 
-	err := businesslogic.CreateCompetition(comp, competitionRepo, provisionRepo, provisionHistoryRepo)
+	err = businesslogic.CreateCompetition(comp, competitionRepo, provisionRepo, provisionHistoryRepo)
 	assert.Nil(t, err, "should create competition if competition data is correct and organizer has sufficient provision")
 }
 

@@ -21,11 +21,9 @@ func TestPostgresPartnershipEventEntryRepository_CreatePartnershipEventEntry(t *
 	defer db.Close()
 
 	entry := businesslogic.PartnershipEventEntry{
-		PartnershipID: 37,
-		EventEntry: businesslogic.EventEntry{
-			EventID:     991,
-			CheckInTime: time.Now(),
-		},
+		Couple:            businesslogic.Partnership{ID: 37},
+		Event:             businesslogic.Event{ID: 991},
+		DateTimeCheckedIn: time.Now(),
 	}
 
 	err := partnershipEventEntryRepo.CreatePartnershipEventEntry(&entry)

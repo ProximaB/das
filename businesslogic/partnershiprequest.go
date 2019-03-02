@@ -14,6 +14,18 @@ const (
 	PartnershipRequestStatusDeclined = 3
 )
 
+type PartnershipRequestStatus struct {
+	ID              int
+	Code            string
+	Description     string
+	DateTimeCreated time.Time
+	DateTimeUpdated time.Time
+}
+
+type IPartnershipRequestStatusRepository interface {
+	GetPartnershipRequestStatus() ([]PartnershipRequestStatus, error)
+}
+
 // PartnershipRequest is a request of partnership that can only be sent between Athletes who are not in the requested Partnership
 type PartnershipRequest struct {
 	PartnershipRequestID int

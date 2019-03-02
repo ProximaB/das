@@ -25,6 +25,7 @@ type CompetitionRegistrationServer struct {
 	Service businesslogic.CompetitionRegistrationService
 }
 
+// prepareRegistrationForm is a helper function that sanitizes the submitted form for validation
 func (server CompetitionRegistrationServer) prepareRegistrationForm(dto viewmodel.AthleteCompetitionRegistrationForm) (businesslogic.EventRegistrationForm, error) {
 	form := businesslogic.EventRegistrationForm{}
 
@@ -107,17 +108,17 @@ func (server CompetitionRegistrationServer) CreateAthleteRegistrationHandler(w h
 // GET /api/athlete/registration
 // This DasController is for athlete use only. Organizer will have to use a different DasController
 // THis is not for public view. For public view, see getCompetitiveBallroomEventEntryHandler()
-func (server CompetitionRegistrationServer) GetAthleteEventRegistrationHandler(w http.ResponseWriter, r *http.Request) {
-	account, _ := server.GetCurrentUser(r)
+func (server CompetitionRegistrationServer) GetAthleteRegistrationHandler(w http.ResponseWriter, r *http.Request) {
+	account, authErr := server.GetCurrentUser(r)
 
-	if account.ID == 0 || !account.HasRole(businesslogic.AccountTypeAthlete) {
-		w.WriteHeader(http.StatusUnauthorized)
+	if account.ID == 0 || !account.HasRole(businesslogic.AccountTypeAthlete) || authErr != nil {
+		util.RespondJsonResult(w, http.StatusUnauthorized, "Unauthorized", nil)
 		return
 	}
 
 	searchDTO := new(struct {
-		CompetitionID int `schema:"competition"`
-		PartnershipID int `schema:"partnership"`
+		CompetitionID int `schema:"competitionId"`
+		PartnershipID int `schema:"partnershipId"`
 	})
 
 	if parseErr := util.ParseRequestData(r, searchDTO); parseErr != nil {

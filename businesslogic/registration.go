@@ -226,10 +226,6 @@ type SearchEntryCriteria struct {
 	PartnershipID int
 }
 
-func (service CompetitionRegistrationService) SearchEntries(criteria SearchEntryCriteria) {
-
-}
-
 // ValidateEventRegistration validates if the registration data is valid. This does not create the registration
 func (service CompetitionRegistrationService) ValidateEventRegistration(currentUser Account, registration EventRegistrationForm) error {
 	if registration.Couple.ID < 1 {
@@ -436,6 +432,13 @@ func (service CompetitionRegistrationService) CreatePartnershipEventEntries(curr
 		}
 	}
 	return nil
+}
+
+func (service CompetitionRegistrationService) SearchPartnershipEventEntries(criteria SearchEntryCriteria) ([]PartnershipEventEntry, error) {
+	return service.PartnershipEventEntryRepo.SearchPartnershipEventEntry(SearchPartnershipEventEntryCriteria{
+		CompetitionID: criteria.CompetitionID,
+		PartnershipID: criteria.PartnershipID,
+	})
 }
 
 // DropPartnershipCompetitionEntry removes the competition entry of the specified partnership from the provided competition

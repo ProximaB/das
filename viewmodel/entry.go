@@ -79,3 +79,33 @@ type EventEntryListViewModel struct {
 	AthleteEntries []AthleteEventEntryViewModel `json:"athleteEntries"`
 	CoupleEntries  []CoupleEventEntryViewModel  `json:"partnershipEntries"`
 }
+
+func EventEntriesToViewModel(entries businesslogic.EventEntryList) EventEntryListViewModel {
+	view := EventEntryListViewModel{}
+	return view
+}
+
+type PartnershipEventEntryViewModel struct {
+	EntryID       int            `json:"entryID"`
+	Lead          string         `json:"lead"`
+	Follow        string         `json:"follow"`
+	CompetitionID int            `json:"competitionId"`
+	Event         EventViewModel `json:"event"`
+}
+
+func CoupleEventEntryToViewModel(entries []businesslogic.PartnershipEventEntry) []PartnershipEventEntryViewModel {
+	output := make([]PartnershipEventEntryViewModel, 0)
+	for _, each := range entries {
+		evtView := EventViewModel{}
+		evtView.PopulateViewModel(each.Event)
+		view := PartnershipEventEntryViewModel{
+			EntryID:       each.ID,
+			Lead:          each.Couple.Lead.FullName(),
+			Follow:        each.Couple.Follow.FullName(),
+			CompetitionID: each.Competition.ID,
+			Event:         evtView,
+		}
+		output = append(output, view)
+	}
+	return output
+}

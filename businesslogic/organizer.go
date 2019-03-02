@@ -181,3 +181,9 @@ func (service OrganizerProvisionService) UpdateOrganizerCompetitionProvision(upd
 	}
 	return nil
 }
+
+type OrganizerStripeSettings struct {
+	ID                  int
+	StripePublicKey     string
+	StripeRestrictedKey string
+}

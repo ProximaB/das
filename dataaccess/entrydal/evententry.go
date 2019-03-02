@@ -7,6 +7,7 @@ import (
 	"github.com/DancesportSoftware/das/dataaccess/accountdal"
 	"github.com/DancesportSoftware/das/dataaccess/competition"
 	"github.com/DancesportSoftware/das/dataaccess/eventdal"
+	"github.com/DancesportSoftware/das/dataaccess/partnershipdal"
 	"log"
 
 	"github.com/DancesportSoftware/das/businesslogic"
@@ -260,11 +261,12 @@ func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(
 		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	clause := repo.SQLBuilder.Select(
-		fmt.Sprintf("%s.%s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s",
+		fmt.Sprintf("%s.%s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s",
 			dasPartnershipEventEntryTable, common.ColumnPrimaryKey,
 			dasPartnershipEventEntryTable, common.COL_EVENT_ID,
 			dasPartnershipEventEntryTable, common.COL_PARTNERSHIP_ID,
 			dasPartnershipEventEntryTable, dasCompetitionEntryColCompetitorTag,
+			dasPartnershipEventEntryTable, dasCompetitionEntryColCheckinInd,
 			dasPartnershipEventEntryTable, common.ColumnCreateUserID,
 			dasPartnershipEventEntryTable, common.ColumnDateTimeCreated,
 			dasPartnershipEventEntryTable, common.ColumnUpdateUserID,
@@ -289,12 +291,16 @@ func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(
 	}
 
 	for rows.Next() {
-		each := businesslogic.PartnershipEventEntry{}
+		each := businesslogic.PartnershipEventEntry{
+			Competition: businesslogic.Competition{},
+			Couple:      businesslogic.Partnership{},
+		}
 		scanErr := rows.Scan(
 			&each.ID,
 			&each.Event.ID,
 			&each.Couple.ID,
 			&each.CompetitorTag,
+			&each.CheckedIn,
 			&each.CreateUserID,
 			&each.DateTimeCreated,
 			&each.UpdateUserID,
@@ -306,7 +312,29 @@ func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(
 		}
 		entries = append(entries, each)
 	}
-	return entries, rows.Close()
+	closeRowErr := rows.Close()
+
+	partnershipRepo := partnershipdal.PostgresPartnershipRepository{
+		repo.Database,
+		repo.SQLBuilder,
+	}
+	eventRepo := eventdal.PostgresEventRepository{
+		repo.Database,
+		repo.SQLBuilder,
+	}
+	competitionRepo := competition.PostgresCompetitionRepository{
+		repo.Database,
+		repo.SQLBuilder,
+	}
+	for i := 0; i < len(entries); i++ {
+		partnerships, _ := partnershipRepo.SearchPartnership(businesslogic.SearchPartnershipCriteria{PartnershipID: entries[i].Couple.ID})
+		entries[i].Couple = partnerships[0]
+		events, _ := eventRepo.SearchEvent(businesslogic.SearchEventCriteria{EventID: entries[i].Event.ID})
+		entries[i].Event = events[0]
+		competitions, _ := competitionRepo.SearchCompetition(businesslogic.SearchCompetitionCriteria{ID: entries[i].Event.CompetitionID})
+		entries[i].Competition = competitions[0]
+	}
+	return entries, closeRowErr
 }
 
 // PostgresAdjudicatorEventEntryRepository implements IAdjudicatorEventEntryRepository with a Postgres database

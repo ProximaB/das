@@ -42,6 +42,15 @@ var createCompetitionRegistrationController = util.DasController{
 	AllowedRoles: []int{businesslogic.AccountTypeAthlete},
 }
 
+var getPartnershipRegistrationController = util.DasController{
+	Name:         "GetPartnershipRegistrationController",
+	Description:  "Athlete get the registration for the partnership and competition selected",
+	Method:       http.MethodGet,
+	Endpoint:     apiAthleteCompetitionRegistrationEndpoint,
+	Handler:      athleteCompetitionRegistrationServer.GetAthleteRegistrationHandler,
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
+}
+
 const apiCompetitionEntryEndpoint = "/api/v1.0/competition/entries"
 const apiEventEntryEndpoint = "/api/v1.0/event/entries"
 const apiAthleteEntryEndpoint = "/api/v1.0/athlete/entries"
@@ -98,6 +107,7 @@ var searchPartnershipEntryController = util.DasController{
 var CompetitionRegistrationControllerGroup = util.DasControllerGroup{
 	Controllers: []util.DasController{
 		createCompetitionRegistrationController,
+		getPartnershipRegistrationController,
 		searchCompetitionEntryController,
 		searchEventEntryController,
 		searchAthleteEntryController,

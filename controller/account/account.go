@@ -26,8 +26,6 @@ type AccountServer struct {
 // and create a local account profile within the database.
 // Identity is completely managed Firebase and DAS only checks the token and store additional user-provided data.
 func (server AccountServer) RegisterAccountHandler(w http.ResponseWriter, r *http.Request) {
-
-	log.Printf("%v", r.PostForm)
 	currentUser, err := server.IAuthenticationStrategy.GetCurrentUser(r)
 	createAccountDTO := new(viewmodel.CreateAccountDTO)
 	if err := util.ParseRequestBodyData(r, createAccountDTO); err != nil {

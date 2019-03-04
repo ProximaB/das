@@ -339,38 +339,46 @@ func (service CompetitionRegistrationService) SearchCompetitionEntries(criteria 
 	return entries, nil
 }
 
-func (service CompetitionRegistrationService) SearchEventEntries(criteria SearchEntryCriteria) (EventEntryList, error) {
-	var err error
-	entries := EventEntryList{}
-
-	athleteEntries, err := service.athleteEventEntryRepo.SearchAthleteEventEntry(SearchAthleteEventEntryCriteria{
+// SearchEventEntries searches the entries of one event. Parameters specified in the criteria will be used to locate
+// all eligible events. For each event, a list of entries will be returned
+func (service CompetitionRegistrationService) SearchEventEntries(criteria SearchEntryCriteria) ([]EventEntryList, error) {
+	events, _ := service.EventRepository.SearchEvent(SearchEventCriteria{
 		CompetitionID: criteria.CompetitionID,
 		EventID:       criteria.EventID,
-		AthleteID:     criteria.AthleteID,
+		FederationID:  criteria.FederationID,
+		DivisionID:    criteria.DivisionID,
+		AgeID:         criteria.AgeID,
+		ProficiencyID: criteria.ProficiencyID,
+		StyleID:       criteria.StyleID,
 	})
-	if err != nil {
-		return entries, err
+	entryLists := make([]EventEntryList, 0)
+	for _, each := range events {
+		entries := EventEntryList{}
+
+		athleteEntries, err := service.athleteEventEntryRepo.SearchAthleteEventEntry(SearchAthleteEventEntryCriteria{
+			CompetitionID: criteria.CompetitionID,
+			EventID:       each.ID,
+			AthleteID:     criteria.AthleteID,
+		})
+		if err != nil {
+			return entryLists, err
+		}
+
+		partnershipEntries, err := service.PartnershipEventEntryRepo.SearchPartnershipEventEntry(SearchPartnershipEventEntryCriteria{
+			CompetitionID: criteria.CompetitionID,
+			EventID:       each.ID,
+			PartnershipID: criteria.PartnershipID,
+		})
+		if err != nil {
+			return entryLists, err
+		}
+
+		entries.Event = each
+		entries.AthleteEntries = athleteEntries
+		entries.CoupleEntries = partnershipEntries
+		entryLists = append(entryLists, entries)
 	}
-
-	partnershipEntries, err := service.PartnershipEventEntryRepo.SearchPartnershipEventEntry(SearchPartnershipEventEntryCriteria{
-		CompetitionID: criteria.CompetitionID,
-		EventID:       criteria.EventID,
-		PartnershipID: criteria.PartnershipID,
-	})
-	if err != nil {
-		return entries, err
-	}
-
-	competitions, err := service.EventRepository.SearchEvent(SearchEventCriteria{CompetitionID: criteria.CompetitionID, EventID: criteria.EventID})
-	if err != nil || len(competitions) != 1 {
-		return entries, errors.New(fmt.Sprintf("cannot find competition with ID = %v", criteria.CompetitionID))
-	}
-
-	entries.Event = competitions[0]
-	entries.AthleteEntries = athleteEntries
-	entries.CoupleEntries = partnershipEntries
-
-	return entries, nil
+	return entryLists, nil
 }
 
 // CreateEntry takes the current user and the registration data and create new Competition Entry for

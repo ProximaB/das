@@ -277,10 +277,7 @@ func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(
 		clause = clause.Where(squirrel.Eq{common.COL_PARTNERSHIP_ID: criteria.PartnershipID})
 	}
 	if criteria.EventID > 0 {
-		clause = clause.Where(squirrel.Eq{common.COL_EVENT_ID: criteria.EventID})
-	}
-	if criteria.CompetitionID > 0 {
-		clause = clause.Join("DAS.EVENT ON DAS.EVENT.ID = DAS.EVENT_ENTRY_PARTNERSHIP.EVENT_ID AND DAS.EVENT.COMPETITION_ID = $1", criteria.CompetitionID)
+		clause = clause.Where(squirrel.Eq{"DAS.EVENT_ENTRY_PARTNERSHIP.EVENT_ID": criteria.EventID})
 	}
 
 	entries := make([]businesslogic.PartnershipEventEntry, 0)

@@ -72,8 +72,12 @@ func (server EntryServer) SearchEventEntryHandler(w http.ResponseWriter, r *http
 		util.RespondJsonResult(w, http.StatusInternalServerError, err.Error(), nil)
 		return
 	}
+	data := make([]viewmodel.EventEntryListViewModel, 0)
+	for _, each := range entries {
+		views := viewmodel.EventEntriesToViewModel(each)
+		data = append(data, views)
+	}
 
-	data := viewmodel.EventEntriesToViewModel(entries)
 	output, _ := json.Marshal(data)
 	w.Write(output)
 }

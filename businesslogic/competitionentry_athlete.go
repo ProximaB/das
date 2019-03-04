@@ -114,3 +114,26 @@ type CompetitionEntryList struct {
 	AthleteEntries []AthleteCompetitionEntry
 	CoupleEntries  []PartnershipCompetitionEntry
 }
+
+// CompetitionLeadTag maps a competition with a lead and that lead's number tag
+type CompetitionLeadTag struct {
+	ID              int
+	CompetitionID   int
+	LeadID          int
+	Tag             int
+	CreateUserID    int
+	DateTimeCreated time.Time
+	UpdateUserID    int
+	DateTimeUpdated time.Time
+}
+
+//
+type SearchCompetitionLeadTagCriteria struct {
+}
+
+type ICompetitionLeadTagRepository interface {
+	CreateCompetitionLeadTag(tag *CompetitionLeadTag) error
+	DeleteCompetitionLeadTag(tag CompetitionLeadTag) error
+	SearchCompetitionLeadTag(criteria SearchCompetitionLeadTagCriteria) ([]CompetitionLeadTag, error)
+	UpdateCompetitionLeadTag(tag CompetitionLeadTag) error
+}

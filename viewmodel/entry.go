@@ -2,6 +2,7 @@ package viewmodel
 
 import "github.com/DancesportSoftware/das/businesslogic"
 
+// SearchEntryForm defines the acceptable parameters that can be used to query competition and event entries
 type SearchEntryForm struct {
 	CompetitionID int `schema:"competitionId"`
 	EventID       int `schema:"eventId"`
@@ -14,6 +15,7 @@ type SearchEntryForm struct {
 	AthleteID     int `schema:"athleteId,omitempty"`
 }
 
+// AthleteCompetitionEntryViewModel
 type AthleteCompetitionEntryViewModel struct {
 	EntryID       int                  `json:"id"`
 	CompetitionID int                  `json:"competitionId"`
@@ -32,6 +34,7 @@ type AthleteEventEntryViewModel struct {
 }
 
 type CoupleEventEntryViewModel struct {
+	EntryID  int                  `json:"entryId"`
 	EventID  int                  `json:"eventId"`
 	CoupleID int                  `json:"partnershipId"`
 	Lead     AthleteTinyViewModel `json:"lead"`
@@ -82,28 +85,24 @@ type EventEntryListViewModel struct {
 
 func EventEntriesToViewModel(entries businesslogic.EventEntryList) EventEntryListViewModel {
 	view := EventEntryListViewModel{}
+	eventView := EventViewModel{}
+	eventView.PopulateViewModel(entries.Event)
+	view.Event = eventView
+	view.CoupleEntries = CoupleEventEntryToViewModel(entries.CoupleEntries)
 	return view
 }
 
-type PartnershipEventEntryViewModel struct {
-	EntryID       int            `json:"entryID"`
-	Lead          string         `json:"lead"`
-	Follow        string         `json:"follow"`
-	CompetitionID int            `json:"competitionId"`
-	Event         EventViewModel `json:"event"`
-}
-
-func CoupleEventEntryToViewModel(entries []businesslogic.PartnershipEventEntry) []PartnershipEventEntryViewModel {
-	output := make([]PartnershipEventEntryViewModel, 0)
+func CoupleEventEntryToViewModel(entries []businesslogic.PartnershipEventEntry) []CoupleEventEntryViewModel {
+	output := make([]CoupleEventEntryViewModel, 0)
 	for _, each := range entries {
 		evtView := EventViewModel{}
 		evtView.PopulateViewModel(each.Event)
-		view := PartnershipEventEntryViewModel{
-			EntryID:       each.ID,
-			Lead:          each.Couple.Lead.FullName(),
-			Follow:        each.Couple.Follow.FullName(),
-			CompetitionID: each.Competition.ID,
-			Event:         evtView,
+		view := CoupleEventEntryViewModel{
+			EntryID:  each.ID,
+			EventID:  each.Event.ID,
+			CoupleID: each.Couple.ID,
+			Lead:     AthleteToTinyViewModel(each.Couple.Lead),
+			Follow:   AthleteToTinyViewModel(each.Couple.Follow),
 		}
 		output = append(output, view)
 	}

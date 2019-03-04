@@ -43,6 +43,7 @@ type IAdjudicatorEventEntryRepository interface {
 	UpdateEventEntry(entry AdjudicatorEventEntry) error
 }
 
+// EventEntryList contains the event, and the athletes and couples who are competing in this event
 type EventEntryList struct {
 	Event          Event
 	AthleteEntries []AthleteEventEntry

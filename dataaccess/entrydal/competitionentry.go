@@ -58,7 +58,7 @@ func (repo PostgresAthleteCompetitionEntryRepository) CreateEntry(entry *busines
 			entry.DateTimeCreated,
 			entry.UpdateUserID,
 			entry.DateTimeUpdated).
-		Suffix("RETURNING ID")
+		Suffix(dalutil.SQLSuffixReturningID)
 
 	clause, args, err := stmt.ToSql()
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
@@ -142,6 +142,7 @@ func (repo PostgresAthleteCompetitionEntryRepository) SearchEntry(criteria busin
 		each.Competition = competitions[0]
 		entries = append(entries, each)
 	}
+	rows.Close()
 	return entries, err
 }
 
@@ -159,7 +160,7 @@ func (repo PostgresAthleteCompetitionEntryRepository) DeleteEntry(entry business
 		} else {
 			_, err = stmt.RunWith(repo.Database).Exec()
 			if err != nil {
-				log.Printf("[error] got error while deleting competition entry with ID")
+				log.Printf("[error] got error while deleting competition entry with ID = %v: %v", entry.ID, err)
 				return err
 			}
 			return tx.Commit()

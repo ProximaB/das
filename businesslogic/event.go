@@ -262,7 +262,7 @@ func (service OrganizerEventService) CreateEvent(event *Event) error {
 	// check if specified events were created
 	similarEvents, _ := service.eventRepo.SearchEvent(SearchEventCriteria{
 		CompetitionID: event.CompetitionID,
-		CategoryID:    event.CategoryID,
+		// CategoryID:    event.CategoryID, // YH: as of 2019-03-03, category of event is not used and should not be a factor
 		FederationID:  event.FederationID,
 		DivisionID:    event.DivisionID,
 		AgeID:         event.AgeID,

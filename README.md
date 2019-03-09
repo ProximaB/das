@@ -6,6 +6,7 @@ Web services for Dancesport Application System (DAS).
 ![](https://img.shields.io/github/license/DancesportSoftware/das.svg?style=flat-square)
 [![GoDoc](https://godoc.org/github.com/DancesportSoftware/das?status.svg)](https://godoc.org/github.com/DancesportSoftware/das)
 [![Build Status](https://travis-ci.org/DancesportSoftware/das.svg?branch=master)](https://travis-ci.org/DancesportSoftware/das)
+[![Maintainability](https://api.codeclimate.com/v1/badges/61cb307b8e2f5045cdb4/maintainability)](https://codeclimate.com/github/DancesportSoftware/das/maintainability)
 [![codecov](https://codecov.io/gh/DancesportSoftware/das/branch/development/graph/badge.svg)](https://codecov.io/gh/DancesportSoftware/das)
 [![codebeat badge](https://codebeat.co/badges/760a6628-dd44-4e33-af98-c195bc85fd20)](https://codebeat.co/projects/github-com-dancesportsoftware-das-master)
 [![Codacy Badge](https://api.codacy.com/project/badge/Grade/76bb2da0aa0e4a2486365500d3f93e8f)](https://www.codacy.com/app/DancesportSoftware/das_2?utm_source=github.com&amp;utm_medium=referral&amp;utm_content=DancesportSoftware/das&amp;utm_campaign=Badge_Grade)

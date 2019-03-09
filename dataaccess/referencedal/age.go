@@ -154,7 +154,9 @@ func (repo PostgresAgeRepository) UpdateAge(age businesslogic.Age) error {
 		return txErr
 	} else {
 		_, err = stmt.RunWith(repo.Database).Exec()
-		tx.Commit()
+		if commitErr := tx.Commit(); commitErr != nil {
+			return commitErr
+		}
 	}
 	return err
 }

@@ -127,10 +127,16 @@ type CompetitionLeadTag struct {
 	DateTimeUpdated time.Time
 }
 
-//
+// SearchCompetitionLeadTagCriteria defines the parameters that can be used to search lead's tags at competitions
 type SearchCompetitionLeadTagCriteria struct {
+	ID            int
+	CompetitionID int
+	LeadID        int
+	Tag           int
+	CreateUserID  int
 }
 
+// ICompetitionLeadTagRepository defines the interface that a lead tag repository should implement.
 type ICompetitionLeadTagRepository interface {
 	CreateCompetitionLeadTag(tag *CompetitionLeadTag) error
 	DeleteCompetitionLeadTag(tag CompetitionLeadTag) error

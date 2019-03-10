@@ -265,7 +265,7 @@ func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(
 			dasPartnershipEventEntryTable, common.ColumnPrimaryKey,
 			dasPartnershipEventEntryTable, common.COL_EVENT_ID,
 			dasPartnershipEventEntryTable, common.COL_PARTNERSHIP_ID,
-			dasPartnershipEventEntryTable, dasCompetitionEntryColCompetitorTag,
+			dasPartnershipEventEntryTable, dasAthleteCompetitionEntryColumnLeadTag,
 			dasPartnershipEventEntryTable, dasCompetitionEntryColCheckinInd,
 			dasPartnershipEventEntryTable, common.ColumnCreateUserID,
 			dasPartnershipEventEntryTable, common.ColumnDateTimeCreated,

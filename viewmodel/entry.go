@@ -20,6 +20,8 @@ type AthleteCompetitionEntryViewModel struct {
 	EntryID       int                  `json:"id"`
 	CompetitionID int                  `json:"competitionId"`
 	Athlete       AthleteTinyViewModel `json:"athlete"`
+	IsLead        bool                 `json:"isLead"`
+	LeadTag       int                  `json:"leadTag"`
 }
 
 type CoupleCompetitionEntryViewModel struct {
@@ -45,6 +47,16 @@ type CompetitionEntryListViewModel struct {
 	Competition    CompetitionViewModel               `json:"competition"`
 	AthleteEntries []AthleteCompetitionEntryViewModel `json:"athleteEntries"`
 	CoupleEntries  []CoupleCompetitionEntryViewModel  `json:"partnershipEntries"`
+}
+
+func AthleteCompetitionEntryToViewModel(entry businesslogic.AthleteCompetitionEntry) AthleteCompetitionEntryViewModel {
+	return AthleteCompetitionEntryViewModel{
+		EntryID:       entry.ID,
+		CompetitionID: entry.Competition.ID,
+		Athlete:       AthleteToTinyViewModel(entry.Athlete),
+		IsLead:        entry.IsLead,
+		LeadTag:       entry.LeadTag,
+	}
 }
 
 func CompetitionEntriesToViewModel(entries businesslogic.CompetitionEntryList) CompetitionEntryListViewModel {

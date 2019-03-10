@@ -1,3 +1,5 @@
+// Repository defines the concrete implementations of IRepositories used in businesslogic. Go does not have
+// auto or managed dependency injection and thus this part has to be done manually.
 package database
 
 import (
@@ -14,10 +16,12 @@ import (
 
 //======= Reference data repositories
 
+// CountryRepository is the singleton repository for CRUD the Country object
 var CountryRepository = referencedal.PostgresCountryRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
+// StateRepository is the singleton repository for CRUD the State object
 var StateRepository = referencedal.PostgresStateRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }

@@ -61,6 +61,8 @@ type Event struct {
 	CategoryID      int // ballroom, cabaret, theater art
 	Description     string
 	StatusID        int
+	Prefix          string // Organizer can use prefix to customize event
+	Suffix          string // Organizer can use suffix to customize event
 	FederationID    int
 	Federation      Federation
 	DivisionID      int

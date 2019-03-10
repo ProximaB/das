@@ -16,13 +16,15 @@ import (
 )
 
 const (
-	dasAthleteCompetitionEntryTable       = "DAS.COMPETITION_ENTRY_ATHLETE"
-	dasPartnershipCompetitionEntryTable   = "DAS.COMPETITION_ENTRY_PARTNERSHIP"
-	dasAdjudicatorCompetitionEntryTable   = "DAS.COMPETITION_ENTRY_ADJUDICATOR"
-	dasScrutineerCompetitionEntryTable    = "DAS.COMPETITION_ENTRY_SCRUTINEER"
-	dasCompetitionEntryColCheckinInd      = "CHECKIN_IND"
-	dasCompetitionEntryColCheckinDateTime = "CHECKIN_DATETIME"
-	dasCompetitionEntryColCompetitorTag   = "LEADTAG"
+	dasAthleteCompetitionEntryTable               = "DAS.COMPETITION_ENTRY_ATHLETE"
+	dasPartnershipCompetitionEntryTable           = "DAS.COMPETITION_ENTRY_PARTNERSHIP"
+	dasAdjudicatorCompetitionEntryTable           = "DAS.COMPETITION_ENTRY_ADJUDICATOR"
+	dasScrutineerCompetitionEntryTable            = "DAS.COMPETITION_ENTRY_SCRUTINEER"
+	dasCompetitionEntryColCheckinInd              = "CHECKIN_IND"
+	dasCompetitionEntryColCheckinDateTime         = "CHECKIN_DATETIME"
+	dasAthleteCompetitionEntryColumnLeadIndicator = "DAS.COMPETITION_ENTRY_ATHLETE.LEAD_INDICATOR"
+	dasAthleteCompetitionEntryColumnLeadTag       = "DAS.COMPETITION_ENTRY_ATHLETE.LEAD_TAG"
+	dasAthleteCompetitionEntryColumnOrganizerNote = "DAS.COMPETITION_ENTRY_ATHLETE.ORGANIZER_NOTE"
 )
 
 // PostgresAthleteCompetitionEntryRepository is a Postgres-based Athlete Competition Entry Repository
@@ -41,6 +43,9 @@ func (repo PostgresAthleteCompetitionEntryRepository) CreateEntry(entry *busines
 		Columns(
 			common.COL_COMPETITION_ID,
 			common.COL_ATHLETE_ID,
+			dasAthleteCompetitionEntryColumnLeadIndicator,
+			dasAthleteCompetitionEntryColumnLeadTag,
+			dasAthleteCompetitionEntryColumnOrganizerNote,
 			dasCompetitionEntryColCheckinInd,
 			dasCompetitionEntryColCheckinDateTime,
 			"PAYMENT_IND",
@@ -51,6 +56,9 @@ func (repo PostgresAthleteCompetitionEntryRepository) CreateEntry(entry *busines
 		Values(
 			entry.Competition.ID,
 			entry.Athlete.ID,
+			entry.IsLead,
+			entry.LeadTag,
+			entry.OrganizerNote,
 			entry.CheckedIn,
 			entry.DateTimeCheckedIn,
 			entry.PaymentReceivedIndicator,
@@ -83,10 +91,13 @@ func (repo PostgresAthleteCompetitionEntryRepository) SearchEntry(criteria busin
 	if repo.Database == nil {
 		return entries, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	clause := repo.SQLBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s",
+	clause := repo.SQLBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s, %s",
 		common.ColumnPrimaryKey,
 		common.COL_COMPETITION_ID,
 		common.COL_ATHLETE_ID,
+		dasAthleteCompetitionEntryColumnLeadIndicator,
+		dasAthleteCompetitionEntryColumnLeadTag,
+		dasAthleteCompetitionEntryColumnOrganizerNote,
 		dasCompetitionEntryColCheckinInd,
 		dasCompetitionEntryColCheckinDateTime,
 		common.ColumnCreateUserID,
@@ -126,6 +137,9 @@ func (repo PostgresAthleteCompetitionEntryRepository) SearchEntry(criteria busin
 			&each.ID,
 			&each.Competition.ID,
 			&each.Athlete.ID,
+			&each.IsLead,
+			&each.LeadTag,
+			&each.OrganizerNote,
 			&each.CheckedIn,
 			&each.DateTimeCheckedIn,
 			&each.CreateUserID,
@@ -174,7 +188,12 @@ func (repo PostgresAthleteCompetitionEntryRepository) UpdateEntry(entry business
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	stmt := repo.SQLBuilder.Update(dasAthleteCompetitionEntryTable)
+	stmt := repo.SQLBuilder.Update("").Table(dasAthleteCompetitionEntryTable).
+		Set(dasCompetitionEntryColCheckinInd, entry.CheckedIn).
+		Set(dasCompetitionEntryColCheckinDateTime, entry.DateTimeCheckedIn).
+		Set(dasAthleteCompetitionEntryColumnLeadIndicator, entry.IsLead).
+		Set(dasAthleteCompetitionEntryColumnLeadTag, entry.LeadTag).
+		Set(dasAthleteCompetitionEntryColumnOrganizerNote, entry.OrganizerNote)
 	var err error
 	if tx, txErr := repo.Database.Begin(); txErr != nil {
 		return txErr
@@ -183,6 +202,23 @@ func (repo PostgresAthleteCompetitionEntryRepository) UpdateEntry(entry business
 		err = tx.Commit()
 	}
 	return err
+}
+
+func (repo PostgresAthleteCompetitionEntryRepository) NextAvailableLeadTag(competition businesslogic.Competition) (int, error) {
+	currentMaxTag := 0
+	stmt := repo.SQLBuilder.Select("MAX(LEAD_TAG)").From(dasAthleteCompetitionEntryTable).Where(squirrel.Eq{common.COL_COMPETITION_ID: competition.ID})
+	scanErr := stmt.RunWith(repo.Database).QueryRow().Scan(&currentMaxTag)
+	if scanErr != nil {
+		return currentMaxTag, scanErr
+	}
+
+	if currentMaxTag == 0 {
+		currentMaxTag = 101
+	} else {
+		currentMaxTag += 1
+	}
+
+	return currentMaxTag, nil
 }
 
 // PostgresPartnershipCompetitionEntryRepository implements a IPartnershipCompetitionEntryRepository with Postgres database

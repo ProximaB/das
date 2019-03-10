@@ -138,6 +138,7 @@ func NewDasRouter() *mux.Router {
 	addDasController(router, organizer.SearchEligibleCompetitionOfficialController)
 	addDasControllerGroup(router, organizer.OrganizerCompetitionOfficialInvitationControllerGroup)
 	addDasControllerGroup(router, organizer.OrganizerCompetitionEventTemplateControllerGroup)
+	addDasControllerGroup(router, organizer.OrganizerLeadTagManagementControllerGroup)
 
 	// competition
 	addDasController(router, competition.GetCompetitionStatusController)

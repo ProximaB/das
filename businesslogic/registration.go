@@ -123,9 +123,15 @@ func (service CompetitionRegistrationService) UpdateRegistration(currentUser Acc
 		return err
 	}
 	if len(currentLeadCompEntries) == 0 {
+		nextTag, tagErr := service.AthleteCompetitionEntryRepo.NextAvailableLeadTag(registration.Competition)
+		if tagErr != nil {
+			return tagErr
+		}
 		entry := AthleteCompetitionEntry{
 			Competition:              registration.Competition,
 			Athlete:                  registration.Couple.Lead,
+			IsLead:                   true,
+			LeadTag:                  nextTag,
 			CheckedIn:                false,
 			PaymentReceivedIndicator: false,
 			CreateUserID:             currentUser.ID,
@@ -147,6 +153,8 @@ func (service CompetitionRegistrationService) UpdateRegistration(currentUser Acc
 		entry := AthleteCompetitionEntry{
 			Competition:              registration.Competition,
 			Athlete:                  registration.Couple.Follow,
+			IsLead:                   false,
+			LeadTag:                  0,
 			CheckedIn:                false,
 			PaymentReceivedIndicator: false,
 			CreateUserID:             currentUser.ID,
@@ -210,7 +218,10 @@ func (service CompetitionRegistrationService) UpdateRegistration(currentUser Acc
 	// check if current user already has registration
 
 	// if has existing registration, get the existing registration
-	//
+
+	// TODO: when new athlete entry is added, check if there is a tag of lead is assigned. If not, assign a default lead
+	// 		tag and insert it to the repo
+	//		If the lead later drops out the competition, the tag spot should be released for other lead to use
 	return nil
 }
 

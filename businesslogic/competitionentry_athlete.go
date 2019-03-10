@@ -12,8 +12,11 @@ type AthleteCompetitionEntry struct {
 	ID                       int
 	Athlete                  Account
 	Competition              Competition
+	IsLead                   bool
+	LeadTag                  int
 	CheckedIn                bool
 	DateTimeCheckedIn        time.Time
+	OrganizerNote            string // Organizer may need to add notes to the entry
 	PaymentReceivedIndicator bool
 	DateTimeOfPayment        time.Time
 	CreateUserID             int
@@ -25,9 +28,11 @@ type AthleteCompetitionEntry struct {
 // SearchAthleteCompetitionEntryCriteria specifies the parameters that can be used
 // to search Athlete Competition Entries in DAS
 type SearchAthleteCompetitionEntryCriteria struct {
-	ID            int `schema:"id"`
-	AthleteID     int `schema:"athlete"`
-	CompetitionID int `schema:"competition"`
+	ID            int  `schema:"id"`
+	AthleteID     int  `schema:"athlete"`
+	CompetitionID int  `schema:"competition"`
+	IsLead        bool `schema:"isLead"`
+	Tag           int  `schema:"leadTag"`
 }
 
 // IAthleteCompetitionEntryRepository specifies the interface that data source should implement
@@ -37,6 +42,7 @@ type IAthleteCompetitionEntryRepository interface {
 	DeleteEntry(entry AthleteCompetitionEntry) error
 	SearchEntry(criteria SearchAthleteCompetitionEntryCriteria) ([]AthleteCompetitionEntry, error)
 	UpdateEntry(entry AthleteCompetitionEntry) error
+	NextAvailableLeadTag(competition Competition) (int, error)
 }
 
 // AthleteCompetitionEntryService encapsulates the data flow of Athlete's Competition Entry, including data validation
@@ -125,6 +131,23 @@ type CompetitionLeadTag struct {
 	DateTimeCreated time.Time
 	UpdateUserID    int
 	DateTimeUpdated time.Time
+}
+
+type CompetitionLeadTagCollection []CompetitionLeadTag
+
+func (tags CompetitionLeadTagCollection) Len() int {
+	return len(tags)
+}
+
+func (tags CompetitionLeadTagCollection) Less(i, j int) bool {
+	if tags[i].Tag > tags[j].Tag {
+		return true
+	}
+	return false
+}
+
+func (tags CompetitionLeadTagCollection) Swap(i, j int) {
+	tags[i], tags[j] = tags[j], tags[i]
 }
 
 // SearchCompetitionLeadTagCriteria defines the parameters that can be used to search lead's tags at competitions

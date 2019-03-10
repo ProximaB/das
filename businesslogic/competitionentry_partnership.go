@@ -2,6 +2,7 @@ package businesslogic
 
 import (
 	"errors"
+	"fmt"
 	"time"
 )
 
@@ -49,6 +50,15 @@ func (entry *PartnershipCompetitionEntry) createPartnershipCompetitionEntry(comp
 }
 
 type PartnershipCompetitionEntryService struct {
+	athleteCompEntryRepo IAthleteCompetitionEntryRepository
+	partnershipEntryRepo IPartnershipCompetitionEntryRepository
+}
+
+func NewPartnershipCompetitionEntryService(athleteEntryRepo IAthleteCompetitionEntryRepository, partnershipEntryRepo IPartnershipCompetitionEntryRepository) PartnershipCompetitionEntryService {
+	return PartnershipCompetitionEntryService{
+		athleteCompEntryRepo: athleteEntryRepo,
+		partnershipEntryRepo: partnershipEntryRepo,
+	}
 }
 
 func (service PartnershipCompetitionEntryService) CreatePartnershipCompetitionEntry() error {
@@ -61,4 +71,32 @@ func (service PartnershipCompetitionEntryService) DeletePartnershipCompetitionEn
 
 func (service PartnershipCompetitionEntryService) SearchPartnershipCompetitionEntry() error {
 	return errors.New("not implemented")
+}
+
+// GetAllLeadEntries returns all the unique leads at the specified competition, if any
+func (service PartnershipCompetitionEntryService) GetAllLeadEntries(competition Competition) ([]AthleteCompetitionEntry, error) {
+	partnerships, err := service.partnershipEntryRepo.SearchEntry(SearchPartnershipCompetitionEntryCriteria{CompetitionID: competition.ID})
+	uniqueLeads := make(map[int]Account)
+
+	for _, each := range partnerships {
+		eachLead := each.Couple.Lead
+		if _, hasLead := uniqueLeads[eachLead.ID]; !hasLead {
+			uniqueLeads[eachLead.ID] = eachLead
+		}
+	}
+
+	// extract the unique leads from the map
+	leadEntries := make([]AthleteCompetitionEntry, 0)
+	for _, each := range uniqueLeads {
+		entryResults, searchErr := service.athleteCompEntryRepo.SearchEntry(SearchAthleteCompetitionEntryCriteria{CompetitionID: competition.ID, AthleteID: each.ID})
+		if searchErr != nil {
+			return leadEntries, searchErr
+		}
+		if len(entryResults) != 1 {
+			return leadEntries, errors.New(fmt.Sprintf("cannot find %v AthleteCompetitionEntry at Competitition %v ", each.FullName(), competition.Name))
+		}
+		leadEntries = append(leadEntries, entryResults[0])
+	}
+
+	return leadEntries, err
 }

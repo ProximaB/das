@@ -111,7 +111,7 @@ func (repo PostgresPartnershipRepository) SearchPartnership(criteria businesslog
 
 	for rows.Next() {
 		each := businesslogic.Partnership{}
-		rows.Scan(
+		scanErr := rows.Scan(
 			&each.ID,
 			&each.Lead.ID,
 			&each.Follow.ID,
@@ -123,6 +123,9 @@ func (repo PostgresPartnershipRepository) SearchPartnership(criteria businesslog
 			&each.DateTimeCreated,
 			&each.DateTimeUpdated,
 		)
+		if scanErr != nil {
+			return partnerships, scanErr
+		}
 		leads, searchLeadErr := accountRepo.SearchAccount(businesslogic.SearchAccountCriteria{ID: each.Lead.ID})
 		follows, searchFollowErr := accountRepo.SearchAccount(businesslogic.SearchAccountCriteria{ID: each.Follow.ID})
 
@@ -143,8 +146,8 @@ func (repo PostgresPartnershipRepository) SearchPartnership(criteria businesslog
 
 		partnerships = append(partnerships, each)
 	}
-	rows.Close()
-	return partnerships, err
+	closeErr := rows.Close()
+	return partnerships, closeErr
 }
 
 func (repo PostgresPartnershipRepository) DeletePartnership(partnership businesslogic.Partnership) error {
@@ -158,5 +161,19 @@ func (repo PostgresPartnershipRepository) UpdatePartnership(partnership business
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	return errors.New("not implemented")
+	stmt := repo.SqlBuilder.Update("").Table(DasPartnershipTable).
+		Set(columnFavoriteByLead, partnership.FavoriteByLead).
+		Set(columnFavoriteByFollow, partnership.FavoriteByFollow).
+		Where(squirrel.Eq{common.ColumnPrimaryKey: partnership.ID})
+	if tx, txErr := repo.Database.Begin(); txErr != nil {
+		return txErr
+	} else {
+		if _, exeErr := stmt.RunWith(repo.Database).Exec(); exeErr != nil {
+			return exeErr
+		}
+		if commitErr := tx.Commit(); commitErr != nil {
+			return commitErr
+		}
+	}
+	return nil
 }

@@ -2,6 +2,7 @@ package partnership
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/DancesportSoftware/das/auth"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
@@ -42,14 +43,14 @@ func (server PartnershipServer) SearchPartnershipHandler(w http.ResponseWriter, 
 }
 
 type updatePartnership struct {
-	PartnershipID int  `json:"partnership"`
+	PartnershipID int  `json:"partnershipId"`
 	Favorite      bool `json:"favorite"`
 }
 
-// PUT /api/partnership
+// PUT /api/v1.0/athlete/partnership
 func (server PartnershipServer) UpdatePartnershipHandler(w http.ResponseWriter, r *http.Request) {
-	account, _ := server.GetCurrentUser(r)
-	if account.ID == 0 {
+	currentUser, _ := server.GetCurrentUser(r)
+	if currentUser.ID == 0 {
 		util.RespondJsonResult(w, http.StatusUnauthorized, "not authorized", nil)
 		return
 	}
@@ -57,6 +58,32 @@ func (server PartnershipServer) UpdatePartnershipHandler(w http.ResponseWriter, 
 	updateDTO := new(updatePartnership)
 	if parseErr := util.ParseRequestBodyData(r, updateDTO); parseErr != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
+		return
+	}
+
+	partnerships, searchErr := server.IPartnershipRepository.SearchPartnership(businesslogic.SearchPartnershipCriteria{PartnershipID: updateDTO.PartnershipID})
+	if searchErr != nil || len(partnerships) != 1 {
+		util.RespondJsonResult(w, http.StatusNotFound, fmt.Sprintf("cannot find partnership with ID = %v", updateDTO.PartnershipID), nil)
+		return
+	}
+
+	// TODO [technical debt]: this should be in businesslogic
+	//		check if current user owns the partnership, if not, then it's unauthorized. if yes, update the corresponding favorite
+	if partnerships[0].HasAthlete(currentUser.ID) {
+		if partnerships[0].Lead.ID == currentUser.ID {
+			partnerships[0].FavoriteByLead = updateDTO.Favorite
+		} else {
+			partnerships[0].FavoriteByFollow = updateDTO.Favorite
+		}
+		if updateErr := server.IPartnershipRepository.UpdatePartnership(partnerships[0]); updateErr != nil {
+			util.RespondJsonResult(w, http.StatusInternalServerError, updateErr.Error(), nil)
+			return
+		} else {
+			util.RespondJsonResult(w, http.StatusOK, "partnership is updated successfully", nil)
+			return
+		}
+	} else {
+		util.RespondJsonResult(w, http.StatusUnauthorized, "not authorized to make changes to this partnership", nil)
 		return
 	}
 }

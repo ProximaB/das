@@ -8,6 +8,7 @@ import (
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
+	"time"
 )
 
 // PartnershipServer serves requests that are related with partnership
@@ -75,6 +76,7 @@ func (server PartnershipServer) UpdatePartnershipHandler(w http.ResponseWriter, 
 		} else {
 			partnerships[0].FavoriteByFollow = updateDTO.Favorite
 		}
+		partnerships[0].DateTimeUpdated = time.Now()
 		if updateErr := server.IPartnershipRepository.UpdatePartnership(partnerships[0]); updateErr != nil {
 			util.RespondJsonResult(w, http.StatusInternalServerError, updateErr.Error(), nil)
 			return

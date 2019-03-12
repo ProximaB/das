@@ -9,6 +9,7 @@ import (
 	"github.com/DancesportSoftware/das/dataaccess/eventdal"
 	"github.com/DancesportSoftware/das/dataaccess/partnershipdal"
 	"log"
+	"time"
 
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/dataaccess/common"
@@ -17,10 +18,11 @@ import (
 )
 
 const (
-	dasAthleteEventEntryTable     = "DAS.EVENT_ENTRY_ATHLETE"
-	dasPartnershipEventEntryTable = "DAS.EVENT_ENTRY_PARTNERSHIP"
-	columnCheckinIndicator        = "CHECKIN_IND"
-	columnCheckinDateTime         = "CHECKIN_DATETIME"
+	dasAthleteEventEntryTable                    = "DAS.EVENT_ENTRY_ATHLETE"
+	dasPartnershipEventEntryTable                = "DAS.EVENT_ENTRY_PARTNERSHIP"
+	columnCheckinIndicator                       = "CHECKIN_IND"
+	columnCheckinDateTime                        = "CHECKIN_DATETIME"
+	dasPartnershipEventEntryTableColumnPlacement = "DAS.EVENT_ENTRY_PARTNERSHIP.PLACEMENT"
 )
 
 type PostgresAthleteEventEntryRepository struct {
@@ -261,12 +263,13 @@ func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(
 		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	clause := repo.SQLBuilder.Select(
-		fmt.Sprintf("%s.%s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s",
+		fmt.Sprintf("%s.%s, %s.%s, %s.%s, %s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s",
 			dasPartnershipEventEntryTable, common.ColumnPrimaryKey,
 			dasPartnershipEventEntryTable, common.COL_EVENT_ID,
 			dasPartnershipEventEntryTable, common.COL_PARTNERSHIP_ID,
-			dasPartnershipEventEntryTable, dasAthleteCompetitionEntryColumnLeadTag,
-			dasPartnershipEventEntryTable, dasCompetitionEntryColCheckinInd,
+			dasPartnershipEventEntryTableColumnPlacement,
+			dasPartnershipEventEntryTable, columnCheckinIndicator,
+			dasPartnershipEventEntryTable, columnCheckinDateTime,
 			dasPartnershipEventEntryTable, common.ColumnCreateUserID,
 			dasPartnershipEventEntryTable, common.ColumnDateTimeCreated,
 			dasPartnershipEventEntryTable, common.ColumnUpdateUserID,
@@ -289,15 +292,17 @@ func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(
 
 	for rows.Next() {
 		each := businesslogic.PartnershipEventEntry{
-			Competition: businesslogic.Competition{},
-			Couple:      businesslogic.Partnership{},
+			Competition:       businesslogic.Competition{},
+			Couple:            businesslogic.Partnership{},
+			DateTimeCheckedIn: new(time.Time),
 		}
 		scanErr := rows.Scan(
 			&each.ID,
 			&each.Event.ID,
 			&each.Couple.ID,
-			&each.CompetitorTag,
+			&each.Placement,
 			&each.CheckedIn,
+			&each.DateTimeCheckedIn,
 			&each.CreateUserID,
 			&each.DateTimeCreated,
 			&each.UpdateUserID,

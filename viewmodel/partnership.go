@@ -60,6 +60,7 @@ type PartnershipRequestResponse struct {
 	Response  int `json:"response"`
 }
 
+// CreatePartnershipRequest defines the JSON payload structure for creating a partnership request.
 type CreatePartnershipRequest struct {
 	SenderID       int    `json:"sender"`
 	RecipientEmail string `json:"recipient"`
@@ -77,11 +78,13 @@ type PartnershipRequest struct {
 	DateTimeCreated time.Time `json:"sent"`
 }
 
+// PartnershipRequestStatus defines the JSON structure of reference data PartnershipRequestStatus.
 type PartnershipRequestStatus struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 
+// PartnershipRole defines the JSON structure reference data PartnershipRole
 type PartnershipRole struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`

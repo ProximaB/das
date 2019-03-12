@@ -14,7 +14,7 @@ type PartnershipEventEntry struct {
 	Event             Event
 	CompetitorTag     int
 	CheckedIn         bool
-	DateTimeCheckedIn time.Time
+	DateTimeCheckedIn *time.Time
 	Placement         int
 	CreateUserID      int
 	DateTimeCreated   time.Time

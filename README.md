@@ -2,7 +2,6 @@
 > Web services for Dancesport Application System (DAS).
 
 [Join the DAS Slack Community](https://join.slack.com/t/ballroomdev/shared_invite/enQtMzg4OTU4OTAyNjQ3LTZmYWU2ZTA1Njc2NmI2YWIyZGRlMTQ1MGYyODM0ZWVmZjAzN2ZkNTcyYzNiM2NiMjE2MjI4YjQyNjcyNTU1MGE)
-[![Gitter chat](https://img.shields.io/gitter/room/DancesportSoftware/das.svg?style=flat-square)](https://gitter.im/gitterHQ/gitter)
 
 
 ![](https://img.shields.io/github/license/DancesportSoftware/das.svg?style=flat-square)

@@ -43,9 +43,9 @@ func (repo PostgresAthleteCompetitionEntryRepository) CreateEntry(entry *busines
 		Columns(
 			common.COL_COMPETITION_ID,
 			common.COL_ATHLETE_ID,
-			dasAthleteCompetitionEntryColumnLeadIndicator,
-			dasAthleteCompetitionEntryColumnLeadTag,
-			dasAthleteCompetitionEntryColumnOrganizerNote,
+			"LEAD_INDICATOR",
+			"LEAD_TAG",
+			"ORGANIZER_NOTE",
 			dasCompetitionEntryColCheckinInd,
 			dasCompetitionEntryColCheckinDateTime,
 			"PAYMENT_IND",
@@ -117,6 +117,7 @@ func (repo PostgresAthleteCompetitionEntryRepository) SearchEntry(criteria busin
 
 	rows, err := clause.RunWith(repo.Database).Query()
 	if err != nil {
+		log.Printf("[error] generating search query for Athlete Competition Entry: %v", err)
 		return entries, err
 	}
 

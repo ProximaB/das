@@ -7,6 +7,7 @@
 ![](https://img.shields.io/github/license/DancesportSoftware/das.svg?style=flat-square)
 [![GoDoc](https://godoc.org/github.com/DancesportSoftware/das?status.svg)](https://godoc.org/github.com/DancesportSoftware/das)
 [![Build Status](https://travis-ci.org/DancesportSoftware/das.svg?branch=master)](https://travis-ci.org/DancesportSoftware/das)
+[![Quality Gate Status](https://sonarcloud.io/api/project_badges/measure?project=dancesport-application-system&metric=alert_status)](https://sonarcloud.io/dashboard?id=dancesport-application-system)
 [![Maintainability](https://api.codeclimate.com/v1/badges/61cb307b8e2f5045cdb4/maintainability)](https://codeclimate.com/github/DancesportSoftware/das/maintainability)
 [![codecov](https://codecov.io/gh/DancesportSoftware/das/branch/development/graph/badge.svg)](https://codecov.io/gh/DancesportSoftware/das)
 [![codebeat badge](https://codebeat.co/badges/760a6628-dd44-4e33-af98-c195bc85fd20)](https://codebeat.co/projects/github-com-dancesportsoftware-das-master)

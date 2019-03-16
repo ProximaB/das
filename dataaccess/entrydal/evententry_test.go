@@ -20,10 +20,11 @@ func TestPostgresPartnershipEventEntryRepository_CreatePartnershipEventEntry(t *
 	db, mock, _ := sqlmock.New()
 	defer db.Close()
 
+	checkin := time.Now()
 	entry := businesslogic.PartnershipEventEntry{
 		Couple:            businesslogic.Partnership{ID: 37},
 		Event:             businesslogic.Event{ID: 991},
-		DateTimeCheckedIn: time.Now(),
+		DateTimeCheckedIn: &checkin,
 	}
 
 	err := partnershipEventEntryRepo.CreatePartnershipEventEntry(&entry)

@@ -1,6 +1,7 @@
 package businesslogic_test
 
 import (
+	"errors"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/mock/businesslogic"
 	"github.com/golang/mock/gomock"

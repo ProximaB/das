@@ -10,6 +10,42 @@ import (
 	reflect "reflect"
 )
 
+// MockIEventStatusRepository is a mock of IEventStatusRepository interface
+type MockIEventStatusRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockIEventStatusRepositoryMockRecorder
+}
+
+// MockIEventStatusRepositoryMockRecorder is the mock recorder for MockIEventStatusRepository
+type MockIEventStatusRepositoryMockRecorder struct {
+	mock *MockIEventStatusRepository
+}
+
+// NewMockIEventStatusRepository creates a new mock instance
+func NewMockIEventStatusRepository(ctrl *gomock.Controller) *MockIEventStatusRepository {
+	mock := &MockIEventStatusRepository{ctrl: ctrl}
+	mock.recorder = &MockIEventStatusRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockIEventStatusRepository) EXPECT() *MockIEventStatusRepositoryMockRecorder {
+	return m.recorder
+}
+
+// GetEventStatus mocks base method
+func (m *MockIEventStatusRepository) GetEventStatus() ([]businesslogic.EventStatus, error) {
+	ret := m.ctrl.Call(m, "GetEventStatus")
+	ret0, _ := ret[0].([]businesslogic.EventStatus)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetEventStatus indicates an expected call of GetEventStatus
+func (mr *MockIEventStatusRepositoryMockRecorder) GetEventStatus() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEventStatus", reflect.TypeOf((*MockIEventStatusRepository)(nil).GetEventStatus))
+}
+
 // MockIEventRepository is a mock of IEventRepository interface
 type MockIEventRepository struct {
 	ctrl     *gomock.Controller

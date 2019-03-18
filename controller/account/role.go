@@ -71,10 +71,9 @@ func (server RoleApplicationServer) CreateRoleApplicationHandler(w http.Response
 	if createErr != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, createErr.Error(), nil)
 		return
-	} else {
-		util.RespondJsonResult(w, http.StatusOK, "role application has been submitted successfully", nil)
-		return
 	}
+	util.RespondJsonResult(w, http.StatusOK, "role application has been submitted successfully", nil)
+	return
 }
 
 // SearchRoleApplicationHandler handles the request:

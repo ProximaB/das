@@ -261,11 +261,11 @@ func (repo PostgresAccountRepository) UpdateAccount(account businesslogic.Accoun
 	if account.ID > 0 {
 	}
 	var err error
-	if tx, txErr := repo.Database.Begin(); txErr != nil {
+	tx, txErr := repo.Database.Begin()
+	if txErr != nil {
 		return txErr
-	} else {
-		_, err = stmt.RunWith(repo.Database).Exec()
-		err = tx.Commit()
 	}
+	_, err = stmt.RunWith(repo.Database).Exec()
+	err = tx.Commit()
 	return err
 }

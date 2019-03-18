@@ -23,21 +23,22 @@ func (server PublicCompetitionServer) SearchCompetitionHandler(w http.ResponseWr
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
 		return
 	} else {
-		if competitions, err := server.SearchCompetition(businesslogic.SearchCompetitionCriteria{
+		competitions, err := server.SearchCompetition(businesslogic.SearchCompetitionCriteria{
 			ID:       searchDTO.ID,
 			Name:     searchDTO.Name,
 			StatusID: searchDTO.StatusID,
-		}); err != nil {
+		})
+		if err != nil {
 			util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP500ErrorRetrievingData, err.Error())
 			return
-		} else {
-			data := make([]viewmodel.CompetitionViewModel, 0)
-			for _, each := range competitions {
-				data = append(data, viewmodel.CompetitionDataModelToViewModel(each, businesslogic.AccountTypeNoAuth))
-			}
-			output, _ := json.Marshal(data)
-			w.Write(output)
 		}
+		data := make([]viewmodel.CompetitionViewModel, 0)
+		for _, each := range competitions {
+			data = append(data, viewmodel.CompetitionDataModelToViewModel(each, businesslogic.AccountTypeNoAuth))
+		}
+		output, _ := json.Marshal(data)
+		w.Write(output)
+
 	}
 }
 

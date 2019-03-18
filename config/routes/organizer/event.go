@@ -11,15 +11,6 @@ import (
 
 const apiOrganizerEventEndpointV1_0 = "/api/v1.0/organizer/event"
 
-var factory = businesslogic.CompetitionEventFactory{
-	database.FederationRepository,
-	database.DivisionRepository,
-	database.AgeRepository,
-	database.ProficiencyRepository,
-	database.StyleRepository,
-	database.DanceRepository,
-}
-
 var organizerEventService = businesslogic.NewOrganizerEventService(
 	database.AccountRepository,
 	database.AccountRoleRepository,
@@ -27,7 +18,12 @@ var organizerEventService = businesslogic.NewOrganizerEventService(
 	database.EventRepository,
 	database.EventDanceRepository,
 	database.CompetitionEventTemplateRepository,
-	factory)
+	database.FederationRepository,
+	database.DivisionRepository,
+	database.AgeRepository,
+	database.ProficiencyRepository,
+	database.StyleRepository,
+	database.DanceRepository)
 var organizerEventServer = organizer.OrganizerEventServer{
 	middleware.AuthenticationStrategy,
 	organizerEventService,

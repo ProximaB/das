@@ -6,6 +6,7 @@ import (
 	"time"
 )
 
+// CompetitionEventFactory can generate event based on specification of event attributes
 type CompetitionEventFactory struct {
 	FederationRepo  IFederationRepository
 	DivisionRepo    IDivisionRepository

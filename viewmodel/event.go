@@ -77,6 +77,7 @@ func (dto CreateEventForm) ToDomainModel(user businesslogic.Account) *businesslo
 	return event
 }
 
+// EventDanceViewModel defines the JSON structure of EventDance
 type EventDanceViewModel struct {
 	ID      int `json:"eventDanceId"`
 	EventId int `json:"eventId"`

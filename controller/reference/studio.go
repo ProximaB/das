@@ -21,18 +21,18 @@ func (server StudioServer) SearchStudioHandler(w http.ResponseWriter, r *http.Re
 		return
 	}
 
-	if studios, err := server.SearchStudio(*criteria); err != nil {
+	studios, err := server.SearchStudio(*criteria)
+	if err != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP500ErrorRetrievingData, err.Error())
 		return
-	} else {
-		data := make([]viewmodel.Studio, 0)
-		for _, each := range studios {
-			data = append(data, viewmodel.StudioDataModelToViewModel(each))
-		}
-
-		output, _ := json.Marshal(data)
-		w.Write(output)
 	}
+	data := make([]viewmodel.Studio, 0)
+	for _, each := range studios {
+		data = append(data, viewmodel.StudioDataModelToViewModel(each))
+	}
+
+	output, _ := json.Marshal(data)
+	w.Write(output)
 }
 
 // POST /api/reference/studio

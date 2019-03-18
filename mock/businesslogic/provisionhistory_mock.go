@@ -46,30 +46,6 @@ func (mr *MockIOrganizerProvisionHistoryRepositoryMockRecorder) SearchOrganizerP
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchOrganizerProvisionHistory", reflect.TypeOf((*MockIOrganizerProvisionHistoryRepository)(nil).SearchOrganizerProvisionHistory), criteria)
 }
 
-// UpdateOrganizerProvisionHistory mocks base method
-func (m *MockIOrganizerProvisionHistoryRepository) UpdateOrganizerProvisionHistory(history businesslogic.OrganizerProvisionHistoryEntry) error {
-	ret := m.ctrl.Call(m, "UpdateOrganizerProvisionHistory", history)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// UpdateOrganizerProvisionHistory indicates an expected call of UpdateOrganizerProvisionHistory
-func (mr *MockIOrganizerProvisionHistoryRepositoryMockRecorder) UpdateOrganizerProvisionHistory(history interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateOrganizerProvisionHistory", reflect.TypeOf((*MockIOrganizerProvisionHistoryRepository)(nil).UpdateOrganizerProvisionHistory), history)
-}
-
-// DeleteOrganizerProvisionHistory mocks base method
-func (m *MockIOrganizerProvisionHistoryRepository) DeleteOrganizerProvisionHistory(history businesslogic.OrganizerProvisionHistoryEntry) error {
-	ret := m.ctrl.Call(m, "DeleteOrganizerProvisionHistory", history)
-	ret0, _ := ret[0].(error)
-	return ret0
-}
-
-// DeleteOrganizerProvisionHistory indicates an expected call of DeleteOrganizerProvisionHistory
-func (mr *MockIOrganizerProvisionHistoryRepositoryMockRecorder) DeleteOrganizerProvisionHistory(history interface{}) *gomock.Call {
-	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteOrganizerProvisionHistory", reflect.TypeOf((*MockIOrganizerProvisionHistoryRepository)(nil).DeleteOrganizerProvisionHistory), history)
-}
-
 // CreateOrganizerProvisionHistory mocks base method
 func (m *MockIOrganizerProvisionHistoryRepository) CreateOrganizerProvisionHistory(history *businesslogic.OrganizerProvisionHistoryEntry) error {
 	ret := m.ctrl.Call(m, "CreateOrganizerProvisionHistory", history)

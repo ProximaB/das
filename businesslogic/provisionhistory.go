@@ -32,7 +32,5 @@ func newProvisionHistoryEntry(provision OrganizerProvision, competition Competit
 
 type IOrganizerProvisionHistoryRepository interface {
 	SearchOrganizerProvisionHistory(criteria SearchOrganizerProvisionHistoryCriteria) ([]OrganizerProvisionHistoryEntry, error)
-	UpdateOrganizerProvisionHistory(history OrganizerProvisionHistoryEntry) error
-	DeleteOrganizerProvisionHistory(history OrganizerProvisionHistoryEntry) error
 	CreateOrganizerProvisionHistory(history *OrganizerProvisionHistoryEntry) error
 }

@@ -76,11 +76,11 @@ func (strategy FirebaseAuthenticationStrategy) GetUserByUID(uid string) (busines
 }
 
 func (strategy FirebaseAuthenticationStrategy) GetUserByEmail(email string) (businesslogic.Account, error) {
-	if user, err := strategy.client.GetUserByEmail(strategy.context, email); err != nil {
+	user, err := strategy.client.GetUserByEmail(strategy.context, email)
+	if err != nil {
 		return businesslogic.Account{}, err
-	} else {
-		return strategy.convertFirebaseUserToDasUser(*user), nil
 	}
+	return strategy.convertFirebaseUserToDasUser(*user), nil
 }
 
 // GetCurrentUser attempts to get the user of from the HTTP request. The HTTP request should have an authorization token

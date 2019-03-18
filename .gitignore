@@ -56,3 +56,4 @@ secret/
 
 # SonarCloud
 .scannerwork/
+*.out

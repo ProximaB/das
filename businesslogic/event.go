@@ -8,13 +8,19 @@ import (
 )
 
 const (
-	EVENT_STATUS_DRAFT    = 1
-	EVENT_STATUS_OPEN     = 2
-	EVENT_STATUS_RUNNING  = 3
-	EVENT_STATUS_CLOSED   = 4
+	// EVENT_STATUS_DRAFT is the stage where it is newly created not open to registration or competition
+	EVENT_STATUS_DRAFT = 1
+	// EVENT_STATUS_OPEN is the stage where it is open to registration, but competition has not started
+	EVENT_STATUS_OPEN = 2
+	// EVENT_STATUS_RUNNING is the stage where the event is currently danced. Adding entries is prohibited but dropping entries is okay.
+	EVENT_STATUS_RUNNING = 3
+	// EVENT_STATUS_CLOSED is the stage where the final round of the event is danced (Regardless of the posting of placement)
+	EVENT_STATUS_CLOSED = 4
+	// EVENT_STATUS_CANCELED is the stage where the event is canceled due to non-technical reasons while the competition is running
 	EVENT_STATUS_CANCELED = 5
 )
 
+// EventStatus defines status of an event
 type EventStatus struct {
 	ID              int
 	Name            string
@@ -24,7 +30,9 @@ type EventStatus struct {
 	DateTimeUpdated time.Time
 }
 
+// IEventStatusRepository defines the method that a EventStatus Repository should implement.
 type IEventStatusRepository interface {
+	// GetEventStatus should return *all* the stored event status in the repository
 	GetEventStatus() ([]EventStatus, error)
 }
 
@@ -193,6 +201,12 @@ type OrganizerEventService struct {
 	eventRepo         IEventRepository
 	eventDanceRepo    IEventDanceRepository
 	eventTemplateRepo ICompetitionEventTemplateRepository
+	federationRepo    IFederationRepository
+	divisionRepo      IDivisionRepository
+	ageRepo           IAgeRepository
+	proficiencyRepo   IProficiencyRepository
+	styleRepo         IStyleRepository
+	danceRepo         IDanceRepository
 	factory           CompetitionEventFactory
 }
 
@@ -202,8 +216,20 @@ func NewOrganizerEventService(accountRepo IAccountRepository,
 	eventRepo IEventRepository,
 	eventDanceRepo IEventDanceRepository,
 	eventTemplateRepo ICompetitionEventTemplateRepository,
-	factory CompetitionEventFactory) OrganizerEventService {
-
+	federationRepo IFederationRepository,
+	divisionRepo IDivisionRepository,
+	ageRepo IAgeRepository,
+	proficiencyRepo IProficiencyRepository,
+	styleRepo IStyleRepository,
+	danceRepo IDanceRepository) OrganizerEventService {
+	eventFactory := CompetitionEventFactory{
+		FederationRepo:  federationRepo,
+		DivisionRepo:    divisionRepo,
+		AgeRepo:         ageRepo,
+		ProficiencyRepo: proficiencyRepo,
+		StyleRepo:       styleRepo,
+		DanceRepo:       danceRepo,
+	}
 	return OrganizerEventService{
 		accountRepo,
 		roleRepo,
@@ -211,7 +237,13 @@ func NewOrganizerEventService(accountRepo IAccountRepository,
 		eventRepo,
 		eventDanceRepo,
 		eventTemplateRepo,
-		factory}
+		federationRepo,
+		divisionRepo,
+		ageRepo,
+		proficiencyRepo,
+		styleRepo,
+		danceRepo,
+		eventFactory}
 }
 
 func (service OrganizerEventService) generateTemplateEvents(templateID int) ([]Event, error) {
@@ -258,27 +290,14 @@ func (service OrganizerEventService) CreateEvent(event *Event) error {
 	if competition.GetStatus() != CompetitionStatusPreRegistration {
 		return errors.New("events can only be added when competition is in pre-registration")
 	} else if competition.CreateUserID != event.CreateUserID {
+		// Only the creator/owner of the competition can create events for the competition.
 		return errors.New("not authorized to create event for this competition")
 	}
 
-	// check if specified events were created
-	similarEvents, _ := service.eventRepo.SearchEvent(SearchEventCriteria{
-		CompetitionID: event.CompetitionID,
-		// CategoryID:    event.CategoryID, // YH: as of 2019-03-03, category of event is not used and should not be a factor
-		FederationID:  event.FederationID,
-		DivisionID:    event.DivisionID,
-		AgeID:         event.AgeID,
-		ProficiencyID: event.ProficiencyID,
-		StyleID:       event.StyleID,
-	})
-
-	// for each similar event, check if they share dances
-	for _, eachEvent := range similarEvents {
-		for _, eachDance := range event.GetDances() {
-			if eachEvent.HasDance(eachDance) {
-				return errors.New("specified dance is already in this event")
-			}
-		}
+	validationErr := service.ValidateEvent(*event, event.GetEventDances())
+	if validationErr != nil {
+		log.Printf("[error] event %v is not valid: %v", *event, validationErr)
+		return validationErr
 	}
 
 	// if no errors, create the event
@@ -366,21 +385,15 @@ func CreateEvent(event Event, compRepo ICompetitionRepository, eventRepo IEventR
 	return nil
 }
 
-func (event Event) validate(dances []EventDance,
-	federationRepo IFederationRepository,
-	divisionRepo IDivisionRepository,
-	ageRepo IAgeRepository,
-	proficiencyRepo IProficiencyRepository,
-	styleRepo IStyleRepository,
-	danceRepo IDanceRepository) error {
+func (service OrganizerEventService) ValidateEvent(event Event, dances []EventDance) error {
 	// check if federation exists
-	targetFederations, err := federationRepo.SearchFederation(SearchFederationCriteria{ID: event.FederationID})
+	targetFederations, err := service.federationRepo.SearchFederation(SearchFederationCriteria{ID: event.FederationID})
 	if err != nil {
 		return err
 	}
 
 	// check if division exists
-	divisions, err := divisionRepo.SearchDivision(SearchDivisionCriteria{ID: event.DivisionID})
+	divisions, err := service.divisionRepo.SearchDivision(SearchDivisionCriteria{ID: event.DivisionID})
 	if err != nil {
 		return err
 	}
@@ -392,7 +405,7 @@ func (event Event) validate(dances []EventDance,
 	}
 
 	// check if age category exists
-	targetAges, err := ageRepo.SearchAge(SearchAgeCriteria{AgeID: event.AgeID})
+	targetAges, err := service.ageRepo.SearchAge(SearchAgeCriteria{AgeID: event.AgeID})
 	if err != nil {
 		return err
 	}
@@ -403,13 +416,13 @@ func (event Event) validate(dances []EventDance,
 	}
 
 	// check if proficiency is part of this division
-	targetSkills, err := proficiencyRepo.SearchProficiency(SearchProficiencyCriteria{ProficiencyID: event.ProficiencyID})
+	targetSkills, err := service.proficiencyRepo.SearchProficiency(SearchProficiencyCriteria{ProficiencyID: event.ProficiencyID})
 	if targetSkills[0].DivisionID != targetDivision.ID {
 		return errors.New("specified proficiency is not part of this division")
 	}
 
 	// check if style exists
-	targetStyles, err := styleRepo.SearchStyle(SearchStyleCriteria{StyleID: event.StyleID})
+	targetStyles, err := service.styleRepo.SearchStyle(SearchStyleCriteria{StyleID: event.StyleID})
 	if err != nil {
 		return errors.New("specified style does not exist")
 	}
@@ -418,9 +431,9 @@ func (event Event) validate(dances []EventDance,
 	unique := map[int]bool{}
 	result := make([]EventDance, 0)
 	for _, each := range dances {
-		if unique[each.DanceID] == false {
+		if !unique[each.DanceID] {
 			// check if dance exists
-			dances, err := danceRepo.SearchDance(SearchDanceCriteria{DanceID: each.DanceID})
+			dances, err := service.danceRepo.SearchDance(SearchDanceCriteria{DanceID: each.DanceID})
 			if err != nil {
 				return err
 			}
@@ -439,6 +452,25 @@ func (event Event) validate(dances []EventDance,
 	// check if there are enough dances
 	if len(dances) < 1 || len(event.GetDances()) < 1 {
 		return errors.New("not enough dance specified")
+	}
+
+	// check if specified events were created
+	similarEvents, _ := service.eventRepo.SearchEvent(SearchEventCriteria{
+		CompetitionID: event.CompetitionID,
+		// CategoryID:    event.CategoryID, // YH: as of 2019-03-03, category of event is not used and should not be a factor
+		FederationID:  event.FederationID,
+		DivisionID:    event.DivisionID,
+		AgeID:         event.AgeID,
+		ProficiencyID: event.ProficiencyID,
+		StyleID:       event.StyleID,
+	})
+	// for each similar event, check if they share dances
+	for _, eachEvent := range similarEvents {
+		for _, eachDance := range event.GetDances() {
+			if eachEvent.HasDance(eachDance) {
+				return errors.New("specified dance is already in this event")
+			}
+		}
 	}
 
 	return nil

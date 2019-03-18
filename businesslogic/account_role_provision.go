@@ -15,6 +15,8 @@ const (
 	RoleApplicationStatusPending = 3
 )
 
+var notAuthorizedToApproveUserRoleApplicationError = errors.New("not authorized to approve user's role application")
+
 // SearchRoleApplicationCriteria specifies the search criteria for role application
 type SearchRoleApplicationCriteria struct {
 	ID             int
@@ -151,23 +153,23 @@ func (service RoleProvisionService) UpdateApplication(currentUser Account, appli
 		return nil // Athlete role does not need to be provisioned
 	case AccountTypeAdjudicator:
 		if !currentUser.HasRole(AccountTypeAdministrator) {
-			return errors.New("not authorized to approve user's role application")
+			return notAuthorizedToApproveUserRoleApplicationError
 		}
 	case AccountTypeScrutineer:
 		if !currentUser.HasRole(AccountTypeAdministrator) {
-			return errors.New("not authorized to approve user's role application")
+			return notAuthorizedToApproveUserRoleApplicationError
 		}
 	case AccountTypeOrganizer:
 		if !currentUser.HasRole(AccountTypeAdministrator) {
-			return errors.New("not authorized to approve user's role application")
+			return notAuthorizedToApproveUserRoleApplicationError
 		}
 	case AccountTypeDeckCaptain:
 		if !(currentUser.HasRole(AccountTypeAdministrator) || currentUser.HasRole(AccountTypeOrganizer)) {
-			return errors.New("not authorized to approve user's role application")
+			return notAuthorizedToApproveUserRoleApplicationError
 		}
 	case AccountTypeEmcee:
 		if !(currentUser.HasRole(AccountTypeAdministrator) || currentUser.HasRole(AccountTypeOrganizer)) {
-			return errors.New("not authorized to approve user's role application")
+			return notAuthorizedToApproveUserRoleApplicationError
 		}
 	default:
 		return errors.New("invalid role application")

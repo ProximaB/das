@@ -84,8 +84,7 @@ func (server PartnershipServer) UpdatePartnershipHandler(w http.ResponseWriter, 
 			util.RespondJsonResult(w, http.StatusOK, "partnership is updated successfully", nil)
 			return
 		}
-	} else {
-		util.RespondJsonResult(w, http.StatusUnauthorized, "not authorized to make changes to this partnership", nil)
-		return
 	}
+	util.RespondJsonResult(w, http.StatusUnauthorized, "not authorized to make changes to this partnership", nil)
+	return
 }

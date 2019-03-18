@@ -168,9 +168,8 @@ func (service CompetitionOfficialInvitationService) UpdateCompetitionOfficialInv
 		} else if currentUser.ID == invitation.Sender.ID {
 			if response != COMPETITION_INVITATION_STATUS_REVOKED {
 				return errors.New("The invitation can only be revoked")
-			} else {
-				canUpdate = true
 			}
+			canUpdate = true
 		}
 	}
 

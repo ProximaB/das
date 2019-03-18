@@ -264,7 +264,7 @@ func UpdateCompetition(user *Account, competition OrganizerUpdateCompetition, re
 	if competitions == nil || len(competitions) != 1 || competitions[0].ID == 0 {
 		return errors.New("cannot find this competition")
 	}
-	if validationErr := validateUpdateCompetition(user, competitions[0], &competition, repo); validationErr != nil {
+	if validationErr := validateUpdateCompetition(user, competitions[0], &competition); validationErr != nil {
 		return validationErr
 	}
 
@@ -283,8 +283,7 @@ func UpdateCompetition(user *Account, competition OrganizerUpdateCompetition, re
 
 func validateUpdateCompetition(user *Account,
 	competition Competition,
-	updateDTO *OrganizerUpdateCompetition,
-	repo ICompetitionRepository) error {
+	updateDTO *OrganizerUpdateCompetition) error {
 	if user.ID != competition.CreateUserID {
 		return errors.New("not authorized to update this competition")
 	}

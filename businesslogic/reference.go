@@ -47,6 +47,7 @@ type ICountryRepository interface {
 	UpdateCountry(country Country) error
 }
 
+// State defines the state/province of a country
 type State struct {
 	ID              int
 	Name            string
@@ -58,6 +59,7 @@ type State struct {
 	DateTimeUpdated time.Time
 }
 
+// SearchStateCriteria defines the criteria that states can be searched by
 type SearchStateCriteria struct {
 	StateID   int    `schema:"id"`
 	Name      string `schema:"name"`

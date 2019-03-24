@@ -13,6 +13,8 @@ const (
 	COMPETITION_INVITATION_STATUS_EXPIRED  = "Expired"
 )
 
+// CompetitionOfficialInvitation is an invitation that can only be sent by organizers to recipients who have provisioned
+// competition official role.
 type CompetitionOfficialInvitation struct {
 	ID                 int
 	Sender             Account
@@ -22,12 +24,14 @@ type CompetitionOfficialInvitation struct {
 	Message            string
 	InvitationStatus   string
 	ExpirationDate     time.Time
-	CreateUserId       int
+	CreateUserID       int
 	DateTimeCreated    time.Time
-	UpdateUserId       int
+	UpdateUserID       int
 	DateTimeUpdated    time.Time
 }
 
+// SearchCompetitionOfficialInvitationCriteria defines the search criteria that can be used to search CompetitionOfficialInvitation
+// within a Invitation repository.
 type SearchCompetitionOfficialInvitationCriteria struct {
 	SenderID             int
 	RecipientID          int
@@ -38,6 +42,8 @@ type SearchCompetitionOfficialInvitationCriteria struct {
 	UpdateUserID         int
 }
 
+// ICompetitionOfficialInvitationRepository defines the interface that a CompetitionOfficialInvitation repository should
+// implement, including creating, deleting, searching, and updating the invitation.
 type ICompetitionOfficialInvitationRepository interface {
 	CreateCompetitionOfficialInvitationRepository(invitation *CompetitionOfficialInvitation) error
 	DeleteCompetitionOfficialInvitationRepository(invitation CompetitionOfficialInvitation) error
@@ -45,6 +51,7 @@ type ICompetitionOfficialInvitationRepository interface {
 	UpdateCompetitionOfficialInvitationRepository(invitation CompetitionOfficialInvitation) error
 }
 
+// CompetitionOfficialInvitationService defines the service that can provide search
 type CompetitionOfficialInvitationService struct {
 	accountRepo     IAccountRepository
 	competitionRepo ICompetitionRepository
@@ -94,9 +101,9 @@ func (service CompetitionOfficialInvitationService) CreateCompetitionOfficialInv
 	invitation.Recipient = recipient
 	invitation.AssignedRoleID = serviceRole
 	invitation.DateTimeCreated = time.Now()
-	invitation.CreateUserId = sender.ID
+	invitation.CreateUserID = sender.ID
 	invitation.DateTimeUpdated = time.Now()
-	invitation.UpdateUserId = sender.ID
+	invitation.UpdateUserID = sender.ID
 
 	// invitation will expire either:
 	// - 30 days after the invitation, or
@@ -176,7 +183,7 @@ func (service CompetitionOfficialInvitationService) UpdateCompetitionOfficialInv
 	if canUpdate {
 		invitation.InvitationStatus = response
 		invitation.DateTimeUpdated = time.Now()
-		invitation.UpdateUserId = currentUser.ID
+		invitation.UpdateUserID = currentUser.ID
 		return service.invitationRepo.UpdateCompetitionOfficialInvitationRepository(invitation)
 	}
 	return errors.New("An unknown error occurred while processing this invitation. Please report this incident to site administrator.")

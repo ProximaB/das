@@ -39,8 +39,7 @@ CREATE SCHEMA IF NOT EXISTS USADANCE;
 \i 'tables/application/announcement.sql'
 
 -- reference data section under das schema
-\i 'tables/das/country.sql'
-\i 'tables/das/state.sql'
+\i 'tables/das/reference.sql'
 \i 'tables/das/city.sql'
 \i 'tables/das/school.sql'
 \i 'tables/das/studio.sql'

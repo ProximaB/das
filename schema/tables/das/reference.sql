@@ -1,13 +1,13 @@
 -- Create table das.country
 -- Indexed Columns: COUNTRY_ID, COUNTRY_NAME, COUNTRY_ABBR
 CREATE TABLE IF NOT EXISTS DAS.COUNTRY (
-                                         ID SERIAL NOT NULL PRIMARY KEY,
-                                         NAME TEXT NOT NULL UNIQUE, -- indexed
-                                         ABBREVIATION VARCHAR(8) NOT NULL UNIQUE, -- indexed
-                                         CREATE_USER_ID INTEGER REFERENCES DAS.ACCOUNT (ID),
-                                         DATETIME_CREATED TIMESTAMP NOT NULL DEFAULT NOW(),
-                                         UPDATE_USER_ID INTEGER REFERENCES DAS.ACCOUNT (ID),
-                                         DATETIME_UPDATED TIMESTAMP NOT NULL DEFAULT NOW()
+   ID SERIAL NOT NULL PRIMARY KEY,
+   NAME TEXT NOT NULL UNIQUE, -- indexed
+   ABBREVIATION VARCHAR(8) NOT NULL UNIQUE, -- indexed
+   CREATE_USER_ID INTEGER REFERENCES DAS.ACCOUNT (ID),
+   DATETIME_CREATED TIMESTAMP NOT NULL DEFAULT NOW(),
+   UPDATE_USER_ID INTEGER REFERENCES DAS.ACCOUNT (ID),
+   DATETIME_UPDATED TIMESTAMP NOT NULL DEFAULT NOW()
 );
 
 

@@ -27,13 +27,13 @@ type AccountServer struct {
 // Identity is completely managed Firebase and DAS only checks the token and store additional user-provided data.
 func (server AccountServer) RegisterAccountHandler(w http.ResponseWriter, r *http.Request) {
 	currentUser, err := server.IAuthenticationStrategy.GetCurrentUser(r)
+	if err != nil {
+		util.RespondJsonResult(w, http.StatusUnauthorized, err.Error(), nil)
+		return
+	}
 	createAccountDTO := new(viewmodel.CreateAccountDTO)
 	if err := util.ParseRequestBodyData(r, createAccountDTO); err != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, err.Error(), nil)
-		return
-	}
-	if err != nil {
-		util.RespondJsonResult(w, http.StatusUnauthorized, err.Error(), nil)
 		return
 	}
 	model := createAccountDTO.ToAccountModel()

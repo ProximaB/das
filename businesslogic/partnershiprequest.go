@@ -67,6 +67,8 @@ type IPartnershipRequestRepository interface {
 	SearchPartnershipRequest(criteria SearchPartnershipRequestCriteria) ([]PartnershipRequest, error)
 	DeletePartnershipRequest(request PartnershipRequest) error
 	UpdatePartnershipRequest(request PartnershipRequest) error
+	GetReceivedRequests(recipientID int) ([]PartnershipRequest, error)
+	GetSentRequests(senderID int) ([]PartnershipRequest, error)
 }
 
 type PartnershipRequestService struct {

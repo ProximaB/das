@@ -55,11 +55,11 @@ func (dto *AccountDTO) Extract(account businesslogic.Account) {
 
 // CreateAccountDTO is the JSON payload for request POST /api/v1.0/account/register
 type CreateAccountDTO struct {
-	Email       string `json:"email"`
+	Email       string `json:"email" validate:"regexp=^[0-9a-z]+@[0-9a-z]+(\\.[0-9a-z]+)+$"`
 	Phone       string `json:"phone"`
-	FirstName   string `json:"firstname"`
-	LastName    string `json:"lastname"`
-	ToSAccepted bool   `json:"tosaccepted"`
+	FirstName   string `json:"firstname" validate:"nonzero"`
+	LastName    string `json:"lastname" validate:"nonzero"`
+	ToSAccepted bool   `json:"tosaccepted" validate:"true"`
 	PPAccepted  bool   `json:"ppaccepted"`
 }
 

@@ -30,10 +30,7 @@ func (server AccountTypeServer) GetAccountTypeHandler(w http.ResponseWriter, r *
 	data := make([]viewmodel.AccountType, 0)
 	types, _ := server.GetAccountTypes()
 	for _, each := range types {
-		// System administrator should not be available for public registration
-		if each.ID != businesslogic.AccountTypeAdministrator {
-			data = append(data, viewmodel.AccountTypeDataModelToViewModel(each))
-		}
+		data = append(data, viewmodel.AccountTypeDataModelToViewModel(each))
 	}
 	output, _ := json.Marshal(data)
 	w.Write(output)

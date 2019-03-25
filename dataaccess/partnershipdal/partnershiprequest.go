@@ -147,3 +147,84 @@ func (repo PostgresPartnershipRequestRepository) DeletePartnershipRequest(reques
 	}
 	return errors.New("not implemented")
 }
+
+func (repo PostgresPartnershipRequestRepository) GetReceivedRequests(recipientID int) ([]businesslogic.PartnershipRequest, error) {
+	stmt := `SELECT * FROM GET_RECEIVED_PARTNERSHIP_REQUESTS($1);`
+	rows, err := repo.Database.Query(stmt, recipientID)
+	requests := make([]businesslogic.PartnershipRequest, 0)
+	if err != nil {
+		return requests, err
+	}
+	var scanErr error
+	for rows.Next() {
+		each := businesslogic.PartnershipRequest{
+			SenderAccount:    new(businesslogic.Account),
+			RecipientAccount: new(businesslogic.Account),
+		}
+		scanErr = rows.Scan(
+			&each.PartnershipRequestID,
+			&each.SenderAccount.ID,
+			&each.SenderAccount.FirstName,
+			&each.SenderAccount.LastName,
+			&each.SenderAccount.Email,
+			&each.SenderRole,
+			&each.RecipientAccount.ID,
+			&each.RecipientAccount.FirstName,
+			&each.RecipientAccount.LastName,
+			&each.RecipientAccount.Email,
+			&each.RecipientRole,
+			&each.Message,
+			&each.Status,
+			&each.CreateUserID,
+			&each.DateTimeCreated,
+			&each.UpdateUserID,
+			&each.DateTimeUpdated,
+		)
+		requests = append(requests, each)
+		if scanErr != nil {
+			return requests, scanErr
+		}
+	}
+	err = rows.Close()
+	return requests, err
+}
+func (repo PostgresPartnershipRequestRepository) GetSentRequests(senderID int) ([]businesslogic.PartnershipRequest, error) {
+	stmt := `SELECT * FROM GET_SENT_PARTNERSHIP_REQUESTS($1);`
+	rows, err := repo.Database.Query(stmt, senderID)
+	requests := make([]businesslogic.PartnershipRequest, 0)
+	if err != nil {
+		return requests, err
+	}
+	var scanErr error
+	for rows.Next() {
+		each := businesslogic.PartnershipRequest{
+			SenderAccount:    new(businesslogic.Account),
+			RecipientAccount: new(businesslogic.Account),
+		}
+		scanErr = rows.Scan(
+			&each.PartnershipRequestID,
+			&each.SenderAccount.ID,
+			&each.SenderAccount.FirstName,
+			&each.SenderAccount.LastName,
+			&each.SenderAccount.Email,
+			&each.SenderRole,
+			&each.RecipientAccount.ID,
+			&each.RecipientAccount.FirstName,
+			&each.RecipientAccount.LastName,
+			&each.RecipientAccount.Email,
+			&each.RecipientRole,
+			&each.Message,
+			&each.Status,
+			&each.CreateUserID,
+			&each.DateTimeCreated,
+			&each.UpdateUserID,
+			&each.DateTimeUpdated,
+		)
+		requests = append(requests, each)
+		if scanErr != nil {
+			return requests, scanErr
+		}
+	}
+	err = rows.Close()
+	return requests, err
+}

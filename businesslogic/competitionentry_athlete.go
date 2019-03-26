@@ -43,6 +43,7 @@ type IAthleteCompetitionEntryRepository interface {
 	SearchEntry(criteria SearchAthleteCompetitionEntryCriteria) ([]AthleteCompetitionEntry, error)
 	UpdateEntry(entry AthleteCompetitionEntry) error
 	NextAvailableLeadTag(competition Competition) (int, error)
+	GetEntriesByCompetition(competitionId int) ([]AthleteCompetitionEntry, error)
 }
 
 // AthleteCompetitionEntryService encapsulates the data flow of Athlete's Competition Entry, including data validation

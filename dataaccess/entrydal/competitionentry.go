@@ -222,6 +222,44 @@ func (repo PostgresAthleteCompetitionEntryRepository) NextAvailableLeadTag(compe
 	return currentMaxTag, nil
 }
 
+func (repo PostgresAthleteCompetitionEntryRepository) GetEntriesByCompetition(competitionId int) ([]businesslogic.AthleteCompetitionEntry, error) {
+	entries := make([]businesslogic.AthleteCompetitionEntry, 0)
+	var err error
+	stmt := `SELECT * FROM GET_ATHLETE_COMPETITION_ENTRIES_BY_COMPETITION($1)`
+	rows, err := repo.Database.Query(stmt, competitionId)
+	if err != nil {
+		return entries, err
+	}
+	for rows.Next() {
+		each := businesslogic.AthleteCompetitionEntry{}
+		competitionStatus := 0
+		err = rows.Scan(
+			&each.ID,
+			&each.Competition.ID,
+			&each.Competition.Name,
+			&competitionStatus,
+			&each.Athlete.ID,
+			&each.Athlete.FirstName,
+			&each.Athlete.LastName,
+			&each.Athlete.DateTimeCreated,
+			&each.Athlete.UserGenderID,
+			&each.IsLead,
+			&each.LeadTag,
+			&each.OrganizerNote,
+			&each.CreateUserID,
+			&each.DateTimeCreated,
+			&each.UpdateUserID,
+			&each.DateTimeUpdated,
+		)
+		if err != nil {
+			return entries, err
+		}
+		each.Competition.UpdateStatus(competitionStatus)
+		entries = append(entries, each)
+	}
+	return entries, err
+}
+
 // PostgresPartnershipCompetitionEntryRepository implements a IPartnershipCompetitionEntryRepository with Postgres database
 type PostgresPartnershipCompetitionEntryRepository struct {
 	Database   *sql.DB

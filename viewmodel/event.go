@@ -120,3 +120,7 @@ func (view *EventViewModel) PopulateViewModel(model businesslogic.Event) {
 		view.EventDances = append(view.EventDances, item)
 	}
 }
+
+type DeleteEventForm struct {
+	ID int `json:"eventId";validate:"min=1"`
+}

@@ -2,6 +2,7 @@ package businesslogic
 
 import (
 	"errors"
+	"fmt"
 	"log"
 	"sort"
 	"time"
@@ -187,10 +188,16 @@ func (event Event) EquivalentTo(other Event) bool {
 	return sameDances
 }
 
-// GetEventByID retrieves an existing Event from the provided repository by its ID
-func GetEventByID(id int, repo IEventRepository) (Event, error) {
-	results, err := repo.SearchEvent(SearchEventCriteria{EventID: id})
-	return results[0], err
+// ToString returns the String representation of an event
+func (event Event) ToString() string {
+	output := fmt.Sprintf("%v %v %v %v %v",
+		event.Federation.Name,
+		event.Division.Name,
+		event.Age.Name,
+		event.Proficiency.Name,
+		event.Style.Name,
+	)
+	return output
 }
 
 // OrganizerEventService provides a layer of abstraction of services used by organizers to manage events of competitions
@@ -474,4 +481,27 @@ func (service OrganizerEventService) ValidateEvent(event Event, dances []EventDa
 	}
 
 	return nil
+}
+
+func (service OrganizerEventService) DeleteEvent(event Event, currentUser Account) error {
+	competitions, searchCompErr := service.competitionRepo.SearchCompetition(SearchCompetitionCriteria{ID: event.CompetitionID})
+	if searchCompErr != nil {
+		return searchCompErr
+	}
+	if len(competitions) != 1 {
+		return errors.New(fmt.Sprintf("cannot find the competition of event %v", event.ToString()))
+	}
+	if competitions[0].GetStatus() == CompetitionStatusClosed {
+		return errors.New("the competition is concluded")
+	}
+	if event.CreateUserID != currentUser.ID {
+		return errors.New("not authorized to delete this event")
+	}
+	if event.StatusID == EVENT_STATUS_RUNNING {
+		return errors.New("event is running and cannot be deleted")
+	}
+	if event.StatusID == EVENT_STATUS_CLOSED {
+		return errors.New("event is closed and cannot be deleted")
+	}
+	return service.eventRepo.DeleteEvent(event)
 }

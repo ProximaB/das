@@ -2,10 +2,12 @@ package organizer
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/DancesportSoftware/das/auth"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/viewmodel"
+	"gopkg.in/validator.v2"
 	"log"
 	"net/http"
 )
@@ -44,7 +46,33 @@ func (server OrganizerEventServer) UpdateEventHandler(w http.ResponseWriter, r *
 // DeleteEventHandler handles the request:
 //	DELETE /api/v1.0/organizer/event
 func (server OrganizerEventServer) DeleteEventHandler(w http.ResponseWriter, r *http.Request) {
-	w.WriteHeader(http.StatusNotImplemented)
+	currentUser, _ := server.Authentication.GetCurrentUser(r)
+	deleteDTO := new(viewmodel.DeleteEventForm)
+
+	if parseErr := util.ParseRequestBodyData(r, deleteDTO); parseErr != nil {
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, nil)
+		return
+	} else if validErr := validator.Validate(deleteDTO); validErr != nil {
+		util.RespondJsonResult(w, http.StatusBadRequest, validErr.Error(), nil)
+		return
+	} else {
+		events, searchErr := server.Service.SearchEvents(businesslogic.SearchEventCriteria{EventID: deleteDTO.ID})
+		if searchErr != nil {
+			util.RespondJsonResult(w, http.StatusInternalServerError, searchErr.Error(), nil)
+			return
+		}
+		if len(events) != 1 {
+			util.RespondJsonResult(w, http.StatusNotFound, "event with this ID does not exist ", nil)
+			return
+		}
+		deletionErr := server.Service.DeleteEvent(events[0], currentUser)
+		if deletionErr != nil {
+			util.RespondJsonResult(w, http.StatusInternalServerError, searchErr.Error(), nil)
+			return
+		}
+		util.RespondJsonResult(w, http.StatusOK, fmt.Sprintf("Success: event with ID = %v is deleted", events[0].ID), nil)
+		return
+	}
 }
 
 // SearchEventHandler handles the request:

@@ -7,7 +7,7 @@ import (
 	"net/http"
 )
 
-const apiOrganizerEntryEndpointV1_0 = "/api/v1.0/organizer/entry"
+const apiOrganizerEntryEndpointV1_0 = "/api/v1.0/organizer/competition/entry"
 
 var organizerEntryServer = organizer.OrganizerEntryServer{}
 

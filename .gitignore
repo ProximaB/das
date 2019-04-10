@@ -53,3 +53,7 @@ secret/
 .elasticbeanstalk/*
 !.elasticbeanstalk/*.cfg.yml
 !.elasticbeanstalk/*.global.yml
+
+# SonarCloud
+.scannerwork/
+*.out

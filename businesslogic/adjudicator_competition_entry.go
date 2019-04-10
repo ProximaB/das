@@ -1,10 +1,15 @@
 package businesslogic
 
+import "time"
+
 // AdjudicatorCompetitionEntry defines the presence of an Adjudicator at a Competition
 type AdjudicatorCompetitionEntry struct {
-	ID               int
-	AdjudicatorID    int
-	CompetitionEntry BaseCompetitionEntry
+	ID              int
+	AdjudicatorID   int
+	CreateUserID    int
+	DateTimeCreated time.Time
+	UpdateUserID    int
+	DateTimeUpdated time.Time
 }
 
 // SearchAdjudicatorCompetitionEntryCriteria specifies the parameters that can be used to search Adjudicator's

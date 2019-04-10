@@ -1,19 +1,3 @@
-// Dancesport Application System (DAS)
-// Copyright (C) 2017, 2018 Yubing Hou
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 package competition
 
 import (
@@ -24,6 +8,7 @@ import (
 	"github.com/DancesportSoftware/das/dataaccess/common"
 	"github.com/DancesportSoftware/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
+	"log"
 	"time"
 )
 
@@ -98,16 +83,32 @@ func (repo PostgresCompetitionRepository) CreateCompetition(competition *busines
 			competition.DateTimeCreated,
 			competition.UpdateUserID,
 			competition.DateTimeUpdated,
-		).Suffix("RETURNING ID")
-	clause, args, err := stmt.ToSql()
-	if tx, txErr := repo.Database.Begin(); txErr != nil {
-		return txErr
-	} else {
-		row := repo.Database.QueryRow(clause, args...)
-		row.Scan(&competition.ID)
-		err = tx.Commit()
-		return err
+		).Suffix(dalutil.SQLSuffixReturningID)
+	hasError := false
+	clause, args, sqlErr := stmt.ToSql()
+	if sqlErr != nil {
+		log.Printf("[error] generating SQL clause: %v", sqlErr)
+		hasError = true
 	}
+	tx, txErr := repo.Database.Begin()
+	if txErr != nil {
+		log.Printf("[error] starting transaction: %v", txErr)
+		hasError = true
+	}
+
+	row := repo.Database.QueryRow(clause, args...)
+	if scanErr := row.Scan(&competition.ID); scanErr != nil {
+		log.Printf("[error] getting ID of newly created competition %v: %v", competition.Name, scanErr)
+		hasError = true
+	}
+	if commitErr := tx.Commit(); commitErr != nil {
+		log.Printf("[error] commiting transaction: %v", commitErr)
+		hasError = true
+	}
+	if hasError {
+		return errors.New("an error occurred while creating data record for competition")
+	}
+	return nil
 }
 
 func (repo PostgresCompetitionRepository) UpdateCompetition(competition businesslogic.Competition) error {
@@ -116,12 +117,17 @@ func (repo PostgresCompetitionRepository) UpdateCompetition(competition business
 	}
 	stmt := repo.SqlBuilder.Update("").Table(DAS_COMPETITION_TABLE)
 	if competition.ID > 0 {
-		stmt = stmt.Set(common.COL_NAME, competition.Name).
+		stmt = stmt.
+			Set(common.COL_FEDERATION_ID, competition.FederationID).
+			Set(common.COL_NAME, competition.Name).
 			Set(common.COL_WEBSITE, competition.Website).
+			Set(DAS_COMPETITION_COL_ADDRESS, competition.Street).
+			Set(common.COL_CITY_ID, competition.City.ID).
+			Set(common.COL_STATE_ID, competition.State.ID).
+			Set(common.COL_COUNTRY_ID, competition.Country.ID).
 			Set(DAS_COMPETITION_COL_STATUS_ID, competition.GetStatus()).
 			Set(DAS_COMPETITION_COL_DATETIME_START, competition.StartDateTime).
 			Set(DAS_COMPETITION_COL_DATETIME_END, competition.EndDateTime).
-			Set(DAS_COMPETITION_COL_ADDRESS, competition.Street).
 			Set(DAS_COMPETITION_COL_CONTACT_NAME, competition.ContactName).
 			Set(DAS_COMPETITION_COL_CONTACT_EMAIL, competition.ContactEmail).
 			Set(DAS_COMPETITION_COL_CONTACT_PHONE, competition.ContactPhone).

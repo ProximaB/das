@@ -1,19 +1,5 @@
-// Dancesport Application System (DAS)
-// Copyright (C) 2017, 2018 Yubing Hou
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
+// Repository defines the concrete implementations of IRepositories used in businesslogic. Go does not have
+// auto or managed dependency injection and thus this part has to be done manually.
 package database
 
 import (
@@ -30,10 +16,12 @@ import (
 
 //======= Reference data repositories
 
+// CountryRepository is the singleton repository for CRUD the Country object
 var CountryRepository = referencedal.PostgresCountryRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
+// StateRepository is the singleton repository for CRUD the State object
 var StateRepository = referencedal.PostgresStateRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
@@ -169,6 +157,14 @@ var EventMetaRepository = eventdal.PostgresEventMetaRepository{
 
 var EventDanceRepository = eventdal.PostgresEventDanceRepository{
 	SqlBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
+var CompetitionEventTemplateRepository = eventdal.PostgresCompetitionEventTemplateRepository{
+	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
+var AthleteEventEntryRepository = entrydal.PostgresAthleteEventEntryRepository{
+	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
 var PartnershipEventEntryRepository = entrydal.PostgresPartnershipEventEntryRepository{

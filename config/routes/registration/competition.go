@@ -1,19 +1,3 @@
-// Dancesport Application System (DAS)
-// Copyright (C) 2017, 2018 Yubing Hou
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 package registration
 
 import (
@@ -21,23 +5,32 @@ import (
 	"github.com/DancesportSoftware/das/config/database"
 	"github.com/DancesportSoftware/das/config/routes/middleware"
 	"github.com/DancesportSoftware/das/controller"
+	"github.com/DancesportSoftware/das/controller/athlete"
 	"github.com/DancesportSoftware/das/controller/util"
 	"net/http"
 )
 
 const apiAthleteCompetitionRegistrationEndpoint = "/api/v1.0/athlete/competition/registration"
 
-var athleteCompetitionRegistrationServer = controller.CompetitionRegistrationServer{
-	IAuthenticationStrategy: middleware.AuthenticationStrategy,
-	Service: businesslogic.CompetitionRegistrationService{
-		AccountRepository:               database.AccountRepository,
-		PartnershipRepository:           database.PartnershipRepository,
-		CompetitionRepository:           database.CompetitionRepository,
-		EventRepository:                 database.EventRepository,
-		AthleteCompetitionEntryRepo:     database.AthleteCompetitionEntryRepository,
-		PartnershipCompetitionEntryRepo: database.PartnershipCompetitionEntryRepository,
-		PartnershipEventEntryRepo:       database.PartnershipEventEntryRepository,
-	},
+var athleteCompetitionRegistrationServer = athlete.CompetitionRegistrationServer{
+	IAccountRepository:                     database.AccountRepository,
+	ICompetitionRepository:                 database.CompetitionRepository,
+	IAthleteCompetitionEntryRepository:     database.AthleteCompetitionEntryRepository,
+	IPartnershipCompetitionEntryRepository: database.PartnershipCompetitionEntryRepository,
+	IPartnershipRepository:                 database.PartnershipRepository,
+	IPartnershipEventEntryRepository:       database.PartnershipEventEntryRepository,
+	IEventRepository:                       database.EventRepository,
+	IAuthenticationStrategy:                middleware.AuthenticationStrategy,
+	Service: businesslogic.NewCompetitionRegistrationService(
+		database.AccountRepository,
+		database.PartnershipRepository,
+		database.CompetitionRepository,
+		database.EventRepository,
+		database.AthleteCompetitionEntryRepository,
+		database.AthleteEventEntryRepository,
+		database.PartnershipCompetitionEntryRepository,
+		database.PartnershipEventEntryRepository,
+	),
 }
 
 var createCompetitionRegistrationController = util.DasController{
@@ -49,10 +42,75 @@ var createCompetitionRegistrationController = util.DasController{
 	AllowedRoles: []int{businesslogic.AccountTypeAthlete},
 }
 
+var getPartnershipRegistrationController = util.DasController{
+	Name:         "GetPartnershipRegistrationController",
+	Description:  "Athlete get the registration for the partnership and competition selected",
+	Method:       http.MethodGet,
+	Endpoint:     apiAthleteCompetitionRegistrationEndpoint,
+	Handler:      athleteCompetitionRegistrationServer.GetAthleteRegistrationHandler,
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
+}
+
+const apiCompetitionEntryEndpoint = "/api/v1.0/competition/entries"
+const apiEventEntryEndpoint = "/api/v1.0/event/entries"
+const apiAthleteEntryEndpoint = "/api/v1.0/athlete/entries"
+const apiPartnershipEntryEndpoint = "/api/v1.0/partnership/entries"
+
+var entryServer = controller.EntryServer{
+	Service: businesslogic.NewCompetitionRegistrationService(
+		database.AccountRepository,
+		database.PartnershipRepository,
+		database.CompetitionRepository,
+		database.EventRepository,
+		database.AthleteCompetitionEntryRepository,
+		database.AthleteEventEntryRepository,
+		database.PartnershipCompetitionEntryRepository,
+		database.PartnershipEventEntryRepository,
+	),
+}
+var searchCompetitionEntryController = util.DasController{
+	Name:         "SearchEntryController",
+	Description:  "Search Athlete/Partnership Competition/Event entries",
+	Method:       http.MethodGet,
+	Endpoint:     apiCompetitionEntryEndpoint,
+	Handler:      entryServer.SearchCompetitionEntryHandler,
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
+}
+
+var searchEventEntryController = util.DasController{
+	Name:         "SearchEntryController",
+	Description:  "Search Athlete/Partnership Competition/Event entries",
+	Method:       http.MethodGet,
+	Endpoint:     apiEventEntryEndpoint,
+	Handler:      entryServer.SearchEventEntryHandler,
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
+}
+var searchAthleteEntryController = util.DasController{
+	Name:         "SearchEntryController",
+	Description:  "Search Athlete/Partnership Competition/Event entries",
+	Method:       http.MethodGet,
+	Endpoint:     apiAthleteEntryEndpoint,
+	Handler:      entryServer.SearchAthleteEntryHandler,
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
+}
+var searchPartnershipEntryController = util.DasController{
+	Name:         "SearchEntryController",
+	Description:  "Search Athlete/Partnership Competition/Event entries",
+	Method:       http.MethodGet,
+	Endpoint:     apiPartnershipEntryEndpoint,
+	Handler:      entryServer.SearchPartnershipEntryHandler,
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
+}
+
 // CompetitionRegistrationControllerGroup is a collection of handler functions for managing
 // Competition Registration in DAS
 var CompetitionRegistrationControllerGroup = util.DasControllerGroup{
 	Controllers: []util.DasController{
 		createCompetitionRegistrationController,
+		getPartnershipRegistrationController,
+		searchCompetitionEntryController,
+		searchEventEntryController,
+		searchAthleteEntryController,
+		searchPartnershipEntryController,
 	},
 }

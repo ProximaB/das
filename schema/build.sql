@@ -39,8 +39,7 @@ CREATE SCHEMA IF NOT EXISTS USADANCE;
 \i 'tables/application/announcement.sql'
 
 -- reference data section under das schema
-\i 'tables/das/country.sql'
-\i 'tables/das/state.sql'
+\i 'tables/das/reference.sql'
 \i 'tables/das/city.sql'
 \i 'tables/das/school.sql'
 \i 'tables/das/studio.sql'
@@ -75,6 +74,7 @@ CREATE SCHEMA IF NOT EXISTS USADANCE;
 \i 'tables/das/event_category.sql'
 \i 'tables/das/event.sql'
 \i 'tables/das/event_dances.sql'
+\i 'tables/das/event_template.sql'
 
 -- round section
 \i 'tables/das/round.sql'

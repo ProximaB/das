@@ -1,28 +1,14 @@
-// Dancesport Application System (DAS)
-// Copyright (C) 2017, 2018 Yubing Hou
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 package partnership
 
 import (
 	"encoding/json"
+	"fmt"
 	"github.com/DancesportSoftware/das/auth"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/viewmodel"
 	"net/http"
+	"time"
 )
 
 // PartnershipServer serves requests that are related with partnership
@@ -58,14 +44,14 @@ func (server PartnershipServer) SearchPartnershipHandler(w http.ResponseWriter, 
 }
 
 type updatePartnership struct {
-	PartnershipID int  `json:"partnership"`
+	PartnershipID int  `json:"partnershipId"`
 	Favorite      bool `json:"favorite"`
 }
 
-// PUT /api/partnership
+// PUT /api/v1.0/athlete/partnership
 func (server PartnershipServer) UpdatePartnershipHandler(w http.ResponseWriter, r *http.Request) {
-	account, _ := server.GetCurrentUser(r)
-	if account.ID == 0 {
+	currentUser, _ := server.GetCurrentUser(r)
+	if currentUser.ID == 0 {
 		util.RespondJsonResult(w, http.StatusUnauthorized, "not authorized", nil)
 		return
 	}
@@ -75,4 +61,30 @@ func (server PartnershipServer) UpdatePartnershipHandler(w http.ResponseWriter, 
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, parseErr.Error())
 		return
 	}
+
+	partnerships, searchErr := server.IPartnershipRepository.SearchPartnership(businesslogic.SearchPartnershipCriteria{PartnershipID: updateDTO.PartnershipID})
+	if searchErr != nil || len(partnerships) != 1 {
+		util.RespondJsonResult(w, http.StatusNotFound, fmt.Sprintf("cannot find partnership with ID = %v", updateDTO.PartnershipID), nil)
+		return
+	}
+
+	// TODO [technical debt]: this should be in businesslogic
+	//		check if current user owns the partnership, if not, then it's unauthorized. if yes, update the corresponding favorite
+	if partnerships[0].HasAthlete(currentUser.ID) {
+		if partnerships[0].Lead.ID == currentUser.ID {
+			partnerships[0].FavoriteByLead = updateDTO.Favorite
+		} else {
+			partnerships[0].FavoriteByFollow = updateDTO.Favorite
+		}
+		partnerships[0].DateTimeUpdated = time.Now()
+		if updateErr := server.IPartnershipRepository.UpdatePartnership(partnerships[0]); updateErr != nil {
+			util.RespondJsonResult(w, http.StatusInternalServerError, updateErr.Error(), nil)
+			return
+		} else {
+			util.RespondJsonResult(w, http.StatusOK, "partnership is updated successfully", nil)
+			return
+		}
+	}
+	util.RespondJsonResult(w, http.StatusUnauthorized, "not authorized to make changes to this partnership", nil)
+	return
 }

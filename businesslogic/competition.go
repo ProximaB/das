@@ -1,25 +1,35 @@
-// Dancesport Application System (DAS)
-// Copyright (C) 2017, 2018 Yubing Hou
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 package businesslogic
 
 import (
 	"errors"
+	"fmt"
 	"time"
 )
+
+const (
+	CompetitionStatusPreRegistration    = 1
+	CompetitionStatusOpenRegistration   = 2
+	CompetitionStatusClosedRegistration = 3
+	CompetitionStatusInProgress         = 4
+	CompetitionStatusProcessing         = 5
+	CompetitionStatusClosed             = 6
+	CompetitionStatusCancelled          = 7
+)
+
+// CompetitionStatus defines the data that is required to label the status of a Competition
+type CompetitionStatus struct {
+	ID              int
+	Name            string
+	Abbreviation    string
+	Description     string
+	DateTimeCreated time.Time
+	DateTimeUpdated time.Time
+}
+
+// ICompetitionStatusRepository defines the function that a CompetitionStatusRepository should implement
+type ICompetitionStatusRepository interface {
+	GetCompetitionAllStatus() ([]CompetitionStatus, error)
+}
 
 // Competition provides the base data structure for a competitive ballroom dance. All competitions in
 // DAS must have some affiliation with a dancesport federation (Not Affiliated/Independent is also a Federation,)
@@ -45,7 +55,7 @@ type Competition struct {
 	Attendance                int
 	RegistrationOpenDateTime  time.Time
 	RegistrationCloseDateTime time.Time
-	officials                 map[int][]Account
+	officials                 map[int][]Account // the integer key is the type of official: adjudicator, scrutineer, emcee, and deck captain
 }
 
 // UpdateStatus will attempt to change the status of the caller competition to statusID, if the change is in logical order
@@ -108,11 +118,15 @@ type SearchCompetitionCriteria struct {
 }
 
 type OrganizerUpdateCompetition struct {
-	CompetitionID int       `json:"competition"`
+	CompetitionID int       `json:"competitionId"`
 	Name          string    `json:"name"`
 	Website       string    `json:"website"`
-	Status        int       `json:"status"`
+	Status        int       `json:"statusId"`
 	Address       string    `json:"street"`
+	CityID        int       `json:"cityId"`
+	StateID       int       `json:"stateId"`
+	CountryID     int       `json:"countryId"`
+	FederationID  int       `json:"federationId"`
 	ContactName   string    `json:"contact"`
 	ContactEmail  string    `json:"email"`
 	ContactPhone  string    `json:"phone"`
@@ -145,8 +159,12 @@ func GetCompetitionByID(id int, repo ICompetitionRepository) (Competition, error
 func CreateCompetition(competition Competition, competitionRepo ICompetitionRepository,
 	provisionRepo IOrganizerProvisionRepository, historyRepo IOrganizerProvisionHistoryRepository) error {
 	// check if data received is validationErr
-	if validationErr := validateCreateCompetition(competition); validationErr != nil {
+	if validationErr := competition.validateCreateCompetition(); validationErr != nil {
 		return validationErr
+	}
+
+	if competition.statusID == 0 {
+		competition.statusID = CompetitionStatusPreRegistration
 	}
 
 	// check if organizer is provisioned with available competitions
@@ -166,54 +184,71 @@ func CreateCompetition(competition Competition, competitionRepo ICompetitionRepo
 	updateOrganizerProvision(newProvision, historyEntry, provisionRepo, historyRepo)
 
 	err := competitionRepo.CreateCompetition(&competition)
+	if err != nil {
+		// refund competition organizer's provision
+		refundProvision := newProvision
+		refundProvision.Available += 1
+		refundProvision.Hosted -= 1
+
+		refundEntry := OrganizerProvisionHistoryEntry{
+			OrganizerRoleID: refundProvision.OrganizerRoleID,
+			Amount:          1,
+			Note:            fmt.Sprintf("Refund for failing in creating competition %v %v", competition.Name, competition.StartDateTime),
+			CreateUserID:    competition.CreateUserID,
+			DateTimeCreated: time.Now(),
+			UpdateUserID:    competition.UpdateUserID,
+			DateTimeUpdated: time.Now(),
+		}
+		updateOrganizerProvision(refundProvision, refundEntry, provisionRepo, historyRepo)
+	}
 
 	return err
 }
 
-func validateCreateCompetition(competition Competition) error {
-	if competition.FederationID < 1 {
+func (comp Competition) validateCreateCompetition() error {
+	if comp.FederationID < 1 {
 		return errors.New("invalid federation")
 	}
-	if len(competition.Name) < 3 {
-		return errors.New("competition name is too short")
+	if len(comp.Name) < 3 {
+		return errors.New("comp name is too short")
 	}
-	if len(competition.Website) < 7 { // requires "http://"
-		return errors.New("official competition website is required")
+	if len(comp.Website) < 7 { // requires "http://"
+		return errors.New("official comp website is required")
 	}
-	if competition.GetStatus() > CompetitionStatusClosedRegistration {
-		return errors.New("cannot create competition that no longer allows new registration")
+	if comp.GetStatus() > CompetitionStatusClosedRegistration {
+		return errors.New("cannot create comp that no longer allows new registration")
 	}
-	if competition.StartDateTime.After(competition.EndDateTime) {
+	if comp.StartDateTime.After(comp.EndDateTime) {
 		return errors.New("start date must be ahead of end date")
 	}
-	if competition.StartDateTime.Before(time.Now()) {
-		return errors.New("competition must starts in a future time")
+	if comp.StartDateTime.Before(time.Now()) {
+		return errors.New("comp must starts in a future time")
 	}
-	if competition.StartDateTime.After(time.Now().AddDate(1, 0, 0)) {
-		return errors.New("cannot create far-future competition")
+	if comp.StartDateTime.After(time.Now().AddDate(1, 0, 0)) {
+		return errors.New("cannot create far-future comp")
 	}
-	if len(competition.ContactName) < 3 {
+	if len(comp.ContactName) < 3 {
 		return errors.New("contact name is too short")
 	}
-	if len(competition.ContactEmail) < 5 {
+	if len(comp.ContactEmail) < 5 {
 		return errors.New("contact email is too short")
 	}
-	if len(competition.ContactPhone) < 9 {
+	if len(comp.ContactPhone) < 9 {
 		return errors.New("contact phone is too short")
 	}
-	if competition.City.ID < 1 {
+	if comp.City.ID < 1 {
 		return errors.New("city is required")
 	}
-	if competition.State.ID < 1 {
+	if comp.State.ID < 1 {
 		return errors.New("state is required")
 	}
-	if competition.Country.ID < 1 {
+	if comp.Country.ID < 1 {
 		return errors.New("country is required")
 	}
-	if competition.CreateUserID < 1 {
+	if comp.CreateUserID < 1 {
 		return errors.New("unauthorized")
 	}
-	if competition.UpdateUserID < 1 {
+	if comp.UpdateUserID < 1 {
 		return errors.New("unauthorized")
 	}
 	return nil
@@ -229,7 +264,7 @@ func UpdateCompetition(user *Account, competition OrganizerUpdateCompetition, re
 	if competitions == nil || len(competitions) != 1 || competitions[0].ID == 0 {
 		return errors.New("cannot find this competition")
 	}
-	if validationErr := validateUpdateCompetition(user, competitions[0], &competition, repo); validationErr != nil {
+	if validationErr := validateUpdateCompetition(user, competitions[0], &competition); validationErr != nil {
 		return validationErr
 	}
 
@@ -248,8 +283,7 @@ func UpdateCompetition(user *Account, competition OrganizerUpdateCompetition, re
 
 func validateUpdateCompetition(user *Account,
 	competition Competition,
-	updateDTO *OrganizerUpdateCompetition,
-	repo ICompetitionRepository) error {
+	updateDTO *OrganizerUpdateCompetition) error {
 	if user.ID != competition.CreateUserID {
 		return errors.New("not authorized to update this competition")
 	}
@@ -292,18 +326,18 @@ type IEventMetaRepository interface {
 }
 
 // Get a list of unique federations that a competition has
-func (competition Competition) GetEventUniqueFederations(eventRepository IEventMetaRepository) ([]Federation, error) {
-	return eventRepository.GetEventUniqueFederations(competition)
+func (comp Competition) GetEventUniqueFederations(eventRepository IEventMetaRepository) ([]Federation, error) {
+	return eventRepository.GetEventUniqueFederations(comp)
 }
-func (competition Competition) GetEventUniqueDivisions(eventRepository IEventMetaRepository) ([]Division, error) {
-	return eventRepository.GetEventUniqueDivisions(competition)
+func (comp Competition) GetEventUniqueDivisions(eventRepository IEventMetaRepository) ([]Division, error) {
+	return eventRepository.GetEventUniqueDivisions(comp)
 }
-func (competition Competition) GetEventUniqueAges(eventRepository IEventMetaRepository) ([]Age, error) {
-	return eventRepository.GetEventUniqueAges(competition)
+func (comp Competition) GetEventUniqueAges(eventRepository IEventMetaRepository) ([]Age, error) {
+	return eventRepository.GetEventUniqueAges(comp)
 }
-func (competition Competition) GetEventUniqueProficiencies(eventRepository IEventMetaRepository) ([]Proficiency, error) {
-	return eventRepository.GetEventUniqueProficiencies(competition)
+func (comp Competition) GetEventUniqueProficiencies(eventRepository IEventMetaRepository) ([]Proficiency, error) {
+	return eventRepository.GetEventUniqueProficiencies(comp)
 }
-func (competition Competition) GetEventUniqueStyles(eventRepository IEventMetaRepository) ([]Style, error) {
-	return eventRepository.GetEventUniqueStyles(competition)
+func (comp Competition) GetEventUniqueStyles(eventRepository IEventMetaRepository) ([]Style, error) {
+	return eventRepository.GetEventUniqueStyles(comp)
 }

@@ -1,19 +1,3 @@
-// Dancesport Application System (DAS)
-// Copyright (C) 2017, 2018 Yubing Hou
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 package provision
 
 import (
@@ -61,19 +45,24 @@ func (repo PostgresOrganizerProvisionHistoryRepository) CreateOrganizerProvision
 	).Suffix("RETURNING ID")
 	clause, args, err := stmt.ToSql()
 
-	if tx, txErr := repo.Database.Begin(); txErr != nil {
+	tx, txErr := repo.Database.Begin()
+	if txErr != nil {
 		return txErr
-	} else {
-		row := repo.Database.QueryRow(clause, args...)
-		row.Scan(&history.ID)
-		err = tx.Commit()
+	}
+	row := repo.Database.QueryRow(clause, args...)
+	err = row.Scan(&history.ID)
+	if err != nil {
 		return err
 	}
+	err = tx.Commit()
+	return err
+
 }
 
 func (repo PostgresOrganizerProvisionHistoryRepository) SearchOrganizerProvisionHistory(criteria businesslogic.SearchOrganizerProvisionHistoryCriteria) ([]businesslogic.OrganizerProvisionHistoryEntry, error) {
+	history := make([]businesslogic.OrganizerProvisionHistoryEntry, 0)
 	if repo.Database == nil {
-		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+		return history, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	clause := repo.SqlBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
 		common.ColumnPrimaryKey,
@@ -87,17 +76,14 @@ func (repo PostgresOrganizerProvisionHistoryRepository) SearchOrganizerProvision
 		From(DAS_ORGANIZER_PROVISION_HISTORY).
 		Where(squirrel.Eq{"ORGANIZER_ID": criteria.OrganizerID})
 
-	history := make([]businesslogic.OrganizerProvisionHistoryEntry, 0)
 	rows, err := clause.RunWith(repo.Database).Query()
-
 	if err != nil {
-		rows.Close()
 		return history, err
 	}
 
 	for rows.Next() {
 		each := businesslogic.OrganizerProvisionHistoryEntry{}
-		rows.Scan(
+		err = rows.Scan(
 			&each.ID,
 			&each.OrganizerRoleID,
 			&each.Amount,
@@ -107,21 +93,11 @@ func (repo PostgresOrganizerProvisionHistoryRepository) SearchOrganizerProvision
 			&each.UpdateUserID,
 			&each.DateTimeUpdated,
 		)
+		history = append(history, each)
+		if err != nil {
+			return history, err
+		}
 	}
-	rows.Close()
+	err = rows.Close()
 	return history, err
-}
-
-func (repo PostgresOrganizerProvisionHistoryRepository) DeleteOrganizerProvisionHistory(history businesslogic.OrganizerProvisionHistoryEntry) error {
-	if repo.Database == nil {
-		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
-	}
-	return errors.New("not implemented")
-}
-
-func (repo PostgresOrganizerProvisionHistoryRepository) UpdateOrganizerProvisionHistory(history businesslogic.OrganizerProvisionHistoryEntry) error {
-	if repo.Database == nil {
-		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
-	}
-	return errors.New("not implemented")
 }

@@ -1,19 +1,3 @@
-// Dancesport Application System (DAS)
-// Copyright (C) 2017, 2018 Yubing Hou
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 package eventdal
 
 import (
@@ -28,7 +12,7 @@ import (
 )
 
 const (
-	dasEventTable                 = "DAS.EVENT"
+	DAS_EVENT_TABLE               = "DAS.EVENT"
 	dasEventColumnEventCategoryID = "CATEGORY_ID"
 	dasEventColumnEventStatusID   = "EVENT_STATUS_ID"
 )
@@ -59,7 +43,7 @@ func (repo PostgresEventRepository) SearchEvent(criteria businesslogic.SearchEve
 		common.ColumnDateTimeCreated,
 		common.ColumnUpdateUserID,
 		common.ColumnDateTimeUpdated,
-	)).From(dasEventTable).OrderBy(common.ColumnPrimaryKey)
+	)).From(DAS_EVENT_TABLE).OrderBy(common.ColumnPrimaryKey)
 	if criteria.CompetitionID > 0 {
 		stmt = stmt.Where(squirrel.Eq{common.COL_COMPETITION_ID: criteria.CompetitionID})
 	}
@@ -90,8 +74,8 @@ func (repo PostgresEventRepository) SearchEvent(criteria businesslogic.SearchEve
 		return events, err
 	}
 	for rows.Next() {
-		each := businesslogic.Event{}
-		rows.Scan(
+		each := businesslogic.NewEvent()
+		scanErr := rows.Scan(
 			&each.ID,
 			&each.CompetitionID,
 			&each.CategoryID,
@@ -107,9 +91,33 @@ func (repo PostgresEventRepository) SearchEvent(criteria businesslogic.SearchEve
 			&each.UpdateUserID,
 			&each.DateTimeUpdated,
 		)
-		events = append(events, each)
+		if scanErr != nil {
+			return events, scanErr
+		}
+		events = append(events, *each)
 	}
-	rows.Close()
+	closeErr := rows.Close()
+	if closeErr != nil {
+		return events, closeErr
+	}
+
+	// get event dances
+	eventDanceRepo := PostgresEventDanceRepository{
+		Database:   repo.Database,
+		SqlBuilder: repo.SQLBuilder,
+	}
+	for i := 0; i < len(events); i++ {
+		eventDances, searchDanceErr := eventDanceRepo.SearchEventDance(businesslogic.SearchEventDanceCriteria{
+			EventID: events[i].ID,
+		})
+		if searchDanceErr != nil {
+			return events, err
+		}
+		for j := 0; j < len(eventDances); j++ {
+			(events[i]).AddEventDance(eventDances[j])
+			events[i].AddDance(eventDances[j].DanceID)
+		}
+	}
 	return events, err
 }
 
@@ -119,7 +127,7 @@ func (repo PostgresEventRepository) CreateEvent(event *businesslogic.Event) erro
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	stmt := repo.SQLBuilder.Insert("").
-		Into(dasEventTable).
+		Into(DAS_EVENT_TABLE).
 		Columns(
 			common.COL_COMPETITION_ID,
 			dasEventColumnEventCategoryID,
@@ -168,7 +176,7 @@ func (repo PostgresEventRepository) UpdateEvent(event businesslogic.Event) error
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	stmt := repo.SQLBuilder.Update("").Table(dasEventTable).
+	stmt := repo.SQLBuilder.Update("").Table(DAS_EVENT_TABLE).
 		Set(dasEventColumnEventStatusID, event.StatusID).
 		Where(squirrel.Eq{common.COL_COMPETITION_ID: event.CompetitionID})
 	tx, txErr := repo.Database.Begin()
@@ -185,5 +193,12 @@ func (repo PostgresEventRepository) DeleteEvent(event businesslogic.Event) error
 	if repo.Database == nil {
 		return errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
-	return errors.New("not implemented")
+	stmt := repo.SQLBuilder.Delete("").From(DAS_EVENT_TABLE).Where(squirrel.Eq{common.ColumnPrimaryKey: event.ID})
+	tx, txErr := repo.Database.Begin()
+	if txErr != nil {
+		return txErr
+	}
+	_, err := stmt.RunWith(repo.Database).Exec()
+	err = tx.Commit()
+	return err
 }

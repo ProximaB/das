@@ -1,19 +1,3 @@
-// Dancesport Application System (DAS)
-// Copyright (C) 2019 Yubing Hou
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 package businesslogic
 
 import (
@@ -29,6 +13,8 @@ const (
 	COMPETITION_INVITATION_STATUS_EXPIRED  = "Expired"
 )
 
+// CompetitionOfficialInvitation is an invitation that can only be sent by organizers to recipients who have provisioned
+// competition official role.
 type CompetitionOfficialInvitation struct {
 	ID                 int
 	Sender             Account
@@ -38,12 +24,14 @@ type CompetitionOfficialInvitation struct {
 	Message            string
 	InvitationStatus   string
 	ExpirationDate     time.Time
-	CreateUserId       int
+	CreateUserID       int
 	DateTimeCreated    time.Time
-	UpdateUserId       int
+	UpdateUserID       int
 	DateTimeUpdated    time.Time
 }
 
+// SearchCompetitionOfficialInvitationCriteria defines the search criteria that can be used to search CompetitionOfficialInvitation
+// within a Invitation repository.
 type SearchCompetitionOfficialInvitationCriteria struct {
 	SenderID             int
 	RecipientID          int
@@ -54,6 +42,8 @@ type SearchCompetitionOfficialInvitationCriteria struct {
 	UpdateUserID         int
 }
 
+// ICompetitionOfficialInvitationRepository defines the interface that a CompetitionOfficialInvitation repository should
+// implement, including creating, deleting, searching, and updating the invitation.
 type ICompetitionOfficialInvitationRepository interface {
 	CreateCompetitionOfficialInvitationRepository(invitation *CompetitionOfficialInvitation) error
 	DeleteCompetitionOfficialInvitationRepository(invitation CompetitionOfficialInvitation) error
@@ -61,6 +51,7 @@ type ICompetitionOfficialInvitationRepository interface {
 	UpdateCompetitionOfficialInvitationRepository(invitation CompetitionOfficialInvitation) error
 }
 
+// CompetitionOfficialInvitationService defines the service that can provide search
 type CompetitionOfficialInvitationService struct {
 	accountRepo     IAccountRepository
 	competitionRepo ICompetitionRepository
@@ -110,9 +101,9 @@ func (service CompetitionOfficialInvitationService) CreateCompetitionOfficialInv
 	invitation.Recipient = recipient
 	invitation.AssignedRoleID = serviceRole
 	invitation.DateTimeCreated = time.Now()
-	invitation.CreateUserId = sender.ID
+	invitation.CreateUserID = sender.ID
 	invitation.DateTimeUpdated = time.Now()
-	invitation.UpdateUserId = sender.ID
+	invitation.UpdateUserID = sender.ID
 
 	// invitation will expire either:
 	// - 30 days after the invitation, or
@@ -184,16 +175,15 @@ func (service CompetitionOfficialInvitationService) UpdateCompetitionOfficialInv
 		} else if currentUser.ID == invitation.Sender.ID {
 			if response != COMPETITION_INVITATION_STATUS_REVOKED {
 				return errors.New("The invitation can only be revoked")
-			} else {
-				canUpdate = true
 			}
+			canUpdate = true
 		}
 	}
 
 	if canUpdate {
 		invitation.InvitationStatus = response
 		invitation.DateTimeUpdated = time.Now()
-		invitation.UpdateUserId = currentUser.ID
+		invitation.UpdateUserID = currentUser.ID
 		return service.invitationRepo.UpdateCompetitionOfficialInvitationRepository(invitation)
 	}
 	return errors.New("An unknown error occurred while processing this invitation. Please report this incident to site administrator.")

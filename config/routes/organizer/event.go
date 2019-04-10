@@ -1,19 +1,3 @@
-// Dancesport Application System (DAS)
-// Copyright (C) 2017, 2018 Yubing Hou
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 package organizer
 
 import (
@@ -27,8 +11,19 @@ import (
 
 const apiOrganizerEventEndpointV1_0 = "/api/v1.0/organizer/event"
 
-var organizerEventService = businesslogic.NewOrganizerEventService(database.AccountRepository, database.AccountRoleRepository,
-	database.CompetitionRepository, database.EventRepository, database.EventDanceRepository)
+var organizerEventService = businesslogic.NewOrganizerEventService(
+	database.AccountRepository,
+	database.AccountRoleRepository,
+	database.CompetitionRepository,
+	database.EventRepository,
+	database.EventDanceRepository,
+	database.CompetitionEventTemplateRepository,
+	database.FederationRepository,
+	database.DivisionRepository,
+	database.AgeRepository,
+	database.ProficiencyRepository,
+	database.StyleRepository,
+	database.DanceRepository)
 var organizerEventServer = organizer.OrganizerEventServer{
 	middleware.AuthenticationStrategy,
 	organizerEventService,
@@ -76,5 +71,32 @@ var OrganizerEventManagementControllerGroup = util.DasControllerGroup{
 		deleteEventController,
 		searchEventController,
 		updateEventController,
+	},
+}
+
+const apiOrganizeEventTemplateEndpoint = "/api/v1/organizer/event/template"
+
+var searchCompetitionEventTemplateController = util.DasController{
+	Name:         "SearchCompetitionEventTemplateController",
+	Description:  "Template for populating competition events",
+	Method:       http.MethodGet,
+	Endpoint:     apiOrganizeEventTemplateEndpoint,
+	Handler:      organizerEventServer.SearchCompetitionEventTemplateHandler,
+	AllowedRoles: []int{businesslogic.AccountTypeOrganizer},
+}
+
+var createCompetitionEventTemplateController = util.DasController{
+	Name:         "CreateCompetitionEventTemplateHandler",
+	Description:  "Creating a template for particular user",
+	Method:       http.MethodPost,
+	Endpoint:     apiOrganizeEventTemplateEndpoint,
+	Handler:      organizerEventServer.CreateCompetitionEventTemplateHanlder,
+	AllowedRoles: []int{businesslogic.AccountTypeOrganizer},
+}
+
+var OrganizerCompetitionEventTemplateControllerGroup = util.DasControllerGroup{
+	Controllers: []util.DasController{
+		createCompetitionEventTemplateController,
+		searchCompetitionEventTemplateController,
 	},
 }

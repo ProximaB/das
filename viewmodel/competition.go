@@ -1,19 +1,3 @@
-// Dancesport Application System (DAS)
-// Copyright (C) 2017, 2018 Yubing Hou
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 package viewmodel
 
 import (
@@ -23,7 +7,7 @@ import (
 	"time"
 )
 
-type Competition struct {
+type CompetitionViewModel struct {
 	ID           int       `json:"id"`
 	Federation   int       `json:"federationId"`
 	Name         string    `json:"name"`
@@ -41,19 +25,20 @@ type Competition struct {
 	ContactEmail string    `json:"email"`
 }
 
-func CompetitionDataModelToViewModel(competition businesslogic.Competition, accountType int) Competition {
-	view := Competition{
+func CompetitionDataModelToViewModel(competition businesslogic.Competition, accountType int) CompetitionViewModel {
+	view := CompetitionViewModel{
 		ID:         competition.ID,
 		Federation: competition.FederationID,
 		Name:       competition.Name,
 		Website:    competition.Website,
 		CountryID:  competition.Country.ID,
-		StateID:    competition.GetStatus(),
+		StateID:    competition.State.ID,
 		CityID:     competition.City.ID,
 		Address:    competition.Street,
 		StartDate:  competition.StartDateTime,
 		EndDate:    competition.EndDateTime,
 		Attendance: competition.Attendance,
+		Status:     competition.GetStatus(),
 	}
 
 	if accountType == businesslogic.AccountTypeOrganizer {

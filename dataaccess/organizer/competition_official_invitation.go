@@ -51,9 +51,9 @@ func (repo PostgresCompetitionOfficialInvitationRepository) CreateCompetitionOff
 			invitation.Message,
 			invitation.InvitationStatus,
 			invitation.ExpirationDate,
-			invitation.CreateUserId,
+			invitation.CreateUserID,
 			invitation.DateTimeCreated,
-			invitation.UpdateUserId,
+			invitation.UpdateUserID,
 			invitation.DateTimeUpdated).
 		Suffix(dalutil.SQLSuffixReturningID)
 	hasError := false
@@ -79,7 +79,7 @@ func (repo PostgresCompetitionOfficialInvitationRepository) CreateCompetitionOff
 	if hasError {
 		return errors.New("An error occurred while creating competition official invitation record")
 	}
-	return errors.New("not implemented")
+	return nil
 }
 func (repo PostgresCompetitionOfficialInvitationRepository) DeleteCompetitionOfficialInvitationRepository(invitation businesslogic.CompetitionOfficialInvitation) error {
 	if repo.Database == nil {
@@ -140,13 +140,13 @@ func (repo PostgresCompetitionOfficialInvitationRepository) SearchCompetitionOff
 			&each.Message,
 			&each.InvitationStatus,
 			&each.ExpirationDate,
-			&each.CreateUserId,
+			&each.CreateUserID,
 			&each.DateTimeCreated,
-			&each.UpdateUserId,
+			&each.UpdateUserID,
 			&each.DateTimeUpdated)
 		if scanErr != nil {
 			log.Printf("[error] scanning Competition Official Invitation: %v", scanErr)
-			return invitations, err
+			return invitations, scanErr
 		}
 		invitations = append(invitations, each)
 	}

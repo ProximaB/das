@@ -1,19 +1,3 @@
-// Dancesport Application System (DAS)
-// Copyright (C) 2017, time.Now().Year() Yubing Hou
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 package businesslogic_test
 
 import (
@@ -51,6 +35,8 @@ func TestCreateCompetition(t *testing.T) {
 		UpdateUserID:  1,
 	}
 
+	err := comp.UpdateStatus(1) // competition must be initialized with a valid status
+
 	competitionRepo.EXPECT().CreateCompetition(&comp).Return(nil)
 	provisionRepo.EXPECT().SearchOrganizerProvision(businesslogic.SearchOrganizerProvisionCriteria{
 		OrganizerID: 1,
@@ -60,7 +46,7 @@ func TestCreateCompetition(t *testing.T) {
 	provisionRepo.EXPECT().UpdateOrganizerProvision(gomock.Any()).Return(nil)
 	provisionHistoryRepo.EXPECT().CreateOrganizerProvisionHistory(gomock.Any()).Return(nil)
 
-	err := businesslogic.CreateCompetition(comp, competitionRepo, provisionRepo, provisionHistoryRepo)
+	err = businesslogic.CreateCompetition(comp, competitionRepo, provisionRepo, provisionHistoryRepo)
 	assert.Nil(t, err, "should create competition if competition data is correct and organizer has sufficient provision")
 }
 

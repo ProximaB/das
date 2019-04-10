@@ -1,19 +1,3 @@
-// Dancesport Application System (DAS)
-// Copyright (C) 2017, 2018 Yubing Hou
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 package viewmodel
 
 import (
@@ -47,8 +31,15 @@ func (criteria OrganizerSearchEventCriteria) ToBusinessModel() businesslogic.Sea
 	}
 }
 
-// CreateEventViewModel defines the payload for creating an Event
-type CreateEventViewModel struct {
+type SearchCompetitionEventTemplateForm struct {
+	ID         int    `schema:"templateId"`
+	Name       string `schema:"name"`
+	Federation string `schema:"federation"`
+	OwnerID    int
+}
+
+// CreateEventForm defines the payload for creating an Event
+type CreateEventForm struct {
 	CompetitionID   int   `json:"competition"`
 	EventCategoryID int   `json:"category"`
 	FederationID    int   `json:"federation"`
@@ -57,10 +48,11 @@ type CreateEventViewModel struct {
 	ProficiencyID   int   `json:"proficiency"`
 	StyleID         int   `json:"style"`
 	Dances          []int `json:"dances"`
+	Template        int   `json:"template,omitempty"`
 }
 
-// ToDomainModel converts the caller CreateEventViewModel to the Event domain model
-func (dto CreateEventViewModel) ToDomainModel(user businesslogic.Account) *businesslogic.Event {
+// ToDomainModel converts the caller CreateEventForm to the Event domain model
+func (dto CreateEventForm) ToDomainModel(user businesslogic.Account) *businesslogic.Event {
 	event := businesslogic.NewEvent()
 	event.CompetitionID = dto.CompetitionID
 	event.CategoryID = businesslogic.EventCategoryCompetitiveBallroom
@@ -85,20 +77,34 @@ func (dto CreateEventViewModel) ToDomainModel(user businesslogic.Account) *busin
 	return event
 }
 
-// EventViewModel defines the JSON structure of Event which is used in outbound API
-type EventViewModel struct {
-	ID            int   `json:"eventId"`
-	CompetitionID int   `json:"competitionId"`
-	FederationID  int   `json:"federationId"`
-	DivisionID    int   `json:"divisionId"`
-	AgeID         int   `json:"ageId"`
-	ProficiencyID int   `json:"proficiencyId"`
-	StyleID       int   `json:"styleId"`
-	Dances        []int `json:"dances"`
+// EventDanceViewModel defines the JSON structure of EventDance
+type EventDanceViewModel struct {
+	ID      int `json:"eventDanceId"`
+	EventId int `json:"eventId"`
+	DanceId int `json:"danceId"`
 }
 
-// Populate populates the caller EventViewModel data fields with data from business logic Event
-func (view *EventViewModel) Populate(model businesslogic.Event) {
+func (view *EventDanceViewModel) PopulateViewModel(model businesslogic.EventDance) {
+	view.ID = model.ID
+	view.EventId = model.EventID
+	view.DanceId = model.DanceID
+}
+
+// EventViewModel defines the JSON structure of Event which is used in outbound API
+type EventViewModel struct {
+	ID            int                   `json:"eventId"`
+	CompetitionID int                   `json:"competitionId"`
+	FederationID  int                   `json:"federationId"`
+	DivisionID    int                   `json:"divisionId"`
+	AgeID         int                   `json:"ageId"`
+	ProficiencyID int                   `json:"proficiencyId"`
+	StyleID       int                   `json:"styleId"`
+	Dances        []int                 `json:"dances"`
+	EventDances   []EventDanceViewModel `json:"eventDances"`
+}
+
+// PopulateViewModel populates the caller EventViewModel data fields with data from business logic Event
+func (view *EventViewModel) PopulateViewModel(model businesslogic.Event) {
 	view.ID = model.ID
 	view.CompetitionID = model.CompetitionID
 	view.FederationID = model.FederationID
@@ -107,4 +113,14 @@ func (view *EventViewModel) Populate(model businesslogic.Event) {
 	view.ProficiencyID = model.ProficiencyID
 	view.StyleID = model.StyleID
 	view.Dances = model.GetDances()
+	view.EventDances = make([]EventDanceViewModel, 0)
+	for _, each := range model.GetEventDances() {
+		item := EventDanceViewModel{}
+		item.PopulateViewModel(each)
+		view.EventDances = append(view.EventDances, item)
+	}
+}
+
+type DeleteEventForm struct {
+	ID int `json:"eventId";validate:"min=1"`
 }

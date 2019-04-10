@@ -13,12 +13,15 @@
 # https://stackoverflow.com/questions/5491634/shell-script-error-expecting-do
 
 set -e
-echo "" > coverage.txt
-#
+echo "" > coverage.txt # for codecov
+baseDir="github.com/DancesportSoftware/das"
 for d in $(go list ./... | grep -v vendor); do
-    go test -race -coverprofile=profile.out -covermode=atomic $d
-    if [ -f profile.out ]; then
-        cat profile.out >> coverage.txt
-        rm profile.out
+    go test -race -coverprofile=tmp.out -covermode=atomic $d
+    if [ -f tmp.out ]; then
+        echo $d
+        cat tmp.out >> coverage.txt
+        targetDir=".${d#$baseDir}"
+        cp tmp.out $targetDir/coverage.out
+        rm tmp.out
     fi
 done

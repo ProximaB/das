@@ -1,19 +1,3 @@
-// Dancesport Application System (DAS)
-// Copyright (C) 2017, 2018 Yubing Hou
-//
-// This program is free software: you can redistribute it and/or modify
-// it under the terms of the GNU General Public License as published by
-// the Free Software Foundation, either version 3 of the License, or
-// (at your option) any later version.
-//
-// This program is distributed in the hope that it will be useful,
-// but WITHOUT ANY WARRANTY; without even the implied warranty of
-// MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
-// GNU General Public License for more details.
-//
-// You should have received a copy of the GNU General Public License
-// along with this program.  If not, see <http://www.gnu.org/licenses/>.
-
 package viewmodel
 
 import (
@@ -28,6 +12,20 @@ type Partnership struct {
 	Since      time.Time `json:"since"`
 	SameSexIND bool      `json:"samesex"`
 	Favorite   bool      `json:"favorite"`
+}
+
+type PartnershipTinyViewModel struct {
+	ID     int    `json:"id"`
+	Lead   string `json:"lead"`
+	Follow string `json:"follow"`
+}
+
+func PartnershipToTinyViewModel(partnership businesslogic.Partnership) PartnershipTinyViewModel {
+	return PartnershipTinyViewModel{
+		ID:     partnership.ID,
+		Lead:   partnership.Lead.FullName(),
+		Follow: partnership.Follow.FullName(),
+	}
 }
 
 func PartnershipDataModelToViewModel(currentUser businesslogic.Account, partnership businesslogic.Partnership) Partnership {
@@ -62,6 +60,7 @@ type PartnershipRequestResponse struct {
 	Response  int `json:"response"`
 }
 
+// CreatePartnershipRequest defines the JSON payload structure for creating a partnership request.
 type CreatePartnershipRequest struct {
 	SenderID       int    `json:"sender"`
 	RecipientEmail string `json:"recipient"`
@@ -79,11 +78,13 @@ type PartnershipRequest struct {
 	DateTimeCreated time.Time `json:"sent"`
 }
 
+// PartnershipRequestStatus defines the JSON structure of reference data PartnershipRequestStatus.
 type PartnershipRequestStatus struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 
+// PartnershipRole defines the JSON structure reference data PartnershipRole
 type PartnershipRole struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`

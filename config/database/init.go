@@ -3,18 +3,22 @@ package database
 import (
 	"database/sql"
 	"github.com/DancesportSoftware/das/env"
-	_ "github.com/lib/pq"
+	_ "github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/postgres"
+
 	"log"
 )
 
 func openDatabaseConnection() {
+	if len(env.DatabaseDriver) == 0 {
+		log.Println("[error] cannot find database driver")
+	}
 	// for testing, use default connection
 	if len(env.DatabaseConnectionString) == 0 {
 		log.Println("[error] cannot find database connection string")
 	}
 
 	var err error
-	PostgresDatabase, err = sql.Open("postgres", env.DatabaseConnectionString)
+	PostgresDatabase, err = sql.Open(env.DatabaseDriver, env.DatabaseConnectionString)
 	if err != nil {
 		log.Printf("[error] cannot establish connection to database: %s\n", err)
 	}

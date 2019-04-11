@@ -2,7 +2,7 @@ FROM golang:1.12 as builder
 
 # Copy local code to the container image.
 WORKDIR /go/src/github.com/DancesportSoftware/das
-COPY ci .
+COPY . .
 
 # Build the command inside the container.
 # (You may fetch or manage dependencies here,

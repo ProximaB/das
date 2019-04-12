@@ -95,6 +95,19 @@ func (mr *MockIAthleteCompetitionEntryRepositoryMockRecorder) NextAvailableLeadT
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "NextAvailableLeadTag", reflect.TypeOf((*MockIAthleteCompetitionEntryRepository)(nil).NextAvailableLeadTag), competition)
 }
 
+// GetEntriesByCompetition mocks base method
+func (m *MockIAthleteCompetitionEntryRepository) GetEntriesByCompetition(competitionId int) ([]businesslogic.AthleteCompetitionEntry, error) {
+	ret := m.ctrl.Call(m, "GetEntriesByCompetition", competitionId)
+	ret0, _ := ret[0].([]businesslogic.AthleteCompetitionEntry)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetEntriesByCompetition indicates an expected call of GetEntriesByCompetition
+func (mr *MockIAthleteCompetitionEntryRepositoryMockRecorder) GetEntriesByCompetition(competitionId interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEntriesByCompetition", reflect.TypeOf((*MockIAthleteCompetitionEntryRepository)(nil).GetEntriesByCompetition), competitionId)
+}
+
 // MockICompetitionLeadTagRepository is a mock of ICompetitionLeadTagRepository interface
 type MockICompetitionLeadTagRepository struct {
 	ctrl     *gomock.Controller

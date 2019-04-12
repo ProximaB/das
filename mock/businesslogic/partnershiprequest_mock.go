@@ -117,3 +117,29 @@ func (m *MockIPartnershipRequestRepository) UpdatePartnershipRequest(request bus
 func (mr *MockIPartnershipRequestRepositoryMockRecorder) UpdatePartnershipRequest(request interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdatePartnershipRequest", reflect.TypeOf((*MockIPartnershipRequestRepository)(nil).UpdatePartnershipRequest), request)
 }
+
+// GetReceivedRequests mocks base method
+func (m *MockIPartnershipRequestRepository) GetReceivedRequests(recipientID int) ([]businesslogic.PartnershipRequest, error) {
+	ret := m.ctrl.Call(m, "GetReceivedRequests", recipientID)
+	ret0, _ := ret[0].([]businesslogic.PartnershipRequest)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetReceivedRequests indicates an expected call of GetReceivedRequests
+func (mr *MockIPartnershipRequestRepositoryMockRecorder) GetReceivedRequests(recipientID interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetReceivedRequests", reflect.TypeOf((*MockIPartnershipRequestRepository)(nil).GetReceivedRequests), recipientID)
+}
+
+// GetSentRequests mocks base method
+func (m *MockIPartnershipRequestRepository) GetSentRequests(senderID int) ([]businesslogic.PartnershipRequest, error) {
+	ret := m.ctrl.Call(m, "GetSentRequests", senderID)
+	ret0, _ := ret[0].([]businesslogic.PartnershipRequest)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetSentRequests indicates an expected call of GetSentRequests
+func (mr *MockIPartnershipRequestRepositoryMockRecorder) GetSentRequests(senderID interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetSentRequests", reflect.TypeOf((*MockIPartnershipRequestRepository)(nil).GetSentRequests), senderID)
+}

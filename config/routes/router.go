@@ -90,7 +90,7 @@ func NewDasRouter() *mux.Router {
 	addDasController(router, util.DasController{
 		Name:         "RootController",
 		Description:  "Handle Server Base Information",
-		Endpoint:     "/",
+		Endpoint:     "/api/version",
 		Handler:      rootController,
 		Method:       http.MethodGet,
 		AllowedRoles: []int{businesslogic.AccountTypeNoAuth},

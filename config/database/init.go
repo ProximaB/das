@@ -3,7 +3,7 @@ package database
 import (
 	"database/sql"
 	"github.com/DancesportSoftware/das/env"
-	_ "github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/postgres"
+	_ "github.com/lib/pq"
 
 	"log"
 )

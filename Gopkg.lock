@@ -38,20 +38,6 @@
   version = "v3.7.0"
 
 [[projects]]
-  digest = "1:2462a00a7bdf9eeef215cbad0e18a3f7c2dd88a261f80188bc11be45808d5cbc"
-  name = "github.com/GoogleCloudPlatform/cloudsql-proxy"
-  packages = [
-    "logging",
-    "proxy/certs",
-    "proxy/dialers/postgres",
-    "proxy/proxy",
-    "proxy/util",
-  ]
-  pruneopts = "UT"
-  revision = "ac834ce67862b7c4ed8bdbe86e664572f820c245"
-  version = "1.13"
-
-[[projects]]
   digest = "1:14a90eb1290bd0aa42848afa9ee2c9ce247abdb63c2cf614331670119760962f"
   name = "github.com/Masterminds/squirrel"
   packages = ["."]
@@ -259,11 +245,11 @@
 
 [[projects]]
   branch = "master"
-  digest = "1:e2e51bf73862610e548f3acd292f447b500e53d792aa55260a8cb605dfd8ba09"
+  digest = "1:3e01c69b34e7c3fa4b7a118ca95a6beaecea00f7f4fb701545d83eacd3badb3c"
   name = "golang.org/x/sys"
   packages = ["unix"]
   pruneopts = "UT"
-  revision = "0ad05ae3009d6413d3363aa09b350b2ec37daf09"
+  revision = "b44545bcd369ef9ff9bebcfebf5f3370ef9b1932"
 
 [[projects]]
   digest = "1:a2ab62866c75542dd18d2b069fec854577a20211d7c0ea6ae746072a1dccdd18"
@@ -289,7 +275,7 @@
   version = "v0.3.0"
 
 [[projects]]
-  digest = "1:23bf2cca12af01ba91d06fb44760a17608e45f8cc615ad7ee3a6108b0fa1e0b1"
+  digest = "1:26c08602c837f20349dfe958a03f709107039c08c69f005935ad0b06f30798f8"
   name = "google.golang.org/api"
   packages = [
     "gensupport",
@@ -300,7 +286,6 @@
     "internal",
     "iterator",
     "option",
-    "sqladmin/v1beta4",
     "storage/v1",
     "transport",
     "transport/grpc",
@@ -411,12 +396,12 @@
   input-imports = [
     "firebase.google.com/go",
     "firebase.google.com/go/auth",
-    "github.com/GoogleCloudPlatform/cloudsql-proxy/proxy/dialers/postgres",
     "github.com/Masterminds/squirrel",
     "github.com/golang/mock/gomock",
     "github.com/gorilla/csrf",
     "github.com/gorilla/mux",
     "github.com/gorilla/schema",
+    "github.com/lib/pq",
     "github.com/stretchr/testify/assert",
     "google.golang.org/api/option",
     "gopkg.in/DATA-DOG/go-sqlmock.v1",

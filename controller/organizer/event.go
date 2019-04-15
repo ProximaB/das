@@ -67,7 +67,7 @@ func (server OrganizerEventServer) DeleteEventHandler(w http.ResponseWriter, r *
 		}
 		deletionErr := server.Service.DeleteEvent(events[0], currentUser)
 		if deletionErr != nil {
-			util.RespondJsonResult(w, http.StatusInternalServerError, searchErr.Error(), nil)
+			util.RespondJsonResult(w, http.StatusInternalServerError, deletionErr.Error(), nil)
 			return
 		}
 		util.RespondJsonResult(w, http.StatusOK, fmt.Sprintf("Success: event with ID = %v is deleted", events[0].ID), nil)

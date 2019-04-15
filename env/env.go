@@ -1,6 +1,7 @@
 package env
 
 const (
+	VarDatabaseDriver           = "DATABASE_DRIVER"
 	VarDatabaseConnectionString = "POSTGRES_CONNECTION"
 	VarFirebaseAuthCredential   = "FIREBASE_AUTH_CREDENTIAL"
 	VarFirebaseProjectId        = "FIREBASE_PROJECT_ID"
@@ -15,6 +16,7 @@ const (
 )
 
 var (
+	DatabaseDriver           string
 	DatabaseConnectionString string
 	FirebaseAuthCredential   string
 	HmacSigningKey           string

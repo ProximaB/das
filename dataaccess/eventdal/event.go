@@ -199,6 +199,9 @@ func (repo PostgresEventRepository) DeleteEvent(event businesslogic.Event) error
 		return txErr
 	}
 	_, err := stmt.RunWith(repo.Database).Exec()
+	if err != nil {
+		return err
+	}
 	err = tx.Commit()
 	return err
 }

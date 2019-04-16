@@ -5,7 +5,7 @@ import (
 	"testing"
 
 	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/mock/businesslogic"
+	mock_businesslogic "github.com/DancesportSoftware/das/mock/businesslogic"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 )
@@ -57,18 +57,24 @@ func TestPartnership_HasAthlete_True(t *testing.T) {
 	assert.True(t, partnership.HasAthlete(6))
 }
 
-// GetPartnershipByID helper functions
+/*  These are helper functions used by the tests in partnership_test.go.
+Their general purpose is to allow for the actual tests to follow the DRY principle  */
+
 type getPartnershipByIDResult struct {
 	partnership businesslogic.Partnership
 	err         error
 }
 
+// Most functions from partnership.go return two values, this function returns a struct that allows
+// access to either values.
 func partnershipTwoValueReturnHandler(p businesslogic.Partnership, e error) getPartnershipByIDResult {
 	result := getPartnershipByIDResult{partnership: p, err: e}
 
 	return result
 }
 
+// Handles the generation of general mocks to prevent reapating of code.  Since the mock is tested
+// twice, MaxTimes(n) is used to allow the expected results to be called twice
 func getPartnershipByIDMockHandler(m *gomock.Controller, partnerID int,
 	partnership []businesslogic.Partnership, err error) businesslogic.IPartnershipRepository {
 
@@ -80,6 +86,7 @@ func getPartnershipByIDMockHandler(m *gomock.Controller, partnerID int,
 	return partnershipRepo
 }
 
+// Handles the generation of general Equal and Nil assertions
 func getPartnershipByIDAssertEqualNilHandler(t *testing.T, partnerID int,
 	partnershipRepo businesslogic.IPartnershipRepository) {
 
@@ -94,7 +101,9 @@ func getPartnershipByIDAssertEqualNilHandler(t *testing.T, partnerID int,
 	)
 }
 
-// GetPartnershipByID tests
+/*  GetPartnershipByID tests  */
+
+// Tests the search result returning an error
 func TestPartnership_GetPartnershipByID_SearchError(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
@@ -111,6 +120,7 @@ func TestPartnership_GetPartnershipByID_SearchError(t *testing.T) {
 	)
 }
 
+// Tests the search result returning Nil
 func TestPartnership_GetPartnershipByID_SearchResultNil(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
@@ -119,6 +129,7 @@ func TestPartnership_GetPartnershipByID_SearchResultNil(t *testing.T) {
 	getPartnershipByIDAssertEqualNilHandler(t, 5, partnershipRepo)
 }
 
+// Tests the search result returning a length not equal to one
 func TestPartnership_GetPartnershipByID_SearchResultLengthNotOne(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
@@ -127,6 +138,7 @@ func TestPartnership_GetPartnershipByID_SearchResultLengthNotOne(t *testing.T) {
 	getPartnershipByIDAssertEqualNilHandler(t, 5, partnershipRepo)
 }
 
+// Tests the search result returning a success
 func TestPartnership_GetPartnershipByID_SearchResultSuccess(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
@@ -135,6 +147,9 @@ func TestPartnership_GetPartnershipByID_SearchResultSuccess(t *testing.T) {
 	getPartnershipByIDAssertEqualNilHandler(t, 5, partnershipRepo)
 }
 
+/*  MustGetPartnershipByID tests, only three paths, no helper functions  */
+
+// Tests the search result returning an error
 func TestPartnership_MustGetPartnershipByID_SearchError(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
@@ -146,7 +161,8 @@ func TestPartnership_MustGetPartnershipByID_SearchError(t *testing.T) {
 	assert.Panics(t, func() { businesslogic.MustGetPartnershipByID(6, partnershipRepo) })
 }
 
-func TestPartnership_MuGetPartnershpiByID_SearchResultLengthNotOne(t *testing.T) {
+// Tests the search result returning a length not equal to one
+func TestPartnership_MustGetPartnershpiByID_SearchResultLengthNotOne(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
 
@@ -157,6 +173,7 @@ func TestPartnership_MuGetPartnershpiByID_SearchResultLengthNotOne(t *testing.T)
 	assert.Panics(t, func() { businesslogic.MustGetPartnershipByID(6, partnershipRepo) })
 }
 
+// Tests the search result returning a success
 func TestPartnership_MustGetPartnershipByID_Success(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()

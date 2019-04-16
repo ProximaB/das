@@ -46,9 +46,9 @@ type IPartnershipRequestBlacklistRepository interface {
 
 // GetBlacklistedAccounts searches all records of Blacklist reports, finds blacklisted accounts, and returns those accounts
 // that were blacklisted
-func (self Account) GetBlacklistedAccounts(accountRepo IAccountRepository, blacklistRepo IPartnershipRequestBlacklistRepository) ([]Account, error) {
+func (account Account) GetBlacklistedAccounts(accountRepo IAccountRepository, blacklistRepo IPartnershipRequestBlacklistRepository) ([]Account, error) {
 	blacklist := make([]Account, 0)
-	entries, err := blacklistRepo.SearchPartnershipRequestBlacklist(SearchPartnershipRequestBlacklistCriteria{ReporterID: self.ID, Whitelisted: false})
+	entries, err := blacklistRepo.SearchPartnershipRequestBlacklist(SearchPartnershipRequestBlacklistCriteria{ReporterID: account.ID, Whitelisted: false})
 	if err != nil {
 		return blacklist, err
 	}

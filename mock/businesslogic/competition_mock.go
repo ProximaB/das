@@ -205,3 +205,147 @@ func (m *MockIEventMetaRepository) GetEventUniqueStyles(competition businesslogi
 func (mr *MockIEventMetaRepositoryMockRecorder) GetEventUniqueStyles(competition interface{}) *gomock.Call {
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetEventUniqueStyles", reflect.TypeOf((*MockIEventMetaRepository)(nil).GetEventUniqueStyles), competition)
 }
+
+// MockICompetitionOfficialRepository is a mock of ICompetitionOfficialRepository interface
+type MockICompetitionOfficialRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockICompetitionOfficialRepositoryMockRecorder
+}
+
+// MockICompetitionOfficialRepositoryMockRecorder is the mock recorder for MockICompetitionOfficialRepository
+type MockICompetitionOfficialRepositoryMockRecorder struct {
+	mock *MockICompetitionOfficialRepository
+}
+
+// NewMockICompetitionOfficialRepository creates a new mock instance
+func NewMockICompetitionOfficialRepository(ctrl *gomock.Controller) *MockICompetitionOfficialRepository {
+	mock := &MockICompetitionOfficialRepository{ctrl: ctrl}
+	mock.recorder = &MockICompetitionOfficialRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockICompetitionOfficialRepository) EXPECT() *MockICompetitionOfficialRepositoryMockRecorder {
+	return m.recorder
+}
+
+// CreateCompetitionOfficial mocks base method
+func (m *MockICompetitionOfficialRepository) CreateCompetitionOfficial(official *businesslogic.CompetitionOfficial) error {
+	ret := m.ctrl.Call(m, "CreateCompetitionOfficial", official)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateCompetitionOfficial indicates an expected call of CreateCompetitionOfficial
+func (mr *MockICompetitionOfficialRepositoryMockRecorder) CreateCompetitionOfficial(official interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateCompetitionOfficial", reflect.TypeOf((*MockICompetitionOfficialRepository)(nil).CreateCompetitionOfficial), official)
+}
+
+// DeleteCompetitionOfficial mocks base method
+func (m *MockICompetitionOfficialRepository) DeleteCompetitionOfficial(official businesslogic.CompetitionOfficial) error {
+	ret := m.ctrl.Call(m, "DeleteCompetitionOfficial", official)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteCompetitionOfficial indicates an expected call of DeleteCompetitionOfficial
+func (mr *MockICompetitionOfficialRepositoryMockRecorder) DeleteCompetitionOfficial(official interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteCompetitionOfficial", reflect.TypeOf((*MockICompetitionOfficialRepository)(nil).DeleteCompetitionOfficial), official)
+}
+
+// SearchCompetitionOfficial mocks base method
+func (m *MockICompetitionOfficialRepository) SearchCompetitionOfficial(criteria businesslogic.SearchCompetitionOfficialCriteria) ([]businesslogic.CompetitionOfficial, error) {
+	ret := m.ctrl.Call(m, "SearchCompetitionOfficial", criteria)
+	ret0, _ := ret[0].([]businesslogic.CompetitionOfficial)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SearchCompetitionOfficial indicates an expected call of SearchCompetitionOfficial
+func (mr *MockICompetitionOfficialRepositoryMockRecorder) SearchCompetitionOfficial(criteria interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchCompetitionOfficial", reflect.TypeOf((*MockICompetitionOfficialRepository)(nil).SearchCompetitionOfficial), criteria)
+}
+
+// UpdateCompetitionOfficial mocks base method
+func (m *MockICompetitionOfficialRepository) UpdateCompetitionOfficial(official businesslogic.CompetitionOfficial) error {
+	ret := m.ctrl.Call(m, "UpdateCompetitionOfficial", official)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateCompetitionOfficial indicates an expected call of UpdateCompetitionOfficial
+func (mr *MockICompetitionOfficialRepositoryMockRecorder) UpdateCompetitionOfficial(official interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateCompetitionOfficial", reflect.TypeOf((*MockICompetitionOfficialRepository)(nil).UpdateCompetitionOfficial), official)
+}
+
+// MockICompetitionOfficialInvitationRepository is a mock of ICompetitionOfficialInvitationRepository interface
+type MockICompetitionOfficialInvitationRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockICompetitionOfficialInvitationRepositoryMockRecorder
+}
+
+// MockICompetitionOfficialInvitationRepositoryMockRecorder is the mock recorder for MockICompetitionOfficialInvitationRepository
+type MockICompetitionOfficialInvitationRepositoryMockRecorder struct {
+	mock *MockICompetitionOfficialInvitationRepository
+}
+
+// NewMockICompetitionOfficialInvitationRepository creates a new mock instance
+func NewMockICompetitionOfficialInvitationRepository(ctrl *gomock.Controller) *MockICompetitionOfficialInvitationRepository {
+	mock := &MockICompetitionOfficialInvitationRepository{ctrl: ctrl}
+	mock.recorder = &MockICompetitionOfficialInvitationRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockICompetitionOfficialInvitationRepository) EXPECT() *MockICompetitionOfficialInvitationRepositoryMockRecorder {
+	return m.recorder
+}
+
+// CreateCompetitionOfficialInvitationRepository mocks base method
+func (m *MockICompetitionOfficialInvitationRepository) CreateCompetitionOfficialInvitationRepository(invitation *businesslogic.CompetitionOfficialInvitation) error {
+	ret := m.ctrl.Call(m, "CreateCompetitionOfficialInvitationRepository", invitation)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// CreateCompetitionOfficialInvitationRepository indicates an expected call of CreateCompetitionOfficialInvitationRepository
+func (mr *MockICompetitionOfficialInvitationRepositoryMockRecorder) CreateCompetitionOfficialInvitationRepository(invitation interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "CreateCompetitionOfficialInvitationRepository", reflect.TypeOf((*MockICompetitionOfficialInvitationRepository)(nil).CreateCompetitionOfficialInvitationRepository), invitation)
+}
+
+// DeleteCompetitionOfficialInvitationRepository mocks base method
+func (m *MockICompetitionOfficialInvitationRepository) DeleteCompetitionOfficialInvitationRepository(invitation businesslogic.CompetitionOfficialInvitation) error {
+	ret := m.ctrl.Call(m, "DeleteCompetitionOfficialInvitationRepository", invitation)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// DeleteCompetitionOfficialInvitationRepository indicates an expected call of DeleteCompetitionOfficialInvitationRepository
+func (mr *MockICompetitionOfficialInvitationRepositoryMockRecorder) DeleteCompetitionOfficialInvitationRepository(invitation interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "DeleteCompetitionOfficialInvitationRepository", reflect.TypeOf((*MockICompetitionOfficialInvitationRepository)(nil).DeleteCompetitionOfficialInvitationRepository), invitation)
+}
+
+// SearchCompetitionOfficialInvitationRepository mocks base method
+func (m *MockICompetitionOfficialInvitationRepository) SearchCompetitionOfficialInvitationRepository(criteria businesslogic.SearchCompetitionOfficialInvitationCriteria) ([]businesslogic.CompetitionOfficialInvitation, error) {
+	ret := m.ctrl.Call(m, "SearchCompetitionOfficialInvitationRepository", criteria)
+	ret0, _ := ret[0].([]businesslogic.CompetitionOfficialInvitation)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// SearchCompetitionOfficialInvitationRepository indicates an expected call of SearchCompetitionOfficialInvitationRepository
+func (mr *MockICompetitionOfficialInvitationRepositoryMockRecorder) SearchCompetitionOfficialInvitationRepository(criteria interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "SearchCompetitionOfficialInvitationRepository", reflect.TypeOf((*MockICompetitionOfficialInvitationRepository)(nil).SearchCompetitionOfficialInvitationRepository), criteria)
+}
+
+// UpdateCompetitionOfficialInvitationRepository mocks base method
+func (m *MockICompetitionOfficialInvitationRepository) UpdateCompetitionOfficialInvitationRepository(invitation businesslogic.CompetitionOfficialInvitation) error {
+	ret := m.ctrl.Call(m, "UpdateCompetitionOfficialInvitationRepository", invitation)
+	ret0, _ := ret[0].(error)
+	return ret0
+}
+
+// UpdateCompetitionOfficialInvitationRepository indicates an expected call of UpdateCompetitionOfficialInvitationRepository
+func (mr *MockICompetitionOfficialInvitationRepositoryMockRecorder) UpdateCompetitionOfficialInvitationRepository(invitation interface{}) *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "UpdateCompetitionOfficialInvitationRepository", reflect.TypeOf((*MockICompetitionOfficialInvitationRepository)(nil).UpdateCompetitionOfficialInvitationRepository), invitation)
+}

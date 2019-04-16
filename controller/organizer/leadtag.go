@@ -26,6 +26,7 @@ func NewOrganizerLeadTagServer(authenticaion auth.IAuthenticationStrategy, compR
 	}
 }
 
+// GetAllLeadEntries returns all the leads at the specified competition
 func (server OrganizerLeadTagServer) GetAllLeadEntries(w http.ResponseWriter, r *http.Request) {
 	formErr := r.ParseForm()
 	if formErr != nil {

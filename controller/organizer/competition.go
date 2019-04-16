@@ -6,6 +6,7 @@ import (
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/viewmodel"
+	"gopkg.in/validator.v2"
 	"log"
 	"net/http"
 	"time"
@@ -29,6 +30,11 @@ func (server OrganizerCompetitionServer) OrganizerCreateCompetitionHandler(w htt
 	createDTO := new(viewmodel.CreateCompetition)
 	if err := util.ParseRequestBodyData(r, createDTO); err != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, err.Error())
+		return
+	}
+
+	if validationErr := validator.Validate(createDTO); validationErr != nil {
+		util.RespondJsonResult(w, http.StatusBadRequest, util.HTTP400InvalidRequestData, validationErr.Error())
 		return
 	}
 

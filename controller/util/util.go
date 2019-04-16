@@ -10,6 +10,7 @@ import (
 const (
 	// HTTP400InvalidRequestData provides a generic message that can be used when HTTP 400 error has to be returned
 	HTTP400InvalidRequestData = "invalid request data"
+	Http404NoDataFound        = "no data is found"
 	// HTTP500ErrorRetrievingData provides a generic error message which indicates that data access layer code has thrown an error
 	HTTP500ErrorRetrievingData = "error in retrieving data"
 )

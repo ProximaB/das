@@ -46,6 +46,42 @@ func (mr *MockIAccountTypeRepositoryMockRecorder) GetAccountTypes() *gomock.Call
 	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccountTypes", reflect.TypeOf((*MockIAccountTypeRepository)(nil).GetAccountTypes))
 }
 
+// MockIAccountStatusRepository is a mock of IAccountStatusRepository interface
+type MockIAccountStatusRepository struct {
+	ctrl     *gomock.Controller
+	recorder *MockIAccountStatusRepositoryMockRecorder
+}
+
+// MockIAccountStatusRepositoryMockRecorder is the mock recorder for MockIAccountStatusRepository
+type MockIAccountStatusRepositoryMockRecorder struct {
+	mock *MockIAccountStatusRepository
+}
+
+// NewMockIAccountStatusRepository creates a new mock instance
+func NewMockIAccountStatusRepository(ctrl *gomock.Controller) *MockIAccountStatusRepository {
+	mock := &MockIAccountStatusRepository{ctrl: ctrl}
+	mock.recorder = &MockIAccountStatusRepositoryMockRecorder{mock}
+	return mock
+}
+
+// EXPECT returns an object that allows the caller to indicate expected use
+func (m *MockIAccountStatusRepository) EXPECT() *MockIAccountStatusRepositoryMockRecorder {
+	return m.recorder
+}
+
+// GetAccountStatus mocks base method
+func (m *MockIAccountStatusRepository) GetAccountStatus() ([]businesslogic.AccountStatus, error) {
+	ret := m.ctrl.Call(m, "GetAccountStatus")
+	ret0, _ := ret[0].([]businesslogic.AccountStatus)
+	ret1, _ := ret[1].(error)
+	return ret0, ret1
+}
+
+// GetAccountStatus indicates an expected call of GetAccountStatus
+func (mr *MockIAccountStatusRepositoryMockRecorder) GetAccountStatus() *gomock.Call {
+	return mr.mock.ctrl.RecordCallWithMethodType(mr.mock, "GetAccountStatus", reflect.TypeOf((*MockIAccountStatusRepository)(nil).GetAccountStatus))
+}
+
 // MockIAccountRepository is a mock of IAccountRepository interface
 type MockIAccountRepository struct {
 	ctrl     *gomock.Controller

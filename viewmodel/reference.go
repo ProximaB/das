@@ -5,6 +5,7 @@ import (
 	"time"
 )
 
+// Country is the view model of a Country object
 type Country struct {
 	ID           int    `json:"id"`
 	Name         string `json:"name"`
@@ -28,9 +29,10 @@ func countryToViewModel(country businesslogic.Country) Country {
 
 }
 
+// CreateCountry defines the form data for creating a country record
 type CreateCountry struct {
-	Name         string `schema:"name"`
-	Abbreviation string `schema:"abbreviation"`
+	Name         string `json:"name" validate:"min=3"`
+	Abbreviation string `json:"abbreviation" validate:"min=3,max=3"` // Abbreviation is the Olympic country code
 }
 
 func (cc *CreateCountry) ToDataModel() businesslogic.Country {

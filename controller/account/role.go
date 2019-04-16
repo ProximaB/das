@@ -6,6 +6,7 @@ import (
 	"github.com/DancesportSoftware/das/businesslogic"
 	"github.com/DancesportSoftware/das/controller/util"
 	"github.com/DancesportSoftware/das/viewmodel"
+	"gopkg.in/validator.v2"
 	"log"
 	"net/http"
 	"time"
@@ -50,14 +51,15 @@ func (server RoleApplicationServer) CreateRoleApplicationHandler(w http.Response
 		util.RespondJsonResult(w, http.StatusBadRequest, "bad application data, please try again", nil)
 		return
 	}
-	if applicationDTO.Validate() != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, applicationDTO.Validate().Error(), nil)
+
+	if errs := validator.Validate(applicationDTO); errs != nil {
+		util.RespondJsonResult(w, http.StatusBadRequest, errs.Error(), nil)
 		return
 	}
 
 	application := businesslogic.RoleApplication{
 		AccountID:       currentUser.ID,
-		AppliedRoleID:   applicationDTO.AppliedRoleID,
+		AppliedRoleID:   applicationDTO.RoleID,
 		Description:     applicationDTO.Description,
 		StatusID:        businesslogic.RoleApplicationStatusPending,
 		ApprovalUserID:  nil,
@@ -100,9 +102,9 @@ func (server RoleApplicationServer) SearchRoleApplicationHandler(w http.Response
 		return
 	}
 
-	dtos := make([]viewmodel.RoleApplication, 0)
+	dtos := make([]viewmodel.RoleApplicationAdminView, 0)
 	for _, each := range applications {
-		dtos = append(dtos, viewmodel.RoleApplication{
+		dtos = append(dtos, viewmodel.RoleApplicationAdminView{
 			ID:                each.ID,
 			ApplicantName:     each.Account.FullName(),
 			RoleApplied:       each.AppliedRoleID,
@@ -146,9 +148,9 @@ func (server RoleApplicationServer) AdminGetRoleApplicationHandler(w http.Respon
 		return
 	}
 
-	dtos := make([]viewmodel.RoleApplication, 0)
+	dtos := make([]viewmodel.RoleApplicationAdminView, 0)
 	for _, each := range applications {
-		dtos = append(dtos, viewmodel.RoleApplication{
+		dtos = append(dtos, viewmodel.RoleApplicationAdminView{
 			ID:                each.ID,
 			ApplicantName:     each.Account.FullName(),
 			RoleApplied:       each.AppliedRoleID,
@@ -179,7 +181,7 @@ func (server RoleApplicationServer) ProvisionRoleApplicationHandler(w http.Respo
 		util.RespondJsonResult(w, http.StatusBadRequest, "bad response data, please try again", nil)
 		return
 	}
-	if responseDTO.Validate() != nil {
+	if validator.Validate(responseDTO) != nil {
 		util.RespondJsonResult(w, http.StatusBadRequest, "bad response data, please try again", nil)
 		return
 	}

@@ -35,31 +35,6 @@ var testOrganizerAccount = businesslogic.Account{
 	Phone:                 "3321231232",
 }
 
-func TestGetAccountByEmail(t *testing.T) {
-	mockCtrl := gomock.NewController(t)
-	defer mockCtrl.Finish()
-
-	mockedAccountRepo := mock_businesslogic.NewMockIAccountRepository(mockCtrl)
-	mockedAccountRepo.EXPECT().SearchAccount(businesslogic.SearchAccountCriteria{
-		Email: "test@email.com",
-	}).Return(nil, errors.New("should not return an account"))
-	mockedAccountRepo.EXPECT().SearchAccount(businesslogic.SearchAccountCriteria{
-		Email: "newuser@email.com",
-	}).Return([]businesslogic.Account{
-		{ID: 1, Email: "newuser@email.com"},
-	}, nil)
-
-	result := businesslogic.GetAccountByEmail("test@email.com", mockedAccountRepo)
-	assert.Equal(t, 0, result.ID)
-	assert.Equal(t, "", result.Email)
-
-	result = businesslogic.GetAccountByEmail("newuser@email.com", mockedAccountRepo)
-	assert.NotNil(t, result)
-	assert.Equal(t, 1, result.ID)
-	assert.Equal(t, "newuser@email.com", result.Email)
-
-}
-
 func TestGetAccountByID(t *testing.T) {
 	mockCtrl := gomock.NewController(t)
 	defer mockCtrl.Finish()
@@ -160,38 +135,46 @@ func TestAccount_SetRoles(t *testing.T) {
 
 func TestAccount_MeetMinimalRequirement_NameTooShort(t *testing.T) {
 	account := businesslogic.Account{
-		FirstName: "K", LastName: "E", Email: "rimuru@slime.com", Phone: "8100100830",
+		FirstName: "A", LastName: "J", Email: "t@e.c", Phone: "1234567890",
 	}
-	assert.Error(t, account.MeetMinimalRequirement())
+	assert.Error(t, account.MeetMinimalRequirement(), "account should be invalid if the name is too short")
 }
 
 func TestAccount_MeetMinimalRequirement_NameTooLong(t *testing.T) {
 	account := businesslogic.Account{
-		FirstName: "KevinKevinKevinKevin",
-		LastName:  "EnarioEnarioEnarioEnarioEnario",
-		Email:     "rimuru@slime.com",
-		Phone:     "810010830",
+		FirstName: "CatCatCatCatCatCatCatCatCatCatCatCat",
+		LastName:  "DogDogDogDogDogDogDogDogDogDogDogDog",
+		Email:     "a@b.c",
+		Phone:     "1112223333",
 	}
-	assert.Error(t, account.MeetMinimalRequirement())
+	assert.Error(t, account.MeetMinimalRequirement(), "account should be invalid the name is too long")
 }
 
 func TestAccount_MeetMinimalRequirement_InvalidEmail(t *testing.T) {
 	account := businesslogic.Account{
-		FirstName: "Kevin", LastName: "Enario", Email: ".com", Phone: "8100100830",
+		FirstName: "Cat", LastName: "Garfield", Email: ".com", Phone: "1112223333",
 	}
-	assert.Error(t, account.MeetMinimalRequirement())
+	assert.Error(t, account.MeetMinimalRequirement(), "account should be invalid if email is invalid")
 }
 
 func TestAccount_MeetMinimalRequirement_InvalidPhone(t *testing.T) {
 	account := businesslogic.Account{
-		FirstName: "Kevin", LastName: "Enario", Email: "rimuru@slime.com", Phone: "01",
+		FirstName: "Cat", LastName: "Garfield", Email: "a@b.c", Phone: "123456789",
 	}
-	assert.Error(t, account.MeetMinimalRequirement())
+	assert.Error(t, account.MeetMinimalRequirement(), "account should be invalid if phone number is too short")
 }
 
-func TestAccount_MeetMinimalRequirement_Success(t *testing.T) {
+func TestAccount_MeetMinimalRequirement_ValidAccount(t *testing.T) {
 	account := businesslogic.Account{
-		FirstName: "Kevin", LastName: "Enario", Email: "rimuru@slime.com", Phone: "8100100830",
+		FirstName: "Cat", LastName: "Garfield", Email: "rimuru@slime.com", Phone: "1234567890",
 	}
-	assert.Nil(t, account.MeetMinimalRequirement())
+	assert.Nil(t, account.MeetMinimalRequirement(), "account should be valid")
+}
+
+func TestAccount_FullName(t *testing.T) {
+	account := businesslogic.Account{
+		FirstName: "Michael",
+		LastName:  "Kaplan",
+	}
+	assert.Equal(t, "Michael Kaplan", account.FullName(), "should generate full name correctly")
 }

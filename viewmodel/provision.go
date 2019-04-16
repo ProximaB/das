@@ -1,7 +1,6 @@
 package viewmodel
 
 import (
-	"errors"
 	"github.com/DancesportSoftware/das/businesslogic"
 	"time"
 )
@@ -30,11 +29,11 @@ func (summary *OrganizerProvisionSummary) Summarize(provision businesslogic.Orga
 
 // SubmitRoleApplication is the payload for role application submission
 type SubmitRoleApplication struct {
-	AppliedRoleID int    `json:"role"`
-	Description   string `json:"description"`
+	RoleID      int    `json:"roleId" validate:"min=2,max=6"` // CAUTION! hard coded role ID here!
+	Description string `json:"description" validate:"min=20"`
 }
 
-type RoleApplication struct {
+type RoleApplicationAdminView struct {
 	ID                int       `json:"id"`
 	ApplicantName     string    `json:"applicant"`
 	RoleApplied       int       `json:"role"`
@@ -54,30 +53,8 @@ type SearchRoleApplicationCriteriaViewModel struct {
 	Responded      bool `schema:"responded"`
 }
 
-// Validate validates SubmitRoleApplication and check if data sanitized
-func (dto SubmitRoleApplication) Validate() error {
-	if dto.AppliedRoleID < businesslogic.AccountTypeAdjudicator || dto.AppliedRoleID > businesslogic.AccountTypeEmcee {
-		return errors.New("this role does not exist")
-	}
-	if len(dto.Description) < 20 {
-		return errors.New("insufficient description")
-	}
-	return nil
-}
-
 // RespondRoleApplication specifies the payload for responding a role application
 type RespondRoleApplication struct {
-	ApplicationID int `json:"applicationId"`
-	Response      int `json:"responseId"`
-}
-
-// Validate validates RespondRoleApplication and check if data sanitized
-func (dto RespondRoleApplication) Validate() error {
-	if dto.ApplicationID == 0 {
-		return errors.New("application does not exist")
-	}
-	if !(dto.Response == businesslogic.RoleApplicationStatusApproved || dto.Response == businesslogic.RoleApplicationStatusDenied) {
-		return errors.New("invalid response to the application")
-	}
-	return nil
+	ApplicationID int `json:"applicationId" validate:"min=1"`
+	Response      int `json:"responseId" validate:"min=1,max=2"`
 }

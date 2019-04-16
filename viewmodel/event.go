@@ -40,13 +40,13 @@ type SearchCompetitionEventTemplateForm struct {
 
 // CreateEventForm defines the payload for creating an Event
 type CreateEventForm struct {
-	CompetitionID   int   `json:"competition"`
-	EventCategoryID int   `json:"category"`
-	FederationID    int   `json:"federation"`
-	DivisionID      int   `json:"division"`
-	AgeID           int   `json:"age"`
-	ProficiencyID   int   `json:"proficiency"`
-	StyleID         int   `json:"style"`
+	CompetitionID   int   `json:"competition" validate:"min=1"`
+	EventCategoryID int   `json:"category" validate:"min=1"`
+	FederationID    int   `json:"federation" validate:"min=1"`
+	DivisionID      int   `json:"division" validate:"min=1"`
+	AgeID           int   `json:"age" validate:"min=1"`
+	ProficiencyID   int   `json:"proficiency" validate:"min=1"`
+	StyleID         int   `json:"style" validate:"min=1"`
 	Dances          []int `json:"dances"`
 	Template        int   `json:"template,omitempty"`
 }

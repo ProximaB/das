@@ -200,6 +200,41 @@ func (event Event) ToString() string {
 	return output
 }
 
+// EventDance represents the many-to-many relationship between competition event and dance references.
+type EventDance struct {
+	ID              int
+	EventID         int
+	DanceID         int
+	CreateUserID    int
+	DateTimeCreated time.Time
+	UpdateUserID    int
+	DateTimeUpdated time.Time
+}
+
+type SearchEventDanceCriteria struct {
+	EventDanceID  int
+	CompetitionID int
+	EventID       int
+}
+
+type IEventDanceRepository interface {
+	SearchEventDance(criteria SearchEventDanceCriteria) ([]EventDance, error)
+	CreateEventDance(eventDance *EventDance) error
+	DeleteEventDance(eventDance EventDance) error
+	UpdateEventDance(eventDance EventDance) error
+}
+
+func NewEventDance(event Event, danceID int) *EventDance {
+	return &EventDance{
+		EventID:         event.ID,
+		DanceID:         danceID,
+		CreateUserID:    event.CreateUserID,
+		DateTimeCreated: time.Now(),
+		UpdateUserID:    event.UpdateUserID,
+		DateTimeUpdated: time.Now(),
+	}
+}
+
 // OrganizerEventService provides a layer of abstraction of services used by organizers to manage events of competitions
 type OrganizerEventService struct {
 	accountRepo       IAccountRepository
@@ -301,7 +336,7 @@ func (service OrganizerEventService) CreateEvent(event *Event) error {
 		return errors.New("not authorized to create event for this competition")
 	}
 
-	validationErr := service.ValidateEvent(*event, event.GetEventDances())
+	validationErr := service.ValidateEvent(*event)
 	if validationErr != nil {
 		log.Printf("[error] event %v is not valid: %v", *event, validationErr)
 		return validationErr
@@ -392,72 +427,82 @@ func CreateEvent(event Event, compRepo ICompetitionRepository, eventRepo IEventR
 	return nil
 }
 
-func (service OrganizerEventService) ValidateEvent(event Event, dances []EventDance) error {
+func (service OrganizerEventService) ValidateEvent(event Event) error {
 	// check if federation exists
-	targetFederations, err := service.federationRepo.SearchFederation(SearchFederationCriteria{ID: event.FederationID})
-	if err != nil {
+	if targetFederations, err := service.federationRepo.SearchFederation(SearchFederationCriteria{
+		ID: event.FederationID,
+	}); err != nil {
 		return err
+	} else if len(targetFederations) == 0 {
+		return errors.New(fmt.Sprintf("cannot find Federation with ID  = %d", event.FederationID))
+	} else {
+		event.Federation = targetFederations[0]
 	}
 
 	// check if division exists
-	divisions, err := service.divisionRepo.SearchDivision(SearchDivisionCriteria{ID: event.DivisionID})
-	if err != nil {
+	if divisions, err := service.divisionRepo.SearchDivision(SearchDivisionCriteria{
+		ID:           event.DivisionID,
+		FederationID: event.FederationID,
+	}); err != nil {
 		return err
-	}
-	targetDivision := divisions[0]
-
-	// check if division is part of this federation
-	if targetDivision.FederationID != targetFederations[0].ID {
-		return errors.New("specified division is not part of this federation")
+	} else if len(divisions) == 0 {
+		return errors.New(fmt.Sprintf("cannot find Division with ID = %d and Federation ID = %d", event.DivisionID, event.FederationID))
+	} else {
+		event.Division = divisions[0]
 	}
 
 	// check if age category exists
-	targetAges, err := service.ageRepo.SearchAge(SearchAgeCriteria{AgeID: event.AgeID})
-	if err != nil {
+	if targetAges, err := service.ageRepo.SearchAge(SearchAgeCriteria{
+		AgeID:      event.AgeID,
+		DivisionID: event.DivisionID,
+	}); err != nil {
 		return err
-	}
-
-	// check if age category is part of this division
-	if targetAges[0].DivisionID != targetDivision.ID {
-		return errors.New("specified age category is not part of this division")
+	} else if len(targetAges) == 0 {
+		return errors.New(fmt.Sprintf("cannot find Age with ID = %d and Division ID = %d", event.AgeID, event.DivisionID))
+	} else {
+		event.Age = targetAges[0]
 	}
 
 	// check if proficiency is part of this division
-	targetSkills, err := service.proficiencyRepo.SearchProficiency(SearchProficiencyCriteria{ProficiencyID: event.ProficiencyID})
-	if targetSkills[0].DivisionID != targetDivision.ID {
-		return errors.New("specified proficiency is not part of this division")
+	if targetSkills, err := service.proficiencyRepo.SearchProficiency(SearchProficiencyCriteria{
+		ProficiencyID: event.ProficiencyID,
+		DivisionID:    event.DivisionID,
+	}); err != nil {
+		return err
+	} else if len(targetSkills) == 0 {
+		return errors.New(fmt.Sprintf("cannot find Proficiency with ID = %d and Division ID = %d", event.ProficiencyID, event.DivisionID))
 	}
 
 	// check if style exists
-	targetStyles, err := service.styleRepo.SearchStyle(SearchStyleCriteria{StyleID: event.StyleID})
-	if err != nil {
-		return errors.New("specified style does not exist")
+	if targetStyles, err := service.styleRepo.SearchStyle(SearchStyleCriteria{StyleID: event.StyleID}); err != nil {
+		return err
+	} else if len(targetStyles) != 1 {
+		return errors.New(fmt.Sprintf("cannot find Style with ID = %d", event.StyleID))
 	}
 
 	// check if there are duplicated dance
-	unique := map[int]bool{}
-	result := make([]EventDance, 0)
-	for _, each := range dances {
-		if !unique[each.DanceID] {
+	uniqueDanceIDs := map[int]bool{}
+	uniqueEventDances := make([]Dance, 0)
+	for _, each := range event.GetDances() {
+		if !uniqueDanceIDs[each] {
 			// check if dance exists
-			dances, err := service.danceRepo.SearchDance(SearchDanceCriteria{DanceID: each.DanceID})
-			if err != nil {
+			if dances, err := service.danceRepo.SearchDance(SearchDanceCriteria{DanceID: each, StyleID: event.StyleID}); err != nil {
 				return err
+			} else if len(dances) != 1 {
+				return errors.New(fmt.Sprintf("cannot find Dance with ID = %d and Style ID = %d", each, event.StyleID))
+			} else {
+				targetDance := dances[0]
+				uniqueDanceIDs[each] = true
+				uniqueEventDances = append(uniqueEventDances, targetDance)
 			}
-			targetDance := dances[0]
-			if targetDance.StyleID != targetStyles[0].ID {
-				return errors.New("specified dance is not part of this style")
-			}
-			unique[each.DanceID] = true
-			result = append(result, each)
 		}
 	}
-	if len(result) != len(dances) {
+	if len(uniqueEventDances) != len(uniqueEventDances) {
 		return errors.New("selected dances contain duplicates")
 	}
 
 	// check if there are enough dances
-	if len(dances) < 1 || len(event.GetDances()) < 1 {
+	if len(event.GetDances()) < 1 {
 		return errors.New("not enough dance specified")
 	}
 
@@ -504,4 +549,131 @@ func (service OrganizerEventService) DeleteEvent(event Event, currentUser Accoun
 		return errors.New("event is closed and cannot be deleted")
 	}
 	return service.eventRepo.DeleteEvent(event)
+}
+
+// CompetitionEventFactory can generate event based on specification of event attributes
+type CompetitionEventFactory struct {
+	FederationRepo  IFederationRepository
+	DivisionRepo    IDivisionRepository
+	AgeRepo         IAgeRepository
+	ProficiencyRepo IProficiencyRepository
+	StyleRepo       IStyleRepository
+	DanceRepo       IDanceRepository
+}
+
+func (factory CompetitionEventFactory) GenerateEvent(federationName, divisionName, ageName, proficiencyName, styleName string, danceNames []string) (Event, error) {
+	event := NewEvent()
+	if federationName != "" {
+		searchResults, err := factory.FederationRepo.SearchFederation(SearchFederationCriteria{Name: federationName})
+		if len(searchResults) == 1 && err == nil {
+			event.FederationID = searchResults[0].ID
+			event.Federation = searchResults[0]
+		} else {
+			return *event, errors.New(fmt.Sprintf("cannot find federation \"%s\"", federationName))
+		}
+	} else {
+		return *event, errors.New("federation is required")
+	}
+
+	if divisionName != "" {
+		searchResults, err := factory.DivisionRepo.SearchDivision(SearchDivisionCriteria{
+			Name:         divisionName,
+			FederationID: event.FederationID,
+		})
+		if len(searchResults) == 1 && err == nil {
+			event.DivisionID = searchResults[0].ID
+			event.Division = searchResults[0]
+		} else {
+			return *event, errors.New(fmt.Sprintf("cannot find division \"%s\"", divisionName))
+		}
+	} else {
+		return *event, errors.New("division is required")
+	}
+
+	if ageName != "" {
+		searchResults, err := factory.AgeRepo.SearchAge(SearchAgeCriteria{
+			Name:       ageName,
+			DivisionID: event.DivisionID,
+		})
+		if len(searchResults) == 1 && err == nil {
+			event.AgeID = searchResults[0].ID
+			event.Age = searchResults[0]
+		} else {
+			return *event, errors.New(fmt.Sprintf("cannot find age \"%s\"", ageName))
+		}
+	} else {
+		return *event, errors.New("age is required")
+	}
+
+	if proficiencyName != "" {
+		searchResults, err := factory.ProficiencyRepo.SearchProficiency(SearchProficiencyCriteria{
+			Name:       proficiencyName,
+			DivisionID: event.DivisionID,
+		})
+		if len(searchResults) == 1 && err == nil {
+			event.ProficiencyID = searchResults[0].ID
+			event.Proficiency = searchResults[0]
+		} else {
+			return *event, errors.New(fmt.Sprintf("cannot find proficiency \"%s\"", proficiencyName))
+		}
+	} else {
+		return *event, errors.New("proficiency is required")
+	}
+
+	if styleName != "" {
+		searchResults, err := factory.StyleRepo.SearchStyle(SearchStyleCriteria{
+			Name: styleName,
+		})
+		if len(searchResults) == 1 && err == nil {
+			event.StyleID = searchResults[0].ID
+			event.Style = searchResults[0]
+		} else {
+			return *event, errors.New(fmt.Sprintf("cannot find style \"%s\"", styleName))
+		}
+	} else {
+		return *event, errors.New("style is required")
+	}
+
+	if len(danceNames) != 0 {
+		for _, each := range danceNames {
+			searchResults, err := factory.DanceRepo.SearchDance(SearchDanceCriteria{
+				StyleID: event.StyleID,
+				Name:    each,
+			})
+			if len(searchResults) == 1 && err == nil {
+				event.AddDance(searchResults[0].ID)
+			}
+		}
+	} else {
+		return *event, errors.New("dances are required")
+	}
+	return *event, nil
+}
+
+type EventTemplate struct {
+	Federation  string   `json:"federation"`
+	Division    string   `json:"division"`
+	Age         string   `json:"age"`
+	Proficiency string   `json:"proficiency"`
+	Style       string   `json:"style"`
+	Dances      []string `json:"dances"`
+}
+
+type CompetitionEventTemplate struct {
+	ID               int
+	Name             string
+	Description      string
+	TargetFederation Federation
+	TemplateEvents   []EventTemplate
+	DateTimeCreate   time.Time
+}
+
+type SearchCompetitionEventTemplateCriteria struct {
+	ID           int
+	Name         string
+	CreateUserID int
+}
+
+type ICompetitionEventTemplateRepository interface {
+	SearchCompetitionEventTemplates(criteria SearchCompetitionEventTemplateCriteria) ([]CompetitionEventTemplate, error)
 }

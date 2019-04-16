@@ -28,6 +28,7 @@ func TestCreateCompetition(t *testing.T) {
 		ContactName:   "James Bond",
 		ContactEmail:  "james.bond@email.com",
 		ContactPhone:  "2290092292",
+		Street:        "1 Main St.",
 		City:          businesslogic.City{ID: 26},
 		State:         businesslogic.State{ID: 17},
 		Country:       businesslogic.Country{ID: 19},

@@ -27,10 +27,10 @@ type AccountTypeServer struct {
 // 		{"id":6,"name":"Emcee"}
 // 	]
 func (server AccountTypeServer) GetAccountTypeHandler(w http.ResponseWriter, r *http.Request) {
-	data := make([]viewmodel.AccountType, 0)
+	data := make([]viewmodel.AccountTypePublicView, 0)
 	types, _ := server.GetAccountTypes()
 	for _, each := range types {
-		data = append(data, viewmodel.AccountTypeDataModelToViewModel(each))
+		data = append(data, viewmodel.NewAccountTypePublicView(each))
 	}
 	output, _ := json.Marshal(data)
 	w.Write(output)

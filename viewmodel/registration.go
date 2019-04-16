@@ -3,8 +3,8 @@ package viewmodel
 // AthleteCompetitionRegistrationForm is the payload that should be submitted by athlete to sign up for a competition
 // This form should only contain events that the couple would compete. If an existing registration
 type AthleteCompetitionRegistrationForm struct {
-	CompetitionID  int   `json:"competitionId"`
-	PartnershipID  int   `json:"partnershipId"`
+	CompetitionID  int   `json:"competitionId" validate:"nonzero"`
+	PartnershipID  int   `json:"partnershipId" validate:"min=1"`
 	AddedEvents    []int `json:"addedEvents"`
 	DroppedEvents  []int `json:"droppedEvents"`
 	Representation struct {

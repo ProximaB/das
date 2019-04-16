@@ -2,6 +2,7 @@ package businesslogic
 
 import (
 	"errors"
+	"regexp"
 	"time"
 )
 
@@ -40,6 +41,33 @@ type IAccountTypeRepository interface {
 	GetAccountTypes() ([]AccountType, error)
 }
 
+const (
+	// AccountStatusActivated sets a flag that account is activated and can function
+	AccountStatusActivated = 1
+	// AccountStatusUnverified is the status for most newly created accounts
+	AccountStatusUnverified = 2
+	// AccountStatusSuspended is the status for accounts that violates ToS or Privacy Policies
+	AccountStatusSuspended = 3
+	// AccountStatusLocked is the status for accounts that are locked due to security issues
+	AccountStatusLocked = 4
+)
+
+// IAccountStatusRepository specifies the requirements
+type IAccountStatusRepository interface {
+	GetAccountStatus() ([]AccountStatus, error)
+}
+
+// AccountStatus defines the status that a DAS account could be. The status
+// of an account can affect the authorization of some actions.
+type AccountStatus struct {
+	ID              int
+	Name            string
+	Abbreviation    string
+	Description     string
+	DateTimeCreated time.Time
+	DateTimeUpdated time.Time
+}
+
 // Account is the base account data for all users in DAS. Some fields are required with others are not
 type Account struct {
 	ID                    int    // userID will be account ID, too
@@ -63,16 +91,19 @@ type Account struct {
 
 func (account Account) MeetMinimalRequirement() error {
 	if len(account.FirstName) < 2 || len(account.LastName) < 2 {
-		return errors.New("Name is too short")
+		return errors.New("name is too short")
 	}
 	if len(account.FirstName) > 18 || len(account.LastName) > 18 {
-		return errors.New("Name is too long")
+		return errors.New("name is too long")
 	}
 	if len(account.Email) < 5 {
-		return errors.New("Invalid email address")
+		emailRegex := regexp.MustCompile("^[a-zA-Z0-9.!#$%&'*+/=?^_`{|}~-]+@[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?(?:\\.[a-zA-Z0-9](?:[a-zA-Z0-9-]{0,61}[a-zA-Z0-9])?)*$")
+		if validEmail := emailRegex.MatchString(account.Email); !validEmail {
+			return errors.New("mal-formatted email")
+		}
 	}
-	if len(account.Phone) < 3 {
-		return errors.New("Invalid phone number")
+	if len(account.Phone) < 10 {
+		return errors.New("invalid phone number")
 	}
 	return nil
 }

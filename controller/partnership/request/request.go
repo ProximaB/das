@@ -32,7 +32,16 @@ func (server PartnershipRequestServer) CreatePartnershipRequestHandler(w http.Re
 	}
 
 	sender, _ := server.GetCurrentUser(r)
-	recipient := businesslogic.GetAccountByEmail(dto.RecipientEmail, server.IAccountRepository)
+	searchResults, err := server.SearchAccount(businesslogic.SearchAccountCriteria{Email: dto.RecipientEmail})
+	if len(searchResults) == 0 {
+		util.RespondJsonResult(w, http.StatusNotFound, util.Http404NoDataFound, nil)
+		return
+	}
+	if err != nil {
+		util.RespondJsonResult(w, http.StatusInternalServerError, util.HTTP500ErrorRetrievingData, err.Error())
+		return
+	}
+	recipient := searchResults[0]
 
 	if recipient.ID == 0 {
 		util.RespondJsonResult(w, http.StatusBadRequest, "recipient does not exist", nil)
@@ -60,7 +69,7 @@ func (server PartnershipRequestServer) CreatePartnershipRequestHandler(w http.Re
 		return
 	}
 
-	err := businesslogic.CreatePartnershipRequest(request, server.IPartnershipRepository,
+	err = businesslogic.CreatePartnershipRequest(request, server.IPartnershipRepository,
 		server.IPartnershipRequestRepository, server.IAccountRepository, server.IPartnershipRequestBlacklistRepository)
 	if err != nil {
 		util.RespondJsonResult(w, http.StatusInternalServerError, "error in submitting partnership request", err.Error())

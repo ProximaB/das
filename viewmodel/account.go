@@ -5,18 +5,20 @@ import (
 	"time"
 )
 
-type AccountType struct {
+type AccountTypePublicView struct {
 	ID   int    `json:"id"`
 	Name string `json:"name"`
 }
 
-func AccountTypeDataModelToViewModel(dm businesslogic.AccountType) AccountType {
-	return AccountType{
-		ID:   dm.ID,
-		Name: dm.Name,
+// NewAccountTypePublicView creates the Public-view object of AccountType
+func NewAccountTypePublicView(model businesslogic.AccountType) AccountTypePublicView {
+	return AccountTypePublicView{
+		ID:   model.ID,
+		Name: model.Name,
 	}
 }
 
+// SearchAccountDTO defines the HTTP search parameters for account search
 type SearchAccountDTO struct {
 	FirstName string `schema:"firstName"`
 	LastName  string `schema:"lastName"`
@@ -60,7 +62,7 @@ type CreateAccountDTO struct {
 	FirstName   string `json:"firstname" validate:"nonzero"`
 	LastName    string `json:"lastname" validate:"nonzero"`
 	ToSAccepted bool   `json:"tosaccepted" validate:"true"`
-	PPAccepted  bool   `json:"ppaccepted"`
+	PPAccepted  bool   `json:"ppaccepted" validate:"true"`
 }
 
 func (dto CreateAccountDTO) ToAccountModel() businesslogic.Account {

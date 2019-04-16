@@ -62,12 +62,13 @@ type PartnershipRequestResponse struct {
 
 // CreatePartnershipRequest defines the JSON payload structure for creating a partnership request.
 type CreatePartnershipRequest struct {
-	SenderID       int    `json:"sender"`
-	RecipientEmail string `json:"recipient"`
-	RecipientRole  int    `json:"roleId"`
+	SenderID       int    `json:"sender" validate:"min=1"`
+	RecipientEmail string `json:"recipient" validate:"min=5"`
+	RecipientRole  int    `json:"roleId" validate:"min=1,max=2"`
 	Message        string `json:"message"`
 }
 
+// PartnershipRequest view model
 type PartnershipRequest struct {
 	ID              int       `json:"id"`
 	Sender          string    `json:"sender"`

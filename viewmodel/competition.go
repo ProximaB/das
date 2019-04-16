@@ -72,19 +72,19 @@ func (cd *CompetitionDate) MarshalJSON() ([]byte, error) {
 
 // CreateCompetition defines the JSON payload for creating a competition
 type CreateCompetition struct {
-	FederationID   int             `json:"federationId"`
-	Name           string          `json:"name"`
+	FederationID   int             `json:"federationId" validate:"min=1"`
+	Name           string          `json:"name" validate:"min=3"`
 	Start          CompetitionDate `json:"start"`
 	End            CompetitionDate `json:"end"`
 	Status         int             `json:"statusId"`
-	WebsiteUrl     string          `json:"website"`
-	VenueStreet    string          `json:"address"`
-	VenueCityID    int             `json:"cityId"`
-	VenueStateID   int             `json:"stateId"`
-	VenueCountryID int             `json:"countryId"`
-	ContactName    string          `json:"contact"`
-	ContactPhone   string          `json:"phone"`
-	ContactEmail   string          `json:"email"`
+	Website        string          `json:"website" validate:"min=10"` // TODO: still requires regex check
+	VenueStreet    string          `json:"address" validate:"min=4"`
+	VenueCityID    int             `json:"cityId" validate:"min=1"`
+	VenueStateID   int             `json:"stateId" validate:"min=1"`
+	VenueCountryID int             `json:"countryId" validate:"min=1"`
+	ContactName    string          `json:"contact" validate:"min=3"`
+	ContactPhone   string          `json:"phone" validate:"min=5"`
+	ContactEmail   string          `json:"email" validate:"min=9"`
 	CreateUserID   string          `json:"createdby,omitempty"`
 }
 
@@ -93,7 +93,7 @@ func (createDTO CreateCompetition) ToCompetitionDataModel(user businesslogic.Acc
 	competition := businesslogic.Competition{
 		FederationID: createDTO.FederationID,
 		Name:         createDTO.Name,
-		Website:      createDTO.WebsiteUrl,
+		Website:      createDTO.Website,
 
 		Country: businesslogic.Country{},
 		State:   businesslogic.State{},

@@ -144,16 +144,6 @@ type ICompetitionRepository interface {
 	DeleteCompetition(competition Competition) error
 }
 
-// GetCompetitionByID guarantees getting a competition from the provided repository. In case failure happens,
-// panic() will be invoked
-func GetCompetitionByID(id int, repo ICompetitionRepository) (Competition, error) {
-	searchResults, err := repo.SearchCompetition(SearchCompetitionCriteria{ID: id})
-	if err != nil || searchResults == nil || len(searchResults) != 1 {
-		return Competition{}, err
-	}
-	return searchResults[0], err
-}
-
 // CreateCompetition creates competition in competitionRepo, update records in provisionRepo, and
 // add a new record to historyRepo
 func CreateCompetition(competition Competition, competitionRepo ICompetitionRepository,

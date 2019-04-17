@@ -95,7 +95,7 @@ func (server CompetitionRegistrationServer) CreateAthleteRegistrationHandler(w h
 		return
 	}
 
-	validationErr := server.Service.UpdateRegistration(account, form)
+	validationErr := server.Service.CreateAndUpdateRegistration(account, form)
 
 	// if registration is not valid, return error
 	if validationErr != nil {

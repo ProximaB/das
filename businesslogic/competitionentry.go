@@ -134,21 +134,37 @@ type CompetitionLeadTag struct {
 	DateTimeUpdated time.Time
 }
 
-type CompetitionLeadTagCollection []CompetitionLeadTag
-
-func (tags CompetitionLeadTagCollection) Len() int {
-	return len(tags)
+// CompetitionLeadTagCollection is an alias type of []CompetitionLeadTag
+type CompetitionLeadTagCollection struct {
+	tags []CompetitionLeadTag
 }
 
-func (tags CompetitionLeadTagCollection) Less(i, j int) bool {
-	if tags[i].Tag > tags[j].Tag {
+func (collection *CompetitionLeadTagCollection) SetTags(tags []CompetitionLeadTag) {
+	collection.tags = tags
+}
+
+func (collection CompetitionLeadTagCollection) HasLead(accountId int) bool {
+	for _, each := range collection.tags {
+		if each.ID == accountId {
+			return true
+		}
+	}
+	return false
+}
+
+func (collection CompetitionLeadTagCollection) Len() int {
+	return len(collection.tags)
+}
+
+func (collection CompetitionLeadTagCollection) Less(i, j int) bool {
+	if collection.tags[i].Tag > collection.tags[j].Tag {
 		return true
 	}
 	return false
 }
 
-func (tags CompetitionLeadTagCollection) Swap(i, j int) {
-	tags[i], tags[j] = tags[j], tags[i]
+func (collection *CompetitionLeadTagCollection) Swap(i, j int) {
+	collection.tags[i], collection.tags[j] = collection.tags[j], collection.tags[i]
 }
 
 // SearchCompetitionLeadTagCriteria defines the parameters that can be used to search lead's tags at competitions
@@ -164,7 +180,7 @@ type SearchCompetitionLeadTagCriteria struct {
 type ICompetitionLeadTagRepository interface {
 	CreateCompetitionLeadTag(tag *CompetitionLeadTag) error
 	DeleteCompetitionLeadTag(tag CompetitionLeadTag) error
-	SearchCompetitionLeadTag(criteria SearchCompetitionLeadTagCriteria) ([]CompetitionLeadTag, error)
+	SearchCompetitionLeadTag(criteria SearchCompetitionLeadTagCriteria) (CompetitionLeadTagCollection, error)
 	UpdateCompetitionLeadTag(tag CompetitionLeadTag) error
 }
 
@@ -196,19 +212,6 @@ type IPartnershipCompetitionEntryRepository interface {
 	DeleteEntry(entry PartnershipCompetitionEntry) error
 	SearchEntry(criteria SearchPartnershipCompetitionEntryCriteria) ([]PartnershipCompetitionEntry, error)
 	UpdateEntry(entry PartnershipCompetitionEntry) error
-}
-
-func (entry *PartnershipCompetitionEntry) createPartnershipCompetitionEntry(compRepo ICompetitionRepository, entryRepo IPartnershipCompetitionEntryRepository) error {
-	// check if competition still accepts new entries
-	competition, findCompErr := GetCompetitionByID(entry.Competition.ID, compRepo)
-	if findCompErr != nil {
-		return findCompErr
-	}
-	if competition.GetStatus() != CompetitionStatusOpenRegistration {
-		return errors.New("this competition no longer accepts new entries")
-	}
-
-	return nil
 }
 
 type PartnershipCompetitionEntryService struct {

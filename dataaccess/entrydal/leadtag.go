@@ -85,10 +85,12 @@ func (repo PostgresCompetitionLeadTagRepository) DeleteCompetitionLeadTag(tag bu
 }
 
 // SearchCompetitionLeadTag searches lead tags that meet the requirement of the specified critieria in a Postgres database
-func (repo PostgresCompetitionLeadTagRepository) SearchCompetitionLeadTag(criteria businesslogic.SearchCompetitionLeadTagCriteria) ([]businesslogic.CompetitionLeadTag, error) {
+func (repo PostgresCompetitionLeadTagRepository) SearchCompetitionLeadTag(criteria businesslogic.SearchCompetitionLeadTagCriteria) (businesslogic.CompetitionLeadTagCollection, error) {
 	tags := make([]businesslogic.CompetitionLeadTag, 0)
+	collection := businesslogic.CompetitionLeadTagCollection{}
+	collection.SetTags(tags)
 	if repo.Database == nil {
-		return tags, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
+		return collection, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 
 	clause := repo.SQLBuilder.Select(fmt.Sprintf("%s, %s, %s, %s, %s, %s, %s, %s",
@@ -119,7 +121,7 @@ func (repo PostgresCompetitionLeadTagRepository) SearchCompetitionLeadTag(criter
 
 	rows, err := clause.RunWith(repo.Database).Query()
 	if err != nil {
-		return tags, err
+		return collection, err
 	}
 
 	for rows.Next() {
@@ -134,13 +136,13 @@ func (repo PostgresCompetitionLeadTagRepository) SearchCompetitionLeadTag(criter
 			&each.UpdateUserID,
 			&each.DateTimeUpdated)
 		if scanErr != nil {
-			return tags, err
+			return collection, err
 		}
 		tags = append(tags, each)
 	}
-	rows.Close()
+	err = rows.Close()
 
-	return tags, err
+	return collection, err
 }
 
 // UpdateCompetitionLeadTag updates the tag of the provided ID to the new tag property in Postgres database

@@ -87,7 +87,8 @@ func (server EntryServer) SearchAthleteEntryHandler(w http.ResponseWriter, r *ht
 
 }
 
-// GET /api/v1.0/partnership/entries
+// SearchPartnershipEntryHandler handles the request
+//	GET /api/v1.0/partnership/entries
 func (server EntryServer) SearchPartnershipEntryHandler(w http.ResponseWriter, r *http.Request) {
 	form := new(viewmodel.SearchEntryForm)
 	if parseErr := util.ParseRequestData(r, form); parseErr != nil {

@@ -126,6 +126,7 @@ type PartnershipEventEntry struct {
 // SearchPartnershipEventEntryCriteria specifies the parameters that can be used to search the Event Entry of a PartnershipID
 type SearchPartnershipEventEntryCriteria struct {
 	CompetitionID int
+	AthleteID     int
 	PartnershipID int
 	EventID       int
 }

@@ -19,7 +19,3 @@ func TestGrantRole_HasRole(t *testing.T) {
 	assert.True(t, user.HasRole(businesslogic.AccountTypeDeckCaptain), "user should have Athlete role assigned")
 	assert.False(t, user.HasRole(businesslogic.AccountTypeAdjudicator), "user should NOT have Adjudicator role assigned")
 }
-
-func TestRoleProvisionService_CreateRoleApplication(t *testing.T) {
-
-}

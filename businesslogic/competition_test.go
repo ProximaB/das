@@ -67,39 +67,10 @@ func TestCompetition_UpdateStatus(t *testing.T) {
 
 func TestCompetition_GetStatus(t *testing.T) {
 	comp := businesslogic.Competition{}
-	comp.UpdateStatus(businesslogic.CompetitionStatusClosedRegistration)
+	err := comp.UpdateStatus(businesslogic.CompetitionStatusClosedRegistration)
 
-	assert.Equal(t, businesslogic.CompetitionStatusClosedRegistration, comp.GetStatus())
-}
-
-// GetCompetitionByID test helpers
-type getCompetitionByIDResult struct {
-	comp businesslogic.Competition
-	err  error
-}
-
-func twoValueReturnHandler(c businesslogic.Competition, e error) getCompetitionByIDResult {
-	result := getCompetitionByIDResult{comp: c, err: e}
-
-	return result
-}
-
-func getCompetitionByIDMockHandler(m *gomock.Controller, id int, r []businesslogic.Competition,
-	e error) businesslogic.ICompetitionRepository {
-	searchComp := businesslogic.SearchCompetitionCriteria{ID: id}
-	competitionRepo := mock_businesslogic.NewMockICompetitionRepository(m)
-	competitionRepo.EXPECT().SearchCompetition(searchComp).Return(r, e).MaxTimes(2)
-
-	return competitionRepo
-}
-
-func getCompetitionByIDAssertNilHandler(t *testing.T, competitionRepo businesslogic.ICompetitionRepository) {
-	assert.Equal(
-		t,
-		twoValueReturnHandler(businesslogic.Competition{}, errors.New("Return an error")).comp,
-		twoValueReturnHandler(businesslogic.GetCompetitionByID(2, competitionRepo)).comp,
-	)
-	assert.Nil(t, twoValueReturnHandler(businesslogic.GetCompetitionByID(2, competitionRepo)).err)
+	assert.Nil(t, err, "should not throw an error in initializing competition status")
+	assert.Equal(t, businesslogic.CompetitionStatusClosedRegistration, comp.GetStatus(), "should get the status of a competition correctly")
 }
 
 // GetCompetitionByID tests

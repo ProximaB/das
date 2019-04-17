@@ -174,21 +174,6 @@ type ICreateAccountStrategy interface {
 	CreateAccount(account Account, password string) error
 }
 
-// GetAccountByEmail will retrieve account from repo by email. This function will return either a matched account
-// or an empty account
-func GetAccountByEmail(email string, repo IAccountRepository) Account {
-	accounts, err := repo.SearchAccount(SearchAccountCriteria{
-		Email: email,
-	})
-	if err != nil {
-		return Account{}
-	}
-	if len(accounts) != 1 {
-		return Account{}
-	}
-	return accounts[0]
-}
-
 // GetAccountByID will retrieve account from repo by ID. This function will return either a matched account
 // or an empty account
 func GetAccountByID(accountID int, repo IAccountRepository) Account {

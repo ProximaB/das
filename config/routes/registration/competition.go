@@ -54,7 +54,6 @@ var getPartnershipRegistrationController = util.DasController{
 const apiCompetitionEntryEndpoint = "/api/v1.0/competition/entries"
 const apiEventEntryEndpoint = "/api/v1.0/event/entries"
 const apiAthleteEntryEndpoint = "/api/v1.0/athlete/entries"
-const apiPartnershipEntryEndpoint = "/api/v1.0/partnership/entries"
 
 var entryServer = controller.EntryServer{
 	Service: businesslogic.NewCompetitionRegistrationService(
@@ -85,19 +84,35 @@ var searchEventEntryController = util.DasController{
 	Handler:      entryServer.SearchEventEntryHandler,
 	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
-var searchAthleteEntryController = util.DasController{
-	Name:         "SearchEntryController",
-	Description:  "Search Athlete/Partnership Competition/Event entries",
+var searchAthleteCompetitionEntryController = util.DasController{
+	Name:         "SearchAthleteCompetitionEntryController",
+	Description:  "Search entries of Athletes at a Competition",
 	Method:       http.MethodGet,
-	Endpoint:     apiAthleteEntryEndpoint,
+	Endpoint:     "/api/v1.0/entries/competition/athlete",
 	Handler:      entryServer.SearchAthleteEntryHandler,
 	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
-var searchPartnershipEntryController = util.DasController{
-	Name:         "SearchEntryController",
-	Description:  "Search Athlete/Partnership Competition/Event entries",
+var searchPartnershipCompetitionEntryController = util.DasController{
+	Name:         "SearchPartnershipCompetitionEntryController",
+	Description:  "Search entries of Partnerships at a Competition",
 	Method:       http.MethodGet,
-	Endpoint:     apiPartnershipEntryEndpoint,
+	Endpoint:     "/api/v1.0/entries/competition/partnership",
+	Handler:      entryServer.SearchAthleteEntryHandler,
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
+}
+var searchAthleteEventEntryController = util.DasController{
+	Name:         "SearchAthleteEventEntryController",
+	Description:  "Search entries of Athletes at an Event of a Competition",
+	Method:       http.MethodGet,
+	Endpoint:     "/api/v1.0/entries/event/athlete",
+	Handler:      entryServer.SearchAthleteEntryHandler,
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
+}
+var searchPartnershipEventEntryController = util.DasController{
+	Name:         "SearchPartnershipEventEntryController",
+	Description:  "Search entries of Partnerships at an Event of a Competition",
+	Method:       http.MethodGet,
+	Endpoint:     "/api/v1.0/entries/event/partnership",
 	Handler:      entryServer.SearchPartnershipEntryHandler,
 	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
@@ -110,7 +125,9 @@ var CompetitionRegistrationControllerGroup = util.DasControllerGroup{
 		getPartnershipRegistrationController,
 		searchCompetitionEntryController,
 		searchEventEntryController,
-		searchAthleteEntryController,
-		searchPartnershipEntryController,
+		searchAthleteCompetitionEntryController,
+		searchPartnershipCompetitionEntryController,
+		searchAthleteEventEntryController,
+		searchPartnershipEventEntryController,
 	},
 }

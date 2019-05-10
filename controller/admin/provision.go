@@ -33,7 +33,7 @@ func (server OrganizerProvisionServer) UpdateOrganizerProvisionHandler(w http.Re
 	updateDTO := new(viewmodel.UpdateProvision)
 	parseErr := util.ParseRequestBodyData(r, updateDTO)
 	if parseErr != nil {
-		util.RespondJsonResult(w, http.StatusBadRequest, "invalid request data", nil)
+		util.RespondJsonResult(w, http.StatusBadRequest, "invalid request data", parseErr.Error())
 		return
 	}
 

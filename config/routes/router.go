@@ -129,7 +129,7 @@ func NewDasRouter() *mux.Router {
 	// partnership
 	addDasControllerGroup(router, partnership.PartnershipControllerGroup)
 
-	// organizer (multi-user)
+	// organizer (multi-user shared: organizer, admin)
 	addDasControllerGroup(router, organizer.OrganizerProvisionControllerGroup)
 
 	// organizer (only)
@@ -160,6 +160,7 @@ func NewDasRouter() *mux.Router {
 
 	// public only
 	addDasControllerGroup(router, competition.PublicCompetitionViewControllerGroup)
+	addDasControllerGroup(router, account.SearchProfileControllerGroup)
 
 	log.Println("[info] finishing controller initialization")
 	return router

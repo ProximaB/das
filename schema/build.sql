@@ -5,7 +5,7 @@
 --
 -- configure database settings
 \! echo "Create DAS Schema"
-SET TIME ZONE 'America/Chicago';
+SET TIME ZONE 'UTC';
 
 -- drop existing schemas
 DROP SCHEMA IF EXISTS APPLICATION, COLLEGIATE, DAS, RATING, TMP, USADANCE CASCADE;

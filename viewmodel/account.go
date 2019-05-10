@@ -59,10 +59,10 @@ func (dto *AccountDTO) Extract(account businesslogic.Account) {
 type CreateAccountDTO struct {
 	Email       string `json:"email" validate:"regexp=^[0-9a-z]+@[0-9a-z]+(\\.[0-9a-z]+)+$"`
 	Phone       string `json:"phone"`
-	FirstName   string `json:"firstname" validate:"nonzero"`
-	LastName    string `json:"lastname" validate:"nonzero"`
-	ToSAccepted bool   `json:"tosaccepted" validate:"true"`
-	PPAccepted  bool   `json:"ppaccepted" validate:"true"`
+	FirstName   string `json:"firstName" validate:"nonzero"`
+	LastName    string `json:"lastName" validate:"nonzero"`
+	ToSAccepted bool   `json:"tosAccepted" validate:"true"`
+	PPAccepted  bool   `json:"ppaAccepted" validate:"true"`
 }
 
 func (dto CreateAccountDTO) ToAccountModel() businesslogic.Account {

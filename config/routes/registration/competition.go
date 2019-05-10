@@ -78,39 +78,67 @@ var searchCompetitionEntryController = util.DasController{
 
 var searchEventEntryController = util.DasController{
 	Name:         "SearchEntryController",
-	Description:  "Search Athlete/Partnership Competition/Event entries",
+	Description:  "Search Athlete Competition Entries",
 	Method:       http.MethodGet,
-	Endpoint:     apiEventEntryEndpoint,
+	Endpoint:     "/api/v1.0/entries/athlete/competition",
 	Handler:      entryServer.SearchEventEntryHandler,
 	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
+
+var searchCompetitionEntryByAthleteController = util.DasController{
+	Name: "SearchEntryController",
+	Description: `Search competition entries of a specific Athlete.
+					This returns all the competitions that this Partnership have competed at`,
+	Method:       http.MethodGet,
+	Endpoint:     "/api/v1.0/entries/athlete/competition",
+	Handler:      entryServer.SearchEventEntryHandler,
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
+}
+
+var searchCompetitionEntryByPartnershipController = util.DasController{
+	Name: "SearchEntryController",
+	Description: `Search competition entries of a specific Partnership.
+					This returns all the competitions that this Partnership have competed at`,
+	Method:       http.MethodGet,
+	Endpoint:     "/api/v1.0/entries/partnership/competition",
+	Handler:      entryServer.SearchEventEntryHandler,
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
+}
+
 var searchAthleteCompetitionEntryController = util.DasController{
-	Name:         "SearchAthleteCompetitionEntryController",
-	Description:  "Search entries of Athletes at a Competition",
+	Name: "SearchAthleteCompetitionEntryController",
+	Description: `Search entries of Athletes at a Competition.
+					This returns all the Athletes (AthleteCompetitionEntry) who are competing at the specified competition`,
 	Method:       http.MethodGet,
 	Endpoint:     "/api/v1.0/entries/competition/athlete",
 	Handler:      entryServer.SearchAthleteEntryHandler,
 	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
+
 var searchPartnershipCompetitionEntryController = util.DasController{
-	Name:         "SearchPartnershipCompetitionEntryController",
-	Description:  "Search entries of Partnerships at a Competition",
+	Name: "SearchPartnershipCompetitionEntryController",
+	Description: `Search entries of Partnerships at a Competition.
+					This returns all the couples (PartnershipCompetitionEntry) who are competing at the specified competition.`,
 	Method:       http.MethodGet,
 	Endpoint:     "/api/v1.0/entries/competition/partnership",
 	Handler:      entryServer.SearchAthleteEntryHandler,
 	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
+
 var searchAthleteEventEntryController = util.DasController{
-	Name:         "SearchAthleteEventEntryController",
-	Description:  "Search entries of Athletes at an Event of a Competition",
+	Name: "SearchAthleteEventEntryController",
+	Description: `Search entries of Athletes at an Event of a Competition.
+					This returns all the Athletes (AthleteEventEntry) who are competing at the specified event.`,
 	Method:       http.MethodGet,
 	Endpoint:     "/api/v1.0/entries/event/athlete",
 	Handler:      entryServer.SearchAthleteEntryHandler,
 	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
 }
+
 var searchPartnershipEventEntryController = util.DasController{
-	Name:         "SearchPartnershipEventEntryController",
-	Description:  "Search entries of Partnerships at an Event of a Competition",
+	Name: "SearchPartnershipEventEntryController",
+	Description: `Search entries of Partnerships at an Event of a Competition.
+					This returns all the couples (PartnershipEventEntry) who are competing at the specified event.`,
 	Method:       http.MethodGet,
 	Endpoint:     "/api/v1.0/entries/event/partnership",
 	Handler:      entryServer.SearchPartnershipEntryHandler,
@@ -125,6 +153,8 @@ var CompetitionRegistrationControllerGroup = util.DasControllerGroup{
 		getPartnershipRegistrationController,
 		searchCompetitionEntryController,
 		searchEventEntryController,
+		searchCompetitionEntryByAthleteController,
+		searchCompetitionEntryByPartnershipController,
 		searchAthleteCompetitionEntryController,
 		searchPartnershipCompetitionEntryController,
 		searchAthleteEventEntryController,

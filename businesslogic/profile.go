@@ -4,19 +4,17 @@ import "time"
 
 // AthleteProfile specifies the data that is contained in an AthleteProfile
 type AthleteProfile struct {
-	ID              int
-	AccountID       int
-	CreateUserID    int
-	DateTimeCreated time.Time
-	UpdateUserID    int
-	DateTimeUpdated time.Time
+	UID       string
+	FirstName string
+	LastName  string
 }
 
-type SearchAthleteProfileCriteria struct{}
+type SearchAthleteProfileCriteria struct {
+	FirstName string
+	LastName  string
+}
 
 type IAthleteProfileRepository interface {
-	CreateProfile(profile *AthleteProfile) error
-	UpdateProfile(profile AthleteProfile) error
 	SearchProfile(criteria SearchAthleteProfileCriteria) ([]AthleteProfile, error)
 }
 

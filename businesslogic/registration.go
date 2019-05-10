@@ -433,10 +433,6 @@ func (service CompetitionRegistrationService) CreateAndUpdatePartnershipEventEnt
 }
 
 func (service CompetitionRegistrationService) SearchPartnershipEventEntries(criteria SearchEntryCriteria) ([]PartnershipEventEntry, error) {
-	if criteria.CompetitionID != 0 {
-		// search entries within a competition
-		return service.PartnershipCompetitionEntryRepo.SearchEntry(SearchPartnershipCompetitionEntryCriteria{})
-	}
 	return service.PartnershipEventEntryRepo.SearchPartnershipEventEntry(SearchPartnershipEventEntryCriteria{
 		CompetitionID: criteria.CompetitionID,
 		PartnershipID: criteria.PartnershipID,

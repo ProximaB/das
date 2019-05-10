@@ -110,6 +110,10 @@ func (server CompetitionRegistrationServer) CreateAthleteRegistrationHandler(w h
 // THis is not for public view. For public view, see getCompetitiveBallroomEventEntryHandler()
 func (server CompetitionRegistrationServer) GetAthleteRegistrationHandler(w http.ResponseWriter, r *http.Request) {
 	account, authErr := server.GetCurrentUser(r)
+	if authErr != nil {
+		util.RespondJsonResult(w, http.StatusUnauthorized, authErr.Error(), nil)
+		return
+	}
 
 	if account.ID == 0 || !account.HasRole(businesslogic.AccountTypeAthlete) || authErr != nil {
 		util.RespondJsonResult(w, http.StatusUnauthorized, "Unauthorized", nil)

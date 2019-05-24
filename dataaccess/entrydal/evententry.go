@@ -263,8 +263,7 @@ func (repo PostgresPartnershipEventEntryRepository) SearchPartnershipEventEntry(
 		return nil, errors.New(dalutil.DataSourceNotSpecifiedError(repo))
 	}
 	clause := repo.SQLBuilder.Select(
-		fmt.Sprintf("%s.%s, %s.%s, %s.%s, %s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s",
-			dasPartnershipEventEntryTable, common.ColumnPrimaryKey,
+		fmt.Sprintf(`DAS.EVENT_ENTRY_PARTNERSHIP.ID, %s.%s, %s.%s, %s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s, %s.%s`,
 			dasPartnershipEventEntryTable, common.COL_EVENT_ID,
 			dasPartnershipEventEntryTable, common.COL_PARTNERSHIP_ID,
 			dasPartnershipEventEntryTableColumnPlacement,

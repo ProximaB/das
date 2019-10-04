@@ -85,6 +85,10 @@ var RoleApplicationRepository = accountdal.PostgresRoleApplicationRepository{
 	SQLBuilder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
 }
 
+var RoleApplicationStatusRepository = accountdal.PostgresRoleApplicationStatusRepository{
+	SqlBulder: squirrel.StatementBuilder.PlaceholderFormat(squirrel.Dollar),
+}
+
 //========= end of account repositories
 
 var PartnershipRepository = partnershipdal.PostgresPartnershipRepository{

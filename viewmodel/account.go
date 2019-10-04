@@ -92,3 +92,13 @@ func AthleteToTinyViewModel(athlete businesslogic.Account) AthleteTinyViewModel 
 		LastName:  athlete.LastName,
 	}
 }
+
+type RoleApplicationStatusViewModel struct {
+	ID   int    `json:"id"`
+	Name string `json:"name"`
+}
+
+func (model *RoleApplicationStatusViewModel) PopulateFromModel(status businesslogic.RoleApplicationStatus) {
+	model.ID = status.ID
+	model.Name = status.Name
+}

@@ -27,6 +27,19 @@ type SearchRoleApplicationCriteria struct {
 	Responded      bool
 }
 
+// RoleApplicationStatus contains the status of a role application
+type RoleApplicationStatus struct {
+	ID              int
+	Name            string
+	DateTimeCreated time.Time
+	DateTimeUpdated time.Time
+}
+
+// IRoleApplicationStatusRepository defines the interface that a Role Application Status Repository should implement
+type IRoleApplicationStatusRepository interface {
+	GetAllRoleApplicationStatus() ([]RoleApplicationStatus, error)
+}
+
 // RoleApplication is an application for restricted roles, including adjudicator, scrutineer, and organizer.
 // Non-restrictive roles such as emcee and deck captain can be approved by competition organizers
 type RoleApplication struct {
@@ -55,6 +68,7 @@ type IRoleApplicationRepository interface {
 type RoleProvisionService struct {
 	accountRepo               IAccountRepository
 	roleApplicationRepo       IRoleApplicationRepository
+	roleApplicationStatusRepo IRoleApplicationStatusRepository
 	roleRepo                  IAccountRoleRepository
 	organizerProvisionService OrganizerProvisionService
 }
@@ -63,16 +77,23 @@ type RoleProvisionService struct {
 func NewRoleProvisionService(
 	accountRepo IAccountRepository,
 	roleApplicationRepo IRoleApplicationRepository,
+	roleApplicationStatusRepo IRoleApplicationStatusRepository,
 	roleRepo IAccountRoleRepository,
 	organizerProvisionRepo IOrganizerProvisionRepository,
-	organizerProvisionHistoryRepo IOrganizerProvisionHistoryRepository) *RoleProvisionService {
+	organizerProvisionHistoryRepo IOrganizerProvisionHistoryRepository,
+) *RoleProvisionService {
 	service := RoleProvisionService{
 		accountRepo:               accountRepo,
 		roleApplicationRepo:       roleApplicationRepo,
+		roleApplicationStatusRepo: roleApplicationStatusRepo,
 		roleRepo:                  roleRepo,
 		organizerProvisionService: NewOrganizerProvisionService(accountRepo, roleRepo, organizerProvisionRepo, organizerProvisionHistoryRepo),
 	}
 	return &service
+}
+
+func (service RoleProvisionService) GetAllRoleApplicationStatuses() ([]RoleApplicationStatus, error) {
+	return service.roleApplicationStatusRepo.GetAllRoleApplicationStatus()
 }
 
 // CreateRoleApplication check the validity of the role application and create it if it's valid

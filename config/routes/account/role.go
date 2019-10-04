@@ -11,10 +11,12 @@ import (
 
 const apiAccountRoleCreateApplication = "/api/v1.0/account/role/application"
 const apiAccountRoleRespondApplication = "/api/v1.0/account/role/provision" // Admin use only
+const apiAccountRoleApplicationStatus = "/api/account/role/application/status"
 
 var roleProvisionService = businesslogic.NewRoleProvisionService(
 	database.AccountRepository,
 	database.RoleApplicationRepository,
+	database.RoleApplicationStatusRepository,
 	database.AccountRoleRepository,
 	database.OrganizerProvisionRepository,
 	database.OrganizerProvisionHistoryRepository)
@@ -70,6 +72,15 @@ var provisionRoleApplicationController = util.DasController{
 	},
 }
 
+var getRoleApplicationStatusController = util.DasController{
+	Name:         "GetRoleApplicationStatusController",
+	Description:  "Get all possible Role Application Status ",
+	Method:       http.MethodGet,
+	Endpoint:     apiAccountRoleApplicationStatus,
+	Handler:      roleApplicationServer.GetAllApplicationStatus,
+	AllowedRoles: []int{businesslogic.AccountTypeNoAuth},
+}
+
 const apiAccountRole = "/api/v1.0/account/role"
 
 var roleServer = account.RoleServer{
@@ -83,6 +94,7 @@ var RoleApplicationControllerGroup = util.DasControllerGroup{
 		searchRoleApplicationController,
 		adminSearchRoleApplicationController,
 		provisionRoleApplicationController,
+		getRoleApplicationStatusController,
 	},
 }
 

@@ -78,6 +78,23 @@ func (server RoleApplicationServer) CreateRoleApplicationHandler(w http.Response
 	return
 }
 
+func (server RoleApplicationServer) GetAllApplicationStatus(w http.ResponseWriter, r *http.Request) {
+	statuses, err := server.service.GetAllRoleApplicationStatuses()
+	if err != nil {
+		util.RespondJsonResult(w, http.StatusInternalServerError, err.Error(), nil)
+	}
+
+	output := make([]viewmodel.RoleApplicationStatusViewModel, 0)
+	for _, each := range statuses {
+		view := viewmodel.RoleApplicationStatusViewModel{}
+		view.PopulateFromModel(each)
+		output = append(output, view)
+	}
+
+	jsonOutput, _ := json.Marshal(output)
+	w.Write(jsonOutput)
+}
+
 // SearchRoleApplicationHandler handles the request:
 //	GET /api/v1.0/account/role/application
 func (server RoleApplicationServer) SearchRoleApplicationHandler(w http.ResponseWriter, r *http.Request) {
@@ -227,6 +244,5 @@ func (server RoleServer) GetAccountRolesHandler(w http.ResponseWriter, r *http.R
 	for _, each := range roles {
 		data = append(data, viewmodel.AccountRoleToAccountRoleDTO(each))
 	}
-	output, _ := json.Marshal(data)
-	w.Write(output)
+	util.RespondJsonResult(w, http.StatusOK, "done", data)
 }

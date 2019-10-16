@@ -56,8 +56,17 @@ func NewFirebaseAuthenticationStrategy(credential string, accountRepo businesslo
 	ctx := context.Background()
 	app, err := firebase.NewApp(ctx, nil, opt)
 	if err != nil {
-		log.Fatalf("error initializing firebase authentication: %v", err)
+		log.Printf("error initializing firebase authentication: %v", err)
+		log.Printf("attempt using secret file")
+
+		// attempt using secret file
+		opt = option.WithCredentialsFile("./secret/firebase-auth-dev-01.json")
+		app, err = firebase.NewApp(ctx, nil, opt)
+		if err != nil {
+			log.Fatalf("error using file for authentication: %v", err)
+		}
 	}
+
 	client, err := app.Auth(ctx)
 	return FirebaseAuthenticationStrategy{
 		accountRepository: accountRepo,

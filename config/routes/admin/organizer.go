@@ -1,11 +1,11 @@
 package admin
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/config/database"
-	"github.com/DancesportSoftware/das/config/routes/middleware"
-	"github.com/DancesportSoftware/das/controller/admin"
-	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/ProximaB/das/businesslogic"
+	"github.com/ProximaB/das/config/database"
+	"github.com/ProximaB/das/config/routes/middleware"
+	"github.com/ProximaB/das/controller/admin"
+	"github.com/ProximaB/das/controller/util"
 	"net/http"
 )
 

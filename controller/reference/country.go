@@ -3,9 +3,9 @@ package reference
 import (
 	"encoding/json"
 	"fmt"
-	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/controller/util"
-	"github.com/DancesportSoftware/das/viewmodel"
+	"github.com/ProximaB/das/businesslogic"
+	"github.com/ProximaB/das/controller/util"
+	"github.com/ProximaB/das/viewmodel"
 	"log"
 	"net/http"
 )

@@ -1,11 +1,11 @@
 package organizer
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/config/database"
-	"github.com/DancesportSoftware/das/config/routes/middleware"
-	"github.com/DancesportSoftware/das/controller/organizer"
-	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/ProximaB/das/businesslogic"
+	"github.com/ProximaB/das/config/database"
+	"github.com/ProximaB/das/config/routes/middleware"
+	"github.com/ProximaB/das/controller/organizer"
+	"github.com/ProximaB/das/controller/util"
 	"net/http"
 )
 

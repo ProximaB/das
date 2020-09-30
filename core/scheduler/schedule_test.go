@@ -1,7 +1,7 @@
 package scheduler_test
 
 import (
-	"github.com/DancesportSoftware/das/core/scheduler"
+	"github.com/ProximaB/das/core/scheduler"
 	"github.com/stretchr/testify/assert"
 	"log"
 	"testing"

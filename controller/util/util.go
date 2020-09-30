@@ -2,7 +2,7 @@ package util
 
 import (
 	"encoding/json"
-	"github.com/DancesportSoftware/das/viewmodel"
+	"github.com/ProximaB/das/viewmodel"
 	"github.com/gorilla/schema"
 	"net/http"
 )

@@ -1,8 +1,8 @@
 package referencedal_test
 
 import (
-	"github.com/DancesportSoftware/das/dataaccess/common"
-	"github.com/DancesportSoftware/das/dataaccess/referencedal"
+	"github.com/ProximaB/das/dataaccess/common"
+	"github.com/ProximaB/das/dataaccess/referencedal"
 	"github.com/Masterminds/squirrel"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"
 	"testing"

@@ -1,10 +1,10 @@
 package reference
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/config/database"
-	"github.com/DancesportSoftware/das/controller/reference"
-	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/ProximaB/das/businesslogic"
+	"github.com/ProximaB/das/config/database"
+	"github.com/ProximaB/das/controller/reference"
+	"github.com/ProximaB/das/controller/util"
 	"net/http"
 )
 

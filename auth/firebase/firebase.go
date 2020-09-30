@@ -5,7 +5,7 @@ import (
 	"errors"
 	"firebase.google.com/go"
 	"firebase.google.com/go/auth"
-	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/ProximaB/das/businesslogic"
 	"google.golang.org/api/option"
 	"log"
 	"net/http"

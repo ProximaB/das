@@ -1,7 +1,7 @@
 package util_test
 
 import (
-	"github.com/DancesportSoftware/das/util"
+	"github.com/ProximaB/das/util"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

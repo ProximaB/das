@@ -2,7 +2,7 @@ package viewmodel
 
 import (
 	"fmt"
-	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/ProximaB/das/businesslogic"
 	"strings"
 	"time"
 )

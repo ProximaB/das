@@ -1,7 +1,7 @@
 #!/usr/bin/env bash
 # mockgen.sh batch updates all mock objects.
 # To run this script:
-# $ cd $GOPATH/src/github.com/DancesportSoftware/das
+# $ cd $GOPATH/src/github.com/ProximaB/das
 # $ bash update_mock.sh
 # On Windows, run this script in a Linux subsystem, or embedded Bash
 #

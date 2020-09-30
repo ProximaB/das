@@ -1,7 +1,7 @@
 package eventdal_test
 
 import (
-	"github.com/DancesportSoftware/das/dataaccess/eventdal"
+	"github.com/ProximaB/das/dataaccess/eventdal"
 	"github.com/Masterminds/squirrel"
 	"testing"
 )

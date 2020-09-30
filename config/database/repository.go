@@ -3,14 +3,14 @@
 package database
 
 import (
-	"github.com/DancesportSoftware/das/dataaccess/accountdal"
-	"github.com/DancesportSoftware/das/dataaccess/competition"
-	"github.com/DancesportSoftware/das/dataaccess/entrydal"
-	"github.com/DancesportSoftware/das/dataaccess/eventdal"
-	"github.com/DancesportSoftware/das/dataaccess/organizer"
-	"github.com/DancesportSoftware/das/dataaccess/partnershipdal"
-	"github.com/DancesportSoftware/das/dataaccess/provision"
-	"github.com/DancesportSoftware/das/dataaccess/referencedal"
+	"github.com/ProximaB/das/dataaccess/accountdal"
+	"github.com/ProximaB/das/dataaccess/competition"
+	"github.com/ProximaB/das/dataaccess/entrydal"
+	"github.com/ProximaB/das/dataaccess/eventdal"
+	"github.com/ProximaB/das/dataaccess/organizer"
+	"github.com/ProximaB/das/dataaccess/partnershipdal"
+	"github.com/ProximaB/das/dataaccess/provision"
+	"github.com/ProximaB/das/dataaccess/referencedal"
 	"github.com/Masterminds/squirrel"
 )
 

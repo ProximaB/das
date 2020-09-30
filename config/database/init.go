@@ -2,7 +2,7 @@ package database
 
 import (
 	"database/sql"
-	"github.com/DancesportSoftware/das/env"
+	"github.com/ProximaB/das/env"
 	_ "github.com/lib/pq"
 
 	"log"

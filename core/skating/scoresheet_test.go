@@ -1,7 +1,7 @@
 package skating_test
 
 import (
-	"github.com/DancesportSoftware/das/core/skating"
+	"github.com/ProximaB/das/core/skating"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

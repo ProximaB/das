@@ -1,7 +1,7 @@
 package partnershipdal_test
 
 import (
-	"github.com/DancesportSoftware/das/dataaccess/partnershipdal"
+	"github.com/ProximaB/das/dataaccess/partnershipdal"
 	"github.com/Masterminds/squirrel"
 	"testing"
 )

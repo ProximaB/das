@@ -1,6 +1,6 @@
 package viewmodel
 
-import "github.com/DancesportSoftware/das/businesslogic"
+import "github.com/ProximaB/das/businesslogic"
 
 type CompetitionStatus struct {
 	ID   int    `json:"id"`

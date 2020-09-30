@@ -3,8 +3,8 @@ package eventdal
 import (
 	"database/sql"
 	"errors"
-	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/dataaccess/util"
+	"github.com/ProximaB/das/businesslogic"
+	"github.com/ProximaB/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 	"log"
 )

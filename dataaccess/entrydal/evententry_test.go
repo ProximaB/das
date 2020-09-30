@@ -1,9 +1,9 @@
 package entrydal_test
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/dataaccess/entrydal"
-	"github.com/DancesportSoftware/das/dataaccess/util"
+	"github.com/ProximaB/das/businesslogic"
+	"github.com/ProximaB/das/dataaccess/entrydal"
+	"github.com/ProximaB/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 	"github.com/stretchr/testify/assert"
 	"gopkg.in/DATA-DOG/go-sqlmock.v1"

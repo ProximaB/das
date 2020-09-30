@@ -1,8 +1,8 @@
 package middleware
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/ProximaB/das/businesslogic"
+	"github.com/ProximaB/das/controller/util"
 	"log"
 	"net/http"
 )

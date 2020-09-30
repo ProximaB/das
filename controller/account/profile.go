@@ -1,9 +1,9 @@
 package account
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/controller/util"
-	"github.com/DancesportSoftware/das/viewmodel"
+	"github.com/ProximaB/das/businesslogic"
+	"github.com/ProximaB/das/controller/util"
+	"github.com/ProximaB/das/viewmodel"
 	"gopkg.in/validator.v2"
 	"log"
 	"net/http"

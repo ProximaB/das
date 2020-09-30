@@ -2,9 +2,9 @@ package account
 
 import (
 	"encoding/json"
-	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/mock/businesslogic"
-	"github.com/DancesportSoftware/das/viewmodel"
+	"github.com/ProximaB/das/businesslogic"
+	"github.com/ProximaB/das/mock/businesslogic"
+	"github.com/ProximaB/das/viewmodel"
 	"github.com/golang/mock/gomock"
 	"github.com/stretchr/testify/assert"
 	"net/http"

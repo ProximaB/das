@@ -4,16 +4,16 @@ import (
 	"database/sql"
 	"errors"
 	"fmt"
-	"github.com/DancesportSoftware/das/dataaccess/accountdal"
-	"github.com/DancesportSoftware/das/dataaccess/competition"
-	"github.com/DancesportSoftware/das/dataaccess/eventdal"
-	"github.com/DancesportSoftware/das/dataaccess/partnershipdal"
+	"github.com/ProximaB/das/dataaccess/accountdal"
+	"github.com/ProximaB/das/dataaccess/competition"
+	"github.com/ProximaB/das/dataaccess/eventdal"
+	"github.com/ProximaB/das/dataaccess/partnershipdal"
 	"log"
 	"time"
 
-	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/dataaccess/common"
-	"github.com/DancesportSoftware/das/dataaccess/util"
+	"github.com/ProximaB/das/businesslogic"
+	"github.com/ProximaB/das/dataaccess/common"
+	"github.com/ProximaB/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 

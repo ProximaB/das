@@ -1,7 +1,7 @@
 package auth
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/ProximaB/das/businesslogic"
 	"net/http"
 )
 

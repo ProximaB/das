@@ -1,7 +1,7 @@
 package viewmodel
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/ProximaB/das/businesslogic"
 	"time"
 )
 

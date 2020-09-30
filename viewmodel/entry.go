@@ -1,6 +1,6 @@
 package viewmodel
 
-import "github.com/DancesportSoftware/das/businesslogic"
+import "github.com/ProximaB/das/businesslogic"
 
 // SearchEntryForm defines the acceptable parameters that can be used to query competition and event entries
 type SearchEntryForm struct {

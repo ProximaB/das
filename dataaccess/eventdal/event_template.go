@@ -5,9 +5,9 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/dataaccess/common"
-	"github.com/DancesportSoftware/das/dataaccess/util"
+	"github.com/ProximaB/das/businesslogic"
+	"github.com/ProximaB/das/dataaccess/common"
+	"github.com/ProximaB/das/dataaccess/util"
 	"github.com/Masterminds/squirrel"
 )
 

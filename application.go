@@ -1,8 +1,8 @@
 package main
 
 import (
-	"github.com/DancesportSoftware/das/config/database"
-	"github.com/DancesportSoftware/das/config/routes"
+	"github.com/ProximaB/das/config/database"
+	"github.com/ProximaB/das/config/routes"
 	"github.com/gorilla/csrf"
 	"log"
 	"net/http"

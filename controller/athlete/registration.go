@@ -4,12 +4,12 @@ import (
 	"encoding/json"
 	"errors"
 	"fmt"
-	"github.com/DancesportSoftware/das/auth"
-	"github.com/DancesportSoftware/das/viewmodel"
+	"github.com/ProximaB/das/auth"
+	"github.com/ProximaB/das/viewmodel"
 	"net/http"
 
-	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/ProximaB/das/businesslogic"
+	"github.com/ProximaB/das/controller/util"
 )
 
 // CompetitionRegistrationServer handles requests that create or update competition registrations

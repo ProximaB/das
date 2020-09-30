@@ -1,7 +1,7 @@
 package businesslogic_test
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic"
+	"github.com/ProximaB/das/businesslogic"
 	"github.com/stretchr/testify/assert"
 	"testing"
 )

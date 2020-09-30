@@ -4,8 +4,8 @@ package eventdal_test
 /*
 import (
 	"database/sql"
-	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/dataaccess/eventdal"
+	"github.com/ProximaB/das/businesslogic"
+	"github.com/ProximaB/das/dataaccess/eventdal"
 	"github.com/Masterminds/squirrel"
 	_ "github.com/lib/pq"
 	"github.com/stretchr/testify/assert"

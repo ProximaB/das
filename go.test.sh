@@ -14,7 +14,7 @@
 
 set -e
 echo "" > coverage.txt # for codecov
-baseDir="github.com/DancesportSoftware/das"
+baseDir="github.com/ProximaB/das"
 for d in $(go list ./... | grep -v vendor); do
     go test -race -coverprofile=tmp.out -covermode=atomic $d
     if [ -f tmp.out ]; then

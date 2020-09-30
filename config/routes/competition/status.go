@@ -1,10 +1,10 @@
 package competition
 
 import (
-	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/config/database"
-	"github.com/DancesportSoftware/das/controller/competition"
-	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/ProximaB/das/businesslogic"
+	"github.com/ProximaB/das/config/database"
+	"github.com/ProximaB/das/controller/competition"
+	"github.com/ProximaB/das/controller/util"
 	"net/http"
 )
 

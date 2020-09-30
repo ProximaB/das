@@ -2,9 +2,9 @@ package blacklist
 
 import (
 	"encoding/json"
-	"github.com/DancesportSoftware/das/auth"
-	"github.com/DancesportSoftware/das/businesslogic"
-	"github.com/DancesportSoftware/das/controller/util"
+	"github.com/ProximaB/das/auth"
+	"github.com/ProximaB/das/businesslogic"
+	"github.com/ProximaB/das/controller/util"
 	"net/http"
 	"time"
 )

@@ -80,7 +80,7 @@ Acceptable versions are listed with each component.
   * dasdb
     * Change to the directory that you would like to keep the repository
     * Clone the repository:
-      * `$ git clone https://github.com/DancesportSoftware/dasdb`
+      * `$ git clone https://github.com/ProximaB/dasdb`
     * Build the database schema and populate data:
       * Change directory: `$ cd dasdb`
       * Build the database: `$ psql -U dasdev -d das -f build.sql`
@@ -92,7 +92,7 @@ Acceptable versions are listed with each component.
       * Windows: `C:\> cd %GOPATH%\src\github.com\DancesportSoftware`
       * Linux: `$ cd $GOPATH/src/github.com/DancesportSoftware`
     * Clone the repository:
-      * `$ git clone https://github.com/DancesportSoftware/das`
+      * `$ git clone https://github.com/ProximaB/das`
     * Get all dependencies:
       * Change directory to project root: `$ cd das`
       * Change branches to development: `$ git checkout development`
